@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visite - École Excellence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.9;
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Menu Window */
+        .menu-window {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .menu-window.active {
+            right: 0;
+        }
+
+        .menu-header {
+            background-color: #2c3e50;
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            opacity: 0.8;
+        }
+
+        .menu-content {
+            padding: 2rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .menu-item a:hover {
+            color: #2c3e50;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Section */
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .photo-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .photo-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .photo-info {
+            padding: 1.5rem;
+        }
+
+        .photo-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .photo-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="homepage.html" class="navbar-brand">🎓 École Excellence</a>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Window -->
+    <div class="menu-window" id="menuWindow">
+        <div class="menu-header">
+            <div class="menu-title">Menu</div>
+            <button class="close-btn" id="closeBtn">&times;</button>
+        </div>
+        <div class="menu-content">
+            <div class="menu-item">
+                <a href="homepage.html">Accueil</a>
+            </div>
+            <div class="menu-item">
+                <a href="visitepage.html">Visite</a>
+            </div>
+            <div class="menu-item">
+                <a href="assisatancepage.html">Assistance</a>
+            </div>
+            <div class="menu-item">
+                <a href="formpage.html">Formulaire</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Visite du Campus</h1>
+        <p>Découvrez nos installations et nos salles de classe</p>
+    </section>
+
+    <!-- Campus Photos -->
+    <section class="section">
+        <h2 class="section-title">Le Campus</h2>
+        <div class="gallery-grid">
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600" alt="Vue extérieure du campus" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Vue Extérieure</h3>
+                    <p class="photo-description">Notre campus moderne de 20 hectares avec ses bâtiments architecturaux impressionnants.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=600" alt="Hall principal" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Hall Principal</h3>
+                    <p class="photo-description">Grand hall d'accueil spacieux et lumineux avec réception et espace d'information.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600" alt="Jardin du campus" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Espaces Verts</h3>
+                    <p class="photo-description">Campus verdoyant avec jardins, espaces de détente et aires de pique-nique.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Classrooms Photos -->
+    <section class="section" style="background: white;">
+        <h2 class="section-title">Salles de Classe</h2>
+        <div class="gallery-grid">
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" alt="Salle de classe moderne" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Salle de Classe Moderne</h3>
+                    <p class="photo-description">Salle équipée de tableau interactif, projecteur et mobilier ergonomique. Capacité: 30 étudiants.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600" alt="Salle avec projecteur" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Salle de Présentation</h3>
+                    <p class="photo-description">Salle spacieuse avec système audio-visuel moderne pour les présentations et conférences.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600" alt="Salle d'étude" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Salle d'Étude</h3>
+                    <p class="photo-description">Espace calme et confortable pour l'étude individuelle et en groupe. 50 places disponibles.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600" alt="Amphithéâtre" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Amphithéâtre</h3>
+                    <p class="photo-description">Grande salle de 500 places avec équipements audiovisuels pour conférences et cérémonies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Laboratories Photos -->
+    <section class="section">
+        <h2 class="section-title">Laboratoires</h2>
+        <div class="gallery-grid">
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600" alt="Laboratoire de sciences" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Laboratoire de Sciences</h3>
+                    <p class="photo-description">Laboratoire équipé pour la physique et la chimie avec matériel de pointe et mesures de sécurité.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" alt="Laboratoire informatique" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Laboratoire Informatique</h3>
+                    <p class="photo-description">Salle informatique avec 40 ordinateurs modernes et logiciels professionnels pour l'apprentissage.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600" alt="Laboratoire de biologie" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Laboratoire de Biologie</h3>
+                    <p class="photo-description">Laboratoire spécialisé pour les sciences de la vie avec microscopes et équipements modernes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Library Photos -->
+    <section class="section" style="background: white;">
+        <h2 class="section-title">Bibliothèque</h2>
+        <div class="gallery-grid">
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600" alt="Bibliothèque" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Bibliothèque Centrale</h3>
+                    <p class="photo-description">Espace de 2000m² avec plus de 100 000 ouvrages et ressources numériques accessibles.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" alt="Salle de lecture" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Salle de Lecture</h3>
+                    <p class="photo-description">Espaces de lecture silencieux et confortables pour l'étude et la recherche.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600" alt="Espace collaboratif" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Espace Collaboratif</h3>
+                    <p class="photo-description">Zones de travail en groupe avec tableaux interactifs et connexion Wi-Fi haut débit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Photos -->
+    <section class="section">
+        <h2 class="section-title">Installations</h2>
+        <div class="gallery-grid">
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600" alt="Complexe sportif" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Complexe Sportif</h3>
+                    <p class="photo-description">Gymnase moderne avec équipements sportifs, piscine et terrains extérieurs.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600" alt="Cafétéria" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Cafétéria</h3>
+                    <p class="photo-description">Espace de restauration avec repas équilibrés et espaces de détente conviviaux.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600" alt="Studio créatif" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Studio Créatif</h3>
+                    <p class="photo-description">Ateliers d'art et studios d'enregistrement pour les programmes créatifs et artistiques.</p>
+                </div>
+            </div>
+            <div class="photo-card">
+                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600" alt="Salle de spectacle" class="photo-image">
+                <div class="photo-info">
+                    <h3 class="photo-title">Salle de Spectacle</h3>
+                    <p class="photo-description">Théâtre de 500 places avec équipements scéniques pour les représentations et événements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Menu functionality
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const menuWindow = document.getElementById('menuWindow');
+        const overlay = document.getElementById('overlay');
+
+        hamburgerBtn.addEventListener('click', () => {
+            menuWindow.classList.add('active');
+            overlay.classList.add('active');
+            hamburgerBtn.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuWindow.classList.contains('active')) {
+                menuWindow.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
+

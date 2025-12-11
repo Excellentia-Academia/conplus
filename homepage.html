@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>homepage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.9;
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Menu Window */
+        .menu-window {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .menu-window.active {
+            right: 0;
+        }
+
+        .menu-header {
+            background-color: #2c3e50;
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            opacity: 0.8;
+        }
+
+        .menu-content {
+            padding: 2rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .menu-item a:hover {
+            color: #2c3e50;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 90vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920') center/cover;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background-color: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .about-image {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .about-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Programs Section */
+        .programs {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .programs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .program-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .program-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .program-content {
+            padding: 1.5rem;
+        }
+
+        .program-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .program-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Facilities Section */
+        .facilities {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .facilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .facility-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .facility-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .facility-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .facility-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Gallery Section */
+        .gallery {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">🎓 École Excellence</a>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Window -->
+    <div class="menu-window" id="menuWindow">
+        <div class="menu-header">
+            <div class="menu-title">Menu</div>
+            <button class="close-btn" id="closeBtn">&times;</button>
+        </div>
+        <div class="menu-content">
+            <div class="menu-item">
+                <a href="homepage.html">Accueil</a>
+            </div>
+            <div class="menu-item">
+                <a href="visitepage.html">Visite</a>
+            </div>
+            <div class="menu-item">
+                <a href="assisatancepage.html">Assistance</a>
+            </div>
+            <div class="menu-item">
+                <a href="formpage.html">Formulaire</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Bienvenue à l'École Excellence</h1>
+            <p>Formons les leaders de demain avec passion, innovation et excellence académique</p>
+            <a href="formpage.html" class="cta-button">Inscrivez-vous maintenant</a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-number">5000+</div>
+            <div class="stat-label">Étudiants</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">250+</div>
+            <div class="stat-label">Enseignants</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Taux de réussite</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Programmes</div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <h2 class="section-title">À Propos de Nous</h2>
+        <div class="about-content">
+            <div>
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800" alt="École moderne" class="about-image">
+            </div>
+            <div class="about-text">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem; color: #2c3e50;">Notre Mission</h3>
+                <p>Depuis plus de 30 ans, l'École Excellence s'engage à offrir une éducation de qualité supérieure qui prépare nos étudiants à exceller dans un monde en constante évolution. Nous croyons en l'éducation holistique qui développe non seulement les compétences académiques, mais aussi le caractère, la créativité et la pensée critique.</p>
+                <p style="margin-top: 1rem;">Notre campus moderne de 20 hectares offre un environnement d'apprentissage stimulant avec des installations de pointe, des laboratoires équipés et des espaces collaboratifs qui favorisent l'innovation et l'excellence.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="programs">
+        <div class="programs-container">
+            <h2 class="section-title">Nos Programmes</h2>
+            <div class="programs-grid">
+                <div class="program-card">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600" alt="Sciences" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Sciences & Technologies</h3>
+                        <p class="program-description">Programmes en sciences, ingénierie, informatique et mathématiques avec des laboratoires de pointe et des projets pratiques innovants.</p>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600" alt="Business" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Business & Management</h3>
+                        <p class="program-description">Formation en commerce, finance, marketing et gestion avec des stages en entreprises et des projets réels.</p>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600" alt="Arts" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Arts & Design</h3>
+                        <p class="program-description">Programmes créatifs en arts visuels, design graphique, architecture et médias avec des studios professionnels.</p>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <img src="télécharger.webp" alt="Santé" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Santé & Médecine</h3>
+                        <p class="program-description">Formation médicale et paramédicale avec des partenariats hospitaliers et des stages cliniques.</p>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600" alt="Éducation" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Éducation & Pédagogie</h3>
+                        <p class="program-description">Programmes pour former les enseignants de demain avec des méthodes pédagogiques innovantes.</p>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600" alt="Droit" class="program-image">
+                    <div class="program-content">
+                        <h3 class="program-title">Droit & Sciences Politiques</h3>
+                        <p class="program-description">Formation juridique complète avec des simulations de procès et des stages dans des cabinets d'avocats.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section class="facilities">
+        <h2 class="section-title">Nos Installations</h2>
+        <div class="facilities-grid">
+            <div class="facility-item">
+                <div class="facility-icon">📚</div>
+                <h3 class="facility-title">Bibliothèque Moderne</h3>
+                <p class="facility-description">Plus de 100 000 ouvrages, espaces de travail collaboratifs et ressources numériques accessibles 24/7.</p>
+            </div>
+            <div class="facility-item">
+                <div class="facility-icon">🔬</div>
+                <h3 class="facility-title">Laboratoires de Pointe</h3>
+                <p class="facility-description">Équipements scientifiques dernier cri pour la recherche et l'expérimentation dans tous les domaines.</p>
+            </div>
+            <div class="facility-item">
+                <div class="facility-icon">🏋️</div>
+                <h3 class="facility-title">Complexe Sportif</h3>
+                <p class="facility-description">Gymnase, piscine olympique, terrains de sport et salles de fitness pour le bien-être de nos étudiants.</p>
+            </div>
+            <div class="facility-item">
+                <div class="facility-icon">💻</div>
+                <h3 class="facility-title">Centres Informatiques</h3>
+                <p class="facility-description">Salles informatiques modernes avec les dernières technologies et accès haut débit partout sur le campus.</p>
+            </div>
+            <div class="facility-item">
+                <div class="facility-icon">🎭</div>
+                <h3 class="facility-title">Théâtre & Arts</h3>
+                <p class="facility-description">Salle de spectacle de 500 places, studios d'enregistrement et ateliers d'art pour l'expression créative.</p>
+            </div>
+            <div class="facility-item">
+                <div class="facility-icon">🍽️</div>
+                <h3 class="facility-title">Restauration</h3>
+                <p class="facility-description">Plusieurs cafétérias offrant des repas équilibrés et variés, adaptés à tous les régimes alimentaires.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <div class="gallery-container">
+            <h2 class="section-title">Galerie Photos</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="OIP.webp" alt="Campus" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" alt="Étudiants" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600" alt="Bibliothèque" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600" alt="Laboratoire" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600" alt="Sport" class="gallery-image">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600" alt="Cérémonie" class="gallery-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">École Excellence</h3>
+            <p style="margin-bottom: 2rem; opacity: 0.9;">Formons l'excellence depuis 1990</p>
+            <div class="footer-links">
+                <a href="homepage.html">Accueil</a>
+                <a href="visitepage.html">Visite</a>
+                <a href="assisatancepage.html">Assistance</a>
+                <a href="formpage.html">Formulaire</a>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">© 2025 École Excellence. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const menuWindow = document.getElementById('menuWindow');
+        const overlay = document.getElementById('overlay');
+
+        // Ouvrir le menu
+        hamburgerBtn.addEventListener('click', () => {
+            menuWindow.classList.add('active');
+            overlay.classList.add('active');
+            hamburgerBtn.classList.add('active');
+        });
+
+        // Fermer le menu
+        closeBtn.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        // Fermer le menu en cliquant sur l'overlay
+        overlay.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        // Fermer le menu avec la touche Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuWindow.classList.contains('active')) {
+                menuWindow.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

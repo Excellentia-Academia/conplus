@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistance - École Excellence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.9;
+        }
+
+        /* Hamburger Button */
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Menu Window */
+        .menu-window {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .menu-window.active {
+            right: 0;
+        }
+
+        .menu-header {
+            background-color: #2c3e50;
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            opacity: 0.8;
+        }
+
+        .menu-content {
+            padding: 2rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .menu-item a:hover {
+            color: #2c3e50;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Section */
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        /* Contact Cards */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .contact-info {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .contact-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #f8f9fa;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Help Sections */
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .help-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .help-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .help-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .help-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .help-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Hours Section */
+        .hours-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .hours-table tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .hours-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .hours-table td {
+            padding: 1rem;
+            color: #666;
+        }
+
+        .hours-table td:first-child {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="homepage.html" class="navbar-brand">🎓 École Excellence</a>
+        <button class="hamburger" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Window -->
+    <div class="menu-window" id="menuWindow">
+        <div class="menu-header">
+            <div class="menu-title">Menu</div>
+            <button class="close-btn" id="closeBtn">&times;</button>
+        </div>
+        <div class="menu-content">
+            <div class="menu-item">
+                <a href="homepage.html">Accueil</a>
+            </div>
+            <div class="menu-item">
+                <a href="visitepage.html">Visite</a>
+            </div>
+            <div class="menu-item">
+                <a href="assisatancepage.html">Assistance</a>
+            </div>
+            <div class="menu-item">
+                <a href="formpage.html">Formulaire</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Centre d'Assistance</h1>
+        <p>Nous sommes là pour vous aider. Trouvez les réponses à vos questions ou contactez-nous directement.</p>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section">
+        <h2 class="section-title">Contactez-Nous</h2>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📞</div>
+                <h3 class="contact-title">Téléphone</h3>
+                <div class="contact-info">
+                    <p><strong>Standard :</strong></p>
+                    <p>+33 1 23 45 67 89</p>
+                    <p style="margin-top: 1rem;"><strong>Urgences :</strong></p>
+                    <p>+33 1 23 45 67 90</p>
+                    <p style="margin-top: 1rem; color: #667eea;">Lun-Ven : 8h-18h</p>
+                </div>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">✉️</div>
+                <h3 class="contact-title">Email</h3>
+                <div class="contact-info">
+                    <p><strong>Informations générales :</strong></p>
+                    <p><a href="mailto:info@ecole-excellence.fr" class="contact-link">info@ecole-excellence.fr</a></p>
+                    <p style="margin-top: 1rem;"><strong>Admissions :</strong></p>
+                    <p><a href="mailto:admissions@ecole-excellence.fr" class="contact-link">admissions@ecole-excellence.fr</a></p>
+                    <p style="margin-top: 1rem;"><strong>Support :</strong></p>
+                    <p><a href="mailto:support@ecole-excellence.fr" class="contact-link">support@ecole-excellence.fr</a></p>
+                </div>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">📍</div>
+                <h3 class="contact-title">Adresse</h3>
+                <div class="contact-info">
+                    <p><strong>École Excellence</strong></p>
+                    <p>123 Avenue de l'Éducation</p>
+                    <p>75001 Paris, France</p>
+                    <p style="margin-top: 1rem; color: #667eea;">Métro : Ligne 1, Station Éducation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section" style="background: #f8f9fa;">
+        <h2 class="section-title">Questions Fréquentes</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">Comment s'inscrire à l'école ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Vous pouvez vous inscrire en remplissant le formulaire d'inscription en ligne sur notre site, ou en vous rendant directement au secrétariat de l'école. Les inscriptions sont ouvertes toute l'année pour certains programmes, et selon un calendrier spécifique pour d'autres. N'hésitez pas à nous contacter pour plus d'informations.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Quels sont les frais de scolarité ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Les frais de scolarité varient selon le programme choisi. Nous proposons également des bourses d'études et des facilités de paiement pour les étudiants éligibles. Pour obtenir des informations détaillées sur les tarifs, veuillez contacter notre service des admissions ou consulter notre brochure.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Quels documents sont nécessaires pour l'inscription ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Les documents requis incluent : une copie du diplôme le plus récent, un relevé de notes, une pièce d'identité, deux photos d'identité, un CV, et une lettre de motivation. Des documents supplémentaires peuvent être demandés selon le programme. Consultez notre page d'admissions pour la liste complète.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">L'école propose-t-elle des logements étudiants ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Oui, nous disposons de résidences étudiantes modernes sur le campus. Les chambres sont disponibles en simple ou partagé, avec accès aux espaces communs. Les demandes de logement doivent être faites en même temps que l'inscription. Contactez notre service de logement pour plus d'informations.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Y a-t-il des bourses disponibles ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Oui, nous offrons plusieurs types de bourses : bourses au mérite, bourses sociales, et bourses d'excellence. Les critères d'éligibilité varient selon le type de bourse. Les dossiers de demande de bourse doivent être soumis en même temps que l'inscription. Notre service financier peut vous aider à identifier les bourses pour lesquelles vous êtes éligible.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Quels sont les horaires d'ouverture du secrétariat ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Le secrétariat est ouvert du lundi au vendredi de 8h00 à 18h00, et le samedi de 9h00 à 13h00. Pendant les périodes de vacances scolaires, les horaires peuvent être modifiés. Il est recommandé de prendre rendez-vous pour les consultations importantes.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">L'école propose-t-elle des visites guidées ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Oui, nous organisons des visites guidées du campus tous les mercredis à 14h00 et les samedis à 10h00. Vous pouvez également faire une visite virtuelle sur notre site web. Pour réserver une visite, contactez notre service des admissions ou utilisez notre formulaire en ligne.
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Comment puis-je obtenir mon relevé de notes ?</div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Les relevés de notes sont disponibles en ligne via votre espace étudiant. Vous pouvez également en faire la demande au secrétariat. Les relevés officiels peuvent être retirés sur place ou envoyés par courrier. Un délai de 48 heures est généralement nécessaire pour la préparation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Help Sections -->
+    <section class="section">
+        <h2 class="section-title">Besoin d'Aide ?</h2>
+        <div class="help-grid">
+            <div class="help-card">
+                <div class="help-icon">📚</div>
+                <h3 class="help-title">Admissions</h3>
+                <p class="help-description">Questions sur les inscriptions, les prérequis, les délais et les procédures d'admission.</p>
+            </div>
+            <div class="help-card">
+                <div class="help-icon">💰</div>
+                <h3 class="help-title">Finances</h3>
+                <p class="help-description">Informations sur les frais de scolarité, les bourses, les aides financières et les facilités de paiement.</p>
+            </div>
+            <div class="help-card">
+                <div class="help-icon">🏠</div>
+                <h3 class="help-title">Logement</h3>
+                <p class="help-description">Aide pour trouver un logement étudiant, informations sur les résidences et les options disponibles.</p>
+            </div>
+            <div class="help-card">
+                <div class="help-icon">📖</div>
+                <h3 class="help-title">Programmes</h3>
+                <p class="help-description">Détails sur nos programmes d'études, les cours, les spécialisations et les débouchés professionnels.</p>
+            </div>
+            <div class="help-card">
+                <div class="help-icon">🎓</div>
+                <h3 class="help-title">Vie Étudiante</h3>
+                <p class="help-description">Informations sur les associations, les activités, les événements et la vie sur le campus.</p>
+            </div>
+            <div class="help-card">
+                <div class="help-icon">💼</div>
+                <h3 class="help-title">Carrières</h3>
+                <p class="help-description">Services d'orientation professionnelle, stages, emplois et opportunités de carrière.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hours Section -->
+    <section class="section" style="background: #f8f9fa;">
+        <h2 class="section-title">Horaires d'Ouverture</h2>
+        <div class="hours-section">
+            <table class="hours-table">
+                <tr>
+                    <td>Lundi - Vendredi</td>
+                    <td>8h00 - 18h00</td>
+                </tr>
+                <tr>
+                    <td>Samedi</td>
+                    <td>9h00 - 13h00</td>
+                </tr>
+                <tr>
+                    <td>Dimanche</td>
+                    <td>Fermé</td>
+                </tr>
+                <tr>
+                    <td>Jours fériés</td>
+                    <td>Fermé</td>
+                </tr>
+            </table>
+            <p style="margin-top: 2rem; text-align: center; color: #666;">
+                <strong>Note :</strong> Pendant les périodes de vacances scolaires, les horaires peuvent être modifiés. 
+                Veuillez nous contacter pour confirmer les horaires.
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // Menu functionality
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const menuWindow = document.getElementById('menuWindow');
+        const overlay = document.getElementById('overlay');
+
+        hamburgerBtn.addEventListener('click', () => {
+            menuWindow.classList.add('active');
+            overlay.classList.add('active');
+            hamburgerBtn.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            menuWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuWindow.classList.contains('active')) {
+                menuWindow.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
+            }
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                
+                // Close all items
+                faqItems.forEach(faqItem => {
+                    faqItem.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
