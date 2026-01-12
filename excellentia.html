@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -24,31 +26,52 @@
             overflow-x: hidden;
         }
         
-        /* Logo en filigrane */
-        .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.03;
-            z-index: -1;
-            pointer-events: none;
-            width: 60%;
-            max-width: 800px;
-            animation: float 20s ease-in-out infinite;
+        /* Logo professionnel en en-tête */
+        .header-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
-        .watermark-logo {
-            width: 100%;
-            height: auto;
-            filter: grayscale(100%) brightness(200%);
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f7ef8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
         
-        @keyframes float {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            25% { transform: translate(-50%, -52%) rotate(1deg); }
-            50% { transform: translate(-50%, -50%) rotate(0deg); }
-            75% { transform: translate(-50%, -48%) rotate(-1deg); }
+        .logo-circle i {
+            font-size: 2.5rem;
+            color: #1a1a2e;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #1e90ff, #f7ef8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .logo-subtitle {
+            font-size: 0.9rem;
+            color: #a0c8ff;
+            font-style: italic;
         }
         
         /* Animation d'entrée pour les éléments */
@@ -80,6 +103,7 @@
             border: 1px solid rgba(220, 190, 130, 0.2);
             position: relative;
             overflow: hidden;
+            margin-top: 60px;
         }
         
         .container::before {
@@ -90,56 +114,6 @@
             right: 0;
             height: 5px;
             background: linear-gradient(90deg, #d4af37, #f7ef8a, #d4af37);
-        }
-        
-        .logo-container {
-            margin-bottom: 15px;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            margin-bottom: 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .logo-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        
-        .excel {
-            color: #1e90ff;
-        }
-        
-        .lentia {
-            color: #ff4444;
-        }
-        
-        .academia {
-            color: #0d47a1;
-        }
-        
-        .graduation-cap {
-            font-size: 1.8rem;
-            margin-left: 10px;
-            color: #d4af37;
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            color: #a0c8ff;
-            font-style: italic;
-            margin-bottom: 20px;
         }
         
         .event-title {
@@ -309,37 +283,159 @@
             box-shadow: 0 12px 20px rgba(212, 175, 55, 0.6);
         }
         
-        .instructions {
-            background-color: rgba(255, 255, 255, 0.05);
+        /* Frais d'inscription */
+        .fees-section {
+            background: linear-gradient(135deg, rgba(30, 144, 255, 0.1), rgba(212, 175, 55, 0.1));
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             margin: 30px 0;
-            text-align: left;
-            border-left: 5px solid #d4af37;
+            border: 2px solid rgba(30, 144, 255, 0.3);
         }
         
-        .instructions h3 {
-            color: #f7ef8a;
+        .fees-title {
+            font-size: 1.8rem;
+            color: #1e90ff;
+            margin-bottom: 25px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .fees-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .fee-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px 20px;
+            border: 2px solid rgba(30, 144, 255, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .fee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(30, 144, 255, 0.2);
+            border-color: #1e90ff;
+        }
+        
+        .fee-card.regular {
+            border-color: rgba(30, 144, 255, 0.4);
+        }
+        
+        .fee-card.member {
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        
+        .fee-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--color1), var(--color2));
+        }
+        
+        .fee-card.regular::before {
+            --color1: #1e90ff;
+            --color2: #63b4ff;
+        }
+        
+        .fee-card.member::before {
+            --color1: #d4af37;
+            --color2: #f7ef8a;
+        }
+        
+        .fee-type {
+            font-size: 1.4rem;
+            color: #1e90ff;
             margin-bottom: 15px;
-            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            text-align: center;
         }
         
-        .instructions ul {
-            padding-left: 20px;
-            color: #cccccc;
-            line-height: 1.5;
+        .fee-card.member .fee-type {
+            color: #f7ef8a;
         }
         
-        .instructions li {
+        .fee-amount {
+            font-size: 2.5rem;
+            color: #fff;
             margin-bottom: 10px;
-            font-size: 0.95rem;
+            text-shadow: 0 0 8px rgba(30, 144, 255, 0.7);
+            font-weight: bold;
         }
         
+        .fee-card.member .fee-amount {
+            text-shadow: 0 0 8px rgba(247, 239, 138, 0.7);
+        }
+        
+        .fee-description {
+            font-size: 0.9rem;
+            color: #a0c8ff;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .fee-details {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .fee-details li {
+            margin-bottom: 10px;
+            color: #cccccc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+        
+        .fee-details i {
+            color: #1e90ff;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .fee-card.member .fee-details i {
+            color: #f7ef8a;
+        }
+        
+        .fee-note {
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px dashed rgba(212, 175, 55, 0.5);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #f7ef8a;
+        }
+        
+        /* Section des Prix et Récompenses */
         .prizes-section {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(30, 144, 255, 0.1));
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.1));
             border-radius: 15px;
             padding: 25px;
             margin: 30px 0;
@@ -359,7 +455,7 @@
         
         .prizes-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 25px;
         }
@@ -420,19 +516,23 @@
         }
         
         .prize-amount {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: #f7ef8a;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-shadow: 0 0 8px rgba(247, 239, 138, 0.7);
             font-weight: bold;
         }
         
         .prize-label {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #a0c8ff;
             margin-bottom: 20px;
             font-style: italic;
             text-align: center;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            width: 100%;
         }
         
         .prize-details {
@@ -443,103 +543,121 @@
         }
         
         .prize-details li {
-            margin-bottom: 10px;
-            color: #cccccc;
+            margin-bottom: 12px;
+            color: #ffffff;
             display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 10px;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.07);
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
         
         .prize-details i {
             color: #d4af37;
             width: 20px;
             text-align: center;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
         
-        .registration-fee {
-            background: rgba(212, 175, 55, 0.15);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            border: 2px dashed rgba(212, 175, 55, 0.5);
-            text-align: center;
-        }
-        
-        .fee-title {
-            font-size: 1.2rem;
+        .prize-highlight {
             color: #f7ef8a;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .fee-amount {
-            font-size: 1.8rem;
-            color: #ffd700;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-right: 5px;
         }
         
-        .fee-note {
-            font-size: 0.9rem;
-            color: #a0c8ff;
-            font-style: italic;
-        }
-        
-        .other-rewards {
+        /* Récompenses supplémentaires */
+        .additional-rewards {
             background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 25px;
             margin-top: 25px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
         
         .rewards-title {
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             color: #f7ef8a;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
         }
         
         .rewards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
         }
         
-        .reward-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
+        .reward-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 25px 20px;
+            border: 2px solid rgba(30, 144, 255, 0.4);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
+            text-align: center;
             transition: all 0.3s ease;
         }
         
-        .reward-item:hover {
-            background: rgba(212, 175, 55, 0.1);
+        .reward-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(30, 144, 255, 0.2);
         }
         
         .reward-icon {
-            font-size: 1.6rem;
-            color: #d4af37;
-            min-width: 40px;
+            font-size: 2.5rem;
+            color: #1e90ff;
+            margin-bottom: 15px;
         }
         
-        .reward-text {
+        .reward-subtitle {
+            font-size: 1.2rem;
+            color: #f7ef8a;
+            margin-bottom: 10px;
+        }
+        
+        .reward-description {
             color: #cccccc;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .instructions {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+            border-left: 5px solid #d4af37;
+        }
+        
+        .instructions h3 {
+            color: #f7ef8a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
         }
         
         .whatsapp-section {
@@ -896,17 +1014,22 @@
                 padding: 40px;
             }
             
-            .logo {
-                font-size: 2.8rem;
-                flex-direction: row;
+            .header-logo {
+                top: 30px;
+                left: 30px;
             }
             
-            .logo-row {
-                flex-direction: row;
+            .logo-circle {
+                width: 80px;
+                height: 80px;
             }
             
-            .graduation-cap {
-                font-size: 2.5rem;
+            .logo-circle i {
+                font-size: 3rem;
+            }
+            
+            .logo-title {
+                font-size: 2.2rem;
             }
             
             .event-title {
@@ -930,7 +1053,7 @@
                 font-size: 1.3rem;
             }
             
-            .prizes-title {
+            .fees-title, .prizes-title, .rewards-title {
                 font-size: 2.2rem;
             }
             
@@ -939,11 +1062,11 @@
             }
             
             .prize-amount {
-                font-size: 2.4rem;
+                font-size: 2.5rem;
             }
             
             .fee-amount {
-                font-size: 2.2rem;
+                font-size: 3rem;
             }
             
             .cta-button {
@@ -968,11 +1091,32 @@
             .prizes-container {
                 grid-template-columns: repeat(3, 1fr);
             }
+            
+            .fees-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         
         @media (min-width: 480px) and (max-width: 767px) {
-            .logo {
-                font-size: 2.2rem;
+            .header-logo {
+                position: relative;
+                top: 0;
+                left: 0;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .logo-circle {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .logo-circle i {
+                font-size: 2.5rem;
+            }
+            
+            .logo-title {
+                font-size: 2rem;
             }
             
             .time-unit {
@@ -990,11 +1134,21 @@
         }
         
         @media (max-width: 479px) {
-            .prizes-container {
-                grid-template-columns: 1fr;
+            .header-logo {
+                position: relative;
+                top: 0;
+                left: 0;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+                margin-bottom: 20px;
             }
             
-            .rewards-grid {
+            .logo-text {
+                align-items: center;
+            }
+            
+            .prizes-container, .fees-container, .rewards-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -1007,11 +1161,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Logo en filigrane -->
-    <div class="watermark">
-        <div class="watermark-logo" style="font-size: 100px; text-align: center; color: rgba(255,255,255,0.1);">
-            🎓
-            <div style="font-size: 30px; margin-top: 10px;">EXCELLENTIA ACADEMIA</div>
+    <!-- Logo professionnel en en-tête -->
+    <div class="header-logo animate" style="animation-delay: 0.1s">
+        <div class="logo-circle">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="logo-text">
+            <div class="logo-title">EXCELLENTIA ACADEMIA</div>
+            <div class="logo-subtitle">Concours d'Éloquence 2026</div>
         </div>
     </div>
     
@@ -1023,18 +1180,7 @@
     </div>
     
     <div class="container">
-        <div class="logo-container animate" style="animation-delay: 0.1s">
-            <div class="logo">
-                <div class="logo-row">
-                    <span class="excel">Excel</span><span class="lentia">lentia</span> <span class="academia">Academia</span>
-                    <span class="graduation-cap">🎓</span>
-                </div>
-            </div>
-            <br>
-            <div class="subtitle">Concours d'Éloquence </div>
-        </div>
-        <br>
-        <h1 class="event-title animate" style="animation-delay: 0.2s">Éloquence en scène   1ère édition</h1>
+        <h1 class="event-title animate" style="animation-delay: 0.2s">Éloquence en scène • 1ère édition</h1>
         
         <div class="deadline-info animate" style="animation-delay: 0.3s">
             <div class="deadline-title">DERNIER JOUR D'INSCRIPTION</div>
@@ -1078,12 +1224,46 @@
         <div class="progress-text" id="progress-text">Temps restant avant la fermeture des inscriptions : 100%</div>
         
         <!-- Frais d'inscription -->
-        <div class="registration-fee animate" style="animation-delay: 0.8s">
-            <div class="fee-title">
-                <i class="fas fa-ticket-alt"></i> Frais de Participation
+        <div class="fees-section animate" style="animation-delay: 0.8s">
+            <h2 class="fees-title">
+                <i class="fas fa-ticket-alt"></i> FRAIS D'INSCRIPTION
+            </h2>
+            
+            <div class="fees-container">
+                <!-- Frais Réguliers -->
+                <div class="fee-card regular">
+                    <div class="fee-type">
+                        <i class="fas fa-user-graduate"></i> Participants Réguliers
+                    </div>
+                    <div class="fee-amount">5.000 Fc</div>
+                    <div class="fee-description">Montant standard pour tous les participants</div>
+                    <ul class="fee-details">
+                        <li><i class="fas fa-check-circle"></i> Accès à toutes les séances préparatoires</li>
+                        <li><i class="fas fa-check-circle"></i> Matériel du concours inclus</li>
+                        <li><i class="fas fa-check-circle"></i> Support pédagogique complet</li>
+                        <li><i class="fas fa-check-circle"></i> Accès aux ressources en ligne</li>
+                    </ul>
+                </div>
+                
+                <!-- Frais Membres -->
+                <div class="fee-card member">
+                    <div class="fee-type">
+                        <i class="fas fa-crown"></i> Membres Excellentia
+                    </div>
+                    <div class="fee-amount">3.000 Fc</div>
+                    <div class="fee-description">Tarif spécial pour les membres enregistrés</div>
+                    <ul class="fee-details">
+                        <li><i class="fas fa-check-circle"></i> Tous les avantages des participants réguliers</li>
+                        <li><i class="fas fa-check-circle"></i> Accès prioritaire aux formations</li>
+                        <li><i class="fas fa-check-circle"></i> Coaching personnalisé supplémentaire</li>
+                        <li><i class="fas fa-check-circle"></i> Certification de membre Excellentia</li>
+                    </ul>
+                </div>
             </div>
-            <div class="fee-amount">5.000 Fc</div>
-            <div class="fee-note">Montant unique pour tous les participants</div>
+            
+            <div class="fee-note">
+                <i class="fas fa-info-circle"></i> Les frais couvrent l'accès à toutes les séances préparatoires et le matériel du concours.
+            </div>
         </div>
         
         <!-- Section des Prix et Récompenses -->
@@ -1101,10 +1281,13 @@
                     <div class="prize-amount">1.000.000 Fc</div>
                     <div class="prize-label">Grand Prix d'Excellence</div>
                     <ul class="prize-details">
-                        <li><i class="fas fa-medal"></i> Médaille d'Or</li>
-                        <li><i class="fas fa-trophy"></i> Grand Trophée</li>
-                        <li><i class="fas fa-award"></i> Brevet de Mérite</li>
-                        <li><i class="fas fa-certificate"></i> Attestation d'Excellence</li>
+                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">1.000.000 Fc</span> sur compte Equity BCDC</li>
+                        <li><i class="fas fa-graduation-cap"></i> <span class="prize-highlight">Bourse académique UNIKIN 2026-2027</span></li>
+                        <li><i class="fas fa-bus"></i> <span class="prize-highlight">Carte Trans Academia annuelle</span></li>
+                        <li><i class="fas fa-book"></i> <span class="prize-highlight">Accès Bibliothèque Centrale (1 an)</span></li>
+                        <li><i class="fas fa-medal"></i> <span class="prize-highlight">Médaille d'Or et Écharpe Officielle</span></li>
+                        <li><i class="fas fa-trophy"></i> Trophée d'Excellence</li>
+                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
                     </ul>
                 </div>
                 
@@ -1116,9 +1299,10 @@
                     <div class="prize-amount">500.000 Fc</div>
                     <div class="prize-label">Prix d'Honneur</div>
                     <ul class="prize-details">
+                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">500.000 Fc</span> sur compte Equity BCDC</li>
                         <li><i class="fas fa-medal"></i> Médaille d'Argent</li>
-                        <li><i class="fas fa-award"></i> Brevet de Mérite</li>
-                        <li><i class="fas fa-certificate"></i> Attestation de Distinction</li>
+                        <li><i class="fas fa-trophy"></i> Trophée d'Argent</li>
+                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
                     </ul>
                 </div>
                 
@@ -1127,51 +1311,48 @@
                     <div class="prize-rank">
                         <i class="fas fa-award"></i> 3ème Place
                     </div>
-                    <div class="prize-amount">200.000 Fc</div>
+                    <div class="prize-amount">250.000 Fc</div>
                     <div class="prize-label">Prix Spécial du Jury</div>
                     <ul class="prize-details">
+                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">250.000 Fc</span> sur compte Equity BCDC</li>
                         <li><i class="fas fa-medal"></i> Médaille de Bronze</li>
-                        <li><i class="fas fa-award"></i> Brevet de Mérite</li>
-                        <li><i class="fas fa-certificate"></i> Attestation de Participation</li>
+                        <li><i class="fas fa-trophy"></i> Trophée de Bronze</li>
+                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
                     </ul>
                 </div>
             </div>
             
-            <div class="other-rewards">
+            <!-- Récompenses supplémentaires -->
+            <div class="additional-rewards">
                 <h3 class="rewards-title">
-                    <i class="fas fa-star"></i> AUTRES RÉCOMPENSES
+                    <i class="fas fa-star"></i> RÉCOMPENSES SUPPLÉMENTAIRES
                 </h3>
                 <div class="rewards-grid">
-                    <div class="reward-item">
+                    <div class="reward-card">
                         <div class="reward-icon">
                             <i class="fas fa-medal"></i>
                         </div>
-                        <div class="reward-text">
-                            <span style="color: #f7ef8a;">Médailles</span> pour les 5 finalistes
+                        <div class="reward-subtitle">Finalistes</div>
+                        <div class="reward-description">
+                            Tous les finalistes recevront un Brevet de Mérite pour leur parcours exceptionnel et un certificat de reconnaissance.
                         </div>
                     </div>
-                    <div class="reward-item">
-                        <div class="reward-icon">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <div class="reward-text">
-                            <span style="color: #f7ef8a;">Brevets de Participation</span> pour tous les participants
-                        </div>
-                    </div>
-                    <div class="reward-item">
+                    <div class="reward-card">
                         <div class="reward-icon">
                             <i class="fas fa-certificate"></i>
                         </div>
-                        <div class="reward-text">
-                            <span style="color: #f7ef8a;">Attestations officielles</span> de participation
+                        <div class="reward-subtitle">Participants</div>
+                        <div class="reward-description">
+                            Certificats de participation officiels pour tous les concurrents, reconnaissant leur engagement et leur courage.
                         </div>
                     </div>
-                    <div class="reward-item">
+                    <div class="reward-card">
                         <div class="reward-icon">
-                            <i class="fas fa-graduation-cap"></i>
+                            <i class="fas fa-chalkboard-teacher"></i>
                         </div>
-                        <div class="reward-text">
-                            <span style="color: #f7ef8a;">Formation gratuite</span> en techniques d'éloquence
+                        <div class="reward-subtitle">Formation</div>
+                        <div class="reward-description">
+                            Ateliers gratuits de techniques d'éloquence animés par des experts pour tous les inscrits au concours.
                         </div>
                     </div>
                 </div>
@@ -1183,9 +1364,10 @@
             <h3><i class="fas fa-info-circle"></i> Comment s'inscrire :</h3>
             <ul>
                 <li><strong>Remplissez le formulaire d'inscription</strong> en cliquant sur le bouton ci-dessus</li>
-                <li><strong>Payez les frais de participation de 5.000 Fc</strong> selon les instructions reçues</li>
+                <li><strong>Payez les frais de participation</strong> selon votre catégorie (régulier ou membre)</li>
                 <li><strong>Préparez un discours de 3 minutes</strong> sur un des thèmes proposés</li>
                 <li><strong>Les participants sélectionnés</strong> seront contactés avant le 20 février 2026</li>
+                <li><strong>Bénéficiez de séances préparatoires</strong> gratuites pour perfectionner votre éloquence</li>
             </ul>
         </div>
         
@@ -1219,7 +1401,10 @@
         
         <footer class="animate" style="animation-delay: 1.2s">
             <p><i class="far fa-clock"></i> Compte à rebours en temps réel</p>
-            <p>Excellentia Academia © 2025-2026 | "Concours d'éloquence"</p>
+            <p>Excellentia Academia © 2025-2026 | "L'excellence par l'éloquence"</p>
+            <p style="margin-top: 10px; font-size: 0.7rem; color: #66aaff;">
+                En partenariat avec l'Université de Kinshasa • Equity BCDC • Trans Academia
+            </p>
         </footer>
     </div>
     
@@ -1228,14 +1413,15 @@
         <div class="modal-content">
             <button class="close-modal" id="closeModal">&times;</button>
             
-            <h2 class="modal-title">
-                <span class="excel">Excel</span><span class="lentia">lentia</span> <span class="academia">Academia</span>
-                <span class="graduation-cap">🎓</span>
-            </h2>
-            
-            <h3 style="color: #f7ef8a; text-align: center; margin-bottom: 25px; font-size: 1.4rem;">
-                Formulaire d'Inscription
-            </h3>
+            <div class="header-logo" style="position: relative; top: 0; left: 0; justify-content: center; margin-bottom: 20px;">
+                <div class="logo-circle">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title" style="font-size: 1.8rem;">EXCELLENTIA ACADEMIA</div>
+                    <div class="logo-subtitle">Formulaire d'Inscription</div>
+                </div>
+            </div>
             
             <!-- Formulaire intégré via iframe -->
             <iframe name="hiddenIframe" class="hidden-form"></iframe>
@@ -1292,6 +1478,15 @@
                 </div>
                 
                 <div class="form-group">
+                    <label class="form-label" for="categorie">Catégorie d'inscription *</label>
+                    <select id="categorie" name="categorie" class="form-select" required>
+                        <option value="" disabled selected>Sélectionnez votre catégorie</option>
+                        <option value="participant_regulier">Participant Régulier (5.000 Fc)</option>
+                        <option value="membre_excellentia">Membre Excellentia (3.000 Fc)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
                     <label class="form-label" for="theme">Thème du discours *</label>
                     <select id="theme" name="theme" class="form-select" required>
                         <option value="" disabled selected>Sélectionnez un thème</option>
@@ -1311,7 +1506,7 @@
                 <div class="form-checkbox">
                     <input type="checkbox" id="conditions" name="conditions" required>
                     <label for="conditions">
-                        Je comprends et j'accepte les frais de participation de 5.000 Fc *
+                        Je comprends et j'accepte les frais de participation selon ma catégorie *
                     </label>
                 </div>
                 
@@ -1332,14 +1527,14 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h3 style="color: #f7ef8a; font-size: 1.6rem; margin-bottom: 15px;">
-                    Inscription envoyée !
+                    Inscription envoyée avec succès !
                 </h3>
                 <p style="color: #a0c8ff; font-size: 1rem; line-height: 1.5; margin-bottom: 15px;">
-                    Merci pour votre inscription au Concours d'Éloquence 2026.
-                    Vous recevrez un message whatsapp avec les détails pour le paiement des frais de participation (5.000 Fc).
+                    Merci pour votre inscription au Concours d'Éloquence Excellentia Academia 2026.
+                    Vous recevrez un message WhatsApp avec les détails pour le paiement des frais de participation.
                 </p>
                 <p style="color: #25d366; font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">
-                    <i class="fab fa-whatsapp"></i> Rejoignez notre groupe WhatsApp !
+                    <i class="fab fa-whatsapp"></i> Rejoignez notre groupe WhatsApp pour ne rien manquer !
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <button id="closeAfterSubmit" class="whatsapp-button" style="background: linear-gradient(90deg, #d4af37, #f7ef8a);">
@@ -1566,6 +1761,7 @@
                 whatsapp: document.getElementById('whatsapp').value,
                 universite: document.getElementById('universite').value,
                 faculte: document.getElementById('faculte').value,
+                categorie: document.getElementById('categorie').value,
                 theme: document.getElementById('theme').value,
                 message: document.getElementById('message').value,
                 whatsapp_group: document.getElementById('whatsapp_group').checked,
@@ -1665,11 +1861,12 @@
                 
                 const date = new Date(participant.date_inscription).toLocaleDateString('fr-FR');
                 const hasWhatsapp = participant.whatsapp === 'oui' ? '✓' : '✗';
+                const categorie = participant.categorie === 'participant_regulier' ? 'Régulier' : 'Membre Excellentia';
                 
                 div.innerHTML = `
                     <div class="participant-name">${participant.nom}</div>
                     <div class="participant-details">
-                        ${participant.faculte} | ${participant.telephone} | ${date} 
+                        ${participant.faculte} | ${categorie} | ${participant.telephone} | ${date} 
                         <span style="color: ${participant.whatsapp === 'oui' ? '#25d366' : '#ff6b6b'}">
                             WhatsApp: ${hasWhatsapp}
                         </span>
@@ -1681,16 +1878,19 @@
         }
         
         // Exporter en Excel
-        document.getElementById('exportButton').addEventListener('click', () => {
-            if (participantsData.length === 0) {
+
+document.getElementById('exportButton').addEventListener('click', () => {
+
+if (participantsData.length === 0) {
                 alert("Aucune donnée à exporter.");
                 return;
             }
             
             // Créer le contenu CSV
-            let csvContent = "Nom,Email,Téléphone,WhatsApp,Université,Faculté,Thème,Date d'inscription\n";
+            let csvContent = "Nom,Email,Téléphone,WhatsApp,Université,Faculté,Catégorie,Thème,Date d'inscription\n";
             
             participantsData.forEach(participant => {
+                const categorie = participant.categorie === 'participant_regulier' ? 'Régulier (5.000 Fc)' : 'Membre Excellentia (3.000 Fc)';
                 const row = [
                     `"${participant.nom}"`,
                     `"${participant.email}"`,
@@ -1698,6 +1898,7 @@
                     `"${participant.whatsapp}"`,
                     `"${participant.universite}"`,
                     `"${participant.faculte}"`,
+                    `"${categorie}"`,
                     `"${participant.theme}"`,
                     `"${new Date(participant.date_inscription).toLocaleDateString('fr-FR')}"`
                 ];
