@@ -9,200 +9,97 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            color: #fff;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #0a0a2a, #1a1a3a, #2a2a4a);
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 0;
         }
         
-        /* Logo professionnel en en-tête */
-        .header-logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
+        /* Header avec logo */
+        .header {
+            background: rgba(10, 10, 40, 0.95);
+            padding: 15px 20px;
+            border-bottom: 3px solid #d4af37;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             gap: 15px;
         }
         
-        .logo-circle {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #d4af37, #f7ef8a);
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #d4af37;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
         }
         
-        .logo-circle i {
-            font-size: 2.5rem;
-            color: #1a1a2e;
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 5px;
         }
         
         .logo-text {
-            display: flex;
-            flex-direction: column;
+            flex: 1;
         }
         
         .logo-title {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            background: linear-gradient(90deg, #1e90ff, #f7ef8a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 3px;
         }
         
         .logo-subtitle {
-            font-size: 0.9rem;
-            color: #a0c8ff;
+            font-size: 0.85rem;
+            color: #d4af37;
             font-style: italic;
         }
         
-        /* Animation d'entrée pour les éléments */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Contenu principal */
+        .main-container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
         }
         
-        .animate {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        
-        .container {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            padding: 30px 25px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        /* Section hero */
+        .hero-section {
             text-align: center;
-            max-width: 1100px;
-            width: 100%;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(220, 190, 130, 0.2);
-            position: relative;
-            overflow: hidden;
-            margin-top: 60px;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #d4af37, #f7ef8a, #d4af37);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
         }
         
         .event-title {
-            font-size: 1.6rem;
-            color: #f7ef8a;
-            margin-bottom: 10px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        
-        .deadline-info {
-            background-color: rgba(212, 175, 55, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        
-        .deadline-title {
-            font-size: 1.3rem;
-            color: #ffd700;
-            margin-bottom: 8px;
-        }
-        
-        .deadline-date {
             font-size: 1.8rem;
-            color: #fff;
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-        }
-        
-        .countdown {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 25px 0;
-        }
-        
-        .time-unit {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px 10px;
-            min-width: 75px;
-            flex: 1;
-            max-width: 120px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .time-unit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #d4af37, #f7ef8a);
-        }
-        
-        .time-unit:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
-            border-color: rgba(212, 175, 55, 0.7);
-        }
-        
-        .time-value {
-            font-size: 2.2rem;
-            font-weight: bold;
             color: #f7ef8a;
-            text-shadow: 0 0 10px rgba(247, 239, 138, 0.7);
-            line-height: 1;
-            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
         
-        .time-label {
-            font-size: 0.9rem;
-            margin-top: 8px;
-            color: #a0c8ff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        
-        .urgent-message {
-            background-color: rgba(255, 50, 50, 0.1);
-            border-radius: 12px;
+        .deadline-box {
+            background: rgba(255, 50, 50, 0.15);
             padding: 15px;
-            margin: 20px 0;
+            border-radius: 15px;
+            margin: 15px 0;
             border: 2px solid rgba(255, 100, 100, 0.4);
             animation: pulse 2s infinite;
         }
@@ -213,211 +110,180 @@
             100% { border-color: rgba(255, 100, 100, 0.4); }
         }
         
-        .urgent-title {
-            font-size: 1.2rem;
+        .deadline-title {
+            font-size: 1.1rem;
             color: #ff6b6b;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            margin-bottom: 5px;
         }
         
-        .urgent-text {
-            font-size: 1rem;
-            color: #ffaaaa;
-            line-height: 1.4;
-        }
-        
-        /* Bouton Admin */
-        .admin-button-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        .admin-button {
-            background: linear-gradient(90deg, #d4af37, #8b7500);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
+        .deadline-date {
+            font-size: 1.6rem;
+            color: #ffffff;
             font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
         }
         
-        .admin-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(139, 117, 0, 0.4);
+        /* Compte à rebours */
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 25px 0;
         }
         
-        .cta-button {
+        .time-unit {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px 5px;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+        }
+        
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f7ef8a;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: #a0c8ff;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        /* Bouton principal */
+        .main-cta {
+            display: block;
+            width: 100%;
             background: linear-gradient(90deg, #d4af37, #f7ef8a);
             color: #1a1a2e;
             border: none;
-            padding: 16px 30px;
+            padding: 18px;
             font-size: 1.2rem;
             font-weight: bold;
-            border-radius: 50px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 25px 0;
+            margin: 20px 0;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: 100%;
-            max-width: 350px;
-        }
-        
-        .cta-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 20px rgba(212, 175, 55, 0.6);
-        }
-        
-        /* Frais de participation - SIMPLIFIÉ */
-        .participation-fee {
-            background: rgba(212, 175, 55, 0.15);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 30px 0;
-            border: 2px solid rgba(212, 175, 55, 0.3);
             text-align: center;
+            text-decoration: none;
         }
         
-        .fee-title {
-            font-size: 1.8rem;
-            color: #ffd700;
-            margin-bottom: 25px;
+        .main-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        /* Section Frais */
+        .fees-section {
+            background: rgba(30, 144, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin: 30px 0;
+            border: 2px solid rgba(30, 144, 255, 0.3);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #1e90ff;
+            margin-bottom: 20px;
+            text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
         }
         
-        .fee-cards {
+        .fees-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .fees-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         
         .fee-card {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
-            padding: 25px 20px;
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid;
+            transition: transform 0.3s ease;
         }
         
         .fee-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .fee-card.regular {
+            border-color: #1e90ff;
+        }
+        
+        .fee-card.member {
             border-color: #d4af37;
         }
         
-        .fee-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--color1), var(--color2));
-        }
-        
-        .fee-card.regular::before {
-            --color1: #1e90ff;
-            --color2: #63b4ff;
-        }
-        
-        .fee-card.member::before {
-            --color1: #d4af37;
-            --color2: #f7ef8a;
-        }
-        
         .fee-amount {
-            font-size: 2.5rem;
-            color: #f7ef8a;
-            margin-bottom: 10px;
-            text-shadow: 0 0 8px rgba(247, 239, 138, 0.7);
+            font-size: 2.2rem;
+            color: #ffffff;
             font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .fee-card.regular .fee-amount {
+            color: #1e90ff;
+        }
+        
+        .fee-card.member .fee-amount {
+            color: #f7ef8a;
         }
         
         .fee-description {
-            font-size: 1.2rem;
-            color: #a0c8ff;
-            font-style: italic;
-            text-align: center;
+            font-size: 1rem;
+            color: #cccccc;
             margin-bottom: 15px;
         }
         
-        .fee-note {
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            border: 1px dashed rgba(212, 175, 55, 0.5);
-            text-align: center;
-            font-size: 0.9rem;
-            color: #f7ef8a;
-        }
-        
-        /* Section des Prix et Récompenses */
+        /* Section Prix */
         .prizes-section {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.1));
-            border-radius: 15px;
-            padding: 25px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
             margin: 30px 0;
             border: 2px solid rgba(212, 175, 55, 0.3);
         }
         
         .prizes-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #ffd700;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
         }
         
-        .prizes-container {
+        .prizes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .prizes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
         
         .prize-card {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
-            padding: 25px 20px;
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            transition: all 0.3s ease;
+            padding: 20px;
+            border: 2px solid;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .prize-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
-            border-color: #d4af37;
         }
         
         .prize-card::before {
@@ -425,313 +291,145 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--color1), var(--color2));
+            right: 0;
+            height: 4px;
+        }
+        
+        .prize-card.first {
+            border-color: #ffd700;
         }
         
         .prize-card.first::before {
-            --color1: #ffd700;
-            --color2: #ffed4e;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+        }
+        
+        .prize-card.second {
+            border-color: #c0c0c0;
         }
         
         .prize-card.second::before {
-            --color1: #c0c0c0;
-            --color2: #e8e8e8;
+            background: linear-gradient(90deg, #c0c0c0, #e8e8e8);
+        }
+        
+        .prize-card.third {
+            border-color: #cd7f32;
         }
         
         .prize-card.third::before {
-            --color1: #cd7f32;
-            --color2: #e49b5d;
+            background: linear-gradient(90deg, #cd7f32, #e49b5d);
         }
         
         .prize-rank {
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             color: #ffd700;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-align: center;
+            gap: 8px;
         }
         
         .prize-amount {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: #f7ef8a;
-            margin-bottom: 10px;
-            text-shadow: 0 0 8px rgba(247, 239, 138, 0.7);
             font-weight: bold;
-        }
-        
-        .prize-label {
-            font-size: 1.1rem;
-            color: #a0c8ff;
-            margin-bottom: 20px;
-            font-style: italic;
-            text-align: center;
-            background: rgba(212, 175, 55, 0.1);
-            padding: 8px 15px;
-            border-radius: 8px;
-            width: 100%;
+            margin: 10px 0;
         }
         
         .prize-details {
             list-style: none;
-            padding: 0;
             margin-top: 15px;
-            width: 100%;
         }
         
         .prize-details li {
-            margin-bottom: 12px;
-            color: #ffffff;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 0.9rem;
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.07);
-            font-size: 0.95rem;
-            line-height: 1.4;
+            gap: 8px;
         }
         
         .prize-details i {
             color: #d4af37;
-            width: 20px;
-            text-align: center;
+            margin-top: 3px;
             flex-shrink: 0;
-            margin-top: 2px;
         }
         
-        .prize-highlight {
-            color: #f7ef8a;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        
-        /* Récompenses supplémentaires */
-        .additional-rewards {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 25px;
-            border: 2px solid rgba(212, 175, 55, 0.3);
-        }
-        
-        .rewards-title {
-            font-size: 1.8rem;
-            color: #f7ef8a;
-            margin-bottom: 20px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        
-        .reward-card {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 25px 20px;
-            border: 2px solid rgba(30, 144, 255, 0.4);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .reward-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(30, 144, 255, 0.2);
-        }
-        
-        .reward-icon {
-            font-size: 2.5rem;
-            color: #1e90ff;
-            margin-bottom: 15px;
-        }
-        
-        .reward-subtitle {
-            font-size: 1.2rem;
-            color: #f7ef8a;
-            margin-bottom: 10px;
-        }
-        
-        .reward-description {
-            color: #cccccc;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        
-        .instructions {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 30px 0;
-            text-align: left;
-            border-left: 5px solid #d4af37;
-        }
-        
-        .instructions h3 {
-            color: #f7ef8a;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            color: #cccccc;
-            line-height: 1.5;
-        }
-        
-        .instructions li {
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-        
+        /* Section WhatsApp */
         .whatsapp-section {
-            background-color: rgba(37, 211, 102, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 25px 0;
+            background: rgba(37, 211, 102, 0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin: 30px 0;
             border: 2px solid rgba(37, 211, 102, 0.3);
-            text-align: center;
         }
         
         .whatsapp-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 15px;
-        }
-        
-        .whatsapp-icon {
-            font-size: 2.2rem;
-            color: #25d366;
         }
         
         .whatsapp-title {
             font-size: 1.4rem;
             color: #25d366;
-            font-weight: bold;
-        }
-        
-        .whatsapp-description {
-            font-size: 1rem;
-            color: #a0ffc0;
-            line-height: 1.5;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .whatsapp-benefits {
-            background-color: rgba(37, 211, 102, 0.08);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .whatsapp-benefits li {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: #ffffff;
-            line-height: 1.4;
         }
         
         .whatsapp-button {
+            display: block;
+            width: 100%;
             background: linear-gradient(90deg, #25d366, #128c7e);
             color: white;
             border: none;
-            padding: 18px 25px;
-            font-size: 1.2rem;
+            padding: 16px;
+            font-size: 1.1rem;
             font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
+            margin: 20px 0 10px;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 16px rgba(37, 211, 102, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            max-width: 350px;
-            margin: 0 auto;
-        }
-        
-        .whatsapp-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 20px rgba(37, 211, 102, 0.4);
-            background: linear-gradient(90deg, #2eff7c, #1ab394);
-        }
-        
-        .progress-container {
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            margin-top: 20px;
-            overflow: hidden;
-            height: 15px;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #0f3460, #d4af37, #f7ef8a);
-            width: 0%;
-            border-radius: 12px;
-            transition: width 1s ease;
-        }
-        
-        .progress-text {
-            margin-top: 12px;
-            font-size: 1rem;
-            color: #a0c8ff;
             text-align: center;
         }
         
-        /* Modal styles */
+        .whatsapp-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #88aabb;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 30px;
+        }
+        
+        /* Modals */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: flex-start;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
             padding: 20px;
             overflow-y: auto;
         }
         
         .modal-content {
-            background: linear-gradient(135deg, #1a1a2e, #0f3460);
-            border-radius: 15px;
+            background: #1a1a2e;
+            border-radius: 20px;
             padding: 25px;
-            width: 100%;
             max-width: 500px;
+            margin: 0 auto;
             border: 2px solid #d4af37;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
             position: relative;
-            margin-top: 20px;
-            margin-bottom: 20px;
         }
         
         .close-modal {
@@ -743,31 +441,12 @@
             color: #ff6b6b;
             font-size: 1.8rem;
             cursor: pointer;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        
-        .close-modal:hover {
-            background-color: rgba(255, 107, 107, 0.1);
-            transform: rotate(90deg);
-        }
-        
-        .modal-title {
-            font-size: 1.6rem;
-            color: #f7ef8a;
-            margin-bottom: 25px;
-            text-align: center;
-            padding-right: 20px;
-        }
-        
-        .form-container {
-            margin-top: 15px;
+            justify-content: center;
         }
         
         .form-group {
@@ -778,25 +457,17 @@
             display: block;
             margin-bottom: 8px;
             color: #a0c8ff;
-            font-size: 1rem;
             font-weight: 600;
         }
         
-        .form-input, .form-textarea, .form-select {
+        .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 2px solid rgba(212, 175, 55, 0.4);
-            background-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
         }
         
         .form-textarea {
@@ -805,172 +476,82 @@
         }
         
         .submit-button {
+            width: 100%;
+            padding: 16px;
             background: linear-gradient(90deg, #1e90ff, #0d47a1);
             color: white;
             border: none;
-            padding: 16px;
+            border-radius: 10px;
             font-size: 1.1rem;
             font-weight: bold;
-            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            margin-top: 20px;
         }
         
-        .submit-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(13, 71, 161, 0.4);
-        }
-        
-        .hidden-form {
-            display: none;
-        }
-        
-        .form-checkbox {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .form-checkbox input {
-            margin-top: 3px;
-            flex-shrink: 0;
-        }
-        
-        .form-checkbox label {
-            font-size: 0.9rem;
-            color: #cccccc;
-            line-height: 1.4;
-        }
-        
-        /* Modal Admin */
-        .admin-modal-content {
-            max-width: 800px;
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .stat-card {
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            color: #f7ef8a;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #a0c8ff;
-        }
-        
-        .participants-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 20px 0;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-            padding: 10px;
-        }
-        
-        .participant-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            border-left: 3px solid #d4af37;
-        }
-        
-        .participant-name {
-            font-weight: bold;
-            color: #f7ef8a;
-        }
-        
-        .participant-details {
-            font-size: 0.8rem;
-            color: #a0c8ff;
-            margin-top: 4px;
-        }
-        
-        .export-button {
-            background: linear-gradient(90deg, #4CAF50, #2E7D32);
+        /* Bouton Admin */
+        .admin-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(90deg, #d4af37, #8b7500);
             color: white;
             border: none;
             padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 25px;
             font-weight: bold;
-            margin-top: 10px;
-            width: 100%;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
         
-        .password-input-container {
-            margin: 20px 0;
-        }
-        
-        .password-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #d4af37;
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-        
-        footer {
-            margin-top: 30px;
-            color: #88aabb;
-            font-size: 0.8rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-            text-align: center;
-        }
-        
-        @media (min-width: 768px) {
-            .container {
-                padding: 40px;
+        /* Responsive optimisations */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
             }
             
-            .header-logo {
-                top: 30px;
-                left: 30px;
-            }
-            
-            .logo-circle {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .logo-circle i {
-                font-size: 3rem;
+            .logo-container {
+                width: 50px;
+                height: 50px;
             }
             
             .logo-title {
-                font-size: 2.2rem;
+                font-size: 1.2rem;
+            }
+            
+            .event-title {
+                font-size: 1.5rem;
+            }
+            
+            .time-value {
+                font-size: 1.5rem;
+            }
+            
+            .countdown {
+                gap: 8px;
+            }
+            
+            .time-unit {
+                padding: 12px 5px;
+            }
+            
+            .main-cta {
+                padding: 16px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .main-container {
+                max-width: 1200px;
+                padding: 30px;
+            }
+            
+            .hero-section {
+                padding: 30px;
             }
             
             .event-title {
@@ -978,409 +559,270 @@
             }
             
             .deadline-date {
-                font-size: 2.5rem;
-            }
-            
-            .time-unit {
-                min-width: 160px;
-                padding: 30px 20px;
-            }
-            
-            .time-value {
-                font-size: 4rem;
-            }
-            
-            .time-label {
-                font-size: 1.3rem;
-            }
-            
-            .fee-title, .prizes-title, .rewards-title {
-                font-size: 2.2rem;
-            }
-            
-            .prize-card {
-                padding: 30px 25px;
-            }
-            
-            .prize-amount {
-                font-size: 2.5rem;
-            }
-            
-            .fee-amount {
-                font-size: 3rem;
-            }
-            
-            .cta-button {
-                width: auto;
-                max-width: none;
-            }
-            
-            .whatsapp-button {
-                width: auto;
-                max-width: none;
-            }
-            
-            .modal-content {
-                padding: 40px;
-                margin-top: 40px;
-            }
-            
-            .modal-title {
-                font-size: 2.2rem;
-            }
-            
-            .prizes-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .fee-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 480px) and (max-width: 767px) {
-            .header-logo {
-                position: relative;
-                top: 0;
-                left: 0;
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-            
-            .logo-circle {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .logo-circle i {
-                font-size: 2.5rem;
-            }
-            
-            .logo-title {
                 font-size: 2rem;
             }
             
-            .time-unit {
-                min-width: 100px;
-                padding: 25px 15px;
-            }
-            
             .time-value {
-                font-size: 3rem;
+                font-size: 2.2rem;
             }
             
-            .prizes-container {
-                grid-template-columns: repeat(2, 1fr);
+            .time-unit {
+                padding: 20px 10px;
             }
         }
         
-        @media (max-width: 479px) {
-            .header-logo {
-                position: relative;
-                top: 0;
-                left: 0;
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-            
-            .logo-text {
-                align-items: center;
-            }
-            
-            .prizes-container, .fee-cards, .rewards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .admin-button {
-                font-size: 0.8rem;
-                padding: 8px 15px;
-            }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .hidden {
+            display: none;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Logo professionnel en en-tête -->
-    <div class="header-logo animate" style="animation-delay: 0.1s">
-        <div class="logo-circle">
-            <i class="fas fa-graduation-cap"></i>
-        </div>
-        <div class="logo-text">
-            <div class="logo-title">EXCELLENTIA ACADEMIA</div>
-            <div class="logo-subtitle">Concours d'Éloquence 2026</div>
-        </div>
-    </div>
-    
-    <!-- Bouton Admin -->
-    <div class="admin-button-container">
-        <button class="admin-button" id="adminButton">
-            <i class="fas fa-lock"></i> Admin
-        </button>
-    </div>
-    
-    <div class="container">
-        <h1 class="event-title animate" style="animation-delay: 0.2s">Éloquence en scène • 1ère édition</h1>
-        
-        <div class="deadline-info animate" style="animation-delay: 0.3s">
-            <div class="deadline-title">DERNIER JOUR D'INSCRIPTION</div>
-            <div class="deadline-date">20 Janvier 2026</div>
-        </div>
-        
-        <div class="urgent-message animate" style="animation-delay: 0.4s">
-            <div class="urgent-title"><i class="fas fa-exclamation-circle"></i> DERNIÈRE CHANCE !</div>
-            <div class="urgent-text">Le temps presse ! Inscrivez-vous avant la date limite pour participer à ce prestigieux concours.</div>
-        </div>
-        
-        <div class="countdown animate" style="animation-delay: 0.5s">
-            <div class="time-unit">
-                <div class="time-value" id="jours">00</div>
-                <div class="time-label">Jours</div>
+    <!-- Header avec logo -->
+    <header class="header">
+<div class="logo-container">
+    <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="logo-img">
+</div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-container">
+        <!-- Hero Section -->
+        <section class="hero-section fade-in">
+            <h1 class="event-title">Éloquence en Scène • 1ère Édition</h1>
+            
+            <div class="deadline-box">
+                <div class="deadline-title">DERNIER JOUR D'INSCRIPTION</div>
+                <div class="deadline-date">20 JANVIER 2026</div>
             </div>
             
-            <div class="time-unit">
-                <div class="time-value" id="heures">00</div>
-                <div class="time-label">Heures</div>
+            <div class="countdown">
+                <div class="time-unit">
+                    <div class="time-value" id="jours">00</div>
+                    <div class="time-label">Jours</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="heures">00</div>
+                    <div class="time-label">Heures</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="minutes">00</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="secondes">00</div>
+                    <div class="time-label">Secondes</div>
+                </div>
             </div>
             
-            <div class="time-unit">
-                <div class="time-value" id="minutes">00</div>
-                <div class="time-label">Minutes</div>
-            </div>
-            
-            <div class="time-unit">
-                <div class="time-value" id="secondes">00</div>
-                <div class="time-label">Secondes</div>
-            </div>
-        </div>
-        
-        <button class="cta-button animate" id="openFormButton" style="animation-delay: 0.6s">
-            <i class="fas fa-pen-fancy"></i> S'INSCRIRE MAINTENANT
-        </button>
-        
-        <div class="progress-container animate" style="animation-delay: 0.7s">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        <div class="progress-text" id="progress-text">Temps restant avant la fermeture des inscriptions : 100%</div>
-        
-        <!-- Frais de participation - SIMPLIFIÉ -->
-        <div class="participation-fee animate" style="animation-delay: 0.8s">
-            <h2 class="fee-title">
+            <button class="main-cta" id="openFormButton">
+                <i class="fas fa-pen-fancy"></i> S'INSCRIRE MAINTENANT
+            </button>
+        </section>
+
+        <!-- Frais de Participation -->
+        <section class="fees-section fade-in">
+            <h2 class="section-title">
                 <i class="fas fa-money-bill-wave"></i> FRAIS DE PARTICIPATION
             </h2>
             
-            <div class="fee-cards">
-                <!-- Pour tous les étudiants -->
+            <div class="fees-grid">
                 <div class="fee-card regular">
                     <div class="fee-amount">5.000 Fc</div>
-                    <div class="fee-description">Pour tous les étudiants qui souhaitent participer</div>
+                    <div class="fee-description">
+                        Pour tous les étudiants qui souhaitent participer
+                    </div>
+                    <div style="color: #a0c8ff; font-size: 0.9rem;">
+                        <i class="fas fa-user-graduate"></i> Étudiants réguliers
+                    </div>
                 </div>
                 
-                <!-- Pour les membres Excellentia -->
                 <div class="fee-card member">
                     <div class="fee-amount">3.000 Fc</div>
-                    <div class="fee-description">Pour les étudiants membres de la structure Excellentia Academia</div>
+                    <div class="fee-description">
+                        Pour les membres de la structure Excellentia Academia
+                    </div>
+                    <div style="color: #f7ef8a; font-size: 0.9rem;">
+                        <i class="fas fa-crown"></i> Membres Excellentia
+                    </div>
                 </div>
             </div>
             
-            <div class="fee-note">
-                <i class="fas fa-info-circle"></i> Ces frais sont uniquement pour la participation au concours et donnent accès à toutes les séances préparatoires.
+            <div style="text-align: center; margin-top: 20px; color: #a0c8ff; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Accès à toutes les séances préparatoires inclus
             </div>
-        </div>
-        
-        <!-- Section des Prix et Récompenses -->
-        <div class="prizes-section animate" style="animation-delay: 0.9s">
+        </section>
+
+        <!-- Prix et Récompenses -->
+        <section class="prizes-section fade-in">
             <h2 class="prizes-title">
                 <i class="fas fa-trophy"></i> PRIX ET RÉCOMPENSES
             </h2>
             
-            <div class="prizes-container">
-                <!-- Premier Prix -->
+            <div class="prizes-grid">
+                <!-- 1ère Place -->
                 <div class="prize-card first">
                     <div class="prize-rank">
                         <i class="fas fa-crown"></i> 1ère Place
                     </div>
                     <div class="prize-amount">1.000.000 Fc</div>
-                    <div class="prize-label">Grand Prix d'Excellence</div>
                     <ul class="prize-details">
-                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">1.000.000 Fc</span> sur compte Equity BCDC</li>
-                        <li><i class="fas fa-graduation-cap"></i> <span class="prize-highlight">Bourse académique UNIKIN 2026-2027</span></li>
-                        <li><i class="fas fa-bus"></i> <span class="prize-highlight">Carte Trans Academia annuelle</span></li>
-                        <li><i class="fas fa-book"></i> <span class="prize-highlight">Accès Bibliothèque Centrale (1 an)</span></li>
-                        <li><i class="fas fa-medal"></i> <span class="prize-highlight">Médaille d'Or et Écharpe Officielle</span></li>
-                        <li><i class="fas fa-trophy"></i> Trophée d'Excellence</li>
-                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
+                        <li><i class="fas fa-check"></i> Sur compte Equity BCDC</li>
+                        <li><i class="fas fa-check"></i> Bourse académique UNIKIN</li>
+                        <li><i class="fas fa-check"></i> Carte Trans Academia</li>
+                        <li><i class="fas fa-check"></i> Médaille d'Or + Trophée</li>
                     </ul>
                 </div>
                 
-                <!-- Deuxième Prix -->
+                <!-- 2ème Place -->
                 <div class="prize-card second">
                     <div class="prize-rank">
                         <i class="fas fa-medal"></i> 2ème Place
                     </div>
                     <div class="prize-amount">500.000 Fc</div>
-                    <div class="prize-label">Prix d'Honneur</div>
                     <ul class="prize-details">
-                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">500.000 Fc</span> sur compte Equity BCDC</li>
-                        <li><i class="fas fa-medal"></i> Médaille d'Argent</li>
-                        <li><i class="fas fa-trophy"></i> Trophée d'Argent</li>
-                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
+                        <li><i class="fas fa-check"></i> Sur compte Equity BCDC</li>
+                        <li><i class="fas fa-check"></i> Médaille d'Argent</li>
+                        <li><i class="fas fa-check"></i> Trophée d'Argent</li>
+                        <li><i class="fas fa-check"></i> Brevet d'Excellence</li>
                     </ul>
                 </div>
                 
-                <!-- Troisième Prix -->
+                <!-- 3ème Place -->
                 <div class="prize-card third">
                     <div class="prize-rank">
                         <i class="fas fa-award"></i> 3ème Place
                     </div>
                     <div class="prize-amount">250.000 Fc</div>
-                    <div class="prize-label">Prix Spécial du Jury</div>
                     <ul class="prize-details">
-                        <li><i class="fas fa-money-bill-wave"></i> <span class="prize-highlight">250.000 Fc</span> sur compte Equity BCDC</li>
-                        <li><i class="fas fa-medal"></i> Médaille de Bronze</li>
-                        <li><i class="fas fa-trophy"></i> Trophée de Bronze</li>
-                        <li><i class="fas fa-award"></i> Brevet d'Excellence</li>
+                        <li><i class="fas fa-check"></i> Sur compte Equity BCDC</li>
+                        <li><i class="fas fa-check"></i> Médaille de Bronze</li>
+                        <li><i class="fas fa-check"></i> Trophée de Bronze</li>
+                        <li><i class="fas fa-check"></i> Brevet d'Excellence</li>
                     </ul>
                 </div>
             </div>
             
             <!-- Récompenses supplémentaires -->
-            <div class="additional-rewards">
-                <h3 class="rewards-title">
+            <div style="margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+                <h3 style="color: #f7ef8a; margin-bottom: 15px; text-align: center;">
                     <i class="fas fa-star"></i> RÉCOMPENSES SUPPLÉMENTAIRES
                 </h3>
-                <div class="rewards-grid">
-                    <div class="reward-card">
-                        <div class="reward-icon">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <div class="reward-subtitle">Finalistes</div>
-                        <div class="reward-description">
-                            Tous les finalistes recevront un Brevet de Mérite pour leur parcours exceptionnel et un certificat de reconnaissance.
-                        </div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: #cccccc;">
+                        <i class="fas fa-medal" style="color: #d4af37;"></i>
+                        <span>Brevet de Mérite pour tous les finalistes</span>
                     </div>
-                    <div class="reward-card">
-                        <div class="reward-icon">
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <div class="reward-subtitle">Participants</div>
-                        <div class="reward-description">
-                            Certificats de participation officiels pour tous les concurrents, reconnaissant leur engagement et leur courage.
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #cccccc;">
+                        <i class="fas fa-certificate" style="color: #1e90ff;"></i>
+                        <span>Certificats de participation pour tous</span>
                     </div>
-                    <div class="reward-card">
-                        <div class="reward-icon">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div class="reward-subtitle">Formation</div>
-                        <div class="reward-description">
-                            Ateliers gratuits de techniques d'éloquence animés par des experts pour tous les inscrits au concours.
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #cccccc;">
+                        <i class="fas fa-chalkboard-teacher" style="color: #25d366;"></i>
+                        <span>Ateliers gratuits d'éloquence</span>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Section Comment s'inscrire -->
-        <div class="instructions animate" style="animation-delay: 1s">
-            <h3><i class="fas fa-info-circle"></i> Comment s'inscrire :</h3>
-            <ul>
-                <li><strong>Remplissez le formulaire d'inscription</strong> en cliquant sur le bouton ci-dessus</li>
-                <li><strong>Payez les frais de participation :</strong> 5.000 Fc (tous) ou 3.000 Fc (membres Excellentia)</li>
-                <li><strong>Préparez un discours de 3 minutes</strong> sur un des thèmes proposés</li>
-                <li><strong>Les participants sélectionnés</strong> seront contactés avant le 20 février 2026</li>
-                <li><strong>Bénéficiez de séances préparatoires</strong> gratuites pour perfectionner votre éloquence</li>
-            </ul>
-        </div>
-        
+        </section>
+
         <!-- Section WhatsApp -->
-        <div class="whatsapp-section animate" style="animation-delay: 1.1s">
+        <section class="whatsapp-section fade-in">
             <div class="whatsapp-header">
-                <i class="fab fa-whatsapp whatsapp-icon"></i>
-                <h3 class="whatsapp-title">Rejoignez notre groupe WhatsApp</h3>
+                <i class="fab fa-whatsapp" style="font-size: 2rem; color: #25d366;"></i>
+                <h2 class="whatsapp-title">Rejoignez notre groupe WhatsApp</h2>
             </div>
             
-            <p class="whatsapp-description">
-                Ne ratez aucune information importante ! Rejoignez la communauté officielle :
+            <p style="color: #a0ffc0; text-align: center; margin-bottom: 20px;">
+                Ne ratez aucune information importante ! Rejoignez la communauté officielle pour :
             </p>
             
-            <ul class="whatsapp-benefits">
-                <li><i class="fas fa-check-circle" style="color: #25d366;"></i> Annonces en temps réel</li>
-                <li><i class="fas fa-check-circle" style="color: #25d366;"></i> Rappels des dates importantes</li>
-                <li><i class="fas fa-check-circle" style="color: #25d366;"></i> Conseils des organisateurs</li>
-                <li><i class="fas fa-check-circle" style="color: #25d366;"></i> Échanges avec les participants</li>
-                <li><i class="fas fa-check-circle" style="color: #25d366;"></i> Questions/réponses en direct</li>
-            </ul>
+            <div style="background: rgba(37, 211, 102, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: white;">
+                    <i class="fas fa-check-circle" style="color: #25d366;"></i>
+                    <span>Annonces en temps réel</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: white;">
+                    <i class="fas fa-check-circle" style="color: #25d366;"></i>
+                    <span>Conseils des organisateurs</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; color: white;">
+                    <i class="fas fa-check-circle" style="color: #25d366;"></i>
+                    <span>Échanges avec les participants</span>
+                </div>
+            </div>
             
             <button class="whatsapp-button" onclick="joinWhatsAppGroup()">
                 <i class="fab fa-whatsapp"></i> REJOINDRE LE GROUPE
             </button>
-            
-            <p style="margin-top: 15px; color: #a0ffc0; font-size: 0.9rem; font-style: italic;">
-                <i class="fas fa-exclamation-circle"></i> Accès réservé aux participants et personnes intéressées
-            </p>
-        </div>
-        
-        <footer class="animate" style="animation-delay: 1.2s">
-            <p><i class="far fa-clock"></i> Compte à rebours en temps réel</p>
-            <p>Excellentia Academia © 2025-2026 | "L'excellence par l'éloquence"</p>
-            <p style="margin-top: 10px; font-size: 0.7rem; color: #66aaff;">
-                En partenariat avec l'Université de Kinshasa • Equity BCDC • Trans Academia
-            </p>
-        </footer>
-    </div>
-    
-    <!-- Modal pour le formulaire d'inscription -->
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Excellentia Academia © 2025-2026</p>
+        <p style="margin-top: 5px; color: #66aaff; font-size: 0.7rem;">
+            En partenariat avec l'Université de Kinshasa • Equity BCDC • Trans Academia
+        </p>
+    </footer>
+
+    <!-- Bouton Admin -->
+    <button class="admin-button" id="adminButton">
+        <i class="fas fa-lock"></i> Admin
+    </button>
+
+    <!-- Modal Formulaire d'Inscription -->
     <div class="modal-overlay" id="formModal">
         <div class="modal-content">
             <button class="close-modal" id="closeModal">&times;</button>
             
-            <div class="header-logo" style="position: relative; top: 0; left: 0; justify-content: center; margin-bottom: 20px;">
-                <div class="logo-circle">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="logo-text">
-                    <div class="logo-title" style="font-size: 1.8rem;">EXCELLENTIA ACADEMIA</div>
-                    <div class="logo-subtitle">Formulaire d'Inscription</div>
-                </div>
-            </div>
+            <h2 style="color: #f7ef8a; text-align: center; margin-bottom: 25px; font-size: 1.5rem;">
+                <i class="fas fa-user-plus"></i> Formulaire d'Inscription
+            </h2>
             
-            <!-- Formulaire visible -->
-            <form id="inscriptionForm" class="form-container">
+            <form id="inscriptionForm">
                 <div class="form-group">
-                    <label class="form-label" for="nom">Nom complet *</label>
-                    <input type="text" id="nom" name="nom" class="form-input" required placeholder="Votre nom, postnom et prénom">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" class="form-input" name="nom" required placeholder="Nom, Postnom, Prénom">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="email">Adresse email *</label>
-                    <input type="email" id="email" name="email" class="form-input" required placeholder="exemple@email.com">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" name="email" required placeholder="exemple@email.com">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="telephone">Téléphone *</label>
-                    <input type="tel" id="telephone" name="telephone" class="form-input" required placeholder="+243 970 501 523">
+                    <label class="form-label">Téléphone *</label>
+                    <input type="tel" class="form-input" name="telephone" required placeholder="+243 970 501 523">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="whatsapp">Avez-vous WhatsApp ? *</label>
-                    <select id="whatsapp" name="whatsapp" class="form-select" required>
-                        <option value="" disabled selected>Choisissez une option</option>
-                        <option value="oui">Oui, je l'utilise</option>
+                    <label class="form-label">Avez-vous WhatsApp ? *</label>
+                    <select class="form-select" name="whatsapp" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="oui">Oui</option>
                         <option value="non">Non</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="universite">Établissement *</label>
-                    <input type="text" id="universite" name="universite" class="form-input" required placeholder="Votre université/école">
+                    <label class="form-label">Université *</label>
+                    <input type="text" class="form-input" name="universite" required placeholder="Votre université">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="faculte">Faculté *</label>
-                    <select id="faculte" name="faculte" class="form-select" required>
-                        <option value="" disabled selected>Sélectionnez votre faculté</option>
+                    <label class="form-label">Faculté *</label>
+                    <select class="form-select" name="faculte" required>
+                        <option value="">Sélectionnez votre faculté</option>
                         <option value="Faculté de sciences et technologies">Faculté de sciences et technologies</option>
                         <option value="Faculté de Lettres et sciences humaines">Faculté de Lettres et sciences humaines</option>
                         <option value="Faculté de Sciences économiques et de gestion">Faculté de Sciences économiques et de gestion</option>
@@ -1398,140 +840,106 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="categorie">Catégorie de participation *</label>
-                    <select id="categorie" name="categorie" class="form-select" required>
-                        <option value="" disabled selected>Sélectionnez votre catégorie</option>
+                    <label class="form-label">Catégorie *</label>
+                    <select class="form-select" name="categorie" required>
+                        <option value="">Sélectionnez votre catégorie</option>
                         <option value="etudiant_regulier">Étudiant régulier (5.000 Fc)</option>
-                        <option value="membre_excellentia">Membre Excellentia Academia (3.000 Fc)</option>
+                        <option value="membre_excellentia">Membre Excellentia (3.000 Fc)</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="theme">Thème du discours *</label>
-                    <select id="theme" name="theme" class="form-select" required>
-                        <option value="" disabled selected>Sélectionnez un thème</option>
+                    <label class="form-label">Thème du discours *</label>
+                    <select class="form-select" name="theme" required>
+                        <option value="">Sélectionnez un thème</option>
                         <option value="liberte">La liberté d'expression numérique</option>
                         <option value="education">Éducation et émancipation</option>
                         <option value="environnement">Responsabilité envers les générations futures</option>
-                        <option value="autre">Autre (précisez ci-dessous)</option>
+                        <option value="autre">Autre</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="message">Votre motivation *</label>
-                    <textarea id="message" name="message" class="form-textarea" required 
-                              placeholder="Expliquez pourquoi vous souhaitez participer... (5-10 lignes)"></textarea>
+                    <label class="form-label">Votre motivation *</label>
+                    <textarea class="form-textarea" name="message" required placeholder="Pourquoi souhaitez-vous participer ?"></textarea>
                 </div>
                 
-                <div class="form-checkbox">
-                    <input type="checkbox" id="conditions" name="conditions" required>
-                    <label for="conditions">
-                        Je comprends et j'accepte les frais de participation selon ma catégorie *
-                    </label>
-                </div>
-                
-                <div class="form-checkbox">
-                    <input type="checkbox" id="whatsapp_group" name="whatsapp_group">
-                    <label for="whatsapp_group">
-                        Je souhaite rejoindre le groupe WhatsApp pour recevoir les dernières informations
+                <div style="margin: 20px 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 10px; color: #cccccc;">
+                        <input type="checkbox" required style="margin-top: 3px;">
+                        <span>J'accepte les frais de participation selon ma catégorie *</span>
                     </label>
                 </div>
                 
                 <button type="submit" class="submit-button">
-                    <i class="fas fa-paper-plane"></i> ENVOYER MON INSCRIPTION
+                    <i class="fas fa-paper-plane"></i> ENVOYER L'INSCRIPTION
                 </button>
             </form>
             
-            <div id="confirmationMessage" class="hidden-form" style="text-align: center; padding: 20px;">
-                <div style="font-size: 3rem; color: #d4af37; margin-bottom: 15px;">
+            <div id="confirmationMessage" class="hidden" style="text-align: center; padding: 20px;">
+                <div style="font-size: 3rem; color: #25d366; margin-bottom: 15px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h3 style="color: #f7ef8a; font-size: 1.6rem; margin-bottom: 15px;">
-                    Inscription envoyée avec succès !
-                </h3>
-                <p style="color: #a0c8ff; font-size: 1rem; line-height: 1.5; margin-bottom: 15px;">
-                    Merci pour votre inscription au Concours d'Éloquence Excellentia Academia 2026.
-                    Vous recevrez un message WhatsApp avec les détails pour le paiement des frais de participation.
+                <h3 style="color: #f7ef8a; margin-bottom: 15px;">Inscription réussie !</h3>
+                <p style="color: #a0c8ff; margin-bottom: 20px;">
+                    Vous recevrez les instructions de paiement par WhatsApp.
                 </p>
-                <p style="color: #25d366; font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">
-                    <i class="fab fa-whatsapp"></i> Rejoignez notre groupe WhatsApp pour ne rien manquer !
-                </p>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <button id="closeAfterSubmit" class="whatsapp-button" style="background: linear-gradient(90deg, #d4af37, #f7ef8a);">
-                        <i class="fas fa-home"></i> RETOUR À L'ACCUEIL
-                    </button>
-                    <button class="whatsapp-button" onclick="joinWhatsAppGroup()">
-                        <i class="fab fa-whatsapp"></i> REJOINDRE WHATSAPP
-                    </button>
-                </div>
+                <button class="whatsapp-button" onclick="joinWhatsAppGroup()">
+                    <i class="fab fa-whatsapp"></i> REJOINDRE WHATSAPP
+                </button>
+                <button class="main-cta" id="closeAfterSubmit" style="margin-top: 10px;">
+                    <i class="fas fa-home"></i> RETOUR À L'ACCUEIL
+                </button>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Admin -->
     <div class="modal-overlay" id="adminModal">
-        <div class="modal-content admin-modal-content">
+        <div class="modal-content">
             <button class="close-modal" id="closeAdminModal">&times;</button>
             
-            <h2 class="modal-title">
-                <i class="fas fa-lock"></i> PANEL ADMINISTRATEUR
+            <h2 style="color: #f7ef8a; text-align: center; margin-bottom: 25px;">
+                <i class="fas fa-lock"></i> PANEL ADMIN
             </h2>
             
             <div id="passwordSection">
-                <h3 style="color: #f7ef8a; text-align: center; margin-bottom: 20px;">
+                <p style="color: #a0c8ff; text-align: center; margin-bottom: 20px;">
                     Accès réservé à la coordination Excellentia Academia
-                </h3>
-                <div class="password-input-container">
-                    <input type="password" id="adminPassword" class="password-input" 
-                           placeholder="Entrez le mot de passe">
-                    <p style="color: #a0c8ff; font-size: 0.9rem; margin-top: 10px; text-align: center;">
-                        Mot de passe : Excellence@acad_2K26
-                    </p>
-                </div>
+                </p>
+                <input type="password" id="adminPassword" 
+                       placeholder="Mot de passe : Excellence@acad_2K26"
+                       style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #d4af37; background: rgba(0,0,0,0.3); color: white; text-align: center; margin-bottom: 20px;">
                 <button id="loginButton" class="submit-button">
-                    <i class="fas fa-sign-in-alt"></i> CONNEXION
+                    <i class="fas fa-sign-in-alt"></i> SE CONNECTER
                 </button>
             </div>
             
-            <div id="adminPanel" class="hidden-form">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h3 style="color: #f7ef8a;">Excellentia Academia - Coordination</h3>
-                    <p style="color: #a0c8ff;">Gestion des inscriptions</p>
-                </div>
+            <div id="adminPanel" class="hidden">
+                <h3 style="color: #f7ef8a; text-align: center; margin-bottom: 20px;">
+                    Excellentia Academia - Coordination
+                </h3>
                 
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalParticipants">0</div>
-                        <div class="stat-label">Total Inscriptions</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: rgba(212,175,55,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2rem; color: #f7ef8a; font-weight: bold;" id="totalParticipants">0</div>
+                        <div style="color: #a0c8ff; font-size: 0.9rem;">Total Inscriptions</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="todayParticipants">0</div>
-                        <div class="stat-label">Aujourd'hui</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="whatsappParticipants">0</div>
-                        <div class="stat-label">Sur WhatsApp</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="facultesCount">13</div>
-                        <div class="stat-label">Facultés représentées</div>
+                    <div style="background: rgba(212,175,55,0.1); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2rem; color: #f7ef8a; font-weight: bold;" id="todayParticipants">0</div>
+                        <div style="color: #a0c8ff; font-size: 0.9rem;">Aujourd'hui</div>
                     </div>
                 </div>
                 
-                <h4 style="color: #f7ef8a; margin: 20px 0 10px;">Liste des Participants</h4>
-                <div class="participants-list" id="participantsList">
-                    <!-- La liste des participants sera chargée ici -->
+                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                    <div id="participantsList">
+                        <!-- Liste des participants -->
+                    </div>
                 </div>
                 
-                <button id="exportButton" class="export-button">
-                    <i class="fas fa-download"></i> EXPORTER EN EXCEL
+                <button id="exportButton" class="whatsapp-button" style="background: linear-gradient(90deg, #4CAF50, #2E7D32);">
+                    <i class="fas fa-download"></i> EXPORTER LES DONNÉES
                 </button>
-                
-                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(212, 175, 55, 0.3);">
-                    <p style="color: #a0c8ff; font-size: 0.8rem; text-align: center;">
-                        <i class="fas fa-info-circle"></i> Les données sont synchronisées en temps réel avec Firebase
-                    </p>
-                </div>
             </div>
         </div>
     </div>
@@ -1556,15 +964,11 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Date limite d'inscription : 20 janvier 2026 à 23h59
-        const targetDate = new Date('January 20, 2026 23:59:59').getTime();
-        const startDate = new Date('January 20, 2025 00:00:00').getTime();
-        const totalDuration = targetDate - startDate;
+        // Variables
+        let participantsData = [];
+        const ADMIN_PASSWORD = "Excellence@acad_2K26";
         
-        // Mettre à jour le compte à rebours toutes les secondes
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        
-        // Éléments du modal
+        // DOM Elements
         const formModal = document.getElementById('formModal');
         const adminModal = document.getElementById('adminModal');
         const openFormButton = document.getElementById('openFormButton');
@@ -1574,127 +978,83 @@
         const closeAfterSubmit = document.getElementById('closeAfterSubmit');
         const inscriptionForm = document.getElementById('inscriptionForm');
         const confirmationMessage = document.getElementById('confirmationMessage');
-        
-        // Variables admin
-        let participantsData = [];
-        const ADMIN_PASSWORD = "Excellence@acad_2K26";
-        
-        // Activer les animations
-        document.addEventListener('DOMContentLoaded', function() {
-            const animateElements = document.querySelectorAll('.animate');
-            animateElements.forEach((el, index) => {
-                setTimeout(() => {
-                    el.style.opacity = 1;
-                    el.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-            
-            // Charger les données des participants
-            loadParticipantsData();
-        });
-        
-        // Fonction pour rejoindre le groupe WhatsApp
+        const loginButton = document.getElementById('loginButton');
+        const exportButton = document.getElementById('exportButton');
+
+        // Fonctions WhatsApp
         function joinWhatsAppGroup() {
-            const whatsappLink = "https://chat.whatsapp.com/EuFshU5EEZ7LpxQrC7OQuM";
-            window.open(whatsappLink, '_blank');
+            window.open("https://chat.whatsapp.com/EuFshU5EEZ7LpxQrC7OQuM", "_blank");
         }
-        
-        // Ouvrir le modal d'inscription
+
+        // Gestion des modals
         openFormButton.addEventListener('click', () => {
-            formModal.style.display = 'flex';
+            formModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         });
-        
-        // Ouvrir le modal admin
+
         adminButton.addEventListener('click', () => {
-            adminModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            document.getElementById('passwordSection').classList.remove('hidden-form');
-            document.getElementById('adminPanel').classList.add('hidden-form');
+            adminModal.style.display = 'block';
+            document.getElementById('passwordSection').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
             document.getElementById('adminPassword').value = '';
         });
-        
-        // Fermer les modals
+
         const closeModalFunc = (modal) => {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
         };
-        
+
         closeModal.addEventListener('click', () => closeModalFunc(formModal));
         closeAdminModal.addEventListener('click', () => closeModalFunc(adminModal));
-        
-        // Fermer le modal après soumission
-        closeAfterSubmit.addEventListener('click', () => {
+
+        closeAfterSubmit?.addEventListener('click', () => {
             closeModalFunc(formModal);
-            // Réinitialiser le formulaire
             inscriptionForm.reset();
-            // Revenir au formulaire
-            inscriptionForm.classList.remove('hidden-form');
-            confirmationMessage.classList.add('hidden-form');
+            inscriptionForm.classList.remove('hidden');
+            confirmationMessage.classList.add('hidden');
         });
-        
-        // Fermer les modals en cliquant à l'extérieur
-        formModal.addEventListener('click', (e) => {
-            if (e.target === formModal) closeModalFunc(formModal);
+
+        // Fermer modal en cliquant à l'extérieur
+        [formModal, adminModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModalFunc(modal);
+            });
         });
-        
-        adminModal.addEventListener('click', (e) => {
-            if (e.target === adminModal) closeModalFunc(adminModal);
-        });
-        
-        // Fermer les modals avec la touche Échap
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (formModal.style.display === 'flex') closeModalFunc(formModal);
-                if (adminModal.style.display === 'flex') closeModalFunc(adminModal);
-            }
-        });
-        
-        // Gérer la connexion admin
-        document.getElementById('loginButton').addEventListener('click', () => {
+
+        // Login admin
+        loginButton.addEventListener('click', () => {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
-                document.getElementById('passwordSection').classList.add('hidden-form');
-                document.getElementById('adminPanel').classList.remove('hidden-form');
-                updateAdminStats();
+                document.getElementById('passwordSection').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadParticipantsData();
             } else {
-                alert("Mot de passe incorrect. Accès refusé.");
+                alert("Mot de passe incorrect");
             }
         });
-        
-        // Gérer la soumission du formulaire d'inscription
-        inscriptionForm.addEventListener('submit', async function(e) {
+
+        // Gestion du formulaire d'inscription
+        inscriptionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Validation rapide
-            const telephone = document.getElementById('telephone').value;
-            if (telephone.length < 8) {
-                alert("Veuillez entrer un numéro de téléphone valide.");
-                return;
-            }
-            
-            // Récupérer les données du formulaire
             const formData = {
-                nom: document.getElementById('nom').value,
-                email: document.getElementById('email').value,
-                telephone: document.getElementById('telephone').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                universite: document.getElementById('universite').value,
-                faculte: document.getElementById('faculte').value,
-                categorie: document.getElementById('categorie').value,
-                theme: document.getElementById('theme').value,
-                message: document.getElementById('message').value,
-                whatsapp_group: document.getElementById('whatsapp_group').checked,
-                conditions: document.getElementById('conditions').checked,
+                nom: inscriptionForm.nom.value,
+                email: inscriptionForm.email.value,
+                telephone: inscriptionForm.telephone.value,
+                whatsapp: inscriptionForm.whatsapp.value,
+                universite: inscriptionForm.universite.value,
+                faculte: inscriptionForm.faculte.value,
+                categorie: inscriptionForm.categorie.value,
+                theme: inscriptionForm.theme.value,
+                message: inscriptionForm.message.value,
                 date_inscription: new Date().toISOString(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
+
             try {
-                // Envoyer à Firebase
                 await db.collection('participants').add(formData);
                 
-                // Envoyer également à Formspree pour garder la compatibilité
+                // Envoyer également à Formspree
                 const formspreeForm = new FormData();
                 for (const key in formData) {
                     formspreeForm.append(key, formData[key]);
@@ -1705,24 +1065,21 @@
                     body: formspreeForm,
                     headers: { 'Accept': 'application/json' }
                 });
+
+                // Afficher confirmation
+                inscriptionForm.classList.add('hidden');
+                confirmationMessage.classList.remove('hidden');
                 
-                // Afficher le message de confirmation
-                inscriptionForm.classList.add('hidden-form');
-                confirmationMessage.classList.remove('hidden-form');
-                
-                // Réinitialiser le formulaire
-                this.reset();
-                
-                // Mettre à jour les stats admin
+                // Mettre à jour les données
                 loadParticipantsData();
-                
+
             } catch (error) {
-                console.error("Erreur lors de l'enregistrement:", error);
-                alert("Erreur lors de l'enregistrement. Veuillez réessayer.");
+                console.error("Erreur:", error);
+                alert("Erreur lors de l'enregistrement");
             }
         });
-        
-        // Charger les données des participants
+
+        // Charger les participants
         async function loadParticipantsData() {
             try {
                 const snapshot = await db.collection('participants').get();
@@ -1730,189 +1087,118 @@
                 snapshot.forEach(doc => {
                     participantsData.push({ id: doc.id, ...doc.data() });
                 });
-                
-                // Mettre à jour les stats si le panel admin est ouvert
-                if (!document.getElementById('adminPanel').classList.contains('hidden-form')) {
-                    updateAdminStats();
-                }
+                updateAdminStats();
             } catch (error) {
-                console.error("Erreur de chargement des données:", error);
+                console.error("Erreur de chargement:", error);
             }
         }
-        
-        // Mettre à jour les statistiques admin
+
         function updateAdminStats() {
-            // Nombre total de participants
             document.getElementById('totalParticipants').textContent = participantsData.length;
             
-            // Participants d'aujourd'hui
             const today = new Date().toDateString();
-            const todayParticipants = participantsData.filter(p => {
-                const participantDate = new Date(p.date_inscription).toDateString();
-                return participantDate === today;
-            });
-            document.getElementById('todayParticipants').textContent = todayParticipants.length;
+            const todayCount = participantsData.filter(p => {
+                return new Date(p.date_inscription).toDateString() === today;
+            }).length;
+            document.getElementById('todayParticipants').textContent = todayCount;
             
-            // Participants avec WhatsApp
-            const whatsappParticipants = participantsData.filter(p => p.whatsapp === 'oui');
-            document.getElementById('whatsappParticipants').textContent = whatsappParticipants.length;
-            
-            // Nombre de facultés représentées
-            const facultes = [...new Set(participantsData.map(p => p.faculte).filter(Boolean))];
-            document.getElementById('facultesCount').textContent = facultes.length;
-            
-            // Mettre à jour la liste des participants
             updateParticipantsList();
         }
-        
-        // Mettre à jour la liste des participants
+
         function updateParticipantsList() {
             const listElement = document.getElementById('participantsList');
             listElement.innerHTML = '';
             
-            // Trier par date (plus récent d'abord)
-            const sortedParticipants = [...participantsData].sort((a, b) => {
-                return new Date(b.date_inscription) - new Date(a.date_inscription);
-            });
-            
-            sortedParticipants.forEach(participant => {
+            participantsData.slice(0, 20).forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'participant-item';
+                div.style.padding = '10px';
+                div.style.marginBottom = '8px';
+                div.style.background = 'rgba(255,255,255,0.05)';
+                div.style.borderRadius = '8px';
+                div.style.borderLeft = '3px solid #d4af37';
                 
-                const date = new Date(participant.date_inscription).toLocaleDateString('fr-FR');
-                const hasWhatsapp = participant.whatsapp === 'oui' ? '✓' : '✗';
-                const categorie = participant.categorie === 'etudiant_regulier' ? 'Étudiant régulier (5.000 Fc)' : 'Membre Excellentia (3.000 Fc)';
-                
+                const date = new Date(p.date_inscription).toLocaleDateString('fr-FR');
                 div.innerHTML = `
-                    <div class="participant-name">${participant.nom}</div>
-                    <div class="participant-details">
-                        ${participant.faculte} | ${categorie} | ${participant.telephone} | ${date} 
-                        <span style="color: ${participant.whatsapp === 'oui' ? '#25d366' : '#ff6b6b'}">
-                            WhatsApp: ${hasWhatsapp}
-                        </span>
+                    <div style="font-weight: bold; color: #f7ef8a;">${p.nom}</div>
+                    <div style="font-size: 0.8rem; color: #a0c8ff;">
+                        ${p.faculte} • ${p.telephone} • ${date}
                     </div>
                 `;
                 
                 listElement.appendChild(div);
             });
         }
-        
-        // Exporter en Excel
-        document.getElementById('exportButton').addEventListener('click', () => {
+
+        // Export des données
+        exportButton.addEventListener('click', () => {
             if (participantsData.length === 0) {
-                alert("Aucune donnée à exporter.");
+                alert("Aucune donnée à exporter");
                 return;
             }
             
-            // Créer le contenu CSV
-            let csvContent = "Nom,Email,Téléphone,WhatsApp,Université,Faculté,Catégorie,Thème,Date d'inscription\n";
+            let csv = "Nom,Email,Téléphone,WhatsApp,Université,Faculté,Catégorie,Thème,Date\n";
             
-            participantsData.forEach(participant => {
-                const categorie = participant.categorie === 'etudiant_regulier' ? 'Étudiant régulier (5.000 Fc)' : 'Membre Excellentia (3.000 Fc)';
-                const row = [
-                    `"${participant.nom}"`,
-                    `"${participant.email}"`,
-                    `"${participant.telephone}"`,
-                    `"${participant.whatsapp}"`,
-                    `"${participant.universite}"`,
-                    `"${participant.faculte}"`,
-                    `"${categorie}"`,
-                    `"${participant.theme}"`,
-                    `"${new Date(participant.date_inscription).toLocaleDateString('fr-FR')}"`
-                ];
-                csvContent += row.join(',') + "\n";
+            participantsData.forEach(p => {
+                csv += `"${p.nom}","${p.email}","${p.telephone}","${p.whatsapp}","${p.universite}","${p.faculte}","${p.categorie}","${p.theme}","${new Date(p.date_inscription).toLocaleDateString('fr-FR')}"\n`;
             });
             
-            // Créer et télécharger le fichier
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
+            const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `participants_excellentia_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `participants_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         });
-        
-        // Écouter les nouvelles inscriptions en temps réel
-        db.collection('participants').onSnapshot((snapshot) => {
-            participantsData = [];
-            snapshot.forEach(doc => {
-                participantsData.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // Mettre à jour les stats si le panel admin est ouvert
-            if (!document.getElementById('adminPanel').classList.contains('hidden-form')) {
-                updateAdminStats();
-            }
-        });
+
+        // Compte à rebours
+        const targetDate = new Date('January 20, 2026 23:59:59').getTime();
         
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
             
-            // Calculer la progression
-            let progress = 0;
-            let remainingPercentage = 100;
-            
-            if (now >= startDate) {
-                const elapsed = now - startDate;
-                progress = Math.min(100, (elapsed / totalDuration) * 100);
-                remainingPercentage = 100 - progress;
-            }
-            
-            // Si la date limite est dépassée
             if (distance < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById('jours').innerHTML = '00';
-                document.getElementById('heures').innerHTML = '00';
-                document.getElementById('minutes').innerHTML = '00';
-                document.getElementById('secondes').innerHTML = '00';
-                document.getElementById('progress-bar').style.width = '100%';
-                document.getElementById('progress-text').innerHTML = 'INSCRIPTIONS TERMINÉES';
-                document.getElementById('progress-text').style.color = '#ff6b6b';
-                document.querySelector('.urgent-message').innerHTML = `
-                    <div class="urgent-title"><i class="fas fa-times-circle"></i> INSCRIPTIONS FERMÉES</div>
-                    <div class="urgent-text">Les inscriptions sont closes. Rendez-vous l'année prochaine !</div>
-                `;
-                openFormButton.innerHTML = '<i class="fas fa-lock"></i> INSCRIPTIONS TERMINÉES';
-                openFormButton.style.background = 'linear-gradient(90deg, #666, #999)';
-                openFormButton.style.cursor = 'not-allowed';
-                openFormButton.onclick = null;
+                document.getElementById('jours').textContent = '00';
+                document.getElementById('heures').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('secondes').textContent = '00';
                 return;
             }
             
-            // Calculer le temps restant
             const jours = Math.floor(distance / (1000 * 60 * 60 * 24));
             const heures = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const secondes = Math.floor((distance % (1000 * 60)) / 1000);
             
-            // Afficher les résultats
-            document.getElementById('jours').innerHTML = formatTime(jours);
-            document.getElementById('heures').innerHTML = formatTime(heures);
-            document.getElementById('minutes').innerHTML = formatTime(minutes);
-            document.getElementById('secondes').innerHTML = formatTime(secondes);
-            
-            // Mettre à jour la progression
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('progress-text').innerHTML = `Temps restant : ${remainingPercentage.toFixed(2)}%`;
-            
-            // Mode urgence (dernière semaine)
-            if (jours < 7) {
-                document.getElementById('progress-text').style.color = '#ff6b6b';
-                document.querySelector('.urgent-title').innerHTML = '<i class="fas fa-hourglass-end"></i> DERNIÈRE SEMAINE !';
-            }
+            document.getElementById('jours').textContent = jours.toString().padStart(2, '0');
+            document.getElementById('heures').textContent = heures.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('secondes').textContent = secondes.toString().padStart(2, '0');
         }
         
-        // Fonction pour formater le temps
-        function formatTime(time) {
-            return time < 10 ? `0${time}` : time;
-        }
-        
-        // Démarrer le compte à rebours
+        setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        // Charger les données au démarrage
+        loadParticipantsData();
+
+        // Écouter les nouvelles inscriptions
+        db.collection('participants').onSnapshot(() => {
+            loadParticipantsData();
+        });
+
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, i) => {
+                setTimeout(() => {
+                    el.style.opacity = 1;
+                    el.style.transform = 'translateY(0)';
+                }, i * 100);
+            });
+        });
     </script>
 </body>
 </html>
