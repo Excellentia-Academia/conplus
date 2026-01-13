@@ -1,2927 +1,1526 @@
 
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excellentia Academia - Structure Académique d'Excellence, Université de Kinshasa</title>
+    <title>Devoirs de Français - Famille Singa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <style>
-        :root {
-            --primary: #1a237e;
-            --primary-light: #534bae;
-            --primary-dark: #000051;
-            --secondary: #d32f2f;
-            --secondary-light: #ff6659;
-            --secondary-dark: #9a0007;
-            --accent: #ffab00;
-            --light: #f5f5f7;
-            --dark: #121212;
-            --gray: #5f6368;
-            --success: #4caf50;
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Source Sans Pro', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
-            color: var(--dark);
-            background-color: var(--light);
-            overflow-x: hidden;
-        }
-        
-        h1, h2, h3, h4, h5 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-        }
-        
-        .container {
-            width: 100%;
+            padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
         }
         
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
+        .header {
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn:hover {
-            background-color: var(--secondary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .btn-small {
-            padding: 8px 20px;
-            font-size: 0.9rem;
-        }
-        
-        .btn-login {
-            background-color: var(--accent);
-            color: var(--dark);
-            margin-left: 10px;
-        }
-        
-        .btn-login:hover {
-            background-color: #ff8f00;
-            color: white;
-        }
-        
-        section {
-            padding: 80px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-            position: relative;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 4px;
-            background-color: var(--secondary);
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-        
-        /* Header & Navigation */
-        header {
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            padding: 15px 0;
-        }
-        
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-        
-        .logo-icon {
-            font-size: 2.2rem;
-            color: var(--primary);
-            margin-right: 10px;
-            animation: pulse 2s infinite;
-        }
-        
-        .logo-text {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--primary);
-        }
-        
-        .logo-text span {
-            color: var(--secondary);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
-        }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 600;
-            font-size: 1rem;
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-        
-        .nav-links a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            background-color: var(--primary);
-            bottom: -5px;
-            left: 0;
-            transition: var(--transition);
-        }
-        
-        .nav-links a:hover:after {
-            width: 100%;
-        }
-        
-        /* Mobile Menu Button - AMÉLIORÉ pour mobile */
-        .mobile-menu-btn {
-            display: none;
-            font-size: 1.8rem;
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            padding: 10px;
-            z-index: 1001;
-            position: relative;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: rgba(26, 35, 126, 0.1);
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .mobile-menu-btn:hover {
-            background-color: rgba(26, 35, 126, 0.2);
-        }
-        
-        /* Institutional Badge */
-        .institutional-badge {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
-            max-width: 500px;
-            box-shadow: 0 5px 20px rgba(26, 35, 126, 0.2);
-            animation: slideInDown 0.8s ease-out;
-        }
-        
-        .badge-icon {
-            font-size: 2rem;
-            margin-right: 20px;
-            color: var(--accent);
-        }
-        
-        .badge-content h3 {
-            margin-bottom: 5px;
-            font-size: 1.3rem;
-        }
-        
-        .badge-content p {
-            margin-bottom: 0;
-            opacity: 0.9;
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding-top: 150px;
-            background: linear-gradient(135deg, rgba(26, 35, 126, 0.05) 0%, rgba(255, 171, 0, 0.05) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .hero-text {
-            flex: 1;
-            padding-right: 40px;
-            animation: slideInLeft 1s ease-out;
-        }
-        
-        .hero-text h1 {
-            font-size: 3.2rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-        
-        .hero-text h1 span {
-            color: var(--secondary);
-        }
-        
-        .hero-text p {
-            font-size: 1.2rem;
-            color: var(--gray);
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-        
-        .coordinateur-info {
-            background-color: rgba(26, 35, 126, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 25px;
-            border-left: 4px solid var(--secondary);
-        }
-        
-        .coordinateur-info h4 {
-            color: var(--primary);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .coordinateur-info h4 i {
-            margin-right: 10px;
-            color: var(--secondary);
-        }
-        
-        .coordinateur-info p {
-            margin-bottom: 5px;
-            font-size: 1rem;
-        }
-        
-        .hero-btns {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .hero-visual {
-            flex: 1;
-            position: relative;
-            animation: slideInRight 1s ease-out;
-        }
-        
-        .floating-elements {
-            position: relative;
-            height: 400px;
-            width: 100%;
-        }
-        
-        .floating-element {
-            position: absolute;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            transition: var(--transition);
-        }
-        
-        .floating-element:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-        }
-        
-        .element-1 {
-            top: 0;
-            left: 0;
-            width: 180px;
-            height: 180px;
-            animation: float 6s ease-in-out infinite;
-            border-top: 5px solid var(--primary);
-        }
-        
-        .element-2 {
-            top: 50px;
-            right: 0;
-            width: 220px;
-            height: 150px;
-            animation: float 7s ease-in-out infinite 0.5s;
-            border-top: 5px solid var(--secondary);
-        }
-        
-        .element-3 {
-            bottom: 0;
-            left: 50px;
-            width: 160px;
-            height: 160px;
-            animation: float 8s ease-in-out infinite 1s;
-            border-top: 5px solid var(--accent);
-        }
-        
-        .floating-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        
-        .floating-text {
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        /* About Section */
-        .about {
-            background-color: white;
-        }
-        
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-        
-        .about-text {
-            flex: 1;
-        }
-        
-        .about-visual {
-            flex: 1;
-            text-align: center;
-        }
-        
-        .about-visual img {
-            max-width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .about-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 40px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background-color: rgba(26, 35, 126, 0.05);
-            border-radius: 10px;
-            min-width: 150px;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-weight: 600;
-        }
-        
-        /* Faculties Section */
-        .faculties {
-            background-color: white;
-        }
-        
-        .faculties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .faculty-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .faculty-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .faculty-icon {
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-        }
-        
-        .faculty-content {
-            padding: 25px;
-        }
-        
-        .faculty-content h3 {
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .faculty-leadership {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-        
-        .leader {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .leader:last-child {
-            margin-bottom: 0;
-        }
-        
-        .leader-icon {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(26, 35, 126, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-        
-        .leader-info h5 {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .leader-info p {
-            font-size: 0.9rem;
-            color: var(--dark);
-            font-weight: 600;
-        }
-        
-        .faculty-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            gap: 10px;
-        }
-        
-        /* Activities Section */
-        .activities {
-            background-color: #f9f9fc;
-        }
-        
-        .activities-tabs {
-            display: flex;
-            justify-content: center;
             margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-        
-        .tab-btn {
-            padding: 12px 30px;
-            background-color: white;
-            border: none;
-            border-radius: 50px;
-            margin: 0 10px 10px 0;
-            font-weight: 600;
-            color: var(--gray);
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .tab-btn.active {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .tab-btn:hover:not(.active) {
-            background-color: rgba(26, 35, 126, 0.1);
-            color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.8s ease-out;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .activity-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .activity-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-        }
-        
-        .activity-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .activity-img {
-            height: 180px;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .activity-content {
-            padding: 25px;
-        }
-        
-        .activity-content h3 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        /* Registration Form */
-        .registration {
-            background-color: white;
-        }
-        
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-        
-        .form-header {
-            background-color: var(--primary);
-            color: white;
             padding: 30px;
-            text-align: center;
-        }
-        
-        .form-header h2 {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
             color: white;
-        }
-        
-        .form-body {
-            padding: 40px;
-        }
-        
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: 0 -15px;
-        }
-        
-        .form-group {
-            flex: 1 0 300px;
-            padding: 0 15px;
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Source Sans Pro', sans-serif;
-            transition: var(--transition);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
-        }
-        
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a237e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            padding-right: 40px;
-        }
-        
-        .checkbox-group {
-            margin-top: 20px;
-        }
-        
-        .checkbox-label {
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-        }
-        
-        .checkbox-label input {
-            margin-right: 10px;
-            margin-top: 5px;
-        }
-        
-        /* Events Section */
-        .events {
-            background-color: #f9f9fc;
-        }
-        
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-        }
-        
-        .event-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-        }
-        
-        .event-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .event-date {
-            background-color: var(--secondary);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: 700;
-        }
-        
-        .event-date .day {
-            font-size: 2rem;
-            line-height: 1;
-        }
-        
-        .event-date .month {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-        }
-        
-        .event-content {
-            padding: 25px;
-        }
-        
-        .event-content h3 {
-            color: var(--primary);
-        }
-        
-        .event-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        /* Mobile Menu Overlay - AMÉLIORÉ */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .mobile-menu-content {
-            background-color: white;
-            width: 90%;
-            max-width: 400px;
             border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideInUp 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
-        .mobile-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(26, 35, 126, 0.1);
-        }
-        
-        .mobile-menu-logo {
-            font-size: 1.8rem;
-            color: var(--primary);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-        
-        .mobile-menu-logo i {
-            margin-right: 10px;
-        }
-        
-        .mobile-menu-close {
-            background: none;
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff6b6b;
+            color: white;
             border: none;
-            font-size: 1.5rem;
-            color: var(--gray);
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            padding: 5px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
         }
         
-        .mobile-menu-links {
-            list-style: none;
+        .admin-btn:hover {
+            background-color: #ff5252;
+            transform: scale(1.05);
+        }
+        
+        .admin-panel {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
-            text-align: left;
+            border: 3px solid #182848;
         }
         
-        .mobile-menu-links li {
-            margin-bottom: 15px;
+        .admin-panel.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
         
-        .mobile-menu-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .mobile-menu-links a i {
-            margin-right: 12px;
-            width: 25px;
+        .admin-header {
             text-align: center;
-            color: var(--primary);
-        }
-        
-        .mobile-menu-links a:hover {
-            background-color: rgba(26, 35, 126, 0.1);
-            color: var(--primary);
-            transform: translateX(5px);
-        }
-        
-        .mobile-menu-divider {
-            height: 1px;
-            background-color: rgba(0, 0, 0, 0.1);
-            margin: 20px 0;
-        }
-        
-        .mobile-menu-archives {
-            background-color: rgba(255, 171, 0, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .mobile-menu-archives h4 {
-            color: var(--dark);
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            color: #182848;
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         
-        .mobile-menu-archives h4 i {
-            margin-right: 10px;
-            color: var(--accent);
+        .admin-header h2 {
+            font-size: 2rem;
         }
         
-        .archive-item {
-            padding: 8px 0;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
-        }
-        
-        .archive-item:last-child {
-            border-bottom: none;
-        }
-        
-        .archive-item a {
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .archive-item a i {
-            margin-right: 8px;
-            color: var(--secondary);
-            font-size: 0.8rem;
-        }
-        
-        .mobile-menu-login {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(26, 35, 126, 0.05);
-            border-radius: 10px;
-        }
-        
-        .mobile-menu-login h4 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .login-form input {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .login-form button {
-            background-color: var(--accent);
-            color: var(--dark);
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .login-form button:hover {
-            background-color: #ff8f00;
-            color: white;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--primary-dark);
-            color: white;
-            padding: 70px 0 30px;
-        }
-        
-        .footer-content {
+        .admin-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
         
-        .footer-logo {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: white;
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 5px solid #4b6cb7;
         }
         
-        .footer-about p {
-            margin-bottom: 20px;
-            opacity: 0.8;
+        .stat-card h3 {
+            color: #182848;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
         }
         
-        .coordinateur-footer {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
-        .coordinateur-footer h4 {
-            color: var(--accent);
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        
-        .coordinateur-footer p {
-            margin-bottom: 5px;
-            font-size: 0.95rem;
-        }
-        
-        .footer-links h3, .footer-contact h3 {
+        .results-table th {
+            background-color: #182848;
             color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .results-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .results-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .export-btn {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .export-btn:hover {
+            background-color: #3a56a4;
+            transform: scale(1.05);
+        }
+        
+        .auth-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            margin: 50px auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-form h2 {
+            text-align: center;
             margin-bottom: 25px;
+            color: #182848;
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .auth-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-form button:hover {
+            background-color: #3a56a4;
+        }
+        
+        .auth-message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .auth-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .auth-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .family-members {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .member-btn {
+            padding: 18px 30px;
             font-size: 1.3rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .footer-links ul {
-            list-style: none;
+        .member-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
         
-        .footer-links li {
-            margin-bottom: 12px;
+        .member-btn i {
+            font-size: 1.5rem;
         }
         
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
+        #aubaine-btn {
+            background-color: #3498db;
+            color: white;
         }
         
-        .footer-links a:hover {
-            color: var(--accent);
-            padding-left: 5px;
+        #moise-btn {
+            background-color: #2ecc71;
+            color: white;
         }
         
-        .footer-contact p {
+        #credo-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .instructions {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #4b6cb7;
+        }
+        
+        .instructions h3 {
+            color: #182848;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
-            opacity: 0.8;
+            gap: 10px;
         }
         
-        .footer-contact i {
-            margin-right: 10px;
-            color: var(--accent);
+        .instructions ul {
+            padding-left: 20px;
         }
         
-        .social-icons {
-            display: flex;
-            gap: 15px;
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .content-area {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             margin-top: 20px;
         }
         
-        .social-icons a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
-        .social-icons a:hover {
-            background-color: var(--secondary);
-            transform: translateY(-3px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-        
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
+        .active-content {
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .hero-content {
-                flex-direction: column;
-            }
-            
-            .hero-text {
-                padding-right: 0;
-                margin-bottom: 60px;
-                text-align: center;
-            }
-            
-            .hero-btns {
-                justify-content: center;
-            }
-            
-            .floating-elements {
-                height: 300px;
-            }
-            
-            .about-content {
-                flex-direction: column;
-            }
+        .content-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .content-header h2 {
+            color: #182848;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .content-header .member-role {
+            font-size: 1.1rem;
+            color: #4b6cb7;
+            font-weight: 600;
+        }
+        
+        .questions-container {
+            margin-bottom: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: #4b6cb7;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .question-text {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        
+        .option {
+            padding: 10px 15px;
+            background-color: white;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        
+        .option:hover {
+            background-color: #f8f9fa;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background-color: #d1ecf1;
+            border-color: #3498db;
+            color: #0c5460;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .option input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .results-panel {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .results-panel h3 {
+            margin-bottom: 20px;
+            color: #182848;
+        }
+        
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4b6cb7;
+            margin: 20px 0;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .feedback.good {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+        
+        .feedback.average {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+        
+        .feedback.poor {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+        
+        .coaching-area {
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .coaching-area h4 {
+            color: #182848;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .coaching-area p {
+            margin-bottom: 15px;
+        }
+        
+        .coaching-tip {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-style: italic;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .submit-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: #3a56a4;
+            transform: scale(1.05);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        /* Styles pour les erreurs dans le panel admin */
+        .error-details {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .error-details h4 {
+            color: #182848;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .error-list {
+            list-style-type: none;
+        }
+        
+        .error-item {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-left: 4px solid #dc3545;
+            border-radius: 5px;
+        }
+        
+        .error-question {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .error-answer {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .error-correct {
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .error-wrong {
+            color: #dc3545;
+            font-weight: 500;
+        }
+        
+        .member-selector {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .member-selector-btn {
+            padding: 8px 15px;
+            background-color: #e9ecef;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .member-selector-btn:hover {
+            background-color: #dee2e6;
+        }
+        
+        .member-selector-btn.active {
+            background-color: #4b6cb7;
+            color: white;
+            border-color: #4b6cb7;
         }
         
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: flex;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-            
-            section {
-                padding: 60px 0;
-            }
-            
-            .faculties-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            }
-            
-            .institutional-badge {
-                flex-direction: column;
-                text-align: center;
-                padding: 20px;
-            }
-            
-            .badge-icon {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
-            
-            .mobile-menu-btn {
-                display: flex;
-                font-size: 1.8rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero-text h1 {
-                font-size: 2rem;
-            }
-            
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
+            .member-btn {
                 width: 100%;
-                max-width: 300px;
+                justify-content: center;
             }
             
-            .form-body {
-                padding: 30px 20px;
-            }
-            
-            .faculties-grid {
+            .options {
                 grid-template-columns: 1fr;
             }
             
-            .faculty-actions {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .admin-btn {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-table {
+                font-size: 0.9rem;
+            }
+            
+            .results-table th, .results-table td {
+                padding: 10px;
+            }
+            
+            .questions-container {
+                max-height: 500px;
+            }
+            
+            .member-selector {
                 flex-direction: column;
-                gap: 10px;
-            }
-            
-            .faculty-actions .btn {
-                width: 100%;
-            }
-            
-            .about-stats {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .stat-item {
-                width: 100%;
-                max-width: 250px;
-            }
-            
-            .mobile-menu-content {
-                padding: 20px;
-            }
-            
-            .mobile-menu-links a {
-                font-size: 1rem;
-                padding: 10px 12px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header & Navigation -->
-    <header>
-        <div class="container nav-container">
-            <a href="#" class="logo">
-                <i class="fas fa-graduation-cap logo-icon"></i>
-                <div class="logo-text">Excellentia <span>Academia</span></div>
-            </a>
+    <div class="header">
+        <h1><i class="fas fa-book-open"></i> Devoirs de Français - Famille Singa</h1>
+        <p>Thème : Accord du participe passé - 50 questions par personne<br>Chaque membre a son propre questionnaire unique</p>
+        <button class="admin-btn" id="admin-panel-btn">
+            <i class="fas fa-lock"></i> Accès Admin
+        </button>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-header">
+            <i class="fas fa-chart-bar fa-2x"></i>
+            <h2>Tableau de Bord Administrateur</h2>
+        </div>
+        
+        <div id="auth-form" class="auth-form">
+            <h2><i class="fas fa-user-shield"></i> Connexion Admin</h2>
+            <input type="password" id="admin-password" placeholder="Mot de passe admin" autocomplete="off">
+            <button id="admin-login-btn">Se connecter</button>
+            <div id="auth-message" class="auth-message"></div>
+        </div>
+        
+        <div id="admin-content" style="display: none;">
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total Participants</h3>
+                    <div class="stat-value" id="total-participants">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Moyenne Générale</h3>
+                    <div class="stat-value" id="average-score">0%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Meilleur Score</h3>
+                    <div class="stat-value" id="best-score">0/50</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Dernière Activité</h3>
+                    <div class="stat-value" id="last-activity">--</div>
+                </div>
+            </div>
             
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#accueil"><i class="fas fa-home"></i> Accueil</a></li>
-                <li><a href="#apropos"><i class="fas fa-info-circle"></i> À Propos</a></li>
-                <li><a href="#facultes"><i class="fas fa-university"></i> Facultés</a></li>
-                <li><a href="#activites"><i class="fas fa-tasks"></i> Activités</a></li>
-                <li><a href="#evenements"><i class="fas fa-calendar-alt"></i> Événements</a></li>
-                <li><a href="#inscription" class="btn btn-small"><i class="fas fa-user-plus"></i> Adhérer</a></li>
-                <li><a href="#" class="btn btn-small btn-login" id="desktopLoginBtn"><i class="fas fa-sign-in-alt"></i> Connexion</a></li>
-            </ul>
+            <h3><i class="fas fa-table"></i> Résultats Détailés</h3>
             
-            <!-- Bouton Menu Mobile AMÉLIORÉ -->
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu mobile">
-                <i class="fas fa-bars"></i>
+            <!-- Sélecteur de membre pour filtrer les résultats -->
+            <div class="member-selector" id="member-selector">
+                <button class="member-selector-btn active" data-member="all">Tous</button>
+                <button class="member-selector-btn" data-member="credo">Credo</button>
+                <button class="member-selector-btn" data-member="moise">Moïse</button>
+                <button class="member-selector-btn" data-member="aubaine">Aubaine</button>
+            </div>
+            
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Participant</th>
+                        <th>Score</th>
+                        <th>Pourcentage</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="results-table-body">
+                    <!-- Results will be populated here -->
+                </tbody>
+            </table>
+            
+            <!-- Zone d'affichage des erreurs détaillées -->
+            <div class="error-details" id="error-details" style="display: none;">
+                <h4><i class="fas fa-exclamation-circle"></i> Erreurs détaillées - <span id="selected-member-name"></span></h4>
+                <div id="errors-list"></div>
+            </div>
+            
+            <button class="export-btn" id="export-btn">
+                <i class="fas fa-download"></i> Exporter les Résultats
             </button>
         </div>
-    </header>
-
-    <!-- Mobile Menu Overlay AMÉLIORÉ -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-content">
-            <div class="mobile-menu-header">
-                <div class="mobile-menu-logo">
-                    <i class="fas fa-graduation-cap"></i> Excellentia Academia
-                </div>
-                <button class="mobile-menu-close" id="closeMobileMenu">
-                    <i class="fas fa-times"></i>
-                </button>
+    </div>
+    
+    <div class="family-members">
+        <button class="member-btn" id="aubaine-btn">
+            <i class="fas fa-user-graduate"></i> Aubaine
+        </button>
+        
+        <button class="member-btn" id="moise-btn">
+            <i class="fas fa-user-graduate"></i> Moïse
+        </button>
+        
+        <button class="member-btn" id="credo-btn">
+            <i class="fas fa-user-graduate"></i> Credo
+        </button>
+    </div>
+    
+    <div class="instructions">
+        <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+        <ul>
+            <li>Chaque membre de la famille a <strong>50 questions uniques et différentes</strong>.</li>
+            <li><strong>Cliquez sur votre nom pour commencer votre devoir.</strong> Aucun exercice ne s'affiche avant que vous ne cliquiez.</li>
+            <li><strong>Credo (Niveau Intermédiaire)</strong> : 50 questions sur l'accord du participe passé</li>
+            <li><strong>Moïse (Niveau Moyen)</strong> : 50 questions plus exigeantes sur l'accord du participe passé</li>
+            <li><strong>Aubaine (Niveau Difficile)</strong> : 50 questions sur les verbes pronominaux et constructions complexes</li>
+            <li><strong>Les résultats sont automatiquement sauvegardés dans la base de données.</strong></li>
+        </ul>
+    </div>
+    
+    <!-- Aucun contenu affiché au départ -->
+    <div id="no-content" class="content-area" style="display: none; text-align: center; padding: 50px;">
+        <h2><i class="fas fa-hand-pointer"></i> Sélectionnez votre nom pour commencer</h2>
+        <p>Cliquez sur votre nom dans les boutons ci-dessus pour afficher votre devoir.</p>
+    </div>
+    
+    <!-- Credo's Content -->
+    <div id="credo-content" class="content-area">
+        <div class="content-header">
+            <h2>Devoir de Credo - Niveau Intermédiaire</h2>
+            <p class="member-role">50 questions sur l'accord du participe passé</p>
+        </div>
+        
+        <div class="coaching-area">
+            <h4><i class="fas fa-chalkboard-teacher"></i> Rôle du Coach</h4>
+            <p>En tant que coach, vous devez non seulement répondre aux questions, mais aussi comprendre les règles derrière chaque réponse.</p>
+            <p>Pour chaque question, nous vous fournirons un conseil pédagogique pour vous aider à expliquer la bonne réponse.</p>
+            
+            <div class="coaching-tip">
+                <strong>Conseil du jour :</strong> Le participe passé s'accorde avec le complément d'objet direct (COD) quand il est placé avant le verbe.
             </div>
-            
-            <ul class="mobile-menu-links">
-                <li><a href="#accueil"><i class="fas fa-home"></i> Accueil</a></li>
-                <li><a href="#apropos"><i class="fas fa-info-circle"></i> À Propos</a></li>
-
-
-
-                <li><a href="#facultes"><i class="fas fa-university"></i> 13 Facultés</a></li>
-                <li><a href="#activites"><i class="fas fa-tasks"></i> Activités</a></li>
-                <li><a href="#evenements"><i class="fas fa-calendar-alt"></i> Événements</a></li>
-                <li><a href="#inscription"><i class="fas fa-user-plus"></i> Adhésion</a></li>
-            </ul>
-            
-            <div class="mobile-menu-divider"></div>
-            
-            <!-- Section Archives Professionnelles -->
-            <div class="mobile-menu-archives">
-                <h4><i class="fas fa-archive"></i> Archives des Activités</h4>
-                <div class="archive-item">
-                    <a href="#"><i class="fas fa-trophy"></i> Concours d'Éloquence 2023</a>
-                </div>
-                <div class="archive-item">
-                    <a href="#"><i class="fas fa-microscope"></i> Semaine de la Recherche 2023</a>
-                </div>
-                <div class="archive-item">
-                    <a href="#"><i class="fas fa-users"></i> Camp de Leadership 2023</a>
-                </div>
-                <div class="archive-item">
-                    <a href="#"><i class="fas fa-graduation-cap"></i> Cérémonie d'Excellence 2023</a>
-                </div>
-                <div class="archive-item">
-                    <a href="#"><i class="fas fa-chart-line"></i> Forum Entrepreneurial 2023</a>
-                </div>
-            </div>
-            
-            <!-- Formulaire de Connexion -->
-            <div class="mobile-menu-login">
-                <h4><i class="fas fa-sign-in-alt"></i> Connexion Membre</h4>
-                <form class="login-form" id="mobileLoginForm">
-                    <input type="email" placeholder="Adresse email" required>
-                    <input type="password" placeholder="Mot de passe" required>
-                    <button type="submit"><i class="fas fa-lock"></i> Se connecter</button>
-                </form>
-                <p style="font-size: 0.8rem; margin-top: 10px; color: var(--gray);">
-                    <i class="fas fa-info-circle"></i> Accès réservé aux membres actifs
-                </p>
-            </div>
-            
-            <div class="mobile-menu-contact">
-                <h4><i class="fas fa-user-tie"></i> Fondateur</h4>
-                <p><strong>MALALE MUSAO Credo</strong></p>
-                <p>Coordonnateur Général</p>
-                <p>Master 1 Droit International</p>
-            </div>
+        </div>
+        
+        <div class="questions-container" id="credo-questions">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+        
+        <button class="submit-btn" id="credo-submit">Soumettre mes réponses</button>
+        
+        <div class="results-panel" id="credo-results" style="display: none;">
+            <h3>Résultats de Credo</h3>
+            <div class="score">Score: <span id="credo-score">0</span>/50</div>
+            <div class="feedback" id="credo-feedback"></div>
+            <p><i class="fas fa-database"></i> Résultats sauvegardés dans la base de données</p>
         </div>
     </div>
-
-    <!-- Institutional Badge -->
-    <div class="institutional-identity">
-        <div class="container">
-            <div class="institutional-badge">
-                <div class="badge-icon">
-                    <i class="fas fa-university"></i>
-                </div>
-                <div class="badge-content">
-                    <h3>Structure Académique Officielle UNIKIN</h3>
-                    <p>Reconnue par l'Université de Kinshasa • N° STAE-UNIKIN-2023-001</p>
-                </div>
-            </div>
+    
+    <!-- Moïse's Content -->
+    <div id="moise-content" class="content-area">
+        <div class="content-header">
+            <h2>Devoir de Moïse - Niveau Moyen</h2>
+            <p class="member-role">50 questions plus exigeantes sur l'accord du participe passé</p>
+        </div>
+        
+        <div class="questions-container" id="moise-questions">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+        
+        <button class="submit-btn" id="moise-submit">Soumettre mes réponses</button>
+        
+        <div class="results-panel" id="moise-results" style="display: none;">
+            <h3>Résultats de Moïse</h3>
+            <div class="score">Score: <span id="moise-score">0</span>/50</div>
+            <div class="feedback" id="moise-feedback"></div>
+            <p><i class="fas fa-database"></i> Résultats sauvegardés dans la base de données</p>
         </div>
     </div>
-
-    <!-- Hero Section -->
-    <section class="hero" id="accueil">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1>Élever l'intelligence, <span>inspirer l'excellence.</span></h1>
-                    <p>Excellentia Academia est la <strong>Structure Académique Officielle</strong> d'accompagnement et de développement des compétences des étudiants de l'Université de Kinshasa. Notre mission est de former une élite académique polyvalente et engagée dans les 13 facultés.</p>
-                    
-                    <div class="coordinateur-info">
-                        <h4><i class="fas fa-user-tie"></i> Coordonnateur Général & Fondateur</h4>
-                        <p><strong>MALALE MUSAO Credo</strong></p>
-                        <p>Étudiant en Master 1 Droit, Département de Droit International Public et Relations Internationales</p>
-                        <p><i class="fas fa-envelope"></i> contact@excellentia-academia.unikin.cd</p>
-                    </div>
-                    
-                    <div class="hero-btns">
-                        <a href="#inscription" class="btn"><i class="fas fa-user-plus"></i> Devenir Membre</a>
-                        <a href="#apropos" class="btn btn-outline"><i class="fas fa-info-circle"></i> Notre Histoire</a>
-                        <a href="#activites" class="btn btn-outline"><i class="fas fa-tasks"></i> Nos Activités</a>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="floating-elements">
-                        <div class="floating-element element-1">
-                            <i class="fas fa-university floating-icon"></i>
-                            <div class="floating-text">Structure Centrale</div>
-                            <small>+13 Clubs Facultaires</small>
-                        </div>
-                        <div class="floating-element element-2">
-                            <i class="fas fa-trophy floating-icon"></i>
-                            <div class="floating-text">Concours Académiques</div>
-                            <small>Inter-facultés</small>
-                        </div>
-                        <div class="floating-element element-3">
-                            <i class="fas fa-users floating-icon"></i>
-                            <div class="floating-text">Accompagnement</div>
-                            <small>Expert & Personnalisé</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    
+    <!-- Aubaine's Content -->
+    <div id="aubaine-content" class="content-area">
+        <div class="content-header">
+            <h2>Devoir d'Aubaine - Niveau Difficile</h2>
+            <p class="member-role">50 questions sur les verbes pronominaux et constructions complexes</p>
         </div>
-    </section>
-
-    <!-- Section À Propos -->
-    <section class="about" id="apropos">
-        <div class="container">
-            <h2 class="section-title">À Propos d'Excellentia Academia</h2>
-            
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>Notre Histoire & Mission</h3>
-                    <p>Fondée en 2023 par <strong>MALALE MUSAO Credo</strong>, étudiant en Master 1 Droit International Public et Relations Internationales, Excellentia Academia est née d'une vision ambitieuse : créer une structure académique d'excellence qui transcende les frontières facultaires et unisse les étudiants les plus brillants de l'Université de Kinshasa.</p>
-                    
-                    <p>Notre mission est triple :</p>
-                    <ul style="margin: 20px 0 20px 30px;">
-                        <li><strong>Promouvoir l'excellence académique</strong> à travers toutes les facultés de l'UNIKIN</li>
-                        <li><strong>Développer les compétences transversales</strong> essentielles à la réussite professionnelle</li>
-                        <li><strong>Créer un réseau d'élites étudiantes</strong> engagées pour le développement de la RDC</li>
-                    </ul>
-                    
-                    <p>Excellentia Academia fonctionne selon un modèle unique : une <strong>structure centrale</strong> qui coordonne et chapeaute 13 <strong>clubs facultaires spécialisés</strong>, permettant ainsi une approche à la fois unifiée et adaptée aux spécificités de chaque domaine d'étude.</p>
-                    
-                    <h4 style="margin-top: 30px;">Notre Vision</h4>
-                    <p>Devenir la référence en matière d'excellence académique en RDC, en formant une nouvelle génération de leaders intellectuels capables de contribuer significativement au développement national et continental.</p>
-                </div>
-                
-                <div class="about-visual">
-                    <div style="background-color: var(--primary-light); color: white; padding: 30px; border-radius: 15px; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                        <h3 style="color: white; margin-bottom: 20px;"><i class="fas fa-bullseye"></i> Nos Valeurs</h3>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="color: var(--accent); margin-bottom: 5px;"><i class="fas fa-star"></i> Excellence</h4>
-                            <p style="color: rgba(255,255,255,0.9);">Nous visons la perfection dans chaque domaine académique.</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="color: var(--accent); margin-bottom: 5px;"><i class="fas fa-handshake"></i> Intégrité</h4>
-                            <p style="color: rgba(255,255,255,0.9);">Nous agissons avec éthique et transparence.</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="color: var(--accent); margin-bottom: 5px;"><i class="fas fa-users"></i> Solidarité</h4>
-                            <p style="color: rgba(255,255,255,0.9);">Nous travaillons ensemble pour la réussite de tous.</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <h4 style="color: var(--accent); margin-bottom: 5px;"><i class="fas fa-lightbulb"></i> Innovation</h4>
-                            <p style="color: rgba(255,255,255,0.9);">Nous encourageons la créativité et les nouvelles idées.</p>
-                        </div>
-                        
-                        <div>
-                            <h4 style="color: var(--accent); margin-bottom: 5px;"><i class="fas fa-globe-africa"></i> Leadership</h4>
-                            <p style="color: rgba(255,255,255,0.9);">Nous formons les leaders de demain pour l'Afrique.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="about-stats">
-                <div class="stat-item">
-                    <div class="stat-number">13</div>
-                    <div class="stat-label">Facultés</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Activités organisées</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Membres actifs</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">15</div>
-                    <div class="stat-label">Partenariats</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Engagement</div>
-                </div>
-            </div>
+        
+        <div class="questions-container" id="aubaine-questions">
+            <!-- Questions will be inserted here by JavaScript -->
         </div>
-    </section>
-
-    <!-- Facultés Section -->
-    <section class="faculties" id="facultes">
-        <div class="container">
-            <h2 class="section-title">13 Facultés de l'Université de Kinshasa</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--gray);">Excellentia Academia est structurée en 1 <strong>Structure Centrale</strong> et 13 <strong>Clubs Facultaires</strong>, chacun avec son équipe de direction dédiée.</p>
-            
-            <div class="faculties-grid">
-                <!-- Faculté 1 - Sciences et Technologies -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #1a237e;">
-                        <i class="fas fa-flask"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Sciences et Technologies</h3>
-                        <p>Laboratoires de recherche, olympiades scientifiques, hackathons et développement de projets innovants en sciences fondamentales et appliquées.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('sciences-tech')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('sciences-tech')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 2 - Lettres et Sciences Humaines -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #d32f2f;">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Lettres et Sciences Humaines</h3>
-                        <p>Ateliers d'écriture créative, clubs de philosophie et de littérature, conférences interdisciplinaires et projets culturels.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('lettres')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('lettres')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 3 - Sciences Économiques et de Gestion -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #388e3c;">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Sciences Économiques et de Gestion</h3>
-                        <p>Clubs d'analyse économique, compétitions de trading, ateliers d'économétrie, simulations boursières et projets de recherche économique.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('economie')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('economie')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 4 - Sciences Sociales, Administratives et Politiques -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #7b1fa2;">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Sciences Sociales, Administratives et Politiques</h3>
-                        <p>Débats politiques, analyses sociologiques, simulations administratives et recherches sur les politiques publiques.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('sciences-sociales')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('sciences-sociales')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 5 - Droit -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #f57c00;">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Droit</h3>
-                        <p>Clubs de plaidoirie, concours de procès simulés, ateliers de rédaction juridique, moots courts et préparation aux examens du barreau.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('droit')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('droit')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 6 - Polytechnique -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #00796b;">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Polytechnique</h3>
-                        <p>Projets d'ingénierie, compétitions de robotique, ateliers de conception assistée par ordinateur et innovations technologiques.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('polytechnique')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('polytechnique')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 7 - Sciences Pharmaceutiques -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #5d4037;">
-                        <i class="fas fa-pills"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Sciences Pharmaceutiques</h3>
-                        <p>Ateliers de pharmacologie, recherche pharmaceutique, préparation aux concours, stages pratiques et développement de médicaments.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('pharma')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('pharma')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 8 - Médecine Dentaire -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #0288d1;">
-                        <i class="fas fa-tooth"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Médecine Dentaire</h3>
-                        <p>Ateliers de techniques dentaires, recherches en odontologie, simulations cliniques et innovations en santé bucco-dentaire.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('dentaire')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('dentaire')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 9 - Médecine Vétérinaire -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #c2185b;">
-                        <i class="fas fa-paw"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Médecine Vétérinaire</h3>
-                        <p>Cliniques vétérinaires étudiantes, recherche en santé animale, ateliers de chirurgie et prévention des zoonoses.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('veto')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('veto')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 10 - Pétrole, Gaz et Énergies Renouvelables -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #303f9f;">
-                        <i class="fas fa-gas-pump"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Pétrole, Gaz et Énergies Renouvelables</h3>
-                        <p>Projets énergétiques, recherche sur les énergies alternatives, simulations d'exploitation et gestion des ressources énergétiques.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('petrole')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('petrole')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 11 - Sciences Agronomiques -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #689f38;">
-                        <i class="fas fa-seedling"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Sciences Agronomiques</h3>
-                        <p>Projets agricoles innovants, recherche agronomique, ateliers de transformation des produits et gestion des exploitations.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('agronomie')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('agronomie')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 12 - Médecine -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #e64a19;">
-                        <i class="fas fa-stethoscope"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Médecine</h3>
-                        <p>Groupes d'étude avancée, simulations médicales, recherche clinique, préparation aux résidanats et innovations médicales.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('medecine')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('medecine')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Faculté 13 - Psychologie et Sciences de l'Éducation -->
-                <div class="faculty-card">
-                    <div class="faculty-icon" style="background-color: #5d4037;">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <div class="faculty-content">
-                        <h3>Faculté de Psychologie et Sciences de l'Éducation</h3>
-                        <p>Ateliers de psychologie appliquée, recherche en sciences éducatives, interventions psychosociales et innovations pédagogiques.</p>
-                        
-                        <div class="faculty-leadership">
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Président du Club</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                            <div class="leader">
-                                <div class="leader-icon">
-                                    <i class="fas fa-user-friends"></i>
-                                </div>
-                                <div class="leader-info">
-                                    <h5>Vice-Président</h5>
-                                    <p>À désigner</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="faculty-actions">
-                            <button class="btn btn-small btn-primary" onclick="showFacultyDetails('psycho')">
-                                <i class="fas fa-info-circle"></i> Détails
-                            </button>
-                            <button class="btn btn-small" onclick="joinFaculty('psycho')">
-                                <i class="fas fa-user-plus"></i> Rejoindre
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        
+        <button class="submit-btn" id="aubaine-submit">Soumettre mes réponses</button>
+        
+        <div class="results-panel" id="aubaine-results" style="display: none;">
+            <h3>Résultats d'Aubaine</h3>
+            <div class="score">Score: <span id="aubaine-score">0</span>/50</div>
+            <div class="feedback" id="aubaine-feedback"></div>
+            <p><i class="fas fa-database"></i> Résultats sauvegardés dans la base de données</p>
         </div>
-    </section>
+    </div>
+    
+    <div class="footer">
+        <p>Devoirs de français - Famille Singa © 2023 | Thème : Accord du participe passé</p>
+        <p>Total : 150 questions uniques (50 par personne) | Système de suivi administrateur activé</p>
+    </div>
 
-    <!-- Activités Section -->
-    <section class="activities" id="activites">
-        <div class="container">
-            <h2 class="section-title">Nos Activités & Programmes</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--gray);">Découvrez nos activités structurées pour développer l'excellence académique dans les 13 facultés de l'UNIKIN.</p>
-            
-            <div class="activities-tabs">
-                <button class="tab-btn active" data-tab="programmes"><i class="fas fa-calendar-check"></i> Programmes récurrents</button>
-                <button class="tab-btn" data-tab="concours"><i class="fas fa-trophy"></i> Concours inter-facultés</button>
-                <button class="tab-btn" data-tab="accompagnement"><i class="fas fa-hands-helping"></i> Accompagnement académique</button>
-                <button class="tab-btn" data-tab="activites-specifiques"><i class="fas fa-tasks"></i> Activités spécifiques</button>
-            </div>
-            
-            <div class="tab-content active" id="programmes">
-                <div class="activity-grid">
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #1a237e;"></div>
-                        <div class="activity-content">
-                            <h3>Clubs d'excellence par faculté</h3>
-                            <p>13 clubs spécialisés, un par faculté, pour approfondir les connaissances disciplinaires et préparer les compétitions académiques nationales et internationales.</p>
-                            <a href="#inscription" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-users"></i> Rejoindre mon club</a>
-                        </div>
-                    </div>
-                    
-
-
-                        <div class="activity-img" style="background-color: #d32f2f;"></div>
-                        <div class="activity-content">
-                            <h3>Ateliers d'écriture académique</h3>
-                            <p>Formations à la rédaction scientifique, méthodologie de recherche, et techniques de rédaction de mémoires, thèses et articles scientifiques.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Voir calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #388e3c;"></div>
-                        <div class="activity-content">
-                            <h3>Formations soft skills</h3>
-                            <p>Développement des compétences transversales : prise de parole, leadership, gestion du temps, rédaction de CV, entretiens et intelligence émotionnelle.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Voir calendrier</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="concours">
-                <div class="activity-grid">
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #7b1fa2;"></div>
-                        <div class="activity-content">
-                            <h3>Concours d'éloquence inter-facultés</h3>
-                            <p>Compétition d'art oratoire entre les 13 facultés sur des sujets d'actualité et académiques. Prix pour les meilleurs orateurs de chaque faculté.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #f57c00;"></div>
-                        <div class="activity-content">
-                            <h3>Olympiades scientifiques UNIKIN</h3>
-                            <p>Compétitions de résolution de problèmes complexes en mathématiques, physique, chimie, biologie et informatique entre facultés scientifiques.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #00796b;"></div>
-                        <div class="activity-content">
-                            <h3>Quiz académique des 13 facultés</h3>
-                            <p>Jeu-questionnaire couvrant tous les domaines de connaissance. Équipes mixtes inter-facultés encouragées pour favoriser l'interdisciplinarité.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="accompagnement">
-                <div class="activity-grid">
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #1a237e;"></div>
-                        <div class="activity-content">
-                            <h3>Camp de préparation aux examens</h3>
-                            <p>Sessions intensives de révision avant les examens avec professeurs et étudiants mentors dans chaque faculté. Méthodologie de travail adaptée.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #d32f2f;"></div>
-                        <div class="activity-content">
-                            <h3>Mentorat par les anciens et experts</h3>
-                            <p>Accompagnement personnalisé par des diplômés excellents et professionnels dans chaque domaine pour guider les projets académiques et professionnels.</p>
-                            <a href="#inscription" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-user-plus"></i> Demander un mentor</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #388e3c;"></div>
-                        <div class="activity-content">
-                            <h3>Préparation TFC/Mémoire/Thèse</h3>
-                            <p>Ateliers spécialisés pour la rédaction du Travail de Fin de Cycle, mémoire ou thèse, avec suivi individualisé par des experts disciplinaires.</p>
-                            <a href="#inscription" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-plus"></i> Réserver une session</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="activites-specifiques">
-                <div class="activity-grid">
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #7b1fa2;"></div>
-                        <div class="activity-content">
-                            <h3>Séminaires de recherche</h3>
-                            <p>Présentations de travaux de recherche par des étudiants avancés et des professeurs pour développer la culture de la recherche scientifique.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #f57c00;"></div>
-                        <div class="activity-content">
-                            <h3>Visites académiques</h3>
-                            <p>Visites d'institutions professionnelles, entreprises et centres de recherche pour le développement professionnel des membres.</p>
-                            <a href="#evenements" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Calendrier</a>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-card">
-                        <div class="activity-img" style="background-color: #00796b;"></div>
-                        <div class="activity-content">
-                            <h3>Projets communautaires</h3>
-                            <p>Initiatives sociales et communautaires pour appliquer les connaissances académiques au service du développement de la communauté.</p>
-                            <a href="#inscription" class="btn" style="margin-top: 15px; padding: 8px 20px; font-size: 0.9rem;"><i class="fas fa-hands-helping"></i> Participer</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Événements Section -->
-    <section class="events" id="evenements">
-        <div class="container">
-            <h2 class="section-title">Événements à Venir</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--gray);">Ne manquez pas nos événements phares qui rassemblent l'élite académique des 13 facultés de l'Université de Kinshasa.</p>
-            
-            <div class="events-grid">
-                <div class="event-card">
-                    <div class="event-date">
-                        <div class="day">15</div>
-                        <div class="month">Octobre</div>
-                    </div>
-                    <div class="event-content">
-                        <h3>Semaine de l'Excellence UNIKIN</h3>
-                        <p>Exposition des projets étudiants des 13 facultés, panels de discussion avec des experts internationaux, et cérémonie de remise des prix d'excellence académique.</p>
-                        <div class="event-meta">
-                            <span><i class="far fa-clock"></i> 9h-18h</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Campus Principal UNIKIN</span>
-                        </div>
-                        <a href="#inscription" class="btn" style="margin-top: 20px; padding: 10px 25px; font-size: 0.9rem;"><i class="fas fa-user-plus"></i> S'inscrire</a>
-                    </div>
-                </div>
-                
-                <div class="event-card">
-                    <div class="event-date">
-                        <div class="day">28</div>
-                        <div class="month">Octobre</div>
-                    </div>
-                    <div class="event-content">
-                        <h3>Finale du Concours d'Éloquence</h3>
-                        <p>Finale inter-facultés du concours d'art oratoire avec participation des 13 facultés. Thème : "L'excellence académique au service du développement de la RDC".</p>
-                        <div class="event-meta">
-                            <span><i class="far fa-clock"></i> 14h-17h</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Amphithéâtre Kwame Nkrumah</span>
-                        </div>
-                        <a href="#inscription" class="btn" style="margin-top: 20px; padding: 10px 25px; font-size: 0.9rem;"><i class="fas fa-user-plus"></i> S'inscrire</a>
-                    </div>
-                </div>
-                
-                <div class="event-card">
-                    <div class="event-date">
-                        <div class="day">05</div>
-                        <div class="month">Novembre</div>
-                    </div>
-                    <div class="event-content">
-                        <h3>Camp de Préparation aux Examens</h3>
-                        <p>Session intensive de révision dans les 13 facultés avec les meilleurs professeurs et étudiants mentors. Méthodologie adaptée à chaque discipline.</p>
-                        <div class="event-meta">
-                            <span><i class="far fa-clock"></i> 8h-20h</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Bibliothèque Centrale UNIKIN</span>
-                        </div>
-                        <a href="#inscription" class="btn" style="margin-top: 20px; padding: 10px 25px; font-size: 0.9rem;"><i class="fas fa-user-plus"></i> S'inscrire</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 50px;">
-                <a href="#evenements" class="btn btn-primary"><i class="fas fa-calendar-alt"></i> Voir tous les événements</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Formulaire d'Inscription -->
-    <section class="registration" id="inscription">
-        <div class="container">
-            <h2 class="section-title">Devenir Membre d'Excellentia Academia</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 50px; color: var(--gray);">Rejoignez notre structure d'excellence et bénéficiez de tous nos programmes, événements et accompagnements personnalisés dans votre faculté.</p>
-            
-            <div class="form-container">
-                <div class="form-header">
-                    <h2>Formulaire d'Adhésion</h2>
-                    <p>Remplissez ce formulaire pour rejoindre la structure Excellentia Academia</p>
-                </div>
-                
-                <!-- FORMSPREE FORM -->
-                <form class="form-body" action="https://formspree.io/f/mldqkngp" method="POST" id="registrationForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">Prénom *</label>
-                            <input type="text" id="firstName" name="Prénom" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="lastName">Nom *</label>
-                            <input type="text" id="lastName" name="Nom" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="postnom">Post-nom (Optionnel)</label>
-                            <input type="text" id="postnom" name="Postnom" class="form-control">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Adresse Email *</label>
-                            <input type="email" id="email" name="Email" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">Téléphone/WhatsApp *</label>
-                            <input type="tel" id="phone" name="Téléphone" class="form-control" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="faculty">Faculté *</label>
-                            <select id="faculty" name="Faculté" class="form-control" required>
-                                <option value="">Sélectionnez votre faculté</option>
-                                <option value="sciences_tech">Faculté de Sciences et Technologies</option>
-                                <option value="lettres">Faculté de Lettres et Sciences Humaines</option>
-                                <option value="economie">Faculté de Sciences Économiques et de Gestion</option>
-                                <option value="sciences_sociales">Faculté de Sciences Sociales, Administratives et Politiques</option>
-                                <option value="droit">Faculté de Droit</option>
-                                <option value="polytechnique">Faculté de Polytechnique</option>
-                                <option value="pharma">Faculté de Sciences Pharmaceutiques</option>
-                                <option value="dentaire">Faculté de Médecine Dentaire</option>
-                                <option value="veto">Faculté de Médecine Vétérinaire</option>
-                                <option value="petrole">Faculté de Pétrole, Gaz et Énergies Renouvelables</option>
-                                <option value="agronomie">Faculté de Sciences Agronomiques</option>
-                                <option value="medecine">Faculté de Médecine</option>
-                                <option value="psycho">Faculté de Psychologie et Sciences de l'Éducation</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="niveau">Niveau d'études *</label>
-                            <select id="niveau" name="Niveau" class="form-control" required>
-                                <option value="">Sélectionnez votre niveau</option>
-                                <option value="licence1">Licence 1</option>
-                                <option value="licence2">Licence 2</option>
-                                <option value="licence3">Licence 3</option>
-                                <option value="master1">Master 1</option>
-                                <option value="master2">Master 2</option>
-                                <option value="doctorat">Doctorat</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="interests">Centres d'intérêt * (Sélectionnez 1 ou plusieurs)</label>
-                            <select id="interests" name="Centres d'intérêt" class="form-control" multiple required>
-                                <option value="clubs">Club d'excellence de ma faculté</option>
-                                <option value="concours">Concours académiques inter-facultés</option>
-                                <option value="ateliers">Ateliers d'écriture et méthodologie</option>
-                                <option value="softskills">Formations soft skills</option>
-                                <option value="mentorat">Programme de mentorat</option>
-                                <option value="entrepreneuriat">Entrepreneuriat étudiant</option>
-                                <option value="recherche">Recherche académique et scientifique</option>
-                                <option value="international">Programmes internationaux et échanges</option>
-                                <option value="leadership">Développement du leadership</option>
-                            </select>
-                            <small style="color: var(--gray);">Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs options</small>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="message">Pourquoi voulez-vous rejoindre Excellentia Academia ? *</label>
-                            <textarea id="message" name="Motivation" class="form-control" rows="4" required placeholder="Expliquez votre motivation pour rejoindre notre structure..."></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="Consentement" required>
-                            <span>J'accepte que mes données soient traitées par Excellentia Academia pour les besoins de mon adhésion. Je comprends que je peux retirer mon consentement à tout moment.</span>
-                        </label>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem;">
-                            <i class="fas fa-paper-plane"></i> Soumettre ma candidature
-                        </button>
-                    </div>
-                    
-                    <input type="hidden" name="_subject" value="Nouvelle candidature Excellentia Academia">
-                    <input type="hidden" name="_replyto" value="contact@excellentia-academia.unikin.cd">
-                    <input type="text" name="_gotcha" style="display:none">
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">
-                        <i class="fas fa-graduation-cap"></i> Excellentia Academia
-                    </div>
-                    <p><strong>Structure Académique d'Excellence</strong> de l'Université de Kinshasa. Notre mission est de former une élite académique polyvalente et engagée dans les 13 facultés.</p>
-                    
-                    <div class="coordinateur-footer">
-                        <h4><i class="fas fa-user-tie"></i> Coordonnateur Général & Fondateur</h4>
-                        <p><strong>MALALE MUSAO Credo</strong></p>
-                        <p>Étudiant en Master 1 Droit - Droit International Public et Relations Internationales</p>
-                        <p>Fondateur de la Structure Excellentia Academia</p>
-                    </div>
-                    
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <h3>Liens Rapides</h3>
-                    <ul>
-                        <li><a href="#accueil"><i class="fas fa-home"></i> Accueil</a></li>
-                        <li><a href="#apropos"><i class="fas fa-info-circle"></i> À Propos</a></li>
-                        <li><a href="#facultes"><i class="fas fa-university"></i> 13 Facultés UNIKIN</a></li>
-                        <li><a href="#activites"><i class="fas fa-tasks"></i> Activités</a></li>
-                        <li><a href="#evenements"><i class="fas fa-calendar-alt"></i> Événements</a></li>
-                        <li><a href="#inscription"><i class="fas fa-user-plus"></i> Adhésion</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-contact">
-                    <h3>Contactez la Structure</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> Université de Kinshasa, Campus Principal</p>
-                    <p><i class="fas fa-phone"></i> +243 81 234 5678</p>
-                    <p><i class="fas fa-envelope"></i> contact@excellentia-academia.unikin.cd</p>
-                    <p><i class="far fa-clock"></i> Lundi - Vendredi: 8h00 - 18h00</p>
-                    <p><i class="fas fa-university"></i> Présent dans les 13 facultés de l'UNIKIN</p>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 Excellentia Academia - Structure Académique d'Excellence, Université de Kinshasa. Tous droits réservés.</p>
-                <p style="margin-top: 10px;">Développé avec <i class="fas fa-heart" style="color: var(--secondary);"></i> par l'équipe Excellentia Academia</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript pour les interactions -->
     <script>
-        // Menu mobile overlay - AMÉLIORÉ
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-        const closeMobileMenu = document.getElementById('closeMobileMenu');
-        const desktopLoginBtn = document.getElementById('desktopLoginBtn');
-        
-        // Fonction pour ouvrir le menu mobile
-        function openMobileMenu() {
-            mobileMenuOverlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
-        }
-        
-        // Fonction pour fermer le menu mobile
-        function closeMobileMenuFunc() {
-            mobileMenuOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-        }
-        
-        // Événements pour le menu mobile
-        mobileMenuBtn.addEventListener('click', () => {
-            if (mobileMenuOverlay.style.display === 'flex') {
-                closeMobileMenuFunc();
-            } else {
-                openMobileMenu();
-            }
-        });
-        
-        closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
-        
-        mobileMenuOverlay.addEventListener('click', (e) => {
-            if (e.target === mobileMenuOverlay) {
-                closeMobileMenuFunc();
-            }
-        });
-        
-        // Fermer le menu mobile en cliquant sur un lien
-        document.querySelectorAll('.mobile-menu-links a').forEach(link => {
-            link.addEventListener('click', closeMobileMenuFunc);
-        });
-        
-        // Connexion desktop
-        desktopLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLoginModal();
-        });
-        
-        // Connexion mobile
-        document.getElementById('mobileLoginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            closeMobileMenuFunc();
-            showLoginModal();
-        });
-        
-        // Fonction pour afficher la modale de connexion
-        function showLoginModal() {
-            const loginModal = document.createElement('div');
-            loginModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 2000;
-                animation: fadeIn 0.3s ease;
-            `;
-            
-            loginModal.innerHTML = `
-                <div style="
-                    background: white;
-                    padding: 40px;
-                    border-radius: 15px;
-                    max-width: 400px;
-                    width: 90%;
-                    text-align: center;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                    animation: slideInUp 0.4s ease;
-                ">
-                    <div style="
-                        width: 70px;
-                        height: 70px;
-                        background-color: var(--accent);
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin: 0 auto 20px;
-                    ">
-                        <i class="fas fa-lock" style="color: white; font-size: 2rem;"></i>
-                    </div>
-                    
-                    <h2 style="color: var(--primary); margin-bottom: 10px;">Connexion Membre</h2>
-                    <p style="color: var(--gray); margin-bottom: 25px;">
-                        Accès réservé aux membres actifs d'Excellentia Academia
-                    </p>
-                    
-                    <form id="loginModalForm" style="display: flex; flex-direction: column; gap: 15px;">
-                        <input type="email" placeholder="Adresse email" required style="padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-                        <input type="password" placeholder="Mot de passe" required style="padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-                        
-                        <div style="text-align: left; font-size: 0.9rem; color: var(--gray);">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" style="margin-right: 8px;">
-                                Se souvenir de moi
-                            </label>
-                        </div>
-                        
-                        <button type="submit" style="
-                            background-color: var(--primary);
-                            color: white;
-                            border: none;
-                            padding: 14px;
-                            border-radius: 8px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            font-size: 1rem;
-                        ">
-                            <i class="fas fa-sign-in-alt"></i> Se connecter
-                        </button>
-                    </form>
-                    
-                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
-                        <p style="font-size: 0.9rem; color: var(--gray);">
-                            <i class="fas fa-question-circle"></i> Problème de connexion ? 
-                            <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;">Contactez l'administration</a>
-                        </p>
-                    </div>
-                    
-                    <button id="closeLoginModal" style="
-                        background: none;
-                        border: none;
-                        color: var(--gray);
-                        font-size: 1.5rem;
-                        position: absolute;
-                        top: 15px;
-                        right: 15px;
-                        cursor: pointer;
-                    ">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(loginModal);
-            document.body.style.overflow = 'hidden';
-            
-            // Ajouter les styles d'animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes slideInUp {
-                    from { 
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to { 
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Gérer la soumission du formulaire
-            document.getElementById('loginModalForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                // Simulation de connexion
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
-                submitBtn.disabled = true;
-                
-                setTimeout(() => {
-                    // Fermer la modale
-                    document.body.removeChild(loginModal);
-                    document.head.removeChild(style);
-                    document.body.style.overflow = 'auto';
-                    
-                    // Rediriger vers la page de la faculté (simulation)
-                    alert('Connexion réussie ! Redirection vers votre espace facultaire...');
-                    // Ici, vous redirigeriez vers la page réelle de connexion
-                    // window.location.href = '/espace-membre';
-                }, 1500);
-            });
-            
-            // Fermer la modale
-            document.getElementById('closeLoginModal').addEventListener('click', () => {
-                document.body.removeChild(loginModal);
-                document.head.removeChild(style);
-                document.body.style.overflow = 'auto';
-            });
-            
-            // Fermer en cliquant à l'extérieur
-            loginModal.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    document.body.removeChild(loginModal);
-                    document.head.removeChild(style);
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        }
-        
-        // Onglets des activités
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Retirer la classe active de tous les boutons et contenus
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                // Ajouter la classe active au bouton cliqué
-                btn.classList.add('active');
-                
-                // Afficher le contenu correspondant
-                const tabId = btn.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-        
-        // Animation au défilement
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
+        // NOUVELLE Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPBq1uT7lbL9Xp_neAJh2lSe0MRErlYdo",
+            authDomain: "evoir-1.firebaseapp.com",
+            projectId: "evoir-1",
+            storageBucket: "evoir-1.firebasestorage.app",
+            messagingSenderId: "504718469638",
+            appId: "1:504718469638:web:72707fd51d0ce6ff773187",
+            measurementId: "G-ZXPC2SKJHT"
         };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Admin credentials
+        const ADMIN_PASSWORD = "legende360@";
+        const ADMIN_EMAIL = "admin@familiesinga.com";
+
+        // Questions data - 50 UNIQUE questions for each family member
+        const credoQuestions = [
+            { question: "Les exercices que j'ai ___ sont faciles.", options: ["faire", "fait", "faits", "faite"], correct: 2 },
+            { question: "La lettre que j'ai ___ est partie.", options: ["écrire", "écrit", "écrite", "écrivait"], correct: 2 },
+            { question: "Les livres que tu as ___ sont intéressants.", options: ["lire", "lu", "lus", "lue"], correct: 2 },
+            { question: "La porte qu'il a ___ était fermée.", options: ["ouvrir", "ouvert", "ouverte", "ouvrait"], correct: 2 },
+            { question: "Les leçons que les élèves ont ___ sont longues.", options: ["apprendre", "appris", "apprises", "apprenait"], correct: 2 },
+            { question: "La faute qu'elle a ___ est grave.", options: ["faire", "fait", "faite", "faisait"], correct: 2 },
+            { question: "Les fleurs qu'ils ont ___ sont fanées.", options: ["cueillir", "cueilli", "cueillies", "cueillait"], correct: 2 },
+            { question: "Les réponses que vous avez ___ sont justes.", options: ["donner", "donné", "données", "donnait"], correct: 2 },
+            { question: "Le message que j'ai ___ était clair.", options: ["écrire", "écrit", "écrite", "écrivait"], correct: 2 },
+            { question: "Les films que nous avons ___ étaient longs.", options: ["voir", "vu", "vus", "voyait"], correct: 2 },
+            { question: "La maison qu'ils ont ___ est neuve.", options: ["construire", "construit", "construite", "construisait"], correct: 2 },
+            { question: "Les phrases que tu as ___ sont correctes.", options: ["écrire", "écrit", "écrites", "écrivait"], correct: 2 },
+            { question: "Le travail qu'elle a ___ est terminé.", options: ["finir", "fini", "finie", "finissait"], correct: 2 },
+            { question: "Les cadeaux qu'ils ont ___ ont plu.", options: ["offrir", "offert", "offerts", "offrait"], correct: 2 },
+            { question: "La réponse qu'il a ___ est exacte.", options: ["donner", "donné", "donnée", "donnait"], correct: 2 },
+            { question: "Les vêtements qu'elle a ___ sont propres.", options: ["laver", "lavé", "lavés", "lavait"], correct: 2 },
+            { question: "La leçon que le professeur a ___ est claire.", options: ["expliquer", "expliqué", "expliquée", "expliquait"], correct: 2 },
+            { question: "Les devoirs que vous avez ___ sont terminés.", options: ["faire", "fait", "faits", "faisait"], correct: 2 },
+            { question: "La chanson que nous avons ___ est connue.", options: ["chanter", "chanté", "chantée", "chantait"], correct: 2 },
+            { question: "Les fruits que nous avons ___ sont mûrs.", options: ["cueillir", "cueilli", "cueillis", "cueillait"], correct: 2 },
+            { question: "La robe qu'elle a ___ est belle.", options: ["acheter", "acheté", "achetée", "achetait"], correct: 2 },
+            { question: "Les règles que tu as ___ sont claires.", options: ["lire", "lu", "lues", "lisait"], correct: 2 },
+            { question: "Le film que j'ai ___ était émouvant.", options: ["voir", "vu", "vue", "voyait"], correct: 2 },
+            { question: "Les photos qu'ils ont ___ sont belles.", options: ["prendre", "pris", "prises", "prenait"], correct: 2 },
+            { question: "La décision qu'il a ___ est juste.", options: ["prendre", "pris", "prise", "prenait"], correct: 2 },
+            { question: "Les messages que tu as ___ sont clairs.", options: ["envoyer", "envoyé", "envoyés", "envoyait"], correct: 2 },
+            { question: "La faute qu'il a ___ est reconnue.", options: ["commettre", "commis", "commise", "commettait"], correct: 2 },
+            { question: "Les livres que nous avons ___ sont nouveaux.", options: ["acheter", "acheté", "achetés", "achetait"], correct: 2 },
+            { question: "La promesse qu'il a ___ est tenue.", options: ["faire", "fait", "faite", "faisait"], correct: 2 },
+            { question: "Les erreurs qu'ils ont ___ sont corrigées.", options: ["faire", "fait", "faites", "faisait"], correct: 2 },
+            { question: "Le texte que j'ai ___ est clair.", options: ["écrire", "écrit", "écrite", "écrivait"], correct: 2 },
+            { question: "Les films que vous avez ___ sont récents.", options: ["voir", "vu", "vus", "voyait"], correct: 2 },
+            { question: "La maison qu'elle a ___ est grande.", options: ["acheter", "acheté", "achetée", "achetait"], correct: 2 },
+            { question: "Les phrases qu'ils ont ___ sont justes.", options: ["écrire", "écrit", "écrites", "écrivait"], correct: 2 },
+            { question: "La réponse qu'elle a ___ est correcte.", options: ["donner", "donné", "donnée", "donnait"], correct: 2 },
+            { question: "Les devoirs qu'ils ont ___ sont faits.", options: ["faire", "fait", "faits", "faisait"], correct: 2 },
+            { question: "La chanson qu'elle a ___ est belle.", options: ["chanter", "chanté", "chantée", "chantait"], correct: 2 },
+            { question: "Les livres que tu as ___ sont lourds.", options: ["porter", "porté", "portés", "portait"], correct: 2 },
+            { question: "La robe qu'il a ___ est neuve.", options: ["choisir", "choisi", "choisie", "choisissait"], correct: 2 },
+            { question: "Les photos que nous avons ___ sont nettes.", options: ["prendre", "pris", "prises", "prenait"], correct: 2 },
+            { question: "Le message que tu as ___ est court.", options: ["envoyer", "envoyé", "envoyée", "envoyait"], correct: 2 },
+            { question: "Les réponses que j'ai ___ sont bonnes.", options: ["recevoir", "reçu", "reçues", "recevait"], correct: 2 },
+            { question: "La règle qu'il a ___ est importante.", options: ["expliquer", "expliqué", "expliquée", "expliquait"], correct: 2 },
+            { question: "Les cadeaux que nous avons ___ ont plu.", options: ["offrir", "offert", "offerts", "offrait"], correct: 2 },
+            { question: "La faute qu'elle a ___ est grave.", options: ["faire", "fait", "faite", "faisait"], correct: 2 },
+            { question: "Les films qu'il a ___ sont intéressants.", options: ["voir", "vu", "vus", "voyait"], correct: 2 },
+            { question: "La lettre qu'elle a ___ est longue.", options: ["écrire", "écrit", "écrite", "écrivait"], correct: 2 },
+            { question: "Les décisions qu'ils ont ___ sont justes.", options: ["prendre", "pris", "prises", "prenait"], correct: 2 },
+            { question: "Le travail qu'il a ___ est bien fait.", options: ["finir", "fini", "finie", "finissait"], correct: 2 },
+            { question: "Les réponses que vous avez ___ sont exactes.", options: ["donner", "donné", "données", "donnait"], correct: 2 }
+        ];
+
+        const moiseQuestions = [
+            { question: "Les lettres que j'ai ___ sont arrivées.", options: ["écrit", "écrite", "écrits", "écrites"], correct: 3 },
+            { question: "Les fautes qu'il a ___ doivent être corrigées.", options: ["fait", "faite", "faites", "faisait"], correct: 2 },
+            { question: "Les décisions qu'elle a ___ sont justes.", options: ["pris", "prise", "prises", "prenait"], correct: 2 },
+            { question: "Les réponses qu'on lui a ___ étaient fausses.", options: ["donné", "donnée", "donnés", "donnait"], correct: 1 },
+            { question: "Les erreurs qu'elle a ___ sont graves.", options: ["commis", "commise", "commises", "commettait"], correct: 2 },
+            { question: "Les livres qu'ils ont ___ sont anciens.", options: ["lire", "lu", "lus", "lisait"], correct: 2 },
+            { question: "Les promesses qu'il a ___ n'ont pas été tenues.", options: ["fait", "faite", "faites", "faisait"], correct: 2 },
+            { question: "Les fleurs qu'elle a ___ ont fané.", options: ["cueilli", "cueillie", "cueillies", "cueillir"], correct: 2 },
+            { question: "Les films que nous avons ___ sont intéressants.", options: ["vu", "vus", "vue", "voyait"], correct: 1 },
+            { question: "Les fautes qu'ils ont ___ sont nombreuses.", options: ["commis", "commise", "commises", "commettait"], correct: 2 },
+            { question: "Les lettres qu'elle a ___ sont longues.", options: ["écrit", "écrite", "écrites", "écrivait"], correct: 2 },
+            { question: "Les règles que tu as ___ sont claires.", options: ["suivi", "suivies", "suivre", "suivait"], correct: 1 },
+            { question: "Les réponses que j'ai ___ étaient exactes.", options: ["reçu", "reçus", "reçues", "recevoir"], correct: 2 },
+            { question: "Les maisons qu'ils ont ___ sont neuves.", options: ["construit", "construite", "construites", "construire"], correct: 2 },
+            { question: "Les fautes qu'elle a ___ sont pardonnées.", options: ["fait", "faite", "faites", "faisait"], correct: 2 },
+            { question: "Les paroles qu'il a ___ ont choqué.", options: ["dit", "dite", "dites", "dire"], correct: 2 },
+            { question: "Les photos qu'elle a ___ sont belles.", options: ["pris", "prise", "prises", "prendre"], correct: 2 },
+            { question: "Les textes que nous avons ___ sont clairs.", options: ["écrit", "écrite", "écrits", "écrire"], correct: 2 },
+            { question: "Les devoirs qu'ils ont ___ sont lourds.", options: ["fait", "faite", "faits", "faire"], correct: 2 },
+            { question: "Les décisions qu'il a ___ étaient justes.", options: ["pris", "prise", "prises", "prendre"], correct: 2 },
+            { question: "Les réponses qu'elle a ___ étaient bonnes.", options: ["donné", "donnée", "données", "donner"], correct: 2 },
+            { question: "Les livres que j'ai ___ sont intéressants.", options: ["lu", "lus", "lue", "lire"], correct: 1 },
+            { question: "Les lettres qu'ils ont ___ sont arrivées.", options: ["envoyé", "envoyée", "envoyées", "envoyer"], correct: 2 },
+            { question: "Les promesses qu'elle a ___ sont tenues.", options: ["fait", "faite", "faites", "faire"], correct: 2 },
+            { question: "Les films que tu as ___ sont longs.", options: ["vu", "vus", "vue", "voir"], correct: 1 },
+            { question: "Les fautes qu'il a ___ sont reconnues.", options: ["commis", "commise", "commises", "commettre"], correct: 2 },
+            { question: "Les réponses qu'ils ont ___ sont justes.", options: ["reçu", "reçus", "reçues", "recevoir"], correct: 2 },
+            { question: "Les décisions que nous avons ___ sont finales.", options: ["pris", "prise", "prises", "prendre"], correct: 2 },
+            { question: "Les lettres qu'elle a ___ sont courtes.", options: ["écrit", "écrite", "écrites", "écrire"], correct: 2 },
+            { question: "Les efforts qu'ils ont ___ sont visibles.", options: ["fait", "faite", "faits", "faire"], correct: 2 },
+            { question: "Les fautes qu'on a ___ sont graves.", options: ["commis", "commise", "commises", "commettre"], correct: 2 },
+            { question: "Les films que nous avons ___ hier étaient longs.", options: ["vu", "vus", "vue", "voir"], correct: 1 },
+            { question: "Les promesses qu'il a ___ étaient sincères.", options: ["fait", "faite", "faites", "faire"], correct: 2 },
+            { question: "Les réponses que tu as ___ sont correctes.", options: ["donné", "donnée", "données", "donner"], correct: 2 },
+            { question: "Les maisons qu'ils ont ___ sont solides.", options: ["bâti", "bâtie", "bâties", "bâtir"], correct: 2 },
+            { question: "Les lettres qu'elle a ___ sont belles.", options: ["écrit", "écrite", "écrites", "écrire"], correct: 2 },
+            { question: "Les fautes qu'ils ont ___ sont lourdes.", options: ["fait", "faite", "faites", "faire"], correct: 2 },
+            { question: "Les décisions qu'il a ___ sont respectées.", options: ["pris", "prise", "prises", "prendre"], correct: 2 },
+            { question: "Les réponses qu'on lui a ___ étaient claires.", options: ["donné", "donnée", "données", "donner"], correct: 1 },
+            { question: "Les erreurs qu'il a ___ sont minimes.", options: ["commis", "commise", "commises", "commettre"], correct: 2 },
+            { question: "Les maisons qu'ils ont ___ sont belles.", options: ["peint", "peinte", "peintes", "peindre"], correct: 2 },
+            { question: "Les chansons que nous avons ___ sont connues.", options: ["apprendre", "appris", "apprises", "apprenait"], correct: 2 },
+            { question: "Les fautes qu'elle s'est ___ sont graves.", options: ["permis", "permise", "permises", "permettre"], correct: 2 },
+            { question: "Les lettres que j'ai ___ sont courtes.", options: ["écrit", "écrite", "écrites", "écrivait"], correct: 2 },
+            { question: "Les décisions qu'ils ont ___ étaient difficiles.", options: ["prendre", "pris", "prises", "prenait"], correct: 2 },
+            { question: "Les réponses que vous avez ___ sont exactes.", options: ["donner", "donné", "données", "donnait"], correct: 2 },
+            { question: "Les livres qu'elle a ___ sont intéressants.", options: ["lire", "lu", "lus", "lisait"], correct: 2 },
+            { question: "Les promesses qu'il s'est ___ sont tenues.", options: ["faire", "fait", "faites", "faisait"], correct: 2 },
+            { question: "Les fautes qu'on a ___ sont nombreuses.", options: ["commettre", "commis", "commises", "commettait"], correct: 2 },
+            { question: "Les décisions que j'ai ___ étaient justes.", options: ["prendre", "pris", "prises", "prenait"], correct: 2 },
+            { question: "Les réponses qu'ils ont ___ sont bonnes.", options: ["recevoir", "reçu", "reçues", "recevait"], correct: 2 }
+        ];
+
+        const aubaineQuestions = [
+            { question: "Les fautes qu'elle s'est ___ sont graves.", options: ["permise", "permis", "permises", "permettre"], correct: 2 },
+            { question: "Les efforts qu'il a ___ faire ont payé.", options: ["dû", "dues", "dûs", "devoir"], correct: 2 },
+            { question: "Les blessures qu'ils se sont ___ sont profondes.", options: ["infligé", "infligée", "infligés", "infligées"], correct: 3 },
+            { question: "Les lettres qu'il s'est ___ écrire étaient longues.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les chansons qu'elle s'est ___ chanter ont plu.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les kilomètres qu'ils ont ___ à pied les ont épuisés.", options: ["parcouru", "parcourus", "parcourue", "parcourir"], correct: 1 },
+            { question: "Les fautes qu'elle a ___ commettre sont graves.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les décisions qu'il a ___ prendre étaient difficiles.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les promesses qu'elle s'est ___ faites étaient irréalistes.", options: ["fait", "faite", "faites", "faire"], correct: 0 },
+            { question: "Les sacrifices qu'ils ont ___ consentir étaient énormes.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les erreurs qu'il s'est ___ reprocher sont mineures.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les paroles qu'elle s'est ___ entendre ont choqué.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les critiques qu'elle a ___ essuyées l'ont blessée.", options: ["essuyé", "essuyés", "essuyées", "essuyer"], correct: 2 },
+            { question: "Les sommes qu'il a ___ payer étaient élevées.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les promesses qu'il a ___ tenir étaient nombreuses.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les réponses qu'elle a ___ reçues sont claires.", options: ["reçu", "reçus", "reçue", "recevoir"], correct: 2 },
+            { question: "Les vérités qu'elle a ___ dites ont choqué.", options: ["dit", "dite", "dites", "dire"], correct: 2 },
+            { question: "Les sanctions qu'ils se sont ___ infliger étaient sévères.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les difficultés qu'elle a ___ rencontrées sont nombreuses.", options: ["rencontré", "rencontrées", "rencontrer", "rencontrait"], correct: 1 },
+            { question: "Les efforts qu'ils ont ___ fournir ont payé.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les fautes qu'il s'est ___ permettre sont graves.", options: ["permis", "permise", "permises", "permettre"], correct: 0 },
+            { question: "Les tâches qu'elle a ___ accomplir étaient lourdes.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les reproches qu'il s'est ___ faits étaient injustes.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les paroles qu'elle a ___ voulu dire étaient dures.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les dépenses qu'ils ont ___ faire dépassent le budget.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les fautes qu'elle s'est ___ avouer étaient graves.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les efforts qu'il a ___ consentir ont payé.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les erreurs qu'elle a ___ pu éviter sont nombreuses.", options: ["pu", "pue", "pouvoir", "pouvait"], correct: 0 },
+            { question: "Les décisions qu'il a ___ voulu prendre étaient risquées.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les blessures qu'ils se sont ___ causées sont sérieuses.", options: ["causé", "causée", "causés", "causées"], correct: 3 },
+            { question: "Les promesses qu'elle s'est ___ données étaient irréalistes.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les difficultés qu'il a ___ surmonter étaient grandes.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les erreurs qu'ils se sont ___ avouer étaient graves.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les efforts qu'elle a ___ fournir ont été récompensés.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les fautes qu'il s'est ___ reprochées étaient légères.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les décisions qu'ils ont ___ prendre étaient difficiles.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les promesses qu'elle s'est ___ tenues étaient nombreuses.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les difficultés qu'il a ___ rencontrer étaient imprévues.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les erreurs qu'ils se sont ___ permettre étaient graves.", options: ["permis", "permise", "permises", "permettre"], correct: 0 },
+            { question: "Les efforts qu'elle a ___ consentir étaient énormes.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les fautes qu'il s'est ___ reprocher étaient sincères.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les décisions qu'ils ont ___ vouloir prendre étaient risquées.", options: ["cru", "crues", "crû", "croire"], correct: 0 },
+            { question: "Les promesses qu'elle s'est ___ faites étaient tenues.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les difficultés qu'il a ___ rencontrées étaient nombreuses.", options: ["rencontré", "rencontrées", "rencontrer", "rencontrait"], correct: 1 },
+            { question: "Les erreurs qu'ils se sont ___ avouées étaient graves.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les efforts qu'elle a ___ consentis étaient importants.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les fautes qu'il s'est ___ permises étaient graves.", options: ["permis", "permise", "permises", "permettre"], correct: 2 },
+            { question: "Les décisions qu'ils ont ___ prendre étaient courageuses.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 },
+            { question: "Les promesses qu'elle s'est ___ tenues étaient sincères.", options: ["fait", "faite", "faits", "faire"], correct: 0 },
+            { question: "Les difficultés qu'il a ___ surmonter étaient réelles.", options: ["dû", "dues", "dûes", "devoir"], correct: 2 }
+        ];
+
+        // Variable pour stocker les résultats chargés
+        let allResults = [];
+        let selectedMemberFilter = 'all';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher le message "Sélectionnez votre nom" au départ
+            document.getElementById('no-content').style.display = 'block';
+            
+            // Cacher tous les contenus des membres au départ
+            document.getElementById('credo-content').style.display = 'none';
+            document.getElementById('moise-content').style.display = 'none';
+            document.getElementById('aubaine-content').style.display = 'none';
+            
+            // Set up button click events
+            document.getElementById('aubaine-btn').addEventListener('click', () => showContent('aubaine'));
+            document.getElementById('moise-btn').addEventListener('click', () => showContent('moise'));
+            document.getElementById('credo-btn').addEventListener('click', () => showContent('credo'));
+            
+            // Admin panel events
+            document.getElementById('admin-panel-btn').addEventListener('click', toggleAdminPanel);
+            document.getElementById('admin-login-btn').addEventListener('click', adminLogin);
+            document.getElementById('export-btn').addEventListener('click', exportResults);
+            
+            // Set up member selector events
+            document.querySelectorAll('.member-selector-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.member-selector-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedMemberFilter = this.getAttribute('data-member');
+                    displayResultsTable();
+                });
             });
-        }, observerOptions);
-        
-        // Observer les éléments à animer
-        document.querySelectorAll('.faculty-card, .activity-card, .event-card, .stat-item').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(card);
+            
+            // Check if admin is already logged in
+            checkAdminAuth();
         });
         
-        // Gestion du formulaire avec Formspree
-        const registrationForm = document.getElementById('registrationForm');
-        
-        registrationForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function showContent(member) {
+            // Cacher le message "Sélectionnez votre nom"
+            document.getElementById('no-content').style.display = 'none';
             
-            // Désactiver le bouton pendant l'envoi
-            const submitBtn = registrationForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-            submitBtn.disabled = true;
+            // Cacher tous les contenus
+            document.querySelectorAll('.content-area').forEach(area => {
+                area.style.display = 'none';
+            });
             
-            try {
-                const formData = new FormData(registrationForm);
-                const response = await fetch('https://formspree.io/f/mldqkngp', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    // Succès - redirection vers une page de confirmation personnalisée
-                    showSuccessMessage();
-                    
-                    // Réinitialisation du formulaire
-                    registrationForm.reset();
-                } else {
-                    throw new Error('Erreur lors de l\'envoi');
+            // Créer les questions pour ce membre si elles n'existent pas encore
+            if (!document.getElementById(`${member}-questions`).hasChildNodes()) {
+                let questionsArray;
+                switch(member) {
+                    case 'credo': questionsArray = credoQuestions; break;
+                    case 'moise': questionsArray = moiseQuestions; break;
+                    case 'aubaine': questionsArray = aubaineQuestions; break;
                 }
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue lors de l\'envoi du formulaire. Veuillez réessayer.');
-            } finally {
-                // Réactiver le bouton
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                createQuestions(member, questionsArray);
+                
+                // Set up submit button event pour ce membre
+                document.getElementById(`${member}-submit`).addEventListener('click', () => submitAnswers(member, questionsArray));
             }
-        });
+            
+            // Afficher le contenu du membre sélectionné
+            document.getElementById(`${member}-content`).style.display = 'block';
+            
+            // Reset button styles
+            document.querySelectorAll('.member-btn').forEach(btn => {
+                btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+            });
+            
+            // Highlight selected button
+            const selectedBtn = document.getElementById(`${member}-btn`);
+            selectedBtn.style.transform = 'translateY(-5px)';
+            selectedBtn.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.15)';
+            
+            // Hide results when switching members
+            document.getElementById(`${member}-results`).style.display = 'none';
+        }
         
-        function showSuccessMessage() {
-            // Créer une modale de succès personnalisée
-            const successModal = document.createElement('div');
-            successModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 2000;
-                animation: fadeIn 0.3s ease;
-            `;
+        function createQuestions(member, questionsArray) {
+            const container = document.getElementById(`${member}-questions`);
+            container.innerHTML = '';
             
-            successModal.innerHTML = `
-                <div style="
-                    background: white;
-                    padding: 40px;
-                    border-radius: 15px;
-                    max-width: 500px;
-                    width: 90%;
-                    text-align: center;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                    animation: slideInUp 0.4s ease;
-                ">
-                    <div style="
-                        width: 80px;
-                        height: 80px;
-                        background-color: #4caf50;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin: 0 auto 20px;
-                    ">
-                        <i class="fas fa-check" style="color: white; font-size: 2.5rem;"></i>
-                    </div>
-                    
-                    <h2 style="color: var(--primary); margin-bottom: 15px;">Candidature Soumise avec Succès !</h2>
-                    <p style="color: var(--gray); margin-bottom: 25px;">
-                        Merci pour votre candidature à Excellentia Academia. Votre demande a été envoyée au Coordonnateur Général.<br><br>
-                        <strong>MALALE MUSAO Credo</strong> ou un responsable de votre faculté vous contactera dans les 48 heures.
-                    </p>
-                    
-                    <div style="
-                        background-color: rgba(26, 35, 126, 0.05);
-                        padding: 15px;
-                        border-radius: 8px;
-                        margin: 20px 0;
-                        text-align: left;
-                    ">
-                        <p style="margin-bottom: 5px;"><strong>Prochaines étapes :</strong></p>
-                        <p style="font-size: 0.9rem; margin-bottom: 3px;">1. Vérification de votre candidature</p>
-                        <p style="font-size: 0.9rem; margin-bottom: 3px;">2. Contact par le Président de votre club facultaire</p>
-                        <p style="font-size: 0.9rem;">3. Participation à la première réunion</p>
-                    </div>
-                    
-                    <button id="closeSuccessModal" style="
-                        background-color: var(--primary);
-                        color: white;
-                        border: none;
-                        padding: 12px 30px;
-                        border-radius: 50px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        margin-top: 20px;
-                        transition: all 0.3s ease;
-                    ">
-                        <i class="fas fa-thumbs-up"></i> Parfait !
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(successModal);
-            document.body.style.overflow = 'hidden';
-            
-            // Ajouter les styles d'animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes slideInUp {
-                    from { 
-                        opacity: 0;
-                        transform: translateY(30px);
-                    }
-                    to { 
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Fermer la modale
-            document.getElementById('closeSuccessModal').addEventListener('click', () => {
-                document.body.removeChild(successModal);
-                document.head.removeChild(style);
-                document.body.style.overflow = 'auto';
+            questionsArray.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
                 
-                // Retour en haut de la page
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
+                let optionsHtml = '';
+                q.options.forEach((option, optIndex) => {
+                    optionsHtml += `
+                        <div class="option" data-index="${optIndex}">
+                            <input type="radio" name="${member}-q${index}" id="${member}-q${index}-opt${optIndex}" value="${optIndex}">
+                            <label for="${member}-q${index}-opt${optIndex}">${option}</label>
+                        </div>
+                    `;
+                });
+                
+                questionDiv.innerHTML = `
+                    <div class="question-text">
+                        <span class="question-number">${index + 1}</span>
+                        ${q.question}
+                    </div>
+                    <div class="options">
+                        ${optionsHtml}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            // Add click events to options
+            container.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionDiv = this.closest('.question');
+                    const options = questionDiv.querySelectorAll('.option');
+                    const input = this.querySelector('input');
+                    
+                    // Deselect all options in this question
+                    options.forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.querySelector('input').checked = false;
+                    });
+                    
+                    // Select clicked option
+                    this.classList.add('selected');
+                    input.checked = true;
                 });
             });
+        }
+        
+        async function submitAnswers(member, questionsArray) {
+            let score = 0;
+            const totalQuestions = questionsArray.length;
+            let answers = [];
             
-            // Fermer en cliquant à l'extérieur
-            successModal.addEventListener('click', (e) => {
-                if (e.target === successModal) {
-                    document.body.removeChild(successModal);
-                    document.head.removeChild(style);
-                    document.body.style.overflow = 'auto';
+            // Check each question
+            for (let i = 0; i < totalQuestions; i++) {
+                const selectedOption = document.querySelector(`input[name="${member}-q${i}"]:checked`);
+                const selectedValue = selectedOption ? parseInt(selectedOption.value) : null;
+                const isCorrect = selectedValue === questionsArray[i].correct;
+                
+                if (isCorrect) {
+                    score++;
                 }
-            });
+                
+                answers.push({
+                    questionIndex: i,
+                    question: questionsArray[i].question,
+                    selected: selectedValue,
+                    correct: questionsArray[i].correct,
+                    isCorrect: isCorrect,
+                    selectedText: selectedValue !== null ? questionsArray[i].options[selectedValue] : 'Non répondu',
+                    correctText: questionsArray[i].options[questionsArray[i].correct]
+                });
+                
+                // Show correct/incorrect
+                const questionDiv = document.getElementById(`${member}-questions`).children[i];
+                const options = questionDiv.querySelectorAll('.option');
+                
+                options.forEach((option, index) => {
+                    option.classList.remove('correct', 'incorrect');
+                    
+                    if (index === questionsArray[i].correct) {
+                        option.classList.add('correct');
+                    } else if (index === selectedValue && selectedValue !== questionsArray[i].correct) {
+                        option.classList.add('incorrect');
+                    }
+                });
+            }
+            
+            // Save results to Firebase
+            await saveResultsToFirebase(member, score, answers, totalQuestions);
+            
+            // Display results
+            const resultsPanel = document.getElementById(`${member}-results`);
+            const scoreElement = document.getElementById(`${member}-score`);
+            const feedbackElement = document.getElementById(`${member}-feedback`);
+            
+            scoreElement.textContent = `${score}/${totalQuestions}`;
+            
+            // Calculate percentage
+            const percentage = (score / totalQuestions) * 100;
+            
+            // Provide feedback based on score
+            let feedback = '';
+            let feedbackClass = '';
+            
+            if (percentage >= 80) {
+                feedback = `Excellent travail ! Tu as bien maîtrisé l'accord du participe passé.`;
+                feedbackClass = 'good';
+            } else if (percentage >= 60) {
+                feedback = `Bon travail ! Tu as compris la majorité des règles, mais il reste quelques points à revoir.`;
+                feedbackClass = 'average';
+            } else {
+                feedback = `Continue à t'entraîner ! N'oublie pas que le participe passé s'accorde avec le COD quand il est placé avant le verbe.`;
+                feedbackClass = 'poor';
+            }
+            
+            // Add additional feedback for Credo
+            if (member === 'credo') {
+                feedback += ` En tant que coach, tu peux maintenant expliquer ces règles à tes frères et sœurs.`;
+                
+                if (percentage >= 80) {
+                    feedback += ` Tu es prêt à les coacher efficacement !`;
+                } else if (percentage >= 60) {
+                    feedback += ` Revois les questions que tu as ratées pour mieux expliquer les règles.`;
+                } else {
+                    feedback += ` Étudie bien les explications avant de coacher les autres.`;
+                }
+            }
+            
+            feedbackElement.textContent = feedback;
+            feedbackElement.className = `feedback ${feedbackClass}`;
+            
+            // Show results panel
+            resultsPanel.style.display = 'block';
+            
+            // Scroll to results
+            resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
-        // Fonctions pour les boutons des facultés
-        function showFacultyDetails(facultyId) {
-            const facultyNames = {
-                'sciences-tech': 'Sciences et Technologies',
-                'lettres': 'Lettres et Sciences Humaines',
-                'economie': 'Sciences Économiques et de Gestion',
-                'sciences-sociales': 'Sciences Sociales, Administratives et Politiques',
-                'droit': 'Droit',
-                'polytechnique': 'Polytechnique',
-                'pharma': 'Sciences Pharmaceutiques',
-                'dentaire': 'Médecine Dentaire',
-                'veto': 'Médecine Vétérinaire',
-                'petrole': 'Pétrole, Gaz et Énergies Renouvelables',
-                'agronomie': 'Sciences Agronomiques',
-                'medecine': 'Médecine',
-                'psycho': 'Psychologie et Sciences de l\'Éducation'
-            };
-            
-            alert(`Détails du Club Excellentia - ${facultyNames[facultyId]}\n\nContactez le Coordonnateur Général pour plus d'informations sur les activités spécifiques à cette faculté.`);
-        }
-        
-        function joinFaculty(facultyId) {
-            // Faire défiler vers le formulaire d'inscription
-            document.getElementById('inscription').scrollIntoView({ behavior: 'smooth' });
-            
-            // Pré-sélectionner la faculté dans le formulaire
-            setTimeout(() => {
-                const facultySelect = document.getElementById('faculty');
-                const facultyNames = {
-                    'sciences-tech': 'sciences_tech',
-                    'lettres': 'lettres',
-                    'economie': 'economie',
-                    'sciences-sociales': 'sciences_sociales',
-                    'droit': 'droit',
-                    'polytechnique': 'polytechnique',
-                    'pharma': 'pharma',
-                    'dentaire': 'dentaire',
-                    'veto': 'veto',
-                    'petrole': 'petrole',
-                    'agronomie': 'agronomie',
-                    'medecine': 'medecine',
-                    'psycho': 'psycho'
+        async function saveResultsToFirebase(member, score, answers, totalQuestions) {
+            try {
+                const resultData = {
+                    member: member,
+                    score: score,
+                    totalQuestions: totalQuestions,
+                    percentage: Math.round((score / totalQuestions) * 100),
+                    answers: answers,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: new Date().toISOString(),
+                    niveau: getNiveau(member)
                 };
                 
-                facultySelect.value = facultyNames[facultyId];
-            }, 500);
+                await db.collection('resultats_devoirs').add(resultData);
+                console.log(`Résultats sauvegardés pour ${member} dans la nouvelle base de données`);
+            } catch (error) {
+                console.error("Erreur lors de la sauvegarde des résultats:", error);
+                alert("Erreur de connexion à la base de données. Veuillez réessayer.");
+            }
         }
         
-        // Smooth scroll pour les liens d'ancrage
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+        function getNiveau(member) {
+            switch(member) {
+                case 'credo': return 'intermédiaire';
+                case 'moise': return 'moyen';
+                case 'aubaine': return 'difficile';
+                default: return 'inconnu';
+            }
+        }
+        
+        function toggleAdminPanel() {
+            const adminPanel = document.getElementById('admin-panel');
+            adminPanel.classList.toggle('active');
+        }
+        
+        function checkAdminAuth() {
+            auth.onAuthStateChanged((user) => {
+                if (user && user.email === ADMIN_EMAIL) {
+                    showAdminContent();
+                } else {
+                    hideAdminContent();
                 }
             });
-        });
+        }
         
-        // Animation des éléments flottants au survol
-        document.querySelectorAll('.floating-element').forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                element.style.animationPlayState = 'paused';
+        async function adminLogin() {
+            const password = document.getElementById('admin-password').value;
+            const messageDiv = document.getElementById('auth-message');
+            
+            if (password === ADMIN_PASSWORD) {
+                try {
+                    // Create user with email and password
+                    await auth.createUserWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
+                    messageDiv.textContent = "Connexion réussie !";
+                    messageDiv.className = "auth-message success";
+                    showAdminContent();
+                    loadResults();
+                } catch (error) {
+                    if (error.code === 'auth/email-already-in-use') {
+                        // User already exists, try to sign in
+                        try {
+                            await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
+                            messageDiv.textContent = "Connexion réussie !";
+                            messageDiv.className = "auth-message success";
+                            showAdminContent();
+                            loadResults();
+                        } catch (signInError) {
+                            messageDiv.textContent = "Erreur de connexion. Vérifiez le mot de passe.";
+                            messageDiv.className = "auth-message error";
+                        }
+                    } else {
+                        messageDiv.textContent = "Erreur de connexion.";
+                        messageDiv.className = "auth-message error";
+                    }
+                }
+            } else {
+                messageDiv.textContent = "Mot de passe incorrect.";
+                messageDiv.className = "auth-message error";
+            }
+        }
+        
+        function showAdminContent() {
+            document.getElementById('auth-form').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+        }
+        
+        function hideAdminContent() {
+            document.getElementById('auth-form').style.display = 'block';
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('error-details').style.display = 'none';
+        }
+        
+        async function loadResults() {
+            try {
+                const snapshot = await db.collection('resultats_devoirs')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                allResults = [];
+                let totalScore = 0;
+                let bestScore = 0;
+                let lastActivity = null;
+                const members = new Set();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    allResults.push({
+                        ...data,
+                        id: doc.id
+                    });
+                    
+                    totalScore += data.percentage;
+                    if (data.score > bestScore) {
+                        bestScore = data.score;
+                    }
+                    members.add(data.member);
+                    
+                    if (!lastActivity || data.timestamp > lastActivity) {
+                        lastActivity = data.timestamp;
+                    }
+                });
+                
+                // Update statistics
+                document.getElementById('total-participants').textContent = members.size;
+                document.getElementById('average-score').textContent = allResults.length > 0 ? 
+                    Math.round(totalScore / allResults.length) + '%' : '0%';
+                document.getElementById('best-score').textContent = bestScore + '/50';
+                document.getElementById('last-activity').textContent = lastActivity ? 
+                    new Date(lastActivity.toDate()).toLocaleDateString('fr-FR') : '--';
+                
+                // Display results table
+                displayResultsTable();
+                
+            } catch (error) {
+                console.error("Erreur lors du chargement des résultats:", error);
+                document.getElementById('results-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #dc3545;">
+                            Erreur de connexion à la base de données. Veuillez réessayer.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function displayResultsTable() {
+            const tableBody = document.getElementById('results-table-body');
+            tableBody.innerHTML = '';
+            
+            // Filtrer les résultats selon le membre sélectionné
+            const filteredResults = selectedMemberFilter === 'all' 
+                ? allResults 
+                : allResults.filter(result => result.member === selectedMemberFilter);
+            
+            if (filteredResults.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px;">
+                            Aucun résultat trouvé pour ce filtre.
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('error-details').style.display = 'none';
+                return;
+            }
+            
+            filteredResults.forEach((result, index) => {
+                const row = document.createElement('tr');
+                const date = result.timestamp ? 
+                    new Date(result.timestamp.toDate()).toLocaleString('fr-FR') : 
+                    new Date(result.date).toLocaleString('fr-FR');
+                
+                let statusClass = '';
+                if (result.percentage >= 80) {
+                    statusClass = 'Excellent';
+                } else if (result.percentage >= 60) {
+                    statusClass = 'Bon';
+                } else {
+                    statusClass = 'À revoir';
+                }
+                
+                row.innerHTML = `
+                    <td>${result.member.charAt(0).toUpperCase() + result.member.slice(1)} (${result.niveau})</td>
+                    <td>${result.score}/${result.totalQuestions}</td>
+                    <td>${result.percentage}%</td>
+                    <td>${date}</td>
+                    <td>
+                        <button class="member-selector-btn" onclick="showErrorDetails('${result.id}', '${result.member}')">
+                            <i class="fas fa-search"></i> Voir les erreurs
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function showErrorDetails(resultId, memberName) {
+            const result = allResults.find(r => r.id === resultId);
+            if (!result) return;
+            
+            document.getElementById('selected-member-name').textContent = 
+                memberName.charAt(0).toUpperCase() + memberName.slice(1);
+            
+            const errorsList = document.getElementById('errors-list');
+            errorsList.innerHTML = '';
+            
+            // Trouver les réponses incorrectes
+            const incorrectAnswers = result.answers.filter(answer => !answer.isCorrect);
+            
+            if (incorrectAnswers.length === 0) {
+                errorsList.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #28a745;">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                        <p style="margin-top: 10px;">Aucune erreur ! Excellent travail !</p>
+                    </div>
+                `;
+            } else {
+                errorsList.innerHTML = `<p>${incorrectAnswers.length} erreur(s) trouvée(s) :</p>`;
+                
+                const errorList = document.createElement('ul');
+                errorList.className = 'error-list';
+                
+                incorrectAnswers.forEach(answer => {
+                    const errorItem = document.createElement('li');
+                    errorItem.className = 'error-item';
+                    
+                    errorItem.innerHTML = `
+                        <div class="error-question">
+                            <strong>Question ${answer.questionIndex + 1}:</strong> ${answer.question}
+                        </div>
+                        <div class="error-answer">
+                            <span class="error-wrong">Votre réponse: ${answer.selectedText}</span> | 
+                            <span class="error-correct">Réponse correcte: ${answer.correctText}</span>
+                        </div>
+                    `;
+                    errorList.appendChild(errorItem);
+                });
+                
+                errorsList.appendChild(errorList);
+            }
+            
+            document.getElementById('error-details').style.display = 'block';
+            document.getElementById('error-details').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function exportResults() {
+            const filteredResults = selectedMemberFilter === 'all' 
+                ? allResults 
+                : allResults.filter(result => result.member === selectedMemberFilter);
+            
+            let csv = "Participant,Niveau,Score,Pourcentage,Date,Nombre d'erreurs\n";
+            
+            filteredResults.forEach(result => {
+                const date = result.timestamp ? 
+                    new Date(result.timestamp.toDate()).toLocaleString('fr-FR') : 
+                    new Date(result.date).toLocaleString('fr-FR');
+                
+                const errorCount = result.answers.filter(a => !a.isCorrect).length;
+                
+                csv += `"${result.member.charAt(0).toUpperCase() + result.member.slice(1)}","${result.niveau}",${result.score}/${result.totalQuestions},${result.percentage}%,"${date}",${errorCount}\n`;
             });
             
-            element.addEventListener('mouseleave', () => {
-                element.style.animationPlayState = 'running';
-            });
-        });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resultats_famille_singa_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
         
-        // Changement de couleur de la navbar au scroll
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 100) {
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-                header.style.padding = '10px 0';
-            } else {
-                header.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
-                header.style.padding = '15px 0';
-            }
-        });
-        
-        // Affichage dynamique du nombre de facultés
-        document.addEventListener('DOMContentLoaded', function() {
-            const facultyCount = document.querySelectorAll('.faculty-card').length;
-            const heroSubtitle = document.querySelector('.floating-element.element-1 .floating-text');
-            if (heroSubtitle) {
-                heroSubtitle.innerHTML = `${facultyCount} Facultés`;
-            }
-        });
+        // Exposer la fonction au scope global pour le bouton
+        window.showErrorDetails = showErrorDetails;
     </script>
 </body>
-
-
+</html>
