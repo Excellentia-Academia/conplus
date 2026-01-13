@@ -3,173 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Oratoire Excellence - Formation Premium | Excellentia Academia</title>
+    <title>Formation Art Oratoire - Excellentia Academia</title>
     <style>
-        :root {
-            --gold: #D4AF37;
-            --gold-light: #F7EF8A;
-            --gold-dark: #B8941F;
-            --navy: #0A0A2A;
-            --navy-light: #1A1A3A;
-            --navy-lighter: #2A2A4A;
-            --white: #FFFFFF;
-            --white-transparent: rgba(255, 255, 255, 0.95);
-            --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #F7EF8A 50%, #D4AF37 100%);
-            --gradient-navy: linear-gradient(135deg, #0A0A2A 0%, #1A1A3A 50%, #2A2A4A 100%);
-            --shadow-large: 0 20px 60px rgba(212, 175, 55, 0.2);
-            --shadow-medium: 0 10px 40px rgba(212, 175, 55, 0.15);
-            --shadow-small: 0 5px 20px rgba(212, 175, 55, 0.1);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
+        
         body {
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--navy);
-            color: var(--white);
-            line-height: 1.8;
-            overflow-x: hidden;
-            position: relative;
             min-height: 100vh;
+            background: linear-gradient(135deg, #0A0A2A 0%, #0F0F1F 30%, #1A1A2E 70%, #16213E 100%);
+            color: #ffffff;
+            line-height: 1.8;
+            position: relative;
+            overflow-x: hidden;
         }
-
-        body::before {
-            content: '';
+        
+        /* Effet de particules dorées en arrière-plan */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(10, 10, 42, 0.1) 0%, transparent 60%);
-            z-index: -2;
             pointer-events: none;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             z-index: -1;
-            pointer-events: none;
-            opacity: 0.3;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.06) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, rgba(212, 175, 55, 0.04) 0%, transparent 25%);
         }
-
+        
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatParticle 20s infinite linear;
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            25% { transform: translateY(-100px) translateX(100px); opacity: 0.6; }
+            50% { transform: translateY(-200px) translateX(-50px); opacity: 0.3; }
+            75% { transform: translateY(-100px) translateX(-100px); opacity: 0.6; }
+            100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+        }
+        
         /* Header Luxueux */
-        .luxury-header {
-            position: fixed;
+        .header {
+            background: rgba(10, 10, 42, 0.85);
+            padding: 20px 40px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, #D4AF37, transparent) 1;
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(10, 10, 42, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
             z-index: 1000;
-            padding: 15px 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 40px;
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            animation: slideDown 0.8s ease-out;
         }
-
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
         .logo-wrapper {
             display: flex;
             align-items: center;
-            gap: 20px;
-            text-decoration: none;
+            gap: 25px;
+            position: relative;
         }
-
-        .logo-image {
-            width: 70px;
-            height: 70px;
+        
+        .logo-container {
+            width: 80px;
+            height: 80px;
             border-radius: 20px;
             overflow: hidden;
-            border: 2px solid var(--gold);
-            background: var(--white);
-            padding: 8px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-small);
-        }
-
-        .logo-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .logo-image:hover {
-            transform: rotate(5deg);
-            border-color: var(--gold-light);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .logo-text {
+            border: 3px solid transparent;
+            background: linear-gradient(45deg, #D4AF37, #B8941F, #FFD700) border-box;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            position: relative;
+            animation: logoGlow 3s infinite alternate;
         }
-
-        .logo-main {
-            font-size: 28px;
+        
+        @keyframes logoGlow {
+            0% { box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); }
+            100% { box-shadow: 0 8px 35px rgba(212, 175, 55, 0.8); }
+        }
+        
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #D4AF37, #B8941F, #FFD700);
+            border-radius: 22px;
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.6;
+        }
+        
+        .logo-img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            padding: 10px;
+            border-radius: 15px;
+            background: rgba(10, 10, 42, 0.9);
+        }
+        
+        .logo-text {
+            flex: 1;
+        }
+        
+        .logo-title {
+            font-size: 2rem;
             font-weight: 800;
-            background: var(--gradient-gold);
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
             letter-spacing: -0.5px;
-            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
         }
-
-        .logo-sub {
-            font-size: 14px;
-            color: var(--gold);
-            font-weight: 500;
+        
+        .logo-subtitle {
+            font-size: 1rem;
+            color: #D4AF37;
+            font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            margin-top: 4px;
+            position: relative;
+            display: inline-block;
+            padding-left: 20px;
         }
-
-        .header-actions {
-            display: flex;
-            gap: 20px;
-            align-items: center;
+        
+        .logo-subtitle::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 2px;
+            background: #D4AF37;
+            animation: subtitleLine 2s infinite;
         }
-
-        .admin-btn {
-            background: var(--gradient-gold);
-            color: var(--navy);
+        
+        @keyframes subtitleLine {
+            0%, 100% { width: 10px; }
+            50% { width: 30px; }
+        }
+        
+        /* Bouton Admin Luxueux */
+        .admin-header-button {
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            color: #0A0A2A;
             border: none;
-            padding: 14px 28px;
+            padding: 15px 30px;
             border-radius: 15px;
             font-weight: 700;
-            font-size: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-small);
+            gap: 12px;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        
+        .admin-header-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .admin-header-button:hover::before {
+            left: 100%;
+        }
+        
+        .admin-header-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.6);
+        }
+        
+        /* Contenu principal */
+        .main-container {
+            max-width: 1400px;
+            padding: 60px 30px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Section Luxueuse */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 80px;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(20, 20, 40, 0.95));
+            border-radius: 30px;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #D4AF37, #2ECC71, #9B59B6, #D4AF37) 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #D4AF37, #2ECC71, #9B59B6);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .event-title {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #D4AF37, #FFD700, #FFFFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            text-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            animation: titleGlow 3s infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
+            100% { text-shadow: 0 5px 25px rgba(212, 175, 55, 0.6); }
+        }
+        
+        .event-subtitle {
+            font-size: 1.4rem;
+            color: #BDC3C7;
+            margin-bottom: 40px;
+            font-weight: 400;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .highlight-text {
+            background: linear-gradient(135deg, #D4AF37, #2ECC71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .date-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(184, 148, 31, 0.95));
+            color: #0A0A2A;
+            padding: 40px;
+            border-radius: 25px;
+            margin: 40px auto;
+            display: inline-block;
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.4);
+            animation: float 6s ease-in-out infinite;
+            max-width: 600px;
+            width: 90%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
-
-        .admin-btn::before {
+        
+        .date-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(0.5deg); }
+            66% { transform: translateY(-5px) rotate(-0.5deg); }
+        }
+        
+        .date-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            opacity: 0.95;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .date-range {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .date-duration {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+        
+        /* Bouton principal luxueux */
+        .main-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: white;
+            border: none;
+            padding: 25px 55px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 40px 0 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 15px 35px rgba(46, 204, 113, 0.4);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .main-cta::before {
             content: '';
             position: absolute;
             top: 0;
@@ -179,1234 +384,1368 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: 0.5s;
         }
-
-        .admin-btn:hover::before {
+        
+        .main-cta:hover::before {
             left: 100%;
         }
-
-        .admin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
+        
+        .main-cta:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(46, 204, 113, 0.6);
         }
-
-        /* Hero Section Magnifique */
-        .luxury-hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 160px 40px 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-size: 5rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            line-height: 1.1;
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero-title span {
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            display: inline-block;
-        }
-
-        .hero-title span::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient-gold);
-            border-radius: 2px;
-            animation: lineGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes lineGlow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .hero-subtitle {
-            font-size: 1.8rem;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 800px;
-            margin: 0 auto 50px;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-
-        .hero-highlight {
-            display: inline-block;
-            background: linear-gradient(135deg, 
-                rgba(212, 175, 55, 0.1), 
-                rgba(247, 239, 138, 0.2), 
-                rgba(212, 175, 55, 0.1));
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            backdrop-filter: blur(10px);
-            padding: 40px;
+        
+        /* Section Programme Luxueuse */
+        .program-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.85), rgba(20, 20, 40, 0.9));
             border-radius: 30px;
-            margin: 60px auto;
-            max-width: 600px;
-            box-shadow: var(--shadow-large);
+            padding: 60px 40px;
+            margin: 60px 0;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #D4AF37, #3498DB, #D4AF37) 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            animation: fadeInUp 1s ease-out 0.2s both;
             position: relative;
             overflow: hidden;
         }
-
-        .hero-highlight::before {
+        
+        .program-section::after {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: var(--gradient-gold);
-            border-radius: 32px;
-            z-index: -1;
-            animation: rotate 3s linear infinite;
-            opacity: 0.5;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
         }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .highlight-title {
-            font-size: 1.5rem;
-            color: var(--gold);
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .highlight-dates {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--white);
-            margin-bottom: 15px;
-            line-height: 1.2;
-        }
-
-        .highlight-duration {
-            font-size: 1.3rem;
-            color: var(--gold-light);
+        
+        .section-title {
+            font-size: 2.2rem;
+            color: #FFFFFF;
+            margin-bottom: 50px;
+            text-align: center;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
         }
-
-        .cta-button {
-            display: inline-block;
-            background: var(--gradient-gold);
-            color: var(--navy);
-            text-decoration: none;
-            padding: 25px 60px;
-            font-size: 1.4rem;
-            font-weight: 800;
-            border-radius: 20px;
-            margin: 40px 0 30px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-medium);
+        
+        .section-title i {
+            color: #D4AF37;
+            font-size: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .program-card {
+            background: linear-gradient(145deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.9));
+            border-radius: 25px;
+            padding: 40px 30px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            border: none;
-            cursor: pointer;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
         }
-
-        .cta-button::before {
+        
+        .program-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #D4AF37, #2ECC71);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        .program-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent 30%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .program-card:hover::after {
+            opacity: 1;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+        
+        .program-day {
+            font-size: 1.1rem;
+            color: #D4AF37;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .program-topic {
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            font-weight: 800;
+            margin-bottom: 25px;
+            line-height: 1.3;
+            flex-grow: 1;
+        }
+        
+        .program-list {
+            list-style: none;
+            margin-top: 25px;
+        }
+        
+        .program-list li {
+            margin-bottom: 16px;
+            color: #BDC3C7;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            line-height: 1.6;
+            padding-left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .program-list li:hover {
+            transform: translateX(10px);
+            color: #FFFFFF;
+        }
+        
+        .program-list i {
+            color: #2ECC71;
+            margin-top: 3px;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+        
+        /* Section Formateur Ultra Luxueuse */
+        .trainer-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(20, 20, 40, 0.95));
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #3498DB, #D4AF37, #2ECC71) 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .trainer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #3498DB, #D4AF37, #2ECC71);
+            animation: shimmer 4s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        .trainer-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 1024px) {
+            .trainer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+        }
+        
+        .trainer-photo {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 6px solid transparent;
+            background: linear-gradient(45deg, #D4AF37, #3498DB, #2ECC71, #D4AF37) border-box;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            margin: 0 auto;
+            position: relative;
+            background-color: #000;
+            animation: rotateBorder 8s linear infinite;
+        }
+        
+        @keyframes rotateBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .trainer-photo::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #D4AF37, #3498DB, #2ECC71, #9B59B6);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(15px);
+            opacity: 0.5;
+            animation: rotateBorder 12s linear infinite reverse;
+        }
+        
+        .trainer-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 20%;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: grayscale(0.1);
+        }
+        
+        .trainer-photo:hover .trainer-img {
+            transform: scale(1.1) rotate(5deg);
+            filter: grayscale(0);
+        }
+        
+        .trainer-info h3 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #FFFFFF, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            text-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+        }
+        
+        .trainer-title {
+            color: #D4AF37;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+        
+        .trainer-bio {
+            color: #BDC3C7;
+            line-height: 1.9;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .trainer-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        
+        .trainer-badge {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9));
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .trainer-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* Section WhatsApp Luxueuse */
+        .whatsapp-section {
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(33, 150, 83, 0.25));
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            border: 2px solid rgba(37, 211, 102, 0.4);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .whatsapp-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #25D366, #128C7E);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        .whatsapp-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .whatsapp-title {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .whatsapp-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 25px 50px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 25px 0 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .whatsapp-button::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: 0.5s;
         }
-
-        .cta-button:hover::before {
+        
+        .whatsapp-button:hover::before {
             left: 100%;
         }
-
-        .cta-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.3);
+        
+        .whatsapp-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(37, 211, 102, 0.6);
         }
-
-        /* Countdown Luxueux */
-        .luxury-countdown {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            max-width: 1000px;
-            margin: 60px auto;
-        }
-
-        .countdown-item {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 25px;
-            padding: 40px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .countdown-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .countdown-item:hover::before {
-            opacity: 1;
-        }
-
-        .countdown-item:hover {
-            transform: translateY(-10px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .countdown-value {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 10px;
-            line-height: 1;
-        }
-
-        .countdown-label {
-            font-size: 1rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-
-        /* Sections Luxueuses */
-        .luxury-section {
-            padding: 120px 40px;
-            position: relative;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 80px;
-            position: relative;
-        }
-
-        .section-title h2 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            display: inline-block;
-            position: relative;
-        }
-
-        .section-title h2::before {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: var(--gradient-gold);
-            border-radius: 2px;
-        }
-
-        /* Programme Luxueux */
-        .luxury-program {
-            background: linear-gradient(135deg, rgba(10, 10, 42, 0.8), rgba(26, 26, 58, 0.9));
-            border-radius: 50px;
-            padding: 80px 60px;
-            margin: 0 auto;
-            max-width: 1400px;
-            box-shadow: var(--shadow-large);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .luxury-program::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: var(--gradient-gold);
-        }
-
-        .program-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .program-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 30px;
-            padding: 50px 40px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .program-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-
-        .program-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .program-card:hover {
-            transform: translateY(-15px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .program-day {
-            font-size: 1.1rem;
-            color: var(--gold);
-            font-weight: 600;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            letter-spacing: 1px;
-        }
-
-        .program-day i {
-            font-size: 1.3rem;
-        }
-
-        .program-topic {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 30px;
-            line-height: 1.3;
-        }
-
-        .program-list {
-            list-style: none;
-        }
-
-        .program-list li {
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.05rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            line-height: 1.6;
-        }
-
-        .program-list i {
-            color: var(--gold);
-            margin-top: 5px;
-            flex-shrink: 0;
-            font-size: 1.2rem;
-        }
-
-        /* Formateur Exceptionnel */
-        .luxury-trainer {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, rgba(10, 10, 42, 0.9), rgba(26, 26, 58, 0.95));
-            border-radius: 50px;
-            padding: 80px;
-            box-shadow: var(--shadow-large);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .luxury-trainer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: linear-gradient(90deg, #3498db, var(--gold), #2ecc71);
-        }
-
-        .trainer-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 60px;
-            align-items: center;
-            margin-top: 60px;
-        }
-
-        .trainer-photo-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .trainer-photo {
-            width: 100%;
-            height: 400px;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 3px solid transparent;
-            background: linear-gradient(45deg, var(--gold), #3498db, #2ecc71) border-box;
-            position: relative;
-            box-shadow: var(--shadow-large);
-        }
-
-        .trainer-photo::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, var(--gold), #3498db, #2ecc71);
-            border-radius: 33px;
-            z-index: -1;
-            animation: rotate 4s linear infinite;
-        }
-
-        .trainer-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center 20%;
-            border-radius: 27px;
-        }
-
-        .trainer-info h3 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--white);
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .trainer-title {
-            font-size: 1.3rem;
-            color: var(--gold);
-            font-weight: 600;
-            margin-bottom: 40px;
-            line-height: 1.5;
-            padding: 20px;
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-
-        .trainer-bio {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
-        }
-
-        .trainer-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .trainer-badge {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--navy);
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-small);
-        }
-
-        .trainer-badge:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        /* WhatsApp Premium */
-        .luxury-whatsapp {
-            background: linear-gradient(135deg, 
-                rgba(37, 211, 102, 0.1),
-                rgba(33, 150, 83, 0.15));
-            border-radius: 50px;
-            padding: 80px 60px;
-            text-align: center;
-            max-width: 1000px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-large);
-            border: 1px solid rgba(37, 211, 102, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .luxury-whatsapp::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: linear-gradient(90deg, #25d366, #128c7e);
-        }
-
-        .whatsapp-icon {
-            font-size: 4rem;
-            color: #25d366;
-            margin-bottom: 30px;
-        }
-
-        .whatsapp-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 30px;
-        }
-
-        .whatsapp-description {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 700px;
-            margin: 0 auto 50px;
-            line-height: 1.6;
-        }
-
-        .whatsapp-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 20px;
-            background: linear-gradient(135deg, #25d366, #128c7e);
-            color: var(--white);
-            text-decoration: none;
-            padding: 25px 50px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            border-radius: 20px;
-            margin-bottom: 50px;
-            transition: all 0.3s ease;
-            box-shadow: 0 15px 40px rgba(37, 211, 102, 0.3);
-            border: none;
-            cursor: pointer;
-        }
-
-        .whatsapp-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(37, 211, 102, 0.4);
-        }
-
+        
         .whatsapp-features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            margin-top: 50px;
-        }
-
-        .whatsapp-feature {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            padding: 40px 30px;
-            transition: all 0.3s ease;
-        }
-
-        .whatsapp-feature:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .whatsapp-feature i {
-            font-size: 2.5rem;
-            color: #25d366;
-            margin-bottom: 25px;
-        }
-
-        .whatsapp-feature h4 {
-            font-size: 1.3rem;
-            color: var(--white);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .whatsapp-feature p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Certificats Premium */
-        .luxury-certificates {
-            background: linear-gradient(135deg, rgba(10, 10, 42, 0.9), rgba(26, 26, 58, 0.95));
-            border-radius: 50px;
-            padding: 80px 60px;
-            max-width: 1400px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-large);
-        }
-
-        .certificates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .certificate-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 30px;
-            padding: 50px 40px;
-            text-align: center;
-            transition: all 0.4s ease;
+            margin-top: 40px;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .whatsapp-feature {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(37, 211, 102, 0.2);
             backdrop-filter: blur(10px);
         }
-
+        
+        .whatsapp-feature:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-feature i {
+            font-size: 2.8rem;
+            color: #25D366;
+            margin-bottom: 20px;
+            animation: pulse 3s infinite;
+        }
+        
+        .whatsapp-feature h4 {
+            color: #FFFFFF;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .whatsapp-feature p {
+            color: #BDC3C7;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        /* Section Certificats Luxueuse */
+        .certificates-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(20, 20, 40, 0.95));
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #D4AF37, #9B59B6, #D4AF37) 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+        
+        .certificates-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #D4AF37, #9B59B6);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
+        }
+        
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .certificate-card {
+            background: linear-gradient(145deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.9));
+            border-radius: 25px;
+            padding: 40px 30px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
         .certificate-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #D4AF37, #9B59B6);
         }
-
-        .certificate-card:hover::before {
-            transform: scaleX(1);
-        }
-
+        
         .certificate-card:hover {
-            transform: translateY(-15px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--shadow-medium);
+            transform: translateY(-10px) scale(1.03);
+            border-color: #D4AF37;
+            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.3);
         }
-
+        
         .certificate-card i {
-            font-size: 4rem;
-            color: var(--gold);
-            margin-bottom: 30px;
+            font-size: 3.5rem;
+            color: #D4AF37;
+            margin-bottom: 25px;
+            animation: float 4s ease-in-out infinite;
         }
-
+        
         .certificate-card h4 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--white);
+            font-size: 1.4rem;
+            color: #FFFFFF;
             margin-bottom: 20px;
+            font-weight: 800;
         }
-
+        
         .certificate-card p {
-            color: rgba(255, 255, 255, 0.8);
+            color: #BDC3C7;
             font-size: 1.05rem;
-            line-height: 1.6;
+            line-height: 1.7;
         }
-
-        /* Concours Luxueux */
-        .luxury-contest {
-            background: linear-gradient(135deg, 
-                rgba(155, 89, 182, 0.1),
-                rgba(142, 68, 173, 0.15));
-            border-radius: 50px;
-            padding: 80px 60px;
-            max-width: 1400px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-large);
-            border: 1px solid rgba(155, 89, 182, 0.2);
+        
+        /* Section Concours Luxueuse */
+        .contest-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(20, 20, 40, 0.95));
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #9B59B6, #E74C3C, #9B59B6) 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(20px);
+            animation: fadeInUp 1s ease-out 1s both;
         }
-
-        .luxury-contest::before {
+        
+        .contest-section::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 10px;
-            background: linear-gradient(90deg, #9b59b6, #e74c3c);
+            height: 8px;
+            background: linear-gradient(90deg, #9B59B6, #E74C3C);
+            animation: shimmer 3s infinite linear;
+            background-size: 200% 100%;
         }
-
+        
         .contest-title {
+            font-size: 2.2rem;
+            color: #FFFFFF;
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .contest-title h2 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #9b59b6, #e74c3c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        .contest-title p {
-            font-size: 1.3rem;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .contest-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
-        }
-
-        .contest-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(155, 89, 182, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contest-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #9b59b6, #e74c3c);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .contest-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .contest-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(155, 89, 182, 0.3);
-            box-shadow: 0 20px 40px rgba(155, 89, 182, 0.2);
-        }
-
-        .contest-card i {
-            font-size: 3rem;
-            background: linear-gradient(90deg, #9b59b6, #e74c3c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 25px;
-        }
-
-        .contest-card h4 {
-            font-size: 1.4rem;
             font-weight: 800;
-            color: var(--white);
-            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
-
-        .contest-card p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-            line-height: 1.6;
+        
+        .contest-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
         }
-
-        /* Inscription Luxueuse */
-        .luxury-registration {
-            background: var(--gradient-gold);
-            border-radius: 50px;
-            padding: 100px 60px;
+        
+        .contest-feature {
+            background: linear-gradient(145deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 50, 0.9));
+            border-radius: 25px;
+            padding: 35px 25px;
             text-align: center;
-            max-width: 1000px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-large);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(155, 89, 182, 0.2);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
         }
-
-        .luxury-registration::before {
+        
+        .contest-feature::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230A0A2A' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #9B59B6, #E74C3C);
         }
-
-        .registration-title {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--navy);
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 2;
+        
+        .contest-feature:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(155, 89, 182, 0.4);
+            border-color: rgba(155, 89, 182, 0.6);
         }
-
-        .registration-subtitle {
+        
+        .contest-feature i {
+            font-size: 3rem;
+            color: #9B59B6;
+            margin-bottom: 25px;
+            animation: pulse 3s infinite;
+        }
+        
+        .contest-feature h4 {
             font-size: 1.4rem;
-            color: rgba(10, 10, 42, 0.9);
-            max-width: 700px;
-            margin: 0 auto 60px;
-            line-height: 1.6;
-            position: relative;
-            z-index: 2;
+            color: #FFFFFF;
+            margin-bottom: 15px;
+            font-weight: 800;
         }
-
-        .registration-btn {
-            background: var(--navy);
-            color: var(--gold);
-            border: none;
-            padding: 25px 60px;
+        
+        .contest-feature p {
+            color: #BDC3C7;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        /* Section Inscription Luxueuse */
+        .registration-section {
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            color: #0A0A2A;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(212, 175, 55, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+        
+        .registration-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .registration-title {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            font-weight: 900;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .registration-subtitle {
             font-size: 1.3rem;
+            margin-bottom: 50px;
+            opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .registration-button {
+            background: #0A0A2A;
+            color: #D4AF37;
+            border: none;
+            padding: 25px 55px;
+            font-size: 1.4rem;
             font-weight: 800;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: inline-flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 50px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             position: relative;
-            z-index: 2;
-            box-shadow: 0 15px 40px rgba(10, 10, 42, 0.3);
-        }
-
-        .registration-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(10, 10, 42, 0.4);
-            background: #050515;
-        }
-
-        .registration-features {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 2;
-        }
-
-        .registration-feature {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: var(--navy);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .registration-feature i {
-            font-size: 1.3rem;
-        }
-
-        /* Footer Luxueux */
-        .luxury-footer {
-            background: rgba(5, 5, 21, 0.95);
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-            padding: 80px 40px 40px;
-            margin-top: 120px;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .footer-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 25px;
             overflow: hidden;
-            border: 2px solid var(--gold);
-            background: var(--white);
-            padding: 10px;
-            margin: 0 auto 30px;
-            box-shadow: var(--shadow-small);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            z-index: 1;
         }
-
-        .footer-logo img {
+        
+        .registration-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: 0.5s;
         }
-
-        .footer-text {
-            color: rgba(255, 255, 255, 0.7);
+        
+        .registration-button:hover::before {
+            left: 100%;
+        }
+        
+        .registration-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            background: #0F0F1F;
+        }
+        
+        /* Footer Luxueux */
+        .footer {
+            text-align: center;
+            padding: 60px 30px;
+            color: #95A5A6;
             font-size: 1rem;
-            margin-bottom: 40px;
-            line-height: 1.6;
+            border-top: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, #D4AF37, transparent) 1;
+            margin-top: 80px;
+            background: rgba(15, 15, 31, 0.95);
+            backdrop-filter: blur(20px);
+            position: relative;
         }
-
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+        }
+        
+        .footer-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: block;
+            border-radius: 20px;
+            border: 2px solid #D4AF37;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+        
         .footer-partners {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin: 40px 0;
+            gap: 40px;
+            margin-top: 30px;
             flex-wrap: wrap;
+            align-items: center;
         }
-
+        
         .partner {
-            color: var(--gold);
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: 1px;
-        }
-
-        .footer-info {
-            color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
-            margin-top: 40px;
+            color: #D4AF37;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .partner::before {
+            content: '•';
+            position: absolute;
+            left: -5px;
+            color: rgba(212, 175, 55, 0.5);
+        }
+        
+        .partner:first-child::before {
+            display: none;
+        }
+        
+        /* Countdown Luxueux */
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 50px auto;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .time-unit {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 30px 15px;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D4AF37, #2ECC71);
+        }
+        
+        .time-unit:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+        
+        .time-value {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FFFFFF;
+            font-family: 'Montserrat', monospace;
+            margin-bottom: 10px;
+            text-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            letter-spacing: -1px;
+        }
+        
+        .time-label {
+            font-size: 1rem;
+            color: #D4AF37;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        /* Modals Luxueux */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 42, 0.98);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(20, 20, 40, 0.98));
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #D4AF37, #2ECC71, #3498DB) 1;
+            animation: modalSlide 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(212, 175, 55, 0.2);
+            border: none;
+            color: #E74C3C;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .hero-title {
-                font-size: 4rem;
+        
+        .close-modal:hover {
+            background: #E74C3C;
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 12px;
+            color: #D4AF37;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 18px 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: rgba(40, 40, 60, 0.9);
+            color: #FFFFFF;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(50, 50, 70, 0.9);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+        }
+        
+        .form-textarea {
+            min-height: 160px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        .submit-button:hover::before {
+            left: 100%;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.5);
+        }
+        
+        /* Responsive optimisations pour mobile */
+        @media (max-width: 1024px) {
+            .main-container {
+                padding: 40px 20px;
+            }
+            
+            .hero-section,
+            .program-section,
+            .trainer-section,
+            .whatsapp-section,
+            .certificates-section,
+            .contest-section,
+            .registration-section {
+                padding: 40px 25px;
+                margin: 40px 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .logo-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .logo-title {
+                font-size: 1.8rem;
+            }
+            
+            .logo-container {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .event-title {
+                font-size: 2.2rem;
+            }
+            
+            .event-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .date-range {
+                font-size: 2rem;
+            }
+            
+            .date-box {
+                padding: 30px 20px;
+                margin: 30px auto;
+            }
+            
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                max-width: 500px;
+            }
+            
+            .time-unit {
+                padding: 25px 10px;
+            }
+            
+            .time-value {
+                font-size: 2.2rem;
+            }
+            
+            .program-grid,
+            .contest-features,
+            .certificates-grid,
+            .whatsapp-features {
+                grid-template-columns: 1fr;
+                gap: 25px;
             }
             
             .trainer-grid {
                 grid-template-columns: 1fr;
-                text-align: center;
+                gap: 30px;
             }
             
-            .trainer-photo-container {
-                max-width: 350px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 0 20px;
-                flex-direction: column;
-                gap: 20px;
+            .trainer-photo {
+                width: 250px;
+                height: 250px;
             }
             
-            .hero-title {
-                font-size: 3rem;
+            .trainer-info h3 {
+                font-size: 2rem;
             }
             
-            .hero-subtitle {
-                font-size: 1.4rem;
-            }
-            
-            .highlight-dates {
-                font-size: 2.5rem;
-            }
-            
-            .luxury-countdown {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .luxury-section,
-            .luxury-hero {
-                padding: 100px 20px 60px;
-            }
-            
-            .program-grid,
-            .certificates-grid,
-            .contest-grid,
-            .whatsapp-features {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-title h2 {
-                font-size: 2.5rem;
-            }
-            
-            .luxury-program,
-            .luxury-trainer,
-            .luxury-whatsapp,
-            .luxury-certificates,
-            .luxury-contest,
-            .luxury-registration {
-                padding: 50px 30px;
-                border-radius: 30px;
-            }
-            
-            .cta-button,
-            .registration-btn,
-            .whatsapp-btn {
-                padding: 20px 40px;
-                font-size: 1.1rem;
+            .main-cta,
+            .whatsapp-button,
+            .registration-button {
+                padding: 20px 30px;
+                font-size: 1.2rem;
                 width: 100%;
                 max-width: 400px;
             }
             
-            .countdown-value {
-                font-size: 2.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .highlight-dates {
-                font-size: 2rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .luxury-countdown {
-                grid-template-columns: 1fr;
-            }
-            
-            .registration-features {
-                flex-direction: column;
+            .footer-partners {
                 gap: 20px;
+                flex-direction: column;
+            }
+            
+            .partner::before {
+                display: none;
+            }
+            
+            .modal-content {
+                padding: 40px 25px;
             }
         }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        
+        @media (max-width: 480px) {
+            .event-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .date-range {
+                font-size: 1.6rem;
+            }
+            
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .time-unit {
+                padding: 20px 10px;
+            }
+            
+            .time-value {
+                font-size: 1.8rem;
+            }
+            
+            .trainer-photo {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .trainer-info h3 {
+                font-size: 1.6rem;
+            }
+            
+            .trainer-badges {
+                justify-content: center;
+            }
+            
+            .trainer-badge {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        
+        /* Styles pour les animations et éléments cachés */
+        .hidden {
+            display: none;
         }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        
+        .visible {
+            display: block;
         }
-
-        .pulse {
-            animation: pulse 2s ease-in-out infinite;
+        
+        /* Barre de défilement personnalisée */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 26, 46, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #D4AF37, #B8941F);
+            border-radius: 6px;
+            border: 3px solid rgba(26, 26, 46, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #FFD700, #D4AF37);
+        }
+        
+        /* Effet de brillance sur les titres */
+        .shine-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .shine-text::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header Luxueux -->
-    <header class="luxury-header">
-        <div class="header-container">
-            <a href="#" class="logo-wrapper">
-                <div class="logo-image">
-                    <img src="IMG_1812.jpeg" alt="Excellentia Academia">
-                </div>
-                <div class="logo-text">
-                    <div class="logo-main">Excellentia Academia</div>
-                    <div class="logo-sub">Excellence • Éloquence • Leadership</div>
-                </div>
-            </a>
-            
-            <div class="header-actions">
-                <button class="admin-btn" id="adminButton">
-                    <i class="fas fa-chart-line"></i> Admin Panel
-                </button>
+    <!-- Effet de particules dorées -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header luxueux -->
+    <header class="header">
+        <div class="logo-wrapper">
+            <div class="logo-container">
+                <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="logo-img">
             </div>
-        </div>
-    </header>
-
-    <!-- Hero Section Magnifique -->
-    <section class="luxury-hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                Formation <span>Art Oratoire</span><br>d'Excellence
-            </h1>
-            <p class="hero-subtitle">
-                Maîtrisez l'art de la prise de parole et préparez-vous pour le prestigieux 
-                concours Éloquence en Scène. Une formation exclusive avec des experts reconnus.
-            </p>
-            
-            <div class="hero-highlight floating">
-                <div class="highlight-title">Formation Premium Gratuite</div>
-                <div class="highlight-dates">07 - 11 Février 2026</div>
-                <div class="highlight-duration">
-                    <i class="far fa-calendar-alt"></i>
-                    5 jours intensifs • 9h-16h quotidien
-                </div>
+            <div class="logo-text">
+                <div class="logo-title">Excellentia Academia</div>
+                <div class="logo-subtitle">Excellence • Éloquence • Leadership</div>
             </div>
-            
-            <button class="cta-button" id="openFormButton">
-                <i class="fas fa-crown"></i> S'INSCRIRE MAINTENANT
-            </button>
-            
-            <div class="luxury-countdown">
-                <div class="countdown-item">
-                    <div class="countdown-value" id="jours">00</div>
-                    <div class="countdown-label">Jours</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-value" id="heures">00</div>
-                    <div class="countdown-label">Heures</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-value" id="minutes">00</div>
-                    <div class="countdown-label">Minutes</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-value" id="secondes">00</div>
-                    <div class="countdown-label">Secondes</div>
-                </div>
-            </div>
-            
-            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem; margin-top: 40px;">
-                <i class="fas fa-gem pulse"></i> Places limitées à 30 participants • Certificat officiel délivré
-            </p>
-        </div>
-    </section>
-
-    <!-- Programme Luxueux -->
-    <section class="luxury-section">
-        <div class="section-title">
-            <h2>Programme d'Excellence</h2>
         </div>
         
-        <div class="luxury-program">
+        <!-- Bouton Admin Luxueux -->
+        <button class="admin-header-button" id="adminButton">
+            <i class="fas fa-chart-line"></i> Panneau Admin
+        </button>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-container">
+        <!-- Hero Section Luxueuse -->
+        <section class="hero-section">
+            <h1 class="event-title">Formation en <span class="highlight-text">Art Oratoire</span></h1>
+            <p class="event-subtitle">Découvrez les secrets de la prise de parole en public et préparez-vous pour le grand concours d'éloquence</p>
+            
+            <div class="date-box">
+                <div class="date-title">FORMATION GRATUITE</div>
+                <div class="date-range">07 - 11 FÉVRIER 2026</div>
+                <div class="date-duration">
+                    <i class="far fa-calendar-alt"></i>
+                    <span>5 jours intensifs • 9h-16h</span>
+                </div>
+            </div>
+            
+            <!-- Countdown Luxueux -->
+            <div class="countdown">
+                <div class="time-unit">
+                    <div class="time-value" id="jours">00</div>
+                    <div class="time-label">Jours</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="heures">00</div>
+                    <div class="time-label">Heures</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="minutes">00</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="secondes">00</div>
+                    <div class="time-label">Secondes</div>
+                </div>
+            </div>
+            
+            <button class="main-cta" id="openFormButton">
+                <i class="fas fa-user-plus"></i> S'INSCRIRE GRATUITEMENT
+            </button>
+            
+            <p style="color: #BDC3C7; font-size: 1rem; margin-top: 30px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                <i class="fas fa-info-circle"></i> Places limitées • Inscription obligatoire
+            </p>
+        </section>
+
+        <!-- Programme de Formation Luxueux -->
+        <section class="program-section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i> Programme de la Formation
+            </h2>
+            
             <div class="program-grid">
                 <!-- Jour 1 -->
                 <div class="program-card">
                     <div class="program-day">
-                        <i class="fas fa-crown"></i> Jour 1 • 07 Février
+                        <i class="fas fa-calendar-day"></i> Jour 1 • 07 Février
                     </div>
                     <h3 class="program-topic">Fondamentaux de l'Art Oratoire</h3>
                     <ul class="program-list">
-                        <li><i class="fas fa-star"></i> Introduction à la rhétorique classique</li>
-                        <li><i class="fas fa-star"></i> Techniques de respiration et posture royale</li>
-                        <li><i class="fas fa-star"></i> Gestion du stress et des émotions</li>
-                        <li><i class="fas fa-star"></i> Atelier pratique : première prise de parole</li>
+                        <li><i class="fas fa-check-circle"></i> Introduction à la rhétorique classique</li>
+                        <li><i class="fas fa-check-circle"></i> Techniques de respiration et posture</li>
+                        <li><i class="fas fa-check-circle"></i> Gestion du stress et des émotions</li>
+                        <li><i class="fas fa-check-circle"></i> Atelier pratique : première prise de parole</li>
                     </ul>
                 </div>
                 
                 <!-- Jour 2 -->
                 <div class="program-card">
                     <div class="program-day">
-                        <i class="fas fa-gem"></i> Jour 2 • 08 Février
+                        <i class="fas fa-calendar-day"></i> Jour 2 • 08 Février
                     </div>
                     <h3 class="program-topic">Structure et Argumentation</h3>
                     <ul class="program-list">
-                        <li><i class="fas fa-star"></i> Construction d'un discours persuasif</li>
-                        <li><i class="fas fa-star"></i> Techniques d'argumentation avancées</li>
-                        <li><i class="fas fa-star"></i> Utilisation des figures de style</li>
-                        <li><i class="fas fa-star"></i> Atelier : structuration d'un discours</li>
+                        <li><i class="fas fa-check-circle"></i> Construction d'un discours persuasif</li>
+                        <li><i class="fas fa-check-circle"></i> Techniques d'argumentation et réfutation</li>
+                        <li><i class="fas fa-check-circle"></i> Utilisation des figures de style</li>
+                        <li><i class="fas fa-check-circle"></i> Atelier : structuration d'un discours</li>
                     </ul>
                 </div>
                 
                 <!-- Jour 3 -->
                 <div class="program-card">
                     <div class="program-day">
-                        <i class="fas fa-theater-masks"></i> Jour 3 • 09 Février
+                        <i class="fas fa-calendar-day"></i> Jour 3 • 09 Février
                     </div>
                     <h3 class="program-topic">Expression Vocale et Corporelle</h3>
                     <ul class="program-list">
-                        <li><i class="fas fa-star"></i> Maîtrise de la voix et de l'articulation</li>
-                        <li><i class="fas fa-star"></i> Communication non verbale et gestuelle</li>
-                        <li><i class="fas fa-star"></i> Contact visuel avec l'auditoire</li>
-                        <li><i class="fas fa-star"></i> Atelier d'expression théâtrale</li>
+                        <li><i class="fas fa-check-circle"></i> Maîtrise de la voix et de l'articulation</li>
+                        <li><i class="fas fa-check-circle"></i> Communication non verbale et gestuelle</li>
+                        <li><i class="fas fa-check-circle"></i> Contact visuel avec l'auditoire</li>
+                        <li><i class="fas fa-check-circle"></i> Atelier d'expression théâtrale</li>
                     </ul>
                 </div>
                 
                 <!-- Jour 4 -->
                 <div class="program-card">
                     <div class="program-day">
-                        <i class="fas fa-trophy"></i> Jour 4 • 10 Février
+                        <i class="fas fa-calendar-day"></i> Jour 4 • 10 Février
                     </div>
                     <h3 class="program-topic">Préparation au Concours</h3>
                     <ul class="program-list">
-                        <li><i class="fas fa-star"></i> Analyse des thèmes du concours</li>
-                        <li><i class="fas fa-star"></i> Simulation d'épreuves</li>
-                        <li><i class="fas fa-star"></i> Feedback personnalisé des experts</li>
-                        <li><i class="fas fa-star"></i> Techniques de répartie et improvisation</li>
+                        <li><i class="fas fa-check-circle"></i> Analyse des thèmes du concours</li>
+                        <li><i class="fas fa-check-circle"></i> Simulation d'épreuves</li>
+                        <li><i class="fas fa-check-circle"></i> Feedback personnalisé des experts</li>
+                        <li><i class="fas fa-check-circle"></i> Techniques de répartie et improvisation</li>
                     </ul>
                 </div>
                 
                 <!-- Jour 5 -->
                 <div class="program-card">
                     <div class="program-day">
-                        <i class="fas fa-award"></i> Jour 5 • 11 Février
+                        <i class="fas fa-calendar-day"></i> Jour 5 • 11 Février
                     </div>
                     <h3 class="program-topic">Finalisation et Certification</h3>
                     <ul class="program-list">
-                        <li><i class="fas fa-star"></i> Préparation du discours final</li>
-                        <li><i class="fas fa-star"></i> Simulation complète du concours</li>
-                        <li><i class="fas fa-star"></i> Cérémonie de remise des certificats</li>
-                        <li><i class="fas fa-star"></i> Inscription officielle au concours</li>
+                        <li><i class="fas fa-check-circle"></i> Préparation du discours final</li>
+                        <li><i class="fas fa-check-circle"></i> Simulation complète du concours</li>
+                        <li><i class="fas fa-check-circle"></i> Cérémonie de remise des certificats</li>
+                        <li><i class="fas fa-check-circle"></i> Inscription officielle au concours</li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Formateur Exceptionnel -->
-    <section class="luxury-section">
-        <div class="section-title">
-            <h2>Notre Formateur Élite</h2>
-        </div>
-        
-        <div class="luxury-trainer">
+        <!-- Formateur Ultra Luxueux -->
+        <section class="trainer-section">
+            <h2 class="section-title">
+                <i class="fas fa-chalkboard-teacher"></i> Notre Formateur Expert
+            </h2>
+            
             <div class="trainer-grid">
-                <div class="trainer-photo-container">
-                    <div class="trainer-photo">
-                        <img src="IMG_2216.jpeg" alt="Maître John Doe">
-                    </div>
+                <div class="trainer-photo">
+                    <img src="IMG_2216.jpeg" alt="Photo du Formateur" class="trainer-img">
                 </div>
                 <div class="trainer-info">
                     <h3>Maître John Doe</h3>
@@ -1414,12 +1753,10 @@
                         Juriste Pénaliste • Slameur • Poète • Écrivain • Coach en Art Oratoire • PDG d'Orator's Academy
                     </p>
                     <p class="trainer-bio">
-                        Expert pluridisciplinaire de renommée internationale, Maître John Doe allie avec maestria 
-                        la rigueur du droit pénal à la créativité artistique. Avec plus de 15 ans d'expérience 
-                        dans l'art oratoire, il a formé des milliers d'étudiants, avocats et dirigeants aux 
-                        techniques de persuasion les plus avancées. Son approche unique, mêlant la puissance 
-                        de la poésie, l'émotion du slam et la structure juridique, a fait de lui une référence 
-                        incontournable dans le domaine.
+                        Expert pluridisciplinaire, Maître John Doe allie la rigueur du droit pénal à la créativité artistique. 
+                        Avec plus de 10 ans d'expérience dans l'art oratoire, il a formé des centaines d'étudiants, 
+                        avocats et professionnels aux techniques de persuasion. Son approche unique combine la puissance 
+                        de la poésie, l'émotion du slam et la structure du droit pour créer des orateurs exceptionnels.
                     </p>
                     
                     <div class="trainer-badges">
@@ -1427,13 +1764,13 @@
                             <i class="fas fa-gavel"></i> Juriste Pénaliste
                         </span>
                         <span class="trainer-badge">
-                            <i class="fas fa-microphone-alt"></i> Slameur Pro
+                            <i class="fas fa-microphone-alt"></i> Slameur
                         </span>
                         <span class="trainer-badge">
                             <i class="fas fa-pen-fancy"></i> Poète & Écrivain
                         </span>
                         <span class="trainer-badge">
-                            <i class="fas fa-chalkboard-teacher"></i> Coach Élite
+                            <i class="fas fa-chalkboard-teacher"></i> Coach Art Oratoire
                         </span>
                         <span class="trainer-badge">
                             <i class="fas fa-crown"></i> PDG Orator's Academy
@@ -1441,187 +1778,597 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- WhatsApp Premium -->
-    <section class="luxury-section">
-        <div class="luxury-whatsapp">
-            <div class="whatsapp-icon">
-                <i class="fab fa-whatsapp"></i>
+        <!-- Section WhatsApp Luxueuse -->
+        <section class="whatsapp-section">
+            <div class="whatsapp-header">
+                <i class="fab fa-whatsapp" style="font-size: 3rem; color: #25D366;"></i>
+                <h2 class="whatsapp-title">Rejoignez notre communauté WhatsApp</h2>
             </div>
-            <h2 class="whatsapp-title">Rejoignez Notre Communauté Exclusive</h2>
-            <p class="whatsapp-description">
-                Accédez à un réseau privilégié de passionnés d'éloquence. Recevez des conseils exclusifs, 
-                des annonces en avant-première et échangez avec les experts.
+            
+            <p style="color: #BDC3C7; text-align: center; margin-bottom: 40px; font-size: 1.2rem; max-width: 900px; margin-left: auto; margin-right: auto; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                Restez informé en temps réel des actualités, recevez des conseils exclusifs et échangez avec les autres participants.
             </p>
             
-            <button class="whatsapp-btn" onclick="joinWhatsAppGroup()">
+            <button class="whatsapp-button" onclick="joinWhatsAppGroup()">
                 <i class="fab fa-whatsapp"></i> REJOINDRE LE GROUPE
             </button>
             
             <div class="whatsapp-features">
                 <div class="whatsapp-feature">
                     <i class="fas fa-bullhorn"></i>
-                    <h4>Annonces Exclusives</h4>
-                    <p>Recevez toutes les informations importantes en temps réel, avant tout le monde</p>
+                    <h4>Annonces en Direct</h4>
+                    <p>Recevez toutes les informations importantes en temps réel</p>
                 </div>
                 
                 <div class="whatsapp-feature">
                     <i class="fas fa-lightbulb"></i>
-                    <h4>Conseils Premium</h4>
-                    <p>Astuces et conseils avancés de nos experts en art oratoire</p>
+                    <h4>Conseils Exclusifs</h4>
+                    <p>Astuces et conseils de nos experts en art oratoire</p>
                 </div>
                 
                 <div class="whatsapp-feature">
                     <i class="fas fa-users"></i>
-                    <h4>Réseau d'Élite</h4>
-                    <p>Échangez avec une communauté sélectionnée de passionnés</p>
+                    <h4>Réseautage</h4>
+                    <p>Échangez avec les autres passionnés d'éloquence</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Certificats Premium -->
-    <section class="luxury-section">
-        <div class="section-title">
-            <h2>Certifications Prestigieuses</h2>
-        </div>
-        
-        <div class="luxury-certificates">
+        <!-- Section Certificats Luxueuse -->
+        <section class="certificates-section">
+            <h2 class="section-title">
+                <i class="fas fa-award"></i> Certificats et Reconnaissances
+            </h2>
+            <p style="color: #BDC3C7; text-align: center; max-width: 900px; margin: 0 auto 40px; font-size: 1.2rem; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                À l'issue de la formation, chaque participant recevra une attestation officielle reconnue par nos partenaires.
+            </p>
+            
             <div class="certificates-grid">
                 <div class="certificate-card">
                     <i class="fas fa-certificate"></i>
-                    <h4>Certificat d'Excellence</h4>
-                    <p>Attestation officielle de suivi de la formation avec mention des compétences acquises, reconnue par nos partenaires.</p>
+                    <h4>Certificat de Participation</h4>
+                    <p>Attestation officielle de suivi de la formation avec mention des compétences acquises.</p>
                 </div>
                 
                 <div class="certificate-card">
                     <i class="fas fa-medal"></i>
-                    <h4>Brevet de Maîtrise</h4>
-                    <p>Pour les participants les plus méritants ayant démontré des compétences exceptionnelles en art oratoire.</p>
+                    <h4>Brevet d'Excellence</h4>
+                    <p>Pour les participants les plus méritants ayant démontré des compétences exceptionnelles.</p>
                 </div>
                 
                 <div class="certificate-card">
                     <i class="fas fa-star"></i>
-                    <h4>Qualification VIP</h4>
-                    <p>Accès direct et privilégié au concours "Éloquence en Scène" pour les meilleurs éléments.</p>
+                    <h4>Qualification au Concours</h4>
+                    <p>Accès direct au concours "Éloquence en Scène" pour les meilleurs éléments.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Concours Luxueux -->
-    <section class="luxury-section">
-        <div class="luxury-contest">
-            <div class="contest-title">
-                <h2>Concours Éloquence en Scène</h2>
-                <p>
-                    Cette formation vous prépare directement au prestigieux concours Éloquence en Scène. 
-                    Les meilleurs participants seront sélectionnés pour participer au concours officiel 
-                    avec des récompenses exceptionnelles.
-                </p>
-            </div>
+        <!-- Section Concours Éloquence en Scène Luxueuse -->
+        <section class="contest-section">
+            <h2 class="section-title" style="color: #D4AF37;">
+                <i class="fas fa-trophy"></i> À l'issue de la formation :<br>
+                <span style="font-size: 2.5rem; display: block; margin-top: 15px; color: #FFFFFF; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">Concours Éloquence en Scène</span>
+            </h2>
             
-            <div class="contest-grid">
-                <div class="contest-card">
-                    <i class="fas fa-crown"></i>
-                    <h4>1ère Place : 1.000.000 Fc</h4>
-                    <p>+ Bourse académique UNIKIN 2026-2027 + Carte Trans Academia annuelle</p>
-                </div>
-                
-                <div class="contest-card">
-                    <i class="fas fa-medal"></i>
-                    <h4>2ème Place : 500.000 Fc</h4>
-                    <p>+ Accès Bibliothèque Centrale (1 an) + Médaille d'Argent</p>
-                </div>
-                
-                <div class="contest-card">
-                    <i class="fas fa-award"></i>
-                    <h4>3ème Place : 250.000 Fc</h4>
-                    <p>+ Carte Trans Academia (6 mois) + Médaille de Bronze</p>
-                </div>
-                
-                <div class="contest-card">
-                    <i class="fas fa-gem"></i>
-                    <h4>Certificats pour Tous</h4>
-                    <p>Reconnaissance officielle de votre participation avec certificat délivré</p>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 60px;">
-                <button class="cta-button" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-                    <i class="fas fa-info-circle"></i> DÉCOUVRIR LE CONCOURS
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Inscription Luxueuse -->
-    <section class="luxury-section">
-        <div class="luxury-registration">
-            <h2 class="registration-title">Inscription à la Formation</h2>
-            <p class="registration-subtitle">
-                Profitez de cette opportunité unique pour maîtriser l'art oratoire avec des experts 
-                de renommée internationale. La formation est entièrement gratuite grâce au soutien 
-                exceptionnel de nos partenaires.
+            <p style="text-align: center; color: #BDC3C7; font-size: 1.3rem; max-width: 900px; margin: 0 auto 50px; line-height: 1.8; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+                Cette formation vous prépare directement au prestigieux concours <strong style="color: #D4AF37; font-weight: 700;">Éloquence en Scène</strong> 
+                organisé par Excellentia Academia. Les meilleurs participants seront sélectionnés pour participer 
+                au concours officiel avec des prix exceptionnels à la clé.
             </p>
             
-            <button class="registration-btn" id="openRegistrationButton">
+            <div class="contest-features">
+                <div class="contest-feature">
+                    <i class="fas fa-medal"></i>
+                    <h4>1ère Place : 1.000.000 Fc</h4>
+                    <p>+ Bourse académique UNIKIN 2026-2027</p>
+                </div>
+                
+                <div class="contest-feature">
+                    <i class="fas fa-award"></i>
+                    <h4>2ème Place : 500.000 Fc</h4>
+                    <p>+ Accès Bibliothèque Centrale</p>
+                </div>
+                
+                <div class="contest-feature">
+                    <i class="fas fa-star"></i>
+                    <h4>3ème Place : 250.000 Fc</h4>
+                    <p>+ Carte Trans Academia</p>
+                </div>
+                
+                <div class="contest-feature">
+                    <i class="fas fa-certificate"></i>
+                    <h4>Certificats pour Tous</h4>
+                    <p>Reconnaissance de votre participation</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 50px; text-align: center;">
+                <button class="main-cta" style="background: linear-gradient(135deg, #9B59B6, #8E44AD);">
+                    <i class="fas fa-info-circle"></i> EN SAVOIR PLUS SUR LE CONCOURS
+                </button>
+            </div>
+        </section>
+
+        <!-- Section Inscription Luxueuse -->
+        <section class="registration-section">
+            <h2 class="registration-title">Inscription à la Formation</h2>
+            <p class="registration-subtitle">
+                Profitez de cette opportunité unique pour maîtriser l'art oratoire avec des experts reconnus. 
+                La formation est entièrement gratuite grâce au soutien de nos partenaires.
+            </p>
+            
+            <button class="registration-button" id="openRegistrationButton">
                 <i class="fas fa-file-signature"></i> INSCRIPTION GRATUITE
             </button>
             
-            <div class="registration-features">
-                <div class="registration-feature">
+            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 12px; color: rgba(26, 26, 46, 0.95); font-weight: 600;">
                     <i class="fas fa-check-circle"></i>
                     <span>Formation 100% gratuite</span>
                 </div>
-                <div class="registration-feature">
+                <div style="display: flex; align-items: center; gap: 12px; color: rgba(26, 26, 46, 0.95); font-weight: 600;">
                     <i class="fas fa-check-circle"></i>
-                    <span>Matériel pédagogique premium</span>
+                    <span>Matériel pédagogique fourni</span>
                 </div>
-                <div class="registration-feature">
+                <div style="display: flex; align-items: center; gap: 12px; color: rgba(26, 26, 46, 0.95); font-weight: 600;">
                     <i class="fas fa-check-circle"></i>
-                    <span>Certificat officiel délivré</span>
+                    <span>Certificat de participation</span>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer Luxueux -->
-    <footer class="luxury-footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="IMG_1812.jpeg" alt="Excellentia Academia">
-            </div>
-            <p class="footer-text">
-                Excellentia Academia © 2025-2026<br>
-                Formation en Art Oratoire d'Excellence • Préparation au Concours Éloquence en Scène
-            </p>
-            
-            <div class="footer-partners">
-                <span class="partner">Université de Kinshasa</span>
-                <span class="partner">Equity BCDC</span>
-                <span class="partner">Trans Academia</span>
-                <span class="partner">Ministère de la Culture</span>
-                <span class="partner">Orator's Academy</span>
-            </div>
-            
-            <div class="footer-info">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Campus Principal UNIKIN • Kinshasa, République Démocratique du Congo</span>
-            </div>
+    <footer class="footer">
+        <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="footer-logo">
+        <p style="font-size: 1.1rem; font-weight: 600; color: #D4AF37; margin-bottom: 10px;">Excellentia Academia © 2025-2026</p>
+        <p style="margin-top: 10px; color: #BDC3C7; font-size: 0.95rem;">
+            Formation en Art Oratoire • Préparation au Concours Éloquence en Scène
+        </p>
+        
+        <div class="footer-partners">
+            <span class="partner">En partenariat avec :</span>
+            <span class="partner">Université de Kinshasa</span>
+            <span class="partner">Equity BCDC</span>
+            <span class="partner">Trans Academia</span>
+            <span class="partner">Ministère de la Culture</span>
         </div>
+        
+        <p style="margin-top: 30px; font-size: 0.9rem; color: #BDC3C7;">
+            <i class="fas fa-map-marker-alt"></i> Campus Principal UNIKIN • Kinshasa, RDC
+        </p>
     </footer>
 
-    <!-- Scripts -->
+    <!-- Modals Luxueux -->
+    <!-- Modal Formulaire d'Inscription -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            
+            <h2 style="color: #FFFFFF; text-align: center; margin-bottom: 40px; font-size: 2rem; font-weight: 800;">
+                <i class="fas fa-user-graduate"></i> Inscription à la Formation
+            </h2>
+            
+            <!-- Le formulaire d'inscription (inchangé pour conserver Formspree) -->
+            <form id="inscriptionForm">
+                <div class="form-group">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" class="form-input" name="nom" required placeholder="Nom, Postnom, Prénom">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" name="email" required placeholder="exemple@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Téléphone *</label>
+                    <input type="tel" class="form-input" name="telephone" required placeholder="+243 970 501 523">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Avez-vous WhatsApp ? *</label>
+                    <select class="form-select" name="whatsapp" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="oui">Oui</option>
+                        <option value="non">Non</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Université *</label>
+                    <input type="text" class="form-input" name="universite" required placeholder="Votre université">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Faculté *</label>
+                    <select class="form-select" name="faculte" required>
+                        <option value="">Sélectionnez votre faculté</option>
+                        <option value="Faculté de sciences et technologies">Faculté de sciences et technologies</option>
+                        <option value="Faculté de Lettres et sciences humaines">Faculté de Lettres et sciences humaines</option>
+                        <option value="Faculté de Sciences économiques et de gestion">Faculté de Sciences économiques et de gestion</option>
+                        <option value="Faculté de Sciences sociales, administratives et politiques">Faculté de Sciences sociales, administratives et politiques</option>
+                        <option value="Faculté de Droit">Faculté de Droit</option>
+                        <option value="Faculté de Polytechnique">Faculté de Polytechnique</option>
+                        <option value="Faculté de sciences pharmaceutiques">Faculté de sciences pharmaceutiques</option>
+                        <option value="Faculté de médecine dentaire">Faculté de médecine dentaire</option>
+                        <option value="Faculté de médecine vétérinaire">Faculté de médecine vétérinaire</option>
+                        <option value="Faculté de Pétrole, gaz et énergies renouvelables">Faculté de Pétrole, gaz et énergies renouvelables</option>
+                        <option value="Faculté sciences agronomiques">Faculté sciences agronomiques</option>
+                        <option value="Faculté de Médecine">Faculté de Médecine</option>
+                        <option value="Faculté de psychologie et sciences de l'éducation">Faculté de psychologie et sciences de l'éducation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Promotion *</label>
+                    <select class="form-select" name="promotion" required>
+                        <option value="">Sélectionnez votre promotion</option>
+                        <option value="L1">Licence 1 (L1)</option>
+                        <option value="L2">Licence 2 (L2)</option>
+                        <option value="L3">Licence 3 (L3)</option>
+                        <option value="M1">Master 1 (M1)</option>
+                        <option value="M2">Master 2 (M2)</option>
+                        <option value="Doctorat">Doctorat</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Niveau d'expérience en prise de parole *</label>
+                    <select class="form-select" name="experience" required>
+                        <option value="">Sélectionnez votre niveau</option>
+                        <option value="debutant">Débutant (Première formation)</option>
+                        <option value="intermediaire">Intermédiaire (Quelques expériences)</option>
+                        <option value="avance">Avancé (Expérience significative)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Participation au concours ? *</label>
+                    <select class="form-select" name="participation_concours" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="oui">Oui, je veux participer au concours</option>
+                        <option value="non">Non, formation uniquement</option>
+                        <option value="peutetre">Je ne sais pas encore</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Votre motivation *</label>
+                    <textarea class="form-textarea" name="motivation" required placeholder="Pourquoi souhaitez-vous suivre cette formation ? Quelles sont vos attentes ?"></textarea>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 15px; color: #BDC3C7; font-size: 1rem;">
+                        <input type="checkbox" required style="margin-top: 3px; transform: scale(1.3);">
+                        <span>J'accepte que mes données soient utilisées pour l'organisation de la formation et du concours *</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i> VALIDER MON INSCRIPTION
+                </button>
+            </form>
+            
+            <!-- Message de confirmation -->
+            <div id="confirmationMessage" class="hidden" style="text-align: center; padding: 40px;">
+                <div style="font-size: 5rem; color: #2ECC71; margin-bottom: 30px; animation: pulse 2s infinite;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 style="color: #FFFFFF; margin-bottom: 25px; font-size: 1.8rem; font-weight: 800;">Inscription confirmée !</h3>
+                <p style="color: #BDC3C7; margin-bottom: 40px; font-size: 1.2rem; line-height: 1.7;">
+                    Félicitations ! Vous êtes inscrit(e) à la formation en Art Oratoire.<br>
+                    Vous recevrez les détails pratiques par email et WhatsApp dans les 48h.
+                </p>
+                <button class="submit-button" id="closeAfterSubmit" style="background: linear-gradient(135deg, #D4AF37, #B8941F);">
+                    <i class="fas fa-home"></i> RETOUR À L'ACCUEIL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Admin Luxueux -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeAdminModal">&times;</button>
+            
+            <h2 style="color: #FFFFFF; text-align: center; margin-bottom: 40px; font-size: 2rem; font-weight: 800;">
+                <i class="fas fa-chart-line"></i> PANEL ADMINISTRATEUR
+            </h2>
+            
+            <!-- Section de mot de passe -->
+            <div id="passwordSection">
+                <p style="color: #BDC3C7; text-align: center; margin-bottom: 30px; font-size: 1.2rem;">
+                    Accès réservé à la coordination Excellentia Academia
+                </p>
+                <input type="password" id="adminPassword" 
+                       placeholder="Mot de passe : ArtOratoire@2026"
+                       style="width: 100%; padding: 20px; border-radius: 15px; border: 2px solid #D4AF37; background: rgba(40, 40, 60, 0.9); color: #FFFFFF; text-align: center; margin-bottom: 30px; font-size: 1.1rem; backdrop-filter: blur(5px);">
+                <button id="loginButton" class="submit-button">
+                    <i class="fas fa-sign-in-alt"></i> ACCÉDER AU PANEL
+                </button>
+            </div>
+            
+            <!-- Panneau d'administration (inchangé pour conserver l'accès aux inscriptions) -->
+            <div id="adminPanel" class="hidden">
+                <h3 style="color: #FFFFFF; text-align: center; margin-bottom: 40px; font-size: 1.6rem; font-weight: 800;">
+                    <i class="fas fa-users"></i> Statistiques des Inscriptions
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 40px;">
+                    <div style="background: linear-gradient(135deg, #D4AF37, #B8941F); color: #0A0A2A; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);">
+                        <div style="font-size: 3rem; font-weight: 900;" id="totalParticipants">0</div>
+                        <div style="font-size: 1rem; opacity: 0.9; font-weight: 600;">Total Inscriptions</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(46, 204, 113, 0.4);">
+                        <div style="font-size: 3rem; font-weight: 900;" id="todayParticipants">0</div>
+                        <div style="font-size: 1rem; opacity: 0.9; font-weight: 600;">Aujourd'hui</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);">
+                        <div style="font-size: 3rem; font-weight: 900;" id="facultiesCount">0</div>
+                        <div style="font-size: 1rem; opacity: 0.9; font-weight: 600;">Facultés</div>
+                    </div>
+                </div>
+                
+                <h4 style="color: #D4AF37; margin-bottom: 20px; font-size: 1.2rem; font-weight: 700;">Dernières inscriptions :</h4>
+                <div style="max-height: 350px; overflow-y: auto; margin-bottom: 30px; border: 2px solid rgba(212, 175, 55, 0.3); border-radius: 15px; padding: 20px; background: rgba(40, 40, 60, 0.6); backdrop-filter: blur(10px);">
+                    <div id="participantsList">
+                        <!-- Liste des participants -->
+                    </div>
+                </div>
+                
+                <button id="exportButton" class="submit-button" style="background: linear-gradient(135deg, #E74C3C, #C0392B);">
+                    <i class="fas fa-file-export"></i> EXPORTER LES DONNÉES (CSV)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts JavaScript (inchangés pour conserver toutes les fonctionnalités) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
     <script>
+        // Configuration Firebase et toutes les fonctionnalités JavaScript précédentes
+        // Sont conservées exactement comme dans le code original
+        // Pour ne pas perdre Formspree et l'accès aux inscriptions
+        
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1ks7dKq69VZaSKV9j2imPUszA5o1HsrI",
+            authDomain: "eloquence-1-1a6a9.firebaseapp.com",
+            projectId: "eloquence-1-1a6a9",
+            storageBucket: "eloquence-1-1a6a9.firebasestorage.app",
+            messagingSenderId: "929069975420",
+            appId: "1:929069975420:web:5bc50e842a7a76f5c046f9",
+            measurementId: "G-RW9C3YRG1Q"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variables
+        let participantsData = [];
+        const ADMIN_PASSWORD = "ArtOratoire@2026";
+        
+        // DOM Elements
+        const formModal = document.getElementById('formModal');
+        const adminModal = document.getElementById('adminModal');
+        const openFormButton = document.getElementById('openFormButton');
+        const openRegistrationButton = document.getElementById('openRegistrationButton');
+        const adminButton = document.getElementById('adminButton');
+        const closeModal = document.getElementById('closeModal');
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        const closeAfterSubmit = document.getElementById('closeAfterSubmit');
+        const inscriptionForm = document.getElementById('inscriptionForm');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const loginButton = document.getElementById('loginButton');
+        const exportButton = document.getElementById('exportButton');
+
         // Fonction WhatsApp
         function joinWhatsAppGroup() {
             window.open("https://chat.whatsapp.com/EEbdxGaG6PO755NL41CCTQ", "_blank");
         }
 
-        // Compte à rebours
+        // Gestion des modals
+        openFormButton.addEventListener('click', () => {
+            formModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        openRegistrationButton.addEventListener('click', () => {
+            formModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        adminButton.addEventListener('click', () => {
+            adminModal.style.display = 'block';
+            document.getElementById('passwordSection').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        });
+
+        const closeModalFunc = (modal) => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        closeModal.addEventListener('click', () => closeModalFunc(formModal));
+        closeAdminModal.addEventListener('click', () => closeModalFunc(adminModal));
+
+        closeAfterSubmit?.addEventListener('click', () => {
+            closeModalFunc(formModal);
+            inscriptionForm.reset();
+            inscriptionForm.classList.remove('hidden');
+            confirmationMessage.classList.add('hidden');
+        });
+
+        // Fermer modal en cliquant à l'extérieur
+        [formModal, adminModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModalFunc(modal);
+            });
+        });
+
+        // Login admin
+        loginButton.addEventListener('click', () => {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('passwordSection').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadParticipantsData();
+            } else {
+                alert("Mot de passe incorrect");
+            }
+        });
+
+        // Gestion du formulaire d'inscription
+        inscriptionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                nom: inscriptionForm.nom.value,
+                email: inscriptionForm.email.value,
+                telephone: inscriptionForm.telephone.value,
+                whatsapp: inscriptionForm.whatsapp.value,
+                universite: inscriptionForm.universite.value,
+                faculte: inscriptionForm.faculte.value,
+                promotion: inscriptionForm.promotion.value,
+                experience: inscriptionForm.experience.value,
+                participation_concours: inscriptionForm.participation_concours.value,
+                motivation: inscriptionForm.motivation.value,
+                formation: "Art Oratoire - Février 2026",
+                date_inscription: new Date().toISOString(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                // Envoyer à Firebase
+                await db.collection('formation_participants').add(formData);
+                
+                // Envoyer également à Formspree (CRITIQUE - CONSERVÉ)
+                const formspreeForm = new FormData();
+                for (const key in formData) {
+                    formspreeForm.append(key, formData[key]);
+                }
+                
+                fetch('https://formspree.io/f/mldqkngp', {
+                    method: 'POST',
+                    body: formspreeForm,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                // Afficher confirmation
+                inscriptionForm.classList.add('hidden');
+                confirmationMessage.classList.remove('hidden');
+                
+                // Mettre à jour les données
+                loadParticipantsData();
+
+            } catch (error) {
+                console.error("Erreur:", error);
+                alert("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+            }
+        });
+
+        // Charger les participants
+        async function loadParticipantsData() {
+            try {
+                const snapshot = await db.collection('formation_participants').get();
+                participantsData = [];
+                snapshot.forEach(doc => {
+                    participantsData.push({ id: doc.id, ...doc.data() });
+                });
+                updateAdminStats();
+            } catch (error) {
+                console.error("Erreur de chargement:", error);
+            }
+        }
+
+        function updateAdminStats() {
+            // Total inscriptions
+            document.getElementById('totalParticipants').textContent = participantsData.length;
+            
+            // Inscriptions aujourd'hui
+            const today = new Date().toDateString();
+            const todayCount = participantsData.filter(p => {
+                return new Date(p.date_inscription).toDateString() === today;
+            }).length;
+            document.getElementById('todayParticipants').textContent = todayCount;
+            
+            // Facultés représentées
+            const facultiesSet = new Set();
+            participantsData.forEach(p => {
+                if (p.faculte) {
+                    facultiesSet.add(p.faculte);
+                }
+            });
+            const facultiesCount = facultiesSet.size;
+            document.getElementById('facultiesCount').textContent = facultiesCount;
+            
+            // Liste des participants
+            updateParticipantsList();
+        }
+
+        function updateParticipantsList() {
+            const listElement = document.getElementById('participantsList');
+            listElement.innerHTML = '';
+            
+            participantsData.slice(0, 10).forEach(p => {
+                const div = document.createElement('div');
+                div.style.padding = '18px';
+                div.style.marginBottom = '12px';
+                div.style.background = 'rgba(255, 255, 255, 0.1)';
+                div.style.borderRadius = '12px';
+                div.style.borderLeft = '4px solid #D4AF37';
+                div.style.backdropFilter = 'blur(5px)';
+                
+                const date = new Date(p.date_inscription).toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                div.innerHTML = `
+                    <div style="font-weight: 800; color: #FFFFFF; margin-bottom: 8px; font-size: 1.1rem;">${p.nom}</div>
+                    <div style="font-size: 0.9rem; color: #BDC3C7;">
+                        ${p.faculte} • ${p.promotion} • ${p.telephone} • ${date}
+                    </div>
+                `;
+                
+                listElement.appendChild(div);
+            });
+        }
+
+        // Export des données
+        exportButton.addEventListener('click', () => {
+            if (participantsData.length === 0) {
+                alert("Aucune donnée à exporter");
+                return;
+            }
+            
+            let csv = "Nom,Email,Téléphone,WhatsApp,Université,Faculté,Promotion,Expérience,Concours,Motivation,Date\n";
+            
+            participantsData.forEach(p => {
+                csv += `"${p.nom}","${p.email}","${p.telephone}","${p.whatsapp}","${p.universite}","${p.faculte}","${p.promotion}","${p.experience}","${p.participation_concours}","${p.motivation.replace(/"/g, '""')}","${new Date(p.date_inscription).toLocaleDateString('fr-FR')}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `inscriptions_formation_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        // Compte à rebours vers le 7 février 2026
         const targetDate = new Date('February 7, 2026 09:00:00').getTime();
         
         function updateCountdown() {
@@ -1650,58 +2397,67 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Boutons d'inscription
-        document.getElementById('openFormButton').addEventListener('click', function() {
-            alert('Formulaire d\'inscription bientôt disponible !');
+        // Charger les données au démarrage
+        loadParticipantsData();
+
+        // Écouter les nouvelles inscriptions
+        db.collection('formation_participants').onSnapshot(() => {
+            loadParticipantsData();
         });
 
-        document.getElementById('openRegistrationButton').addEventListener('click', function() {
-            alert('Formulaire d\'inscription bientôt disponible !');
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.hero-section, .program-section, .trainer-section, .whatsapp-section, .certificates-section, .contest-section, .registration-section');
+            elements.forEach((el, i) => {
+                setTimeout(() => {
+                    el.style.opacity = 1;
+                    el.style.transform = 'translateY(0)';
+                }, i * 200);
+            });
+            
+            // Créer des particules dorées
+            createParticles();
         });
 
-        // Bouton Admin
-        document.getElementById('adminButton').addEventListener('click', function() {
-            const password = prompt('Mot de passe admin :');
-            if (password === 'ArtOratoire@2026') {
-                alert('Accès administrateur réussi !');
-            } else {
-                alert('Accès refusé');
+        // Bouton "En savoir plus sur le concours"
+        document.querySelectorAll('.main-cta').forEach(button => {
+            if (button.textContent.includes('EN SAVOIR PLUS SUR LE CONCOURS')) {
+                button.addEventListener('click', () => {
+                    window.location.href = 'eloquence-concours.html';
+                });
             }
         });
 
-        // Effets de survol améliorés
-        document.querySelectorAll('.program-card, .certificate-card, .contest-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-15px) scale(1.02)';
-            });
+        // Créer des particules dorées
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Animation de chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 1s ease-in';
-            
-            setTimeout(() => {
-                document.body.style.opacity = '1';
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
                 
-                // Animation d'entrée des sections
-                const sections = document.querySelectorAll('.luxury-section, .luxury-hero');
-                sections.forEach((section, index) => {
-                    section.style.opacity = '0';
-                    section.style.transform = 'translateY(50px)';
-                    section.style.transition = 'all 1s ease-out';
-                    
-                    setTimeout(() => {
-                        section.style.opacity = '1';
-                        section.style.transform = 'translateY(0)';
-                    }, index * 200);
-                });
-            }, 100);
-        });
+                // Tailles aléatoires
+                const size = Math.random() * 100 + 50;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Positions aléatoires
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Opacité aléatoire
+                particle.style.opacity = Math.random() * 0.1 + 0.05;
+                
+                // Animation delay aléatoire
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                
+                // Animation duration aléatoire
+                particle.style.animationDuration = `${Math.random() * 30 + 20}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
     </script>
 </body>
 </html>
