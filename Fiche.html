@@ -480,6 +480,29 @@ ELOQ-2024-010</textarea>
                                     pdf.text('SCEAU OFFICIEL', x + receiptWidth - 40, y + receiptHeight - 5);
                                 }
 
+                                // ============ AJOUT DE LA SIGNATURE "EXCELLENTIA ACADEMIA" ============
+                                // Signature stylisée pour l'authenticité
+                                pdf.setFontSize(7);
+                                pdf.setTextColor(100, 100, 100);
+                                
+                                // Ligne de signature
+                                pdf.line(x + 15, y + receiptHeight - 8, x + receiptWidth - 15, y + receiptHeight - 8);
+                                
+                                // Texte de signature
+                                pdf.setFont('helvetica', 'italic');
+                                pdf.text('Pour authentification:', x + receiptWidth/2, y + receiptHeight - 6, { align: 'center' });
+                                
+                                // Nom de l'institution
+                                pdf.setFont('helvetica', 'bold');
+                                pdf.setTextColor(40, 40, 40);
+                                pdf.setFontSize(8);
+                                pdf.text('Excellentia Academia', x + receiptWidth/2, y + receiptHeight - 3, { align: 'center' });
+                                
+                                // Retour aux paramètres par défaut
+                                pdf.setFont('helvetica', 'normal');
+                                pdf.setTextColor(0, 0, 0);
+                                // ============ FIN DE L'AJOUT ============
+
                                 // Numéro de séquence
                                 pdf.setFontSize(6);
                                 pdf.setTextColor(100, 100, 100);
@@ -539,7 +562,15 @@ ELOQ-2024-010</textarea>
                             <p><strong>Code:</strong> <span style="color: red; font-weight: bold;">${codes[0]}</span></p>
                             <p><strong>Montant:</strong> 50,00 €</p>
                         </div>
-                        <div style="text-align: right; margin-top: 30px; padding-top: 10px; border-top: 1px solid #000;">
+                        
+                        <!-- Section de signature -->
+                        <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #000; text-align: center;">
+                            <div style="border-bottom: 1px solid #999; width: 80%; margin: 0 auto 5px;"></div>
+                            <p style="font-size: 12px; color: #666; margin: 0; font-style: italic;">Pour authentification:</p>
+                            <p style="font-size: 14px; color: #333; font-weight: bold; margin: 5px 0 0;">Excellentia Academia</p>
+                        </div>
+                        
+                        <div style="text-align: right; margin-top: 20px; padding-top: 10px; border-top: 1px solid #000;">
                             <div style="border: 1px dashed #3498db; width: 100px; height: 50px; margin-left: auto; display: flex; align-items: center; justify-content: center; color: #666;">
                                 SCEAU OFFICIEL
                             </div>
@@ -547,7 +578,7 @@ ELOQ-2024-010</textarea>
                         </div>
                     </div>
                     <p style="text-align: center; color: #666; margin-top: 30px;">
-                        ✅ Le PDF final contiendra ${codes.length} reçu(s) avec le sceau officiel
+                        ✅ Le PDF final contiendra ${codes.length} reçu(s) avec le sceau officiel et la signature Excellentia Academia
                     </p>
                 </body>
                 </html>
