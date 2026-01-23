@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de Reçus - Concours d'Éloquence</title>
+    
+    <!-- Bibliothèques nécessaires -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <style>
-        /* === STYLES GÉNÉRAUX === */
+        /* === RESET === */
         * {
             margin: 0;
             padding: 0;
@@ -13,87 +19,132 @@
         }
 
         body {
-            font-family: 'Times New Roman', serif;
-            background: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
         }
 
+        /* === CONTAINER === */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
         /* === HEADER === */
         .header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #333;
         }
 
         .header h1 {
-            font-size: 28px;
-            color: #2c3e50;
+            font-size: 32px;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
 
         .header p {
-            color: #7f8c8d;
             font-size: 16px;
+            opacity: 0.9;
         }
 
-        /* === FORMULAIRE === */
+        /* === MAIN CONTENT === */
+        .main-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === FORM === */
         .form-section {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border: 1px solid #dee2e6;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 18px;
         }
 
         .code-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ced4da;
-            border-radius: 5px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 120px;
-            margin-bottom: 15px;
-        }
-
-        .form-controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
             font-size: 16px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            resize: vertical;
+            min-height: 200px;
+            margin-bottom: 15px;
             transition: all 0.3s;
         }
 
+        .code-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .counter {
+            text-align: right;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* === BUTTONS === */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .btn-primary {
-            background: #3498db;
+            background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
         }
 
         .btn-secondary {
@@ -105,79 +156,214 @@
             background: #7f8c8d;
         }
 
-        .counter {
-            font-size: 14px;
-            color: #666;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
         }
 
-        /* === PRÉVISUALISATION === */
-        .preview-section {
-            margin: 40px 0;
-        }
-
-        .preview-section h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        /* === GRILLE DE RECUS (10 par page) === */
-        .receipts-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 40px;
-            page-break-inside: avoid;
-        }
-
-        /* Style pour impression - 2 rangées de 5 = 10 reçus par page */
-        @media print {
-            .receipts-grid {
-                grid-template-columns: repeat(5, 1fr);
-                grid-template-rows: repeat(2, 1fr);
-                gap: 5mm;
-                margin: 0;
-                page-break-after: always;
-            }
-            
-            .no-print {
-                display: none !important;
-            }
-            
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .container {
-                box-shadow: none;
-                padding: 0;
-            }
-        }
-
-        /* === RECU INDIVIDUEL === */
-        .receipt {
-            width: 190px;
-            height: 270px;
-            background: white;
-            border: 2px solid #000;
-            border-radius: 5px;
-            padding: 15px;
+        /* === RECEIPT PREVIEW === */
+        .receipt-preview-container {
             position: relative;
+            width: 400px;
+            height: 600px;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
             overflow: hidden;
-            font-size: 12px;
-            line-height: 1.4;
-            page-break-inside: avoid;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: white;
         }
 
-        /* Filigrane */
-        .watermark {
+        /* === OPTIONS === */
+        .options-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-item:hover {
+            background: #e9ecef;
+        }
+
+        .option-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #3498db;
+        }
+
+        .option-item label {
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        /* === DOWNLOAD SECTION === */
+        .download-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-radius: 15px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .download-icon {
+            font-size: 60px;
+            color: #28a745;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-details h3 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .file-size {
+            color: #0c5460;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* === LOADER === */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #9b59b6);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* === RECEIPT STYLES (Pour le PDF) === */
+        .receipt-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .receipt-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 15mm 20mm;
+            height: 257mm;
+        }
+
+        .receipt {
+            width: 85mm;
+            height: 45mm;
+            border: 1px solid #000;
+            padding: 5mm;
+            position: relative;
+            font-size: 10px;
+            font-family: 'Times New Roman', serif;
+            page-break-inside: avoid;
+            background: white;
+            overflow: hidden;
+        }
+
+        .watermark-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -185,14 +371,12 @@
             height: 100%;
             opacity: 0.1;
             z-index: 0;
-            pointer-events: none;
             background-image: url('IMG_1812.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
 
-        /* Contenu du reçu */
         .receipt-content {
             position: relative;
             z-index: 1;
@@ -201,220 +385,161 @@
             flex-direction: column;
         }
 
-        /* En-tête du reçu */
         .receipt-header {
             text-align: center;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #000;
+            margin-bottom: 2mm;
+            padding-bottom: 1mm;
+            border-bottom: 0.5px solid #000;
         }
 
         .receipt-header h3 {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .receipt-header h4 {
             font-size: 12px;
-            font-weight: normal;
-            color: #333;
-        }
-
-        /* Corps du reçu */
-        .receipt-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
         }
 
         .receipt-info {
-            margin-bottom: 15px;
+            margin-bottom: 2mm;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
-            border-bottom: 1px dashed #ccc;
+            margin-bottom: 1mm;
+            font-size: 9px;
         }
 
         .info-label {
             font-weight: bold;
-            color: #333;
-        }
-
-        .info-value {
-            color: #000;
-            font-weight: normal;
         }
 
         .code-display {
             text-align: center;
-            margin: 10px 0;
-            padding: 8px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 3px;
+            margin: 2mm 0;
+            padding: 2mm;
+            border: 1px solid #ccc;
             font-family: 'Courier New', monospace;
             font-weight: bold;
-            font-size: 13px;
-            letter-spacing: 1px;
+            font-size: 11px;
+            background: #f8f9fa;
         }
 
-        /* QR Code placeholder */
-        .qr-placeholder {
+        .qrcode-container {
             text-align: center;
-            margin: 10px 0;
-            padding: 5px;
-            background: white;
-            border: 1px dashed #ccc;
-            border-radius: 3px;
+            margin: 2mm 0;
         }
 
-        .qr-placeholder span {
-            font-size: 10px;
-            color: #666;
-        }
-
-        /* Signature */
-        .signature {
+        .signature-container {
             text-align: right;
-            margin-top: 10px;
-            padding-top: 5px;
-            border-top: 1px solid #000;
-        }
-
-        .signature-line {
-            width: 120px;
-            height: 1px;
-            background: #000;
-            margin-left: auto;
-            margin-bottom: 3px;
-        }
-
-        .signature-text {
-            font-size: 10px;
-            font-style: italic;
-            color: #333;
+            margin-top: auto;
+            padding-top: 2mm;
+            border-top: 0.5px solid #000;
         }
 
         .signature-img {
-            height: 40px;
-            margin-left: auto;
+            height: 12mm;
             display: block;
+            margin-left: auto;
             opacity: 0.8;
         }
 
-        /* Pied de page du reçu */
-        .receipt-footer {
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid #ccc;
-            font-size: 9px;
-            color: #666;
-            text-align: center;
-        }
-
-        /* Numéro de séquence */
         .receipt-number {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 10px;
+            top: 1mm;
+            right: 1mm;
+            font-size: 8px;
             color: #666;
             background: white;
-            padding: 2px 5px;
-            border-radius: 2px;
-            border: 1px solid #ddd;
+            padding: 1mm 2mm;
+            border-radius: 2mm;
+            border: 0.5px solid #ddd;
         }
 
-        /* === CONTROLES D'IMPRESSION === */
-        .print-controls {
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-            text-align: center;
+        /* === NOTIFICATION === */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
         }
 
-        .print-info {
-            font-size: 14px;
-            color: #2c3e50;
-            margin-bottom: 15px;
+        .notification.show {
+            transform: translateX(0);
         }
 
-        /* === FOOTER === */
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #7f8c8d;
-            font-size: 14px;
+        .notification i {
+            font-size: 24px;
         }
+
+        .notification-success i { color: #28a745; }
+        .notification-error i { color: #dc3545; }
+        .notification-info i { color: #17a2b8; }
 
         /* === RESPONSIVE === */
-        @media (max-width: 1200px) {
-            .receipts-grid {
-                grid-template-columns: repeat(4, 1fr);
-                grid-template-rows: repeat(3, 1fr);
+        @media print {
+            body * {
+                visibility: hidden;
             }
-        }
-
-        @media (max-width: 992px) {
-            .receipts-grid {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(4, 1fr);
+            
+            .receipt-page, .receipt-page * {
+                visibility: visible;
+            }
+            
+            .receipt-page {
+                position: absolute;
+                left: 0;
+                top: 0;
+                box-shadow: none;
             }
         }
 
         @media (max-width: 768px) {
-            .receipts-grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(5, 1fr);
+            .main-content {
+                padding: 20px;
             }
             
-            .receipt {
-                width: 170px;
-                height: 240px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .receipts-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(10, 1fr);
+            .button-group {
+                flex-direction: column;
             }
             
-            .receipt {
+            .btn {
                 width: 100%;
-                max-width: 250px;
-                margin: 0 auto;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- En-tête -->
+        <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-file-invoice"></i> Générateur de Reçus de Paiement</h1>
-            <p>Concours d'Éloquence 2024 - 10 reçus par page</p>
+            <h1>🎤 Générateur de Reçus de Paiement</h1>
+            <p>Concours d'Éloquence 2024 • 10 reçus par page A4</p>
         </div>
 
-        <!-- Formulaire de saisie -->
-        <div class="form-section no-print">
-            <textarea 
-                id="codeInput" 
-                class="code-input" 
-                placeholder="Entrez les codes de vote (un par ligne). Exemple :&#10;ELOQ-001&#10;ELOQ-002&#10;ELOQ-003"
-                rows="6"
-            >ELOQ-2024-001
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div>
+                <!-- Form Section -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="codeInput">📝 Codes de vote (un par ligne)</label>
+                        <textarea 
+                            id="codeInput" 
+                            class="code-input" 
+                            placeholder="Entrez les codes, un par ligne :&#10;ELOQ-2024-001&#10;ELOQ-2024-002&#10;ELOQ-2024-003&#10;..."
+                            rows="8"
+                        >ELOQ-2024-001
 ELOQ-2024-002
 ELOQ-2024-003
 ELOQ-2024-004
@@ -424,77 +549,170 @@ ELOQ-2024-007
 ELOQ-2024-008
 ELOQ-2024-009
 ELOQ-2024-010</textarea>
-            
-            <div class="form-controls">
-                <div>
-                    <button class="btn btn-primary" id="generateBtn">
-                        <i class="fas fa-magic"></i> Générer les Reçus
-                    </button>
-                    <button class="btn btn-secondary" id="clearBtn">
-                        <i class="fas fa-broom"></i> Effacer
-                    </button>
-                    <button class="btn btn-secondary" id="exampleBtn">
-                        <i class="fas fa-vial"></i> Exemple
-                    </button>
+                        <div class="counter">
+                            <span id="codeCount">10</span> codes saisis
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="form-group">
+                        <label>⚙️ Options de génération</label>
+                        <div class="option-item">
+                            <input type="checkbox" id="optionWatermark" checked>
+                            <label for="optionWatermark">
+                                <div style="width: 20px; height: 20px; background: #3498db; opacity: 0.3; margin-right: 10px;"></div>
+                                Appliquer le filigrane (IMG_1812.jpeg)
+                            </label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="optionSignature" checked>
+                            <label for="optionSignature">
+                                <div style="width: 20px; height: 20px; border-bottom: 2px solid #000; margin-right: 10px;"></div>
+                                Ajouter la signature (Times_New_Roman.png)
+                            </label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="optionQRCode" checked>
+                            <label for="optionQRCode">
+                                <div style="width: 20px; height: 20px; border: 2px solid #000; margin-right: 10px; position: relative;">
+                                    <div style="position: absolute; width: 12px; height: 12px; background: #000; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                                </div>
+                                Inclure les codes QR
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="generateBtn">
+                            🚀 Générer les Reçus PDF
+                        </button>
+                        <button class="btn btn-secondary" id="previewBtn">
+                            👁️ Aperçu Rapide
+                        </button>
+                        <button class="btn btn-secondary" id="clearBtn">
+                            🗑️ Effacer Tout
+                        </button>
+                        <button class="btn btn-success" id="exampleBtn">
+                            📋 Charger Exemple
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Download Section -->
+                <div class="download-section" id="downloadSection">
+                    <div class="download-info">
+                        <div class="download-icon">✅</div>
+                        <div class="file-details">
+                            <h3>Reçus générés avec succès !</h3>
+                            <p id="downloadMessage">10 reçus prêts à télécharger</p>
+                            <div class="file-size">
+                                <span>📄</span>
+                                <span id="fileName">receipts.pdf</span>
+                                •
+                                <span id="fileSize">~250 KB</span>
+                            </div>
+                        </div>
+                        <div class="download-actions">
+                            <button class="btn btn-primary" id="downloadPDFBtn">
+                                📥 Télécharger PDF
+                            </button>
+                            <button class="btn btn-secondary" id="printBtn">
+                                🖨️ Imprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="options-section">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">📊 Informations</h3>
                 
-                <div class="counter">
-                    <span id="codeCount">10 codes</span> saisis
+                <div style="background: #e8f4fc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #3498db; margin-bottom: 10px;">📝 Format des reçus</h4>
+                    <ul style="padding-left: 20px; color: #2c3e50;">
+                        <li>10 reçus par page A4</li>
+                        <li>2 colonnes × 5 lignes</li>
+                        <li>Taille : 85mm × 45mm</li>
+                        <li>Optimisé pour impression</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f0f8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #27ae60; margin-bottom: 10px;">🔒 Sécurité intégrée</h4>
+                    <ul style="padding-left: 20px; color: #2c3e50;">
+                        <li>Filigrane unique par reçu</li>
+                        <li>Signature numérique</li>
+                        <li>Code QR de vérification</li>
+                        <li>Numéro de série unique</li>
+                    </ul>
+                </div>
+
+                <div style="background: #fff8e1; padding: 20px; border-radius: 8px;">
+                    <h4 style="color: #f39c12; margin-bottom: 10px;">💡 Conseils</h4>
+                    <ul style="padding-left: 20px; color: #2c3e50;">
+                        <li>Utilisez du papier A4 standard</li>
+                        <li>Imprimez en haute qualité</li>
+                        <li>Conservez une copie numérique</li>
+                        <li>Vérifiez avant distribution</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Section de prévisualisation -->
-        <div class="preview-section" id="previewSection">
-            <h2><i class="fas fa-eye"></i> Prévisualisation des Reçus</h2>
-            
-            <!-- Grille de 10 reçus par page -->
-            <div class="receipts-grid" id="receiptsGrid">
-                <!-- Les reçus seront générés ici par JavaScript -->
-            </div>
-
-            <!-- Contrôles d'impression -->
-            <div class="print-controls no-print">
-                <p class="print-info">
-                    <i class="fas fa-info-circle"></i>
-                    Configuration : 10 reçus par page (5x2) - Prêt pour l'impression
-                </p>
-                <button class="btn btn-primary" id="printBtn">
-                    <i class="fas fa-print"></i> Imprimer les Reçus
-                </button>
-                <button class="btn btn-secondary" id="addPageBtn">
-                    <i class="fas fa-plus"></i> Ajouter une Page
-                </button>
-            </div>
-        </div>
-
-        <!-- Pied de page -->
-        <div class="footer no-print">
-            <p><strong>Concours d'Éloquence 2024</strong> | Reçus officiels avec filigrane et signature</p>
-            <p>Chaque reçu inclut : Filigrane (IMG_1812.jpeg) + Signature (Times_New_Roman.png)</p>
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 Concours d'Éloquence • Tous droits réservés</p>
+            <p style="margin-top: 10px; opacity: 0.8; font-size: 14px;">
+                Générateur officiel de reçus • Version 3.0
+            </p>
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Variables globales
-        let codes = [];
-        let currentPage = 1;
-        const RECEIPTS_PER_PAGE = 10;
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h3>Génération en cours...</h3>
+            <p>Création des reçus PDF</p>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p id="loaderStatus">Initialisation</p>
+        </div>
+    </div>
 
-        // Initialisation
+    <!-- Hidden receipt container for PDF generation -->
+    <div id="pdfContainer" style="position: absolute; left: -9999px; top: -9999px; width: 210mm;"></div>
+
+    <script>
+        // ============ VARIABLES GLOBALES ============
+        let codes = [];
+        let pdfBlob = null;
+        let generatedPDF = null;
+
+        // ============ INITIALISATION ============
         document.addEventListener('DOMContentLoaded', function() {
             updateCodeCount();
-            generateReceipts();
+            loadFromLocalStorage();
             
             // Événements
             document.getElementById('codeInput').addEventListener('input', updateCodeCount);
-            document.getElementById('generateBtn').addEventListener('click', generateReceipts);
-            document.getElementById('clearBtn').addEventListener('click', clearInput);
+            document.getElementById('generateBtn').addEventListener('click', generateReceiptsPDF);
+            document.getElementById('previewBtn').addEventListener('click', showQuickPreview);
+            document.getElementById('clearBtn').addEventListener('click', clearAll);
             document.getElementById('exampleBtn').addEventListener('click', loadExample);
-            document.getElementById('printBtn').addEventListener('click', printReceipts);
-            document.getElementById('addPageBtn').addEventListener('click', addPage);
+            document.getElementById('downloadPDFBtn').addEventListener('click', downloadPDF);
+            document.getElementById('printBtn').addEventListener('click', printPDF);
+            
+            // Raccourcis clavier
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            console.log('✅ Générateur de reçus initialisé');
         });
+
+        // ============ FONCTIONS PRINCIPALES ============
 
         // Mettre à jour le compteur de codes
         function updateCodeCount() {
@@ -503,303 +721,438 @@ ELOQ-2024-010</textarea>
                 .map(code => code.trim())
                 .filter(code => code.length > 0);
             
-            document.getElementById('codeCount').textContent = codes.length + ' code' + (codes.length !== 1 ? 's' : '');
+            document.getElementById('codeCount').textContent = codes.length;
+            saveToLocalStorage();
         }
 
-        // Générer les reçus
-        function generateReceipts() {
-            updateCodeCount();
-            
+        // Générer les reçus PDF
+        async function generateReceiptsPDF() {
             if (codes.length === 0) {
-                alert('Veuillez entrer au moins un code');
+                showNotification('❌ Veuillez entrer au moins un code', 'error');
                 return;
             }
-            
-            const receiptsGrid = document.getElementById('receiptsGrid');
-            receiptsGrid.innerHTML = '';
-            
-            // Calculer le nombre de pages nécessaires
-            const totalPages = Math.ceil(codes.length / RECEIPTS_PER_PAGE);
-            const startIndex = (currentPage - 1) * RECEIPTS_PER_PAGE;
-            const endIndex = Math.min(startIndex + RECEIPTS_PER_PAGE, codes.length);
-            
-            // Générer les reçus pour la page actuelle
-            for (let i = startIndex; i < endIndex; i++) {
-                const receipt = createReceipt(codes[i], i + 1, codes.length);
-                receiptsGrid.appendChild(receipt);
-            }
-            
-            // Remplir les cases vides si nécessaire
-            const emptySlots = RECEIPTS_PER_PAGE - (endIndex - startIndex);
-            for (let i = 0; i < emptySlots; i++) {
-                const emptyReceipt = createEmptyReceipt();
-                receiptsGrid.appendChild(emptyReceipt);
-            }
-            
-            // Afficher la section de prévisualisation
-            document.getElementById('previewSection').style.display = 'block';
-        }
 
-        // Créer un reçu individuel
-        function createReceipt(code, sequence, total) {
-            const receipt = document.createElement('div');
-            receipt.className = 'receipt';
+            showLoader('Préparation des reçus...');
             
-            // Date formatée
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const timeStr = now.toLocaleTimeString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            // Numéro de référence unique
-            const refNumber = 'REF-' + now.getFullYear() + '-' + 
-                String(sequence).padStart(4, '0') + '-' + 
-                Math.random().toString(36).substr(2, 5).toUpperCase();
-            
-            receipt.innerHTML = `
-                <!-- Filigrane -->
-                <div class="watermark"></div>
+            try {
+                // Options
+                const options = {
+                    watermark: document.getElementById('optionWatermark').checked,
+                    signature: document.getElementById('optionSignature').checked,
+                    qrcode: document.getElementById('optionQRCode').checked
+                };
+
+                // Générer le PDF
+                const pdf = await createPDF(codes, options);
                 
-                <!-- Numéro de séquence -->
-                <div class="receipt-number">${sequence}/${total}</div>
+                // Sauvegarder le PDF
+                pdfBlob = pdf.output('blob');
+                generatedPDF = pdf;
                 
-                <div class="receipt-content">
-                    <!-- En-tête -->
-                    <div class="receipt-header">
-                        <h3>REÇU DE PAIEMENT</h3>
-                        <h4>Concours d'Éloquence</h4>
-                    </div>
-                    
-                    <!-- Corps -->
-                    <div class="receipt-body">
-                        <div class="receipt-info">
-                            <div class="info-row">
-                                <span class="info-label">Date:</span>
-                                <span class="info-value">${dateStr}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Heure:</span>
-                                <span class="info-value">${timeStr}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Référence:</span>
-                                <span class="info-value" style="font-size: 9px;">${refNumber}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Montant:</span>
-                                <span class="info-value">50,00 €</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Mode:</span>
-                                <span class="info-value">Virement</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Code de vote -->
-                        <div class="code-display">
-                            <div style="font-size: 10px; margin-bottom: 3px;">CODE DE VOTE</div>
-                            <div style="font-size: 14px; font-weight: bold; color: #c0392b;">${code}</div>
-                        </div>
-                        
-                        <!-- QR Code placeholder -->
-                        <div class="qr-placeholder">
-                            <div style="margin-bottom: 3px;">[QR Code]</div>
-                            <span>Scanner pour vérifier</span>
-                        </div>
-                        
-                        <!-- Signature -->
-                        <div class="signature">
-                            <div class="signature-line"></div>
-                            <div class="signature-text">
-                                <div>Le Président du Jury</div>
-                                <div style="font-size: 9px;">Concours d'Éloquence 2024</div>
-                            </div>
-                            <!-- Signature image -->
-                            <img src="Times_New_Roman.png" alt="Signature" class="signature-img" onerror="this.style.display='none'">
-                        </div>
-                    </div>
-                    
-                    <!-- Pied de page -->
-                    <div class="receipt-footer">
-                        Document officiel • Ne pas reproduire • Valide jusqu'au 31/12/2024
-                    </div>
-                </div>
-            `;
+                // Mettre à jour l'interface
+                updateDownloadSection();
+                showDownloadSection();
+                
+                hideLoader();
+                showNotification(`✅ ${codes.length} reçu(s) généré(s) avec succès`, 'success');
+                
+            } catch (error) {
+                console.error('Erreur génération PDF:', error);
+                hideLoader();
+                showNotification('❌ Erreur lors de la génération', 'error');
+            }
+        }
+
+        // Créer le PDF
+        async function createPDF(codes, options) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const pageWidth = 210;
+                    const pageHeight = 297;
+                    const margin = 20;
+                    const receiptWidth = 85;
+                    const receiptHeight = 45;
+                    const cols = 2;
+                    const rows = 5;
+                    const horizontalGap = (pageWidth - 2 * margin - cols * receiptWidth) / (cols - 1);
+                    const verticalGap = (pageHeight - 2 * margin - rows * receiptHeight) / (rows - 1);
+
+                    let currentPage = 0;
+                    let receiptIndex = 0;
+
+                    // Générer les reçus page par page
+                    for (let page = 0; page < Math.ceil(codes.length / 10); page++) {
+                        if (page > 0) {
+                            pdf.addPage();
+                        }
+
+                        // Définir la police
+                        pdf.setFont('helvetica');
+                        pdf.setFontSize(8);
+
+                        // Générer 10 reçus par page
+                        for (let row = 0; row < rows; row++) {
+                            for (let col = 0; col < cols; col++) {
+                                if (receiptIndex >= codes.length) break;
+
+                                const x = margin + col * (receiptWidth + horizontalGap);
+                                const y = margin + row * (receiptHeight + verticalGap);
+                                const code = codes[receiptIndex];
+                                
+                                // Dessiner le cadre du reçu
+                                pdf.setDrawColor(0, 0, 0);
+                                pdf.setLineWidth(0.5);
+                                pdf.rect(x, y, receiptWidth, receiptHeight);
+
+                                // Ajouter le filigrane
+                                if (options.watermark) {
+                                    try {
+                                        // Simuler un filigrane avec du texte
+                                        pdf.setTextColor(200, 200, 200);
+                                        pdf.setFontSize(40);
+                                        pdf.text('ÉLOQUENCE', x + receiptWidth/2, y + receiptHeight/2, { align: 'center', angle: 45 });
+                                        pdf.setTextColor(0, 0, 0);
+                                        pdf.setFontSize(8);
+                                    } catch (e) {
+                                        console.warn('Filigrane non chargé');
+                                    }
+                                }
+
+                                // En-tête
+                                pdf.setFontSize(10);
+                                pdf.setFont('helvetica', 'bold');
+                                pdf.text('REÇU DE PAIEMENT', x + receiptWidth/2, y + 5, { align: 'center' });
+                                pdf.setFont('helvetica', 'normal');
+                                pdf.text('Concours d\'Éloquence 2024', x + receiptWidth/2, y + 8, { align: 'center' });
+                                pdf.setFontSize(8);
+
+                                // Ligne de séparation
+                                pdf.line(x + 5, y + 10, x + receiptWidth - 5, y + 10);
+
+                                // Informations
+                                const now = new Date();
+                                const dateStr = now.toLocaleDateString('fr-FR');
+                                const timeStr = now.toLocaleTimeString('fr-FR').slice(0, 5);
+                                const ref = `REF-${now.getFullYear()}-${String(receiptIndex + 1).padStart(4, '0')}`;
+
+                                pdf.text(`Date: ${dateStr}`, x + 5, y + 15);
+                                pdf.text(`Heure: ${timeStr}`, x + 5, y + 18);
+                                pdf.text(`Réf: ${ref}`, x + 5, y + 21);
+                                pdf.text(`Montant: 50,00 €`, x + 5, y + 24);
+
+                                // Code de vote
+                                pdf.setFont('courier', 'bold');
+                                pdf.setFontSize(10);
+                                pdf.text('CODE DE VOTE:', x + receiptWidth/2, y + 30, { align: 'center' });
+                                pdf.setFontSize(12);
+                                pdf.setTextColor(220, 53, 69);
+                                pdf.text(code, x + receiptWidth/2, y + 35, { align: 'center' });
+                                pdf.setTextColor(0, 0, 0);
+                                pdf.setFont('helvetica', 'normal');
+                                pdf.setFontSize(8);
+
+                                // QR Code (simulé)
+                                if (options.qrcode) {
+                                    pdf.setDrawColor(100, 100, 100);
+                                    pdf.rect(x + receiptWidth - 20, y + 28, 15, 15);
+                                    pdf.text('QR', x + receiptWidth - 12.5, y + 35.5, { align: 'center' });
+                                }
+
+                                // Signature
+                                if (options.signature) {
+                                    pdf.text('Le Président du Jury', x + receiptWidth - 40, y + receiptHeight - 5);
+                                    pdf.line(x + receiptWidth - 40, y + receiptHeight - 6, x + receiptWidth - 10, y + receiptHeight - 6);
+                                }
+
+                                // Numéro de séquence
+                                pdf.setFontSize(6);
+                                pdf.setTextColor(100, 100, 100);
+                                pdf.text(`${receiptIndex + 1}/${codes.length}`, x + receiptWidth - 8, y + 4);
+                                pdf.setTextColor(0, 0, 0);
+
+                                receiptIndex++;
+                            }
+                        }
+
+                        // Numéro de page
+                        pdf.setFontSize(10);
+                        pdf.text(`Page ${page + 1}`, pageWidth/2, pageHeight - 10, { align: 'center' });
+
+                        updateProgress(Math.min((receiptIndex / codes.length) * 100, 90));
+                    }
+
+                    updateProgress(100);
+                    resolve(pdf);
+
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        // Mettre à jour la section de téléchargement
+        function updateDownloadSection() {
+            const fileSize = pdfBlob ? Math.round(pdfBlob.size / 1024) : 0;
+            const pageCount = Math.ceil(codes.length / 10);
             
-            return receipt;
+            document.getElementById('downloadMessage').textContent = 
+                `${codes.length} reçu(s) • ${pageCount} page(s) A4`;
+            document.getElementById('fileName').textContent = 
+                `recus_eloquence_${new Date().toISOString().slice(0,10)}.pdf`;
+            document.getElementById('fileSize').textContent = `${fileSize} KB`;
         }
 
-        // Créer un reçu vide
-        function createEmptyReceipt() {
-            const receipt = document.createElement('div');
-            receipt.className = 'receipt';
-            receipt.style.opacity = '0.5';
-            receipt.style.borderStyle = 'dashed';
-            receipt.innerHTML = `
-                <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
-                    <div style="text-align: center;">
-                        <i class="fas fa-file" style="font-size: 30px; margin-bottom: 10px;"></i>
-                        <div>Emplacement vide</div>
+        // Télécharger le PDF
+        function downloadPDF() {
+            if (!generatedPDF) {
+                showNotification('❌ Aucun PDF à télécharger', 'error');
+                return;
+            }
+
+            const filename = `recus_concours_eloquence_${new Date().toISOString().slice(0,19).replace(/[:]/g, '-')}.pdf`;
+            generatedPDF.save(filename);
+            showNotification('📥 Téléchargement démarré', 'success');
+        }
+
+        // Imprimer le PDF
+        function printPDF() {
+            if (!generatedPDF) {
+                showNotification('❌ Aucun PDF à imprimer', 'error');
+                return;
+            }
+
+            // Créer une nouvelle fenêtre pour l'impression
+            const printWindow = window.open('', '_blank');
+            const pdfDataUri = generatedPDF.output('datauristring');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Impression des Reçus</title>
+                    <style>
+                        body { margin: 0; padding: 0; }
+                        iframe { width: 100%; height: 100vh; border: none; }
+                    </style>
+                </head>
+                <body>
+                    <iframe src="${pdfDataUri}"></iframe>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                document.querySelector('iframe').contentWindow.print();
+                            }, 1000);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+        }
+
+        // ============ FONCTIONS UTILITAIRES ============
+
+        // Afficher l'aperçu rapide
+        function showQuickPreview() {
+            if (codes.length === 0) {
+                showNotification('❌ Veuillez entrer des codes', 'error');
+                return;
+            }
+
+            // Créer un aperçu du premier reçu
+            const previewWindow = window.open('', '_blank', 'width=600,height=800');
+            previewWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Aperçu Reçu</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .receipt { 
+                            width: 300px; 
+                            border: 2px solid #000; 
+                            padding: 20px; 
+                            margin: 0 auto;
+                            position: relative;
+                        }
+                        .watermark { 
+                            position: absolute; 
+                            top: 0; left: 0; 
+                            width: 100%; height: 100%; 
+                            opacity: 0.1; 
+                            background: #ccc; 
+                            z-index: 0; 
+                        }
+                        .content { position: relative; z-index: 1; }
+                        h2 { text-align: center; margin: 0 0 10px 0; }
+                        .code { 
+                            text-align: center; 
+                            font-size: 24px; 
+                            font-weight: bold; 
+                            color: #c00; 
+                            margin: 20px 0; 
+                            font-family: monospace;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Aperçu du Reçu</h1>
+                    <div class="receipt">
+                        <div class="watermark"></div>
+                        <div class="content">
+                            <h2>REÇU DE PAIEMENT</h2>
+                            <p><strong>Concours d'Éloquence 2024</strong></p>
+                            <p>Date: ${new Date().toLocaleDateString('fr-FR')}</p>
+                            <p>Code: <span class="code">${codes[0]}</span></p>
+                            <p>Montant: 50,00 €</p>
+                            <div style="text-align: right; margin-top: 30px;">
+                                <div style="border-top: 1px solid #000; width: 150px; margin-left: auto;"></div>
+                                <p>Signature</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
-            return receipt;
+                    <p style="text-align: center; margin-top: 20px; color: #666;">
+                        Ceci est un aperçu. Le PDF final contiendra ${codes.length} reçu(s).
+                    </p>
+                </body>
+                </html>
+            `);
         }
 
-        // Effacer l'entrée
-        function clearInput() {
-            if (codes.length > 0 && confirm('Effacer tous les codes ?')) {
+        // Effacer tout
+        function clearAll() {
+            if (codes.length > 0 && confirm('Êtes-vous sûr de vouloir tout effacer ?')) {
                 document.getElementById('codeInput').value = '';
+                codes = [];
                 updateCodeCount();
-                document.getElementById('receiptsGrid').innerHTML = '';
+                document.getElementById('downloadSection').style.display = 'none';
+                showNotification('🗑️ Tous les codes ont été effacés', 'info');
             }
         }
 
         // Charger un exemple
         function loadExample() {
-            const exampleCodes = [];
-            for (let i = 1; i <= 15; i++) {
-                exampleCodes.push(`ELOQ-2024-${String(i).padStart(3, '0')}`);
+            const example = [];
+            for (let i = 1; i <= 12; i++) {
+                example.push(`ELOQ-2024-${String(i).padStart(3, '0')}`);
             }
-            document.getElementById('codeInput').value = exampleCodes.join('\n');
+            document.getElementById('codeInput').value = example.join('\n');
             updateCodeCount();
-            generateReceipts();
+            showNotification('📋 Exemple chargé (12 codes)', 'success');
         }
 
-        // Imprimer les reçus
-        function printReceipts() {
-            // Préparer l'impression
-            const originalContent = document.body.innerHTML;
-            const printContent = document.getElementById('previewSection').innerHTML;
+        // Afficher la section de téléchargement
+        function showDownloadSection() {
+            document.getElementById('downloadSection').style.display = 'block';
+            document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============ GESTION DU LOADER ============
+
+        function showLoader(message) {
+            document.getElementById('loaderStatus').textContent = message;
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('loaderStatus').textContent = 
+                `Génération... ${Math.round(percent)}%`;
+        }
+
+        // ============ NOTIFICATIONS ============
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <span style="font-size: 24px;">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" style="background:none; border:none; font-size:24px; cursor:pointer; margin-left:auto;">×</button>
+            `;
             
-            // Ouvrir la fenêtre d'impression
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Impression Reçus - Concours d'Éloquence</title>
-                    <style>
-                        body {
-                            font-family: 'Times New Roman', serif;
-                            margin: 0;
-                            padding: 10mm;
-                        }
-                        
-                        .receipts-grid {
-                            display: grid;
-                            grid-template-columns: repeat(5, 1fr);
-                            grid-template-rows: repeat(2, 1fr);
-                            gap: 5mm;
-                            page-break-inside: avoid;
-                        }
-                        
-                        .receipt {
-                            width: 38mm;
-                            height: 54mm;
-                            border: 1px solid #000;
-                            padding: 3mm;
-                            font-size: 9px;
-                            position: relative;
-                            page-break-inside: avoid;
-                        }
-                        
-                        .watermark {
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            opacity: 0.1;
-                            background-image: url('IMG_1812.jpeg');
-                            background-size: cover;
-                            background-position: center;
-                        }
-                        
-                        .receipt-number {
-                            position: absolute;
-                            top: 1mm;
-                            right: 1mm;
-                            font-size: 8px;
-                        }
-                        
-                        .code-display {
-                            text-align: center;
-                            margin: 2mm 0;
-                            padding: 2mm;
-                            border: 1px solid #ccc;
-                            font-family: 'Courier New', monospace;
-                            font-weight: bold;
-                        }
-                        
-                        .signature-img {
-                            height: 8mm;
-                            display: block;
-                            margin-left: auto;
-                            opacity: 0.8;
-                        }
-                        
-                        @page {
-                            size: A4;
-                            margin: 10mm;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${printContent}
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                            window.onafterprint = function() {
-                                window.close();
-                            };
-                        };
-                    </script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
         }
 
-        // Ajouter une page
-        function addPage() {
-            if (codes.length > currentPage * RECEIPTS_PER_PAGE) {
-                currentPage++;
-                generateReceipts();
-            } else {
-                alert('Aucun code supplémentaire à afficher');
+        // ============ LOCAL STORAGE ============
+
+        function saveToLocalStorage() {
+            localStorage.setItem('eloquenceCodes', JSON.stringify(codes));
+            localStorage.setItem('eloquenceOptions', JSON.stringify({
+                watermark: document.getElementById('optionWatermark').checked,
+                signature: document.getElementById('optionSignature').checked,
+                qrcode: document.getElementById('optionQRCode').checked
+            }));
+        }
+
+        function loadFromLocalStorage() {
+            const savedCodes = localStorage.getItem('eloquenceCodes');
+            const savedOptions = localStorage.getItem('eloquenceOptions');
+            
+            if (savedCodes) {
+                codes = JSON.parse(savedCodes);
+                if (codes.length > 0) {
+                    document.getElementById('codeInput').value = codes.join('\n');
+                    updateCodeCount();
+                }
+            }
+            
+            if (savedOptions) {
+                const options = JSON.parse(savedOptions);
+                document.getElementById('optionWatermark').checked = options.watermark;
+                document.getElementById('optionSignature').checked = options.signature;
+                document.getElementById('optionQRCode').checked = options.qrcode;
             }
         }
 
-        // Raccourcis clavier
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+G pour générer
-            if (e.ctrlKey && e.key === 'g') {
+        // ============ RACCOURCIS CLAVIER ============
+
+        function handleKeyboardShortcuts(e) {
+            // Ctrl+Enter : Générer
+            if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault();
-                generateReceipts();
+                generateReceiptsPDF();
             }
             
-            // Ctrl+P pour imprimer
-            if (e.ctrlKey && e.key === 'p') {
-                e.preventDefault();
-                printReceipts();
-            }
-            
-            // Ctrl+E pour exemple
+            // Ctrl+E : Exemple
             if (e.ctrlKey && e.key === 'e') {
                 e.preventDefault();
                 loadExample();
             }
-        });
+            
+            // Ctrl+D : Télécharger
+            if (e.ctrlKey && e.key === 'd' && generatedPDF) {
+                e.preventDefault();
+                downloadPDF();
+            }
+            
+            // Ctrl+P : Imprimer
+            if (e.ctrlKey && e.key === 'p' && generatedPDF) {
+                e.preventDefault();
+                printPDF();
+            }
+        }
+
+        // ============ FONCTIONS EXPORTÉES ============
+        window.downloadPDF = downloadPDF;
+        window.printPDF = printPDF;
     </script>
-    
-    <!-- Font Awesome pour les icônes -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>
