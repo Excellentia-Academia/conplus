@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestionnaire de Codes GitHub</title>
+    <style>
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-hover: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            touch-action: manipulation;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 100%;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            padding: 0 10px;
+        }
+
+        /* Main content - Adapté pour mobile */
+        .main-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Sections */
+        .section {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            color: var(--dark);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+            min-width: 24px;
+        }
+
+        /* Form elements optimisés pour mobile */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: white;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        textarea {
+            min-height: 120px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            line-height: 1.4;
+        }
+
+        /* Boutons optimisés pour touch */
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 18px 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 56px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: white;
+        }
+
+        /* Résultats et copie */
+        .result-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+        }
+
+        .code-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .code-display.duplicate {
+            border-left-color: var(--danger);
+            background: #ffeaea;
+        }
+
+        .code-original {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 10px;
+            word-break: break-all;
+            padding-right: 40px;
+        }
+
+        .code-parts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .code-part {
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            position: relative;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .code-part:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Boutons de copie */
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .copy-btn:active {
+            background: var(--primary);
+            color: white;
+            transform: scale(0.9);
+        }
+
+        .copy-btn.copied {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        .copy-all-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* Alertes et messages */
+        .duplicate-warning {
+            background: #fff3cd;
+            border: 2px solid var(--warning);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .duplicate-warning.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .duplicate-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--warning);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Statistiques en grille */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Onglets pour mobile */
+        .tabs {
+            display: flex;
+            background: #f1f1f1;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Messages toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--dark);
+            color: white;
+            padding: 16px 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            width: auto;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Footer optimisé */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Media queries pour très petits écrans */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            button {
+                padding: 16px 12px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+                margin: 20px auto;
+            }
+            
+            body {
+                padding: 20px;
+            }
+        }
+
+        /* Pour les très grands écrans */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 900px;
+            }
+            
+            .main-content {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .section {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+
+        /* Améliorations pour le clavier virtuel */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .result-box {
+                max-height: 200px;
+            }
+        }
+
+        /* Support pour mode sombre */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light: #1a1a1a;
+                --dark: #f0f0f0;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
+            }
+            
+            .container {
+                background: #2c3e50;
+                color: #f0f0f0;
+            }
+            
+            .section {
+                background: #34495e;
+            }
+            
+            .result-box,
+            .code-display,
+            .stat-card {
+                background: #2c3e50;
+                color: #f0f0f0;
+            }
+            
+            input, textarea, select {
+                background: #34495e;
+                color: #f0f0f0;
+                border-color: #4a6278;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-code-branch"></i>
+                Codes GitHub
+            </h1>
+            <p>Séparez et vérifiez vos codes - Optimisé mobile</p>
+        </div>
+
+        <!-- Onglets pour navigation mobile -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('input')">
+                <i class="fas fa-edit"></i> Saisie
+            </button>
+            <button class="tab" onclick="switchTab('results')">
+                <i class="fas fa-chart-bar"></i> Résultats
+            </button>
+            <button class="tab" onclick="switchTab('tools')">
+                <i class="fas fa-tools"></i> Outils
+            </button>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <!-- Onglet 1: Saisie -->
+            <div id="input-tab" class="tab-content active">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-keyboard"></i>
+                        Saisie des codes
+                    </h2>
+                    
+                    <div class="input-group">
+                        <label for="codeInput">
+                            <i class="fas fa-code"></i>
+                            Codes (un par ligne) :
+                        </label>
+                        <textarea 
+                            id="codeInput" 
+                            placeholder="Collez vos codes ici...
+Exemple: 
+WMT6HP3VJVED
+ABC123DEF456
+XYZ789GHI012"
+                            spellcheck="false"
+                            autocorrect="off"
+                            autocapitalize="off"
+                        ></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="partLength">
+                            <i class="fas fa-ruler"></i>
+                            Longueur des parties :
+                        </label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" id="partLengthRange" min="1" max="6" value="3" style="flex: 1;">
+                            <input type="number" id="partLength" value="3" min="1" max="10" style="width: 80px;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.9rem; color: var(--gray);">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6+</span>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="separateCodes()">
+                            <i class="fas fa-cut"></i>
+                            Séparer
+                        </button>
+                        <button class="btn-secondary" onclick="checkDuplicates()">
+                            <i class="fas fa-search"></i>
+                            Doublons
+                        </button>
+                        <button class="btn-warning" onclick="loadExample()">
+                            <i class="fas fa-magic"></i>
+                            Exemple
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet 2: Résultats -->
+            <div id="results-tab" class="tab-content">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Résultats
+                    </h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalCodes">0</div>
+                            <div class="stat-label">Codes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalParts">0</div>
+                            <div class="stat-label">Parties</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="duplicateCount">0</div>
+                            <div class="stat-label">Doublons</div>
+                        </div>
+                    </div>
+
+                    <div class="result-box" id="resultBox">
+                        <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <p>Aucun résultat à afficher</p>
+                            <p style="font-size: 0.9rem;">Séparez des codes pour voir les résultats ici</p>
+                        </div>
+                    </div>
+
+                    <button class="btn-secondary copy-all-btn" onclick="copyAllResults()">
+                        <i class="fas fa-copy"></i>
+                        Copier tous les résultats
+                    </button>
+                </div>
+
+                <!-- Section doublons -->
+                <div class="duplicate-warning" id="duplicateWarning">
+                    <h3 style="color: var(--danger); margin-bottom: 15px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Doublons détectés
+                    </h3>
+                    <div id="duplicateList"></div>
+                </div>
+            </div>
+
+            <!-- Onglet 3: Outils -->
+            <div id="tools-tab" class="tab-content">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-tools"></i>
+                        Outils supplémentaires
+                    </h2>
+
+                    <div class="input-group">
+                        <label for="singleCode">
+                            <i class="fas fa-barcode"></i>
+                            Tester un code unique :
+                        </label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="singleCode" placeholder="Entrez un code...">
+                            <button class="btn-secondary" onclick="testSingleCode()" style="min-width: 60px;">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="cleanAllCodes()">
+                            <i class="fas fa-broom"></i>
+                            Nettoyer
+                        </button>
+                        <button class="btn-warning" onclick="exportResults()">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                        <button class="btn-danger" onclick="clearAll()">
+                            <i class="fas fa-trash"></i>
+                            Tout effacer
+                        </button>
+                    </div>
+
+                    <!-- Options rapides -->
+                    <div style="margin-top: 25px;">
+                        <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.1rem;">
+                            <i class="fas fa-bolt"></i>
+                            Actions rapides
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <button class="btn-secondary" onclick="copyLastCode()" style="padding: 12px;">
+                                <i class="fas fa-copy"></i>
+                                Dernier code
+                            </button>
+                            <button class="btn-secondary" onclick="copyAllCodes()" style="padding: 12px;">
+                                <i class="fas fa-copy"></i>
+                                Tous les codes
+                            </button>
+                            <button class="btn-secondary" onclick="toggleTheme()" style="padding: 12px;">
+                                <i class="fas fa-moon"></i>
+                                Thème
+                            </button>
+                            <button class="btn-secondary" onclick="shareResults()" style="padding: 12px;">
+                                <i class="fas fa-share"></i>
+                                Partager
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 Gestionnaire de Codes GitHub - Optimisé pour mobile</p>
+            <p style="margin-top: 10px; opacity: 0.8; font-size: 0.85rem;">
+                <i class="fas fa-mobile-alt"></i>
+                Compatible téléphone • <i class="fas fa-copy"></i> Copie facile
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast message -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle" id="toastIcon"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentResults = [];
+        let duplicateCodes = new Set();
+        let currentTheme = 'light';
+
+        // Toast message function
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+            
+            toastMessage.textContent = message;
+            
+            // Définir l'icône selon le type
+            switch(type) {
+                case 'success':
+                    toastIcon.className = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    toastIcon.className = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    toastIcon.className = 'fas fa-exclamation-triangle';
+                    break;
+                case 'info':
+                    toastIcon.className = 'fas fa-info-circle';
+                    break;
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Synchroniser le range et le number input
+        document.getElementById('partLengthRange').addEventListener('input', function() {
+            document.getElementById('partLength').value = this.value;
+        });
+
+        document.getElementById('partLength').addEventListener('input', function() {
+            const value = Math.min(10, Math.max(1, parseInt(this.value) || 3));
+            this.value = value;
+            document.getElementById('partLengthRange').value = value;
+        });
+
+        // Fonction pour nettoyer un code
+        function cleanCode(code) {
+            return code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        }
+
+        // Fonction pour séparer un code
+        function separateCode(code, partLength) {
+            const clean = cleanCode(code);
+            const parts = [];
+            
+            for (let i = 0; i < clean.length; i += parseInt(partLength)) {
+                parts.push(clean.substring(i, i + parseInt(partLength)));
+            }
+            
+            return {
+                original: code,
+                cleaned: clean,
+                parts: parts,
+                isDuplicate: duplicateCodes.has(clean)
+            };
+        }
+
+        // Fonction principale de séparation
+        function separateCodes() {
+            const codeInput = document.getElementById('codeInput');
+            const partLength = document.getElementById('partLength').value;
+            const resultBox = document.getElementById('resultBox');
+            
+            if (!codeInput.value.trim()) {
+                showToast('Veuillez entrer des codes !', 'error');
+                return;
+            }
+            
+            // Nettoyer les codes
+            const codes = codeInput.value.split('\n')
+                .map(code => code.trim())
+                .filter(code => code.length > 0);
+            
+            // Détecter les doublons d'abord
+            detectDuplicates(codes);
+            
+            // Traiter chaque code
+            currentResults = [];
+            let totalParts = 0;
+            
+            codes.forEach((code, index) => {
+                const result = separateCode(code, partLength);
+                currentResults.push(result);
+                totalParts += result.parts.length;
+            });
+            
+            // Afficher les résultats
+            displayResults();
+            
+            // Mettre à jour les stats
+            updateStats(codes.length, totalParts);
+            
+            // Changer d'onglet vers les résultats
+            switchTab('results');
+            
+            showToast(`${codes.length} codes séparés !`, 'success');
+            
+            // Focus sur le bouton de copie
+            setTimeout(() => {
+                document.querySelector('.copy-all-btn').focus();
+            }, 100);
+        }
+
+        // Fonction pour afficher les résultats
+        function displayResults() {
+            const resultBox = document.getElementById('resultBox');
+            resultBox.innerHTML = '';
+            
+            if (currentResults.length === 0) {
+                resultBox.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>Aucun résultat à afficher</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            currentResults.forEach((result, index) => {
+                const codeDiv = document.createElement('div');
+                codeDiv.className = `code-display ${result.isDuplicate ? 'duplicate' : ''}`;
+                codeDiv.id = `code-${index}`;
+                
+                // Bouton de copie
+                const copyBtn = document.createElement('div');
+                copyBtn.className = 'copy-btn';
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                copyBtn.onclick = () => copyCode(index);
+                
+                codeDiv.innerHTML = `
+                    <div class="code-original">
+                        <strong>#${index + 1}:</strong> ${result.original}
+                        ${result.original !== result.cleaned ? 
+                            `<small style="color: var(--gray); margin-left: 10px;">→ ${result.cleaned}</small>` : ''}
+                        ${result.isDuplicate ? 
+                            `<span style="color: var(--danger); margin-left: 10px;">
+                                <i class="fas fa-exclamation-circle"></i> Doublon
+                            </span>` : ''}
+                    </div>
+                    <div class="code-parts">
+                        ${result.parts.map(part => 
+                            `<span class="code-part">${part}</span>`
+                        ).join('')}
+                    </div>
+                `;
+                
+                codeDiv.appendChild(copyBtn);
+                resultBox.appendChild(codeDiv);
+            });
+        }
+
+        // Fonction de copie d'un code
+        function copyCode(index) {
+            if (!currentResults[index]) return;
+            
+            const result = currentResults[index];
+            const textToCopy = `${result.original}\n${result.parts.join(' ')}`;
+            
+            // Utiliser l'API Clipboard
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const copyBtn = document.querySelector(`#code-${index} .copy-btn`);
+                copyBtn.classList.add('copied');
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                
+                showToast('Code copié !', 'success');
+                
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            }).catch(err => {
+                // Fallback pour anciens navigateurs
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                showToast('Code copié !', 'success');
+            });
+        }
+
+        // Copier tous les résultats
+        function copyAllResults() {
+            if (currentResults.length === 0) {
+                showToast('Aucun résultat à copier', 'warning');
+                return;
+            }
+            
+            let textToCopy = "=== RÉSULTATS DES CODES ===\n\n";
+            
+            currentResults.forEach((result, index) => {
+                textToCopy += `Code ${index + 1}: ${result.original}\n`;
+                textToCopy += `Parties: ${result.parts.join(' ')}\n`;
+                if (result.isDuplicate) textToCopy += `⚠ Doublon détecté\n`;
+                textToCopy += `\n`;
+            });
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('Tous les résultats copiés !', 'success');
+            });
+        }
+
+        // Copier tous les codes originaux
+        function copyAllCodes() {
+            const codeInput = document.getElementById('codeInput');
+            if (!codeInput.value.trim()) {
+                showToast('Aucun code à copier', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(codeInput.value).then(() => {
+                showToast('Tous les codes copiés !', 'success');
+            });
+        }
+
+        // Copier le dernier code
+        function copyLastCode() {
+            const codeInput = document.getElementById('codeInput');
+            const codes = codeInput.value.split('\n').filter(code => code.trim());
+            
+            if (codes.length === 0) {
+                showToast('Aucun code disponible', 'warning');
+                return;
+            }
+            
+            const lastCode = codes[codes.length - 1];
+            navigator.clipboard.writeText(lastCode).then(() => {
+                showToast('Dernier code copié !', 'success');
+            });
+        }
+
+        // Détecter les doublons
+        function detectDuplicates(codes) {
+            duplicateCodes.clear();
+            const seen = new Set();
+            
+            codes.forEach(code => {
+                const clean = cleanCode(code);
+                if (seen.has(clean)) {
+                    duplicateCodes.add(clean);
+                }
+                seen.add(clean);
+            });
+            
+            // Afficher l'alerte de doublons
+            const warningBox = document.getElementById('duplicateWarning');
+            const duplicateList = document.getElementById('duplicateList');
+            
+            if (duplicateCodes.size > 0) {
+                warningBox.classList.add('show');
+                duplicateList.innerHTML = '';
+                
+                duplicateCodes.forEach(code => {
+                    const count = codes.filter(c => cleanCode(c) === code).length;
+                    const item = document.createElement('div');
+                    item.className = 'duplicate-item';
+                    item.innerHTML = `
+                        <span style="font-family: 'Courier New', monospace; font-weight: bold;">${code}</span>
+                        <span style="color: var(--danger);">
+                            ${count} occurrence${count > 1 ? 's' : ''}
+                        </span>
+                    `;
+                    duplicateList.appendChild(item);
+                });
+                
+                document.getElementById('duplicateCount').textContent = duplicateCodes.size;
+            } else {
+                warningBox.classList.remove('show');
+            }
+        }
+
+        // Vérifier uniquement les doublons
+        function checkDuplicates() {
+            const codeInput = document.getElementById('codeInput');
+            const codes = codeInput.value.split('\n')
+                .map(code => code.trim())
+                .filter(code => code.length > 0);
+            
+            if (codes.length === 0) {
+                showToast('Veuillez entrer des codes !', 'error');
+                return;
+            }
+            
+            detectDuplicates(codes);
+            switchTab('results');
+            
+            if (duplicateCodes.size > 0) {
+                showToast(`${duplicateCodes.size} doublon(s) trouvé(s) !`, 'warning');
+            } else {
+                showToast('Aucun doublon trouvé !', 'success');
+            }
+        }
+
+        // Tester un code unique
+        function testSingleCode() {
+            const singleCode = document.getElementById('singleCode').value;
+            const partLength = document.getElementById('partLength').value;
+            
+            if (!singleCode.trim()) {
+                showToast('Veuillez entrer un code !', 'error');
+                return;
+            }
+            
+            const result = separateCode(singleCode, partLength);
+            const resultBox = document.getElementById('resultBox');
+            
+            resultBox.innerHTML = `
+                <div class="code-display">
+                    <div class="copy-btn" onclick="copyCode(0)">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                    <div class="code-original">
+                        <strong>Code testé:</strong> ${singleCode}
+                        ${singleCode !== result.cleaned ? 
+                            `<br><small style="color: var(--gray);">Nettoyé: ${result.cleaned}</small>` : ''}
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>Longueur:</strong> ${result.cleaned.length} caractères
+                    </div>
+                    <div class="code-parts">
+                        ${result.parts.map(part => 
+                            `<span class="code-part">${part}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            currentResults = [result];
+            updateStats(1, result.parts.length);
+            switchTab('results');
+            showToast('Code testé avec succès !', 'success');
+        }
+
+        // Mettre à jour les statistiques
+        function updateStats(codeCount, partCount) {
+            document.getElementById('totalCodes').textContent = codeCount;
+            document.getElementById('totalParts').textContent = partCount;
+        }
+
+        // Charger un exemple
+        function loadExample() {
+            const exampleCodes = `WMT6HP3VJVED
+ABC123DEF456
+GHI789JKL012
+WMT6HP3VJVED
+MNO345PQR678
+STU901VWX234
+ABC123DEF456
+YZA567BCD890
+WMT6HP3VJVED
+EFG123HIJ456`;
+            
+            document.getElementById('codeInput').value = exampleCodes;
+            showToast('Exemple chargé !', 'success');
+        }
+
+        // Nettoyer tous les codes
+        function cleanAllCodes() {
+            const codeInput = document.getElementById('codeInput');
+            const codes = codeInput.value.split('\n')
+                .map(code => cleanCode(code))
+                .filter(code => code.length > 0);
+            
+            codeInput.value = codes.join('\n');
+            showToast('Codes nettoyés !', 'success');
+        }
+
+        // Exporter les résultats
+        function exportResults() {
+            if (currentResults.length === 0) {
+                showToast('Aucun résultat à exporter', 'warning');
+                return;
+            }
+            
+            const blob = new Blob([JSON.stringify(currentResults, null, 2)], {
+                type: 'application/json'
+            });
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `codes-github-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Résultats exportés !', 'success');
+        }
+
+        // Partager les résultats
+        function shareResults() {
+            if (currentResults.length === 0) {
+                showToast('Aucun résultat à partager', 'warning');
+                return;
+            }
+            
+            let shareText = "Résultats des codes GitHub:\n\n";
+            currentResults.slice(0, 5).forEach((result, index) => {
+                shareText += `${index + 1}. ${result.original}\n`;
+            });
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mes codes GitHub',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {
+                    // Fallback si l'utilisateur annule
+                    copyAllResults();
+                });
+            } else {
+                copyAllResults();
+            }
+        }
+
+        // Changer de thème
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            showToast(`Thème ${currentTheme} activé`, 'info');
+        }
+
+        // Tout effacer
+        function clearAll() {
+            if (confirm('Voulez-vous vraiment tout effacer ?')) {
+                document.getElementById('codeInput').value = '';
+                document.getElementById('singleCode').value = '';
+                document.getElementById('resultBox').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>Aucun résultat à afficher</p>
+                    </div>
+                `;
+                document.getElementById('duplicateWarning').classList.remove('show');
+                
+                updateStats(0, 0);
+                currentResults = [];
+                duplicateCodes.clear();
+                
+                showToast('Tout a été effacé !', 'success');
+            }
+        }
+
+        // Changer d'onglet
+        function switchTab(tabName) {
+            // Mettre à jour les boutons d'onglet
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Activer le bon onglet
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Focus sur le premier élément interactif
+            setTimeout(() => {
+                const activeTab = document.getElementById(`${tabName}-tab`);
+                const firstInput = activeTab.querySelector('input, textarea, button');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger un exemple après 500ms
+            setTimeout(loadExample, 500);
+            
+            // Ajouter les écouteurs d'événements pour les touches
+            document.getElementById('singleCode').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    testSingleCode();
+                    e.preventDefault();
+                }
+            });
+            
+            // Support tactile amélioré
+            document.querySelectorAll('.code-part').forEach(part => {
+                part.addEventListener('touchstart', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                part.addEventListener('touchend', function(e) {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Prévenir le zoom sur les inputs
+            document.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('touchstart', function(e) {
+                    this.style.fontSize = '16px'; // Prévenir le zoom iOS
+                });
+            });
+            
+            // Gérer la touche retour sur mobile
+            window.addEventListener('popstate', function() {
+                switchTab('input');
+            });
+        });
+
+        // Vibration sur mobile (optionnelle)
+        function vibrate(duration = 50) {
+            if (navigator.vibrate) {
+                navigator.vibrate(duration);
+            }
+        }
+
+        // Raccourci clavier pour les tests
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + S pour séparer
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                separateCodes();
+            }
+            
+            // Ctrl/Cmd + D pour doublons
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                checkDuplicates();
+            }
+            
+            // Ctrl/Cmd + E pour exemple
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                loadExample();
+            }
+        });
+    </script>
+</body>
+</html>
