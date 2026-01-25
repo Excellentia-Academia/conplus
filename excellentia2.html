@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -656,10 +656,11 @@
             }
         }
         
+        /* PHOTO DU FORMATEUR EN CARRÉ */
         .trainer-photo {
             width: 320px;
             height: 320px;
-            border-radius: 50%;
+            border-radius: 15px; /* Carré avec coins légèrement arrondis */
             overflow: hidden;
             border: 6px solid transparent;
             background: linear-gradient(45deg, #D4AF37, #3498DB, #2ECC71, #D4AF37) border-box;
@@ -667,12 +668,12 @@
             margin: 0 auto;
             position: relative;
             background-color: #000;
-            animation: rotateBorder 8s linear infinite;
+            animation: photoGlow 3s infinite alternate;
         }
         
-        @keyframes rotateBorder {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes photoGlow {
+            0% { box-shadow: 0 25px 50px rgba(212, 175, 55, 0.4); }
+            100% { box-shadow: 0 25px 50px rgba(52, 152, 219, 0.6); }
         }
         
         .trainer-photo::before {
@@ -683,24 +684,25 @@
             right: -10px;
             bottom: -10px;
             background: linear-gradient(45deg, #D4AF37, #3498DB, #2ECC71, #9B59B6);
-            border-radius: 50%;
+            border-radius: 25px; /* Même arrondi que le conteneur */
             z-index: -1;
             filter: blur(15px);
             opacity: 0.5;
-            animation: rotateBorder 12s linear infinite reverse;
         }
         
+        /* IMAGE EN CARRÉ - TOUTE L'IMAGE EST VISIBLE */
         .trainer-img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            object-position: center 20%;
+            object-fit: contain; /* Affiche toute l'image */
+            object-position: center;
+            background-color: #000; /* Fond noir si l'image a des marges */
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: grayscale(0.1);
         }
         
         .trainer-photo:hover .trainer-img {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.05);
             filter: grayscale(0);
         }
         
@@ -1111,8 +1113,8 @@
             }
             
             .trainer-photo {
-                width: 250px;
-                height: 250px;
+                width: 280px;
+                height: 280px;
             }
             
             .trainer-info h3 {
@@ -1161,8 +1163,8 @@
             }
             
             .trainer-photo {
-                width: 220px;
-                height: 220px;
+                width: 250px;
+                height: 250px;
             }
             
             .trainer-info h3 {
@@ -1188,6 +1190,20 @@
             display: block;
         }
         
+        /* Message de confirmation */
+        .success-message {
+            text-align: center;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #2ECC71;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
         /* Barre de défilement personnalisée */
         ::-webkit-scrollbar {
             width: 12px;
@@ -1205,28 +1221,6 @@
         
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(to bottom, #FFD700, #D4AF37);
-        }
-        
-        /* Effet de brillance sur les titres */
-        .shine-text {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .shine-text::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 100%; }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1355,55 +1349,26 @@
                         <li><i class="fas fa-check-circle"></i> Clôture de la formation et recommandations finales</li>
                     </ul>
                 </div>
-<div style="
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    border: 2px solid #2196f3;
-    border-radius: 12px;
-    padding: 25px;
-    margin: 25px 0;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.15);
-    position: relative;
-">
-    <!-- Icône décorative en haut à gauche -->
-    <div style="
-        position: absolute;
-        top: -15px;
-        left: 20px;
-        background: #2196f3;
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-    ">
-        📢 INFORMATION
-    </div>
-    
-    <h3 style="
-        margin-top: 10px;
-        margin-bottom: 20px;
-        color: #0d47a1;
-        font-size: 22px;
-        border-bottom: 2px solid #90caf9;
-        padding-bottom: 10px;
-    ">
-        ⚠️ NOTE IMPORTANTE
-    </h3>
-    
-    <div style="color: #000000; line-height: 1.8; font-size: 16px;">
-        <p style="margin: 15px 0; padding-left: 10px; border-left: 3px solid #42a5f5;">
-            <strong style="color: #1565c0;">✅ Formation gratuite</strong><br>
-            Participation ouverte à tous sans frais d'inscription.
-        </p>
-        
-        <p style="margin: 15px 0; padding-left: 10px; border-left: 3px solid #42a5f5;">
-            <strong style="color: #1565c0;">🎓 Remise des brevets</strong><br>
-            <span style="background: #ffebee; padding: 2px 6px; border-radius: 3px;">
-                UNIQUEMENT pour les participants présents aux deux jours complets de formation
-            </span>
-        </p>
-    </div>
-</div>
+            </div>
+            
+            <!-- Note importante -->
+            <div style="
+                background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.15));
+                border: 2px solid rgba(46, 204, 113, 0.4);
+                border-radius: 15px;
+                padding: 25px;
+                margin-top: 40px;
+                text-align: center;
+            ">
+                <h3 style="color: #2ECC71; margin-bottom: 15px; font-size: 1.4rem; font-weight: 700;">
+                    <i class="fas fa-exclamation-triangle"></i> NOTE IMPORTANTE
+                </h3>
+                <p style="color: #BDC3C7; line-height: 1.7; font-size: 1.1rem;">
+                    <strong style="color: #FFFFFF;">Formation gratuite •</strong> Participation ouverte à tous sans frais d'inscription<br>
+                    <strong style="color: #FFFFFF;">Remise des brevets •</strong> Uniquement pour les participants présents aux deux jours complets de formation
+                </p>
+            </div>
+        </section>
 
         <!-- Formateur Ultra Luxueux -->
         <section class="trainer-section">
@@ -1411,18 +1376,34 @@
                 <i class="fas fa-chalkboard-teacher"></i> Notre Formateur Expert
             </h2>
             
-  
             <div class="trainer-grid">
+                <!-- PHOTO EN CARRÉ AVEC TOUTE L'IMAGE VISIBLE -->
                 <div class="trainer-photo">
                     <img src="IMG_2216.jpeg" alt="Photo du Formateur" class="trainer-img">
                 </div>
                 <div class="trainer-info">
-                    <h2> CLOTAIRE-BERGER ELONGAMA</h2>
+                    <h2>CLOTAIRE-BERGER ELONGAMA</h2>
                     <p class="trainer-title">
                         Juriste Pénaliste • Slameur • Poète • Écrivain • Coach en Art Oratoire • PDG d'Orator's Academy
                     </p>
-   
-
+                    <p class="trainer-bio">
+                        Expert en éloquence avec plus de 10 ans d'expérience dans la formation en prise de parole publique. 
+                        Formateur certifié ayant accompagné des centaines d'étudiants vers l'excellence oratoire. 
+                        Spécialiste des techniques de persuasion et de communication efficace.
+                    </p>
+                    <div class="trainer-badges">
+                        <div class="trainer-badge">
+                            <i class="fas fa-graduation-cap"></i> Formateur Certifié
+                        </div>
+                        <div class="trainer-badge">
+                            <i class="fas fa-trophy"></i> Expert en Éloquence
+                        </div>
+                        <div class="trainer-badge">
+                            <i class="fas fa-users"></i> 500+ Étudiants Formés
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Section WhatsApp Luxueuse -->
@@ -1465,121 +1446,126 @@
                 <i class="fas fa-user-graduate"></i> Inscription à la Formation
             </h2>
             
-<!-- Le formulaire d'inscription -->
-<form id="inscriptionForm">
-    <div class="form-group">
-        <label class="form-label">Nom complet *</label>
-        <input type="text" class="form-input" name="nom" required placeholder="Nom, Postnom, Prénom">
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Email *</label>
-        <input type="email" class="form-input" name="email" required placeholder="exemple@email.com">
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Téléphone *</label>
-        <input type="tel" class="form-input" name="telephone" required placeholder="+243 970 501 523">
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Avez-vous WhatsApp ? *</label>
-        <select class="form-select" name="whatsapp" required>
-            <option value="">Sélectionnez</option>
-            <option value="oui">Oui</option>
-            <option value="non">Non</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Profession / Études *</label>
-        <input type="text" class="form-input" name="profession" required placeholder="Votre profession ou domaine d'études">
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Faculté *</label>
-        <select class="form-select" name="faculte" required>
-            <option value="">Sélectionnez votre faculté</option>
-            <option value="sciences_technologies">Faculté de sciences et technologies</option>
-            <option value="lettres_sciences_humaines">Faculté de Lettres et sciences humaines</option>
-            <option value="sciences_economiques_gestion">Faculté de Sciences économiques et de gestion</option>
-            <option value="sciences_sociales_administratives_politiques">Faculté de Sciences sociales, administratives et politiques</option>
-            <option value="droit">Faculté de Droit</option>
-            <option value="polytechnique">Faculté de Polytechnique</option>
-            <option value="sciences_pharmaceutiques">Faculté de sciences pharmaceutiques</option>
-            <option value="medecine_dentaire">Faculté de médecine dentaire</option>
-            <option value="medecine_veterinaire">Faculté de médecine vétérinaire</option>
-            <option value="petrole_gaz_energies_renouvelables">Faculté de Pétrole, gaz et énergies renouvelables</option>
-            <option value="sciences_agronomiques">Faculté sciences agronomiques</option>
-            <option value="medecine">Faculté de Médecine</option>
-            <option value="psychologie_sciences_education">Faculté de psychologie et sciences de l'éducation</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Souhaitez-vous participer au concours d'éloquence ? *</label>
-        <select class="form-select" name="concours_eloquence" required>
-            <option value="">Sélectionnez</option>
-            <option value="oui">Oui, je vais participer</option>
-            <option value="non">Non, je vais participer à la formation uniquement</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Niveau d'expérience en prise de parole *</label>
-        <select class="form-select" name="experience" required>
-            <option value="">Sélectionnez votre niveau</option>
-            <option value="debutant">Débutant (Première formation)</option>
-            <option value="intermediaire">Intermédiaire (Quelques expériences)</option>
-            <option value="avance">Avancé (Expérience significative)</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Votre motivation *</label>
-        <textarea class="form-textarea" name="motivation" required placeholder="Pourquoi souhaitez-vous suivre cette formation ? Quelles sont vos attentes ?"></textarea>
-    </div>
-    
-    <div style="margin: 30px 0;">
-        <label style="display: flex; align-items: flex-start; gap: 15px; color: #BDC3C7; font-size: 1rem;">
-            <input type="checkbox" required style="margin-top: 3px; transform: scale(1.3);">
-            <span>Je confirme ma participation à cette formation </span>
-        </label>
-    </div>
-    
-    <button type="submit" class="submit-button">
-        <i class="fas fa-paper-plane"></i> VALIDER MON INSCRIPTION
-    </button>
-</form>
+            <!-- Le formulaire d'inscription -->
+            <form id="inscriptionForm">
+                <div class="form-group">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" class="form-input" name="nom" required placeholder="Nom, Postnom, Prénom">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" name="email" required placeholder="exemple@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Téléphone *</label>
+                    <input type="tel" class="form-input" name="telephone" required placeholder="+243 970 501 523">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Avez-vous WhatsApp ? *</label>
+                    <select class="form-select" name="whatsapp" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="oui">Oui</option>
+                        <option value="non">Non</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Profession / Études *</label>
+                    <input type="text" class="form-input" name="profession" required placeholder="Votre profession ou domaine d'études">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Faculté *</label>
+                    <select class="form-select" name="faculte" required>
+                        <option value="">Sélectionnez votre faculté</option>
+                        <option value="sciences_technologies">Faculté de sciences et technologies</option>
+                        <option value="lettres_sciences_humaines">Faculté de Lettres et sciences humaines</option>
+                        <option value="sciences_economiques_gestion">Faculté de Sciences économiques et de gestion</option>
+                        <option value="sciences_sociales_administratives_politiques">Faculté de Sciences sociales, administratives et politiques</option>
+                        <option value="droit">Faculté de Droit</option>
+                        <option value="polytechnique">Faculté de Polytechnique</option>
+                        <option value="sciences_pharmaceutiques">Faculté de sciences pharmaceutiques</option>
+                        <option value="medecine_dentaire">Faculté de médecine dentaire</option>
+                        <option value="medecine_veterinaire">Faculté de médecine vétérinaire</option>
+                        <option value="petrole_gaz_energies_renouvelables">Faculté de Pétrole, gaz et énergies renouvelables</option>
+                        <option value="sciences_agronomiques">Faculté sciences agronomiques</option>
+                        <option value="medecine">Faculté de Médecine</option>
+                        <option value="psychologie_sciences_education">Faculté de psychologie et sciences de l'éducation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Souhaitez-vous participer au concours d'éloquence ? *</label>
+                    <select class="form-select" name="concours_eloquence" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="oui">Oui, je vais participer</option>
+                        <option value="non">Non, je vais participer à la formation uniquement</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Niveau d'expérience en prise de parole *</label>
+                    <select class="form-select" name="experience" required>
+                        <option value="">Sélectionnez votre niveau</option>
+                        <option value="debutant">Débutant (Première formation)</option>
+                        <option value="intermediaire">Intermédiaire (Quelques expériences)</option>
+                        <option value="avance">Avancé (Expérience significative)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Votre motivation *</label>
+                    <textarea class="form-textarea" name="motivation" required placeholder="Pourquoi souhaitez-vous suivre cette formation ? Quelles sont vos attentes ?"></textarea>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <label style="display: flex; align-items: flex-start; gap: 15px; color: #BDC3C7; font-size: 1rem;">
+                        <input type="checkbox" required style="margin-top: 3px; transform: scale(1.3);">
+                        <span>Je confirme ma participation à cette formation</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="submit-button" id="submitFormButton">
+                    <i class="fas fa-paper-plane"></i> VALIDER MON INSCRIPTION
+                </button>
+            </form>
             
-            <!-- Message de confirmation -->
+            <!-- Message de confirmation (s'affiche après l'envoi) -->
             <div id="confirmationMessage" class="hidden" style="text-align: center; padding: 40px;">
-                <div style="font-size: 5rem; color: #2ECC71; margin-bottom: 30px; animation: pulse 2s infinite;">
+                <div class="success-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
-            <h3 style="color: #FFFFFF; margin-bottom: 25px; font-size: 1.8rem; font-weight: 800;">Inscription confirmée !</h3>
-<p style="color: #BDC3C7; margin-bottom: 25px; font-size: 1.2rem; line-height: 1.7;">
-    Félicitations ! Vous êtes inscrit(e) à la formation d'Eloquence.
-</p>
-
-<div style="background-color: rgba(37, 211, 102, 0.1); border-left: 4px solid #25D366; padding: 20px; margin-bottom: 40px; border-radius: 4px;">
-    <p style="color: #FFFFFF; margin-bottom: 15px; font-size: 1.2rem; font-weight: 600;">
-        ⚠️ IMPORTANT : Rejoignez le groupe WhatsApp
-    </p>
-    <p style="color: #BDC3C7; margin-bottom: 15px; font-size: 1.1rem; line-height: 1.6;">
-        <strong>Aucune information ne sera envoyée par email ou WhatsApp.</strong><br>
-        Vous devez intégrer le groupe WhatsApp pour recevoir tous les détails pratiques de la formation.
-    </p>
-    <p style="color: #BDC3C7; font-size: 1.1rem; line-height: 1.6;">
-        <strong>Comment faire :</strong><br>
-        1. Cliquez sur "Retour à l'accueil"<br>
-        2. En bas de page, cliquez sur "Rejoindre le groupe WhatsApp"
-    </p>
-</div>
-</div>
-                <button class="submit-button" id="closeAfterSubmit" style="background: linear-gradient(135deg, #D4AF37, #B8941F);">
-                    <i class="fas fa-home"></i> RETOUR À L'ACCUEIL
-                </button>
+                <h3 style="color: #FFFFFF; margin-bottom: 25px; font-size: 1.8rem; font-weight: 800;">Inscription confirmée !</h3>
+                <p style="color: #BDC3C7; margin-bottom: 25px; font-size: 1.2rem; line-height: 1.7;">
+                    Félicitations ! Votre inscription à la formation d'Eloquence a bien été enregistrée.
+                </p>
+                
+                <div style="background-color: rgba(37, 211, 102, 0.1); border-left: 4px solid #25D366; padding: 20px; margin-bottom: 40px; border-radius: 4px;">
+                    <p style="color: #FFFFFF; margin-bottom: 15px; font-size: 1.2rem; font-weight: 600;">
+                        ⚠️ IMPORTANT : Rejoignez le groupe WhatsApp
+                    </p>
+                    <p style="color: #BDC3C7; margin-bottom: 15px; font-size: 1.1rem; line-height: 1.6;">
+                        <strong>Aucune information ne sera envoyée par email ou SMS.</strong><br>
+                        Vous devez intégrer le groupe WhatsApp pour recevoir tous les détails pratiques de la formation.
+                    </p>
+                    <p style="color: #BDC3C7; font-size: 1.1rem; line-height: 1.6;">
+                        <strong>Comment faire :</strong><br>
+                        1. Cliquez sur "Rejoindre le groupe WhatsApp"<br>
+                        2. Restez informé en temps réel
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <button class="whatsapp-button" onclick="joinWhatsAppGroup()" style="width: auto;">
+                        <i class="fab fa-whatsapp"></i> REJOINDRE LE GROUPE
+                    </button>
+                    <button class="submit-button" id="closeAfterSubmit" style="background: linear-gradient(135deg, #D4AF37, #B8941F); width: auto; padding: 15px 30px;">
+                        <i class="fas fa-home"></i> RETOUR À L'ACCUEIL
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1665,7 +1651,7 @@
         let participantsData = [];
         const ADMIN_PASSWORD = "eloquenceenscene2k26@";
         
-        // Dates de la formation (18-19 février 2026)
+        // Dates de la formation
         const formationStart = new Date('2026-02-18T08:00:00').getTime();
         const formationEnd = new Date('2026-02-19T18:00:00').getTime();
         
@@ -1679,6 +1665,7 @@
         const closeAfterSubmit = document.getElementById('closeAfterSubmit');
         const inscriptionForm = document.getElementById('inscriptionForm');
         const confirmationMessage = document.getElementById('confirmationMessage');
+        const submitFormButton = document.getElementById('submitFormButton');
         const loginButton = document.getElementById('loginButton');
         const exportButton = document.getElementById('exportButton');
 
@@ -1691,6 +1678,10 @@
         openFormButton.addEventListener('click', () => {
             formModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            // Réinitialiser le formulaire
+            inscriptionForm.reset();
+            inscriptionForm.classList.remove('hidden');
+            confirmationMessage.classList.add('hidden');
         });
 
         adminButton.addEventListener('click', () => {
@@ -1708,11 +1699,8 @@
         closeModal.addEventListener('click', () => closeModalFunc(formModal));
         closeAdminModal.addEventListener('click', () => closeModalFunc(adminModal));
 
-        closeAfterSubmit?.addEventListener('click', () => {
+        closeAfterSubmit.addEventListener('click', () => {
             closeModalFunc(formModal);
-            inscriptionForm.reset();
-            inscriptionForm.classList.remove('hidden');
-            confirmationMessage.classList.add('hidden');
         });
 
         // Fermer modal en cliquant à l'extérieur
@@ -1738,56 +1726,60 @@
         inscriptionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Désactiver le bouton pendant l'envoi
+            submitFormButton.disabled = true;
+            submitFormButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVOI EN COURS...';
+            
             const formData = {
-                nom: inscriptionForm.nom.value,
-                email: inscriptionForm.email.value,
-                telephone: inscriptionForm.telephone.value,
+                nom: inscriptionForm.nom.value.trim(),
+                email: inscriptionForm.email.value.trim(),
+                telephone: inscriptionForm.telephone.value.trim(),
                 whatsapp: inscriptionForm.whatsapp.value,
-                profession: inscriptionForm.profession.value,
+                profession: inscriptionForm.profession.value.trim(),
+                faculte: inscriptionForm.faculte.value,
+                concours_eloquence: inscriptionForm.concours_eloquence.value,
                 experience: inscriptionForm.experience.value,
-                motivation: inscriptionForm.motivation.value,
+                motivation: inscriptionForm.motivation.value.trim(),
                 formation: "Art Oratoire - 18-19 Février 2026",
                 date_inscription: new Date().toISOString(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             try {
-                // Envoyer à Firebase
+                // 1. Envoyer à Firebase Firestore
                 await db.collection('formation_participants').add(formData);
                 
-                // Envoyer également à Formspree
-                const formspreeForm = new FormData();
-                for (const key in formData) {
-                    formspreeForm.append(key, formData[key]);
-                }
-                
-                fetch('https://formspree.io/f/mldqkngp', {
-                    method: 'POST',
-                    body: formspreeForm,
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                // Afficher confirmation
+                // 2. Afficher le message de confirmation
                 inscriptionForm.classList.add('hidden');
                 confirmationMessage.classList.remove('hidden');
                 
-                // Mettre à jour les données
+                // 3. Mettre à jour les données admin
                 loadParticipantsData();
-
+                
+                console.log("Inscription réussie !");
+                
             } catch (error) {
-                console.error("Erreur:", error);
+                console.error("Erreur lors de l'inscription:", error);
                 alert("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+            } finally {
+                // Réactiver le bouton
+                submitFormButton.disabled = false;
+                submitFormButton.innerHTML = '<i class="fas fa-paper-plane"></i> VALIDER MON INSCRIPTION';
             }
         });
 
         // Charger les participants
         async function loadParticipantsData() {
             try {
-                const snapshot = await db.collection('formation_participants').get();
+                const snapshot = await db.collection('formation_participants')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
                 participantsData = [];
                 snapshot.forEach(doc => {
                     participantsData.push({ id: doc.id, ...doc.data() });
                 });
+                
                 updateAdminStats();
             } catch (error) {
                 console.error("Erreur de chargement:", error);
@@ -1801,19 +1793,19 @@
             // Inscriptions aujourd'hui
             const today = new Date().toDateString();
             const todayCount = participantsData.filter(p => {
-                return new Date(p.date_inscription).toDateString() === today;
+                const date = new Date(p.date_inscription);
+                return date.toDateString() === today;
             }).length;
             document.getElementById('todayParticipants').textContent = todayCount;
             
-            // Niveaux d'expérience
+            // Niveaux d'expérience différents
             const experienceSet = new Set();
             participantsData.forEach(p => {
                 if (p.experience) {
                     experienceSet.add(p.experience);
                 }
             });
-            const experienceCount = experienceSet.size;
-            document.getElementById('experienceCount').textContent = experienceCount;
+            document.getElementById('experienceCount').textContent = experienceSet.size;
             
             // Liste des participants
             updateParticipantsList();
@@ -1822,6 +1814,16 @@
         function updateParticipantsList() {
             const listElement = document.getElementById('participantsList');
             listElement.innerHTML = '';
+            
+            if (participantsData.length === 0) {
+                listElement.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #BDC3C7;">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <p>Aucune inscription pour le moment</p>
+                    </div>
+                `;
+                return;
+            }
             
             participantsData.slice(0, 10).forEach(p => {
                 const div = document.createElement('div');
@@ -1842,7 +1844,8 @@
                 div.innerHTML = `
                     <div style="font-weight: 800; color: #FFFFFF; margin-bottom: 8px; font-size: 1.1rem;">${p.nom}</div>
                     <div style="font-size: 0.9rem; color: #BDC3C7;">
-                        ${p.profession} • ${p.experience} • ${p.telephone} • ${date}
+                        ${p.profession} • ${p.faculte} • ${p.experience}<br>
+                        ${p.telephone} • ${date}
                     </div>
                 `;
                 
@@ -1857,10 +1860,10 @@
                 return;
             }
             
-            let csv = "Nom,Email,Téléphone,WhatsApp,Profession,Expérience,Motivation,Date\n";
+            let csv = "Nom,Email,Téléphone,WhatsApp,Profession,Faculté,Concours,Expérience,Motivation,Date\n";
             
             participantsData.forEach(p => {
-                csv += `"${p.nom}","${p.email}","${p.telephone}","${p.whatsapp}","${p.profession}","${p.experience}","${p.motivation.replace(/"/g, '""')}","${new Date(p.date_inscription).toLocaleDateString('fr-FR')}"\n`;
+                csv += `"${p.nom || ''}","${p.email || ''}","${p.telephone || ''}","${p.whatsapp || ''}","${p.profession || ''}","${p.faculte || ''}","${p.concours_eloquence || ''}","${p.experience || ''}","${p.motivation?.replace(/"/g, '""') || ''}","${new Date(p.date_inscription).toLocaleDateString('fr-FR')}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1873,22 +1876,17 @@
             document.body.removeChild(a);
         });
 
-        // Compte à rebours intelligent vers le 18 février 2026
+        // Compte à rebours
         function updateCountdown() {
             const now = new Date().getTime();
             
-            // Si nous sommes avant la formation
             if (now < formationStart) {
                 const distance = formationStart - now;
                 updateCountdownDisplay(distance);
-            } 
-            // Si nous sommes pendant la formation
-            else if (now >= formationStart && now <= formationEnd) {
+            } else if (now >= formationStart && now <= formationEnd) {
                 const distance = formationEnd - now;
                 updateCountdownDisplay(distance);
-            } 
-            // Si la formation est terminée
-            else {
+            } else {
                 document.getElementById('jours').textContent = '00';
                 document.getElementById('heures').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
@@ -1914,16 +1912,25 @@
         // Charger les données au démarrage
         loadParticipantsData();
 
-        // Écouter les nouvelles inscriptions
-        db.collection('formation_participants').onSnapshot(() => {
-            loadParticipantsData();
-        });
+        // Écouter les nouvelles inscriptions en temps réel
+        db.collection('formation_participants')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot((snapshot) => {
+                participantsData = [];
+                snapshot.forEach(doc => {
+                    participantsData.push({ id: doc.id, ...doc.data() });
+                });
+                updateAdminStats();
+            });
 
         // Animation d'entrée
         document.addEventListener('DOMContentLoaded', () => {
             const elements = document.querySelectorAll('.hero-section, .program-section, .trainer-section, .whatsapp-section');
             elements.forEach((el, i) => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(30px)';
                 setTimeout(() => {
+                    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                     el.style.opacity = 1;
                     el.style.transform = 'translateY(0)';
                 }, i * 200);
@@ -1942,27 +1949,60 @@
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                // Tailles aléatoires
                 const size = Math.random() * 100 + 50;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
-                
-                // Positions aléatoires
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
-                
-                // Opacité aléatoire
                 particle.style.opacity = Math.random() * 0.1 + 0.05;
-                
-                // Animation delay aléatoire
                 particle.style.animationDelay = `${Math.random() * 20}s`;
-                
-                // Animation duration aléatoire
                 particle.style.animationDuration = `${Math.random() * 30 + 20}s`;
                 
                 particlesContainer.appendChild(particle);
             }
         }
+
+        // Fonction pour afficher un toast
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.right = '30px';
+            toast.style.padding = '20px 25px';
+            toast.style.borderRadius = '15px';
+            toast.style.background = type === 'success' 
+                ? 'linear-gradient(135deg, #2ECC71, #27AE60)' 
+                : 'linear-gradient(135deg, #E74C3C, #C0392B)';
+            toast.style.color = 'white';
+            toast.style.fontWeight = '600';
+            toast.style.zIndex = '9999';
+            toast.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+            toast.style.animation = 'slideIn 0.3s ease-out';
+            toast.innerHTML = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Ajouter l'animation pour le toast
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
