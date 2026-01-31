@@ -1067,6 +1067,10 @@
             animation: fadeIn 0.5s ease-out;
         }
         
+        .payment-option.visible {
+            display: block;
+        }
+        
         .online-payment-btn {
             width: 100%;
             padding: 20px;
@@ -1609,7 +1613,7 @@
                     <textarea class="form-textarea" name="motivation" required placeholder="Pourquoi souhaitez-vous suivre cette formation ? Quelles sont vos attentes ?"></textarea>
                 </div>
                 
-                <!-- NOUVEAU: Section Paiement -->
+                <!-- CORRECTION: Section Paiement avec affichage immédiat -->
                 <div class="payment-section">
                     <div class="payment-info">
                         <h3 style="color: #D4AF37; margin-bottom: 15px; font-size: 1.4rem; font-weight: 700;">
@@ -1630,12 +1634,12 @@
                         </select>
                     </div>
                     
-                    <!-- Option Paiement en ligne -->
+                    <!-- Option Paiement en ligne (maintenant visible immédiatement) -->
                     <div id="onlinePaymentOption" class="payment-option">
                         <p style="color: #BDC3C7; text-align: center; margin-bottom: 20px; font-size: 1.1rem;">
                             Cliquez sur le bouton ci-dessous pour effectuer le paiement en ligne via Chariow
                         </p>
-                        <a Après votre validation d'inscription veuillez payer le 3000fc pour l'obtention du ticket d'accès >
+                        <a href="https://concours.mychariow.shop/prd_8wxct7" target="_blank" class="online-payment-btn">
                             <i class="fas fa-credit-card"></i> PAYER 3.000 FC AVEC CHARIOW
                         </a>
                         <p class="payment-note">
@@ -1643,7 +1647,7 @@
                         </p>
                     </div>
                     
-                    <!-- Option Paiement en présentiel -->
+                    <!-- Option Paiement en présentiel (maintenant visible immédiatement) -->
                     <div id="presentielPaymentOption" class="payment-option">
                         <div class="presentiel-info">
                             <h4><i class="fas fa-handshake"></i> Paiement en Présentiel</h4>
@@ -1922,18 +1926,20 @@
             });
         });
 
-        // Gestion du changement de méthode de paiement
+        // CORRECTION: Gestion du changement de méthode de paiement - Afficher immédiatement
         paymentMethod.addEventListener('change', function() {
             const value = this.value;
             
             // Masquer toutes les options
-            onlinePaymentOption.style.display = 'none';
-            presentielPaymentOption.style.display = 'none';
+            onlinePaymentOption.classList.remove('visible');
+            presentielPaymentOption.classList.remove('visible');
             
             // Afficher l'option sélectionnée
             if (value === 'en_ligne') {
+                onlinePaymentOption.classList.add('visible');
                 onlinePaymentOption.style.display = 'block';
             } else if (value === 'presentiel') {
+                presentielPaymentOption.classList.add('visible');
                 presentielPaymentOption.style.display = 'block';
             }
         });
