@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -49,7 +48,7 @@
             margin: 0 auto;
         }
 
-        /* En-tête */
+        /* Header Luxueux */
         .header {
             background: linear-gradient(135deg, var(--primary-blue), #283593);
             color: white;
@@ -58,6 +57,7 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            margin-bottom: 30px;
         }
 
         .header::before {
@@ -80,10 +80,16 @@
             z-index: 1;
         }
 
+        .logo-text {
+            text-align: center;
+            flex: 1;
+        }
+
         .title-main {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             letter-spacing: 1px;
+            margin-bottom: 10px;
         }
 
         .title-main span {
@@ -95,32 +101,48 @@
         .title-sub {
             font-size: 1.1rem;
             opacity: 0.9;
-            margin-top: 10px;
             font-weight: 300;
         }
 
-        .status-indicator {
+        /* Bouton Admin Luxueux */
+        .admin-header-button {
+            background: linear-gradient(135deg, var(--primary-gold), var(--accent-gold));
+            color: var(--text-dark);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
+            gap: 12px;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(255, 179, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            z-index: 1;
         }
 
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--success);
-            animation: pulse 2s infinite;
+        .admin-header-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .admin-header-button:hover::before {
+            left: 100%;
+        }
+
+        .admin-header-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(255, 179, 0, 0.6);
         }
 
         /* Contenu principal */
@@ -616,6 +638,183 @@
             border: 2px solid #2196f3;
         }
 
+        /* Modal Admin */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 42, 0.98);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(20, 20, 40, 0.98));
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #D4AF37, #2ECC71, #3498DB) 1;
+            animation: modalSlide 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(212, 175, 55, 0.2);
+            border: none;
+            color: #E74C3C;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .close-modal:hover {
+            background: #E74C3C;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* Section mot de passe admin */
+        .password-section {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .admin-title {
+            color: #D4AF37;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #D4AF37;
+            background: rgba(40, 40, 60, 0.9);
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            backdrop-filter: blur(5px);
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.5);
+        }
+
+        /* Panneau admin */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel h3 {
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            color: #0A0A2A;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .stat-card .value {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .data-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            background: rgba(40, 40, 60, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .main-content {
@@ -658,6 +857,10 @@
                 flex-direction: column;
                 text-align: center;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Animation de chargement */
@@ -678,17 +881,18 @@
 </head>
 <body>
     <div class="container">
-        <!-- En-tête -->
+        <!-- Header -->
         <div class="header fade-in">
             <div class="title-container">
-                <div>
+                <div class="logo-text">
                     <h1 class="title-main">FICHE <span>ENREGISTREMENT</span> CLANS</h1>
                     <p class="title-sub">LWG - KHG | Initiative Kizito-Anuarite</p>
                 </div>
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span>Firebase Connecté</span>
-                </div>
+                
+                <!-- Bouton Admin Luxueux -->
+                <button class="admin-header-button" id="adminButton">
+                    <i class="fas fa-chart-line"></i> Panneau Admin
+                </button>
             </div>
         </div>
 
@@ -808,6 +1012,62 @@
         </div>
     </div>
 
+    <!-- Modal Admin -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeAdminModal">&times;</button>
+            
+            <div class="password-section" id="passwordSection">
+                <h2 class="admin-title">
+                    <i class="fas fa-lock"></i> ACCÈS ADMINISTRATEUR
+                </h2>
+                <p style="color: #BDC3C7; text-align: center; margin-bottom: 30px; font-size: 1.2rem;">
+                    Accès réservé à l'équipe technique Lwanga/Kahenga
+                </p>
+                
+                <input type="password" class="password-input" id="adminPassword" 
+                       placeholder="Mot de passe" maxlength="30">
+                
+                <button class="login-button" id="loginAdminBtn">
+                    <i class="fas fa-sign-in-alt"></i> SE CONNECTER
+                </button>
+            </div>
+            
+            <div class="admin-panel" id="adminPanel">
+                <h3>
+                    <i class="fas fa-chart-line"></i> STATISTIQUES DES CLANS
+                </h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="value" id="totalPlayers">0</div>
+                        <div class="label">Joueurs enregistrés</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #2ECC71, #27AE60); color: white;">
+                        <div class="value" id="totalCoaches">0</div>
+                        <div class="label">Coaches enregistrés</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white;">
+                        <div class="value" id="totalClans">0</div>
+                        <div class="label">Clans complets</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 40px;">
+                    <i class="fas fa-users"></i> DONNÉES ENREGISTRÉES
+                </h3>
+                
+                <div class="data-list" id="adminDataList">
+                    <!-- Les données seront affichées ici -->
+                </div>
+                
+                <button class="login-button" id="exportDataBtn" style="background: linear-gradient(135deg, #D4AF37, #B8941F);">
+                    <i class="fas fa-file-export"></i> EXPORTER LES DONNÉES (CSV)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration Firebase
         const firebaseConfig = {
@@ -838,6 +1098,15 @@
             "SAINT CÉLESTIN"
         ];
         
+        // Options pour le voyage (1ère, 2ème, 3ème, 4ème)
+        const voyageOptions = [
+            { value: "", label: "Choisir..." },
+            { value: "1ère", label: "1ère Voyage" },
+            { value: "2ème", label: "2ème Voyage" },
+            { value: "3ème", label: "3ème Voyage" },
+            { value: "4ème", label: "4ème Voyage" }
+        ];
+        
         // Variables globales
         let currentClanIndex = 0;
         let playersData = {};
@@ -859,6 +1128,12 @@
             document.getElementById('clearBtn').addEventListener('click', clearCurrentClan);
             document.getElementById('saveLocalBtn').addEventListener('click', saveLocalData);
             document.getElementById('submitBtn').addEventListener('click', submitToFirebase);
+            
+            // Événements admin
+            document.getElementById('adminButton').addEventListener('click', openAdminModal);
+            document.getElementById('closeAdminModal').addEventListener('click', closeAdminModal);
+            document.getElementById('loginAdminBtn').addEventListener('click', loginAdmin);
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
             
             // Événements sur les champs
             document.getElementById('playersTableBody').addEventListener('input', function(e) {
@@ -964,7 +1239,7 @@
             document.getElementById('currentClanName').textContent = clans[currentClanIndex];
         }
 
-        // Générer le tableau des joueurs
+        // Générer le tableau des joueurs avec les options de voyage
         function generatePlayersTable() {
             const tableBody = document.getElementById('playersTableBody');
             tableBody.innerHTML = '';
@@ -975,6 +1250,13 @@
                 const player = currentPlayers[i];
                 const row = document.createElement('tr');
                 row.dataset.index = i;
+                
+                // Créer les options de voyage
+                let voyageOptionsHTML = '';
+                voyageOptions.forEach(option => {
+                    const selected = player.voyage === option.value ? 'selected' : '';
+                    voyageOptionsHTML += `<option value="${option.value}" ${selected}>${option.label}</option>`;
+                });
                 
                 row.innerHTML = `
                     <td class="row-number">${i + 1}</td>
@@ -988,9 +1270,7 @@
                     </td>
                     <td>
                         <select class="player-voyage" data-field="voyage">
-                            <option value="">Choisir...</option>
-                            <option value="Oui" ${player.voyage === 'Oui' ? 'selected' : ''}>Oui</option>
-                            <option value="Non" ${player.voyage === 'Non' ? 'selected' : ''}>Non</option>
+                            ${voyageOptionsHTML}
                         </select>
                     </td>
                     <td>
@@ -1086,7 +1366,6 @@
         // Sauvegarder les données du clan courant
         function saveCurrentClanData() {
             // Les données sont déjà sauvegardées au fur et à mesure via updatePlayerField et updateCoachField
-            // Cette fonction est principalement pour la clarté du code
         }
 
         // Mettre à jour le compteur de joueurs remplis
@@ -1095,8 +1374,7 @@
             let filledCount = 0;
             
             currentPlayers.forEach(player => {
-
-if (player.nom.trim() !== '' || player.prenom.trim() !== '') {
+                if (player.nom.trim() !== '' || player.prenom.trim() !== '') {
                     filledCount++;
                 }
             });
@@ -1331,6 +1609,200 @@ if (player.nom.trim() !== '' || player.prenom.trim() !== '') {
             setTimeout(() => {
                 messageElement.style.display = 'none';
             }, 5000);
+        }
+
+        // Fonctions Admin
+        function openAdminModal() {
+            document.getElementById('adminModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            const correctPassword = "Lwanga/kahenga2k26@";
+            
+            if (password === correctPassword) {
+                // Masquer la section mot de passe
+                document.getElementById('passwordSection').style.display = 'none';
+                
+                // Afficher le panneau admin
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                // Charger les statistiques
+                loadAdminStatistics();
+                
+                // Focus sur le bouton d'export
+                document.getElementById('exportDataBtn').focus();
+            } else {
+                alert('Mot de passe incorrect. Veuillez réessayer.');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        async function loadAdminStatistics() {
+            try {
+                // Récupérer toutes les données des clans
+                const clansRef = database.ref('clans');
+                const snapshot = await clansRef.once('value');
+                const clansData = snapshot.val();
+                
+                let totalPlayers = 0;
+                let totalCoaches = 0;
+                let completedClans = 0;
+                
+                // Calculer les statistiques
+                if (clansData) {
+                    Object.values(clansData).forEach(clan => {
+                        // Compter les joueurs remplis
+                        if (clan.players) {
+                            clan.players.forEach(player => {
+                                if (player.nom && player.nom.trim() !== '') {
+                                    totalPlayers++;
+                                }
+                            });
+                        }
+                        
+                        // Compter les coaches remplis
+                        if (clan.coaches) {
+                            Object.values(clan.coaches).forEach(coach => {
+                                if (coach.nom && coach.nom.trim() !== '') {
+                                    totalCoaches++;
+                                }
+                            });
+                        }
+                        
+                        // Vérifier si le clan est complet (au moins 10 joueurs)
+                        if (clan.players) {
+                            const filledPlayers = clan.players.filter(p => p.nom && p.nom.trim() !== '').length;
+                            if (filledPlayers >= 10) {
+                                completedClans++;
+                            }
+                        }
+                    });
+                }
+                
+                // Mettre à jour les statistiques affichées
+                document.getElementById('totalPlayers').textContent = totalPlayers;
+                document.getElementById('totalCoaches').textContent = totalCoaches;
+                document.getElementById('totalClans').textContent = completedClans;
+                
+                // Afficher les données dans la liste
+                displayAdminData(clansData);
+                
+            } catch (error) {
+                console.error('Erreur lors du chargement des statistiques:', error);
+            }
+        }
+
+        function displayAdminData(clansData) {
+            const dataList = document.getElementById('adminDataList');
+            dataList.innerHTML = '';
+            
+            if (!clansData) {
+                dataList.innerHTML = '<p style="color: #BDC3C7; text-align: center;">Aucune donnée disponible</p>';
+                return;
+            }
+            
+            // Créer une liste des clans avec leurs données
+            Object.entries(clansData).forEach(([clanName, clan]) => {
+                const clanDiv = document.createElement('div');
+                clanDiv.style.padding = '15px';
+                clanDiv.style.marginBottom = '15px';
+                clanDiv.style.background = 'rgba(255, 255, 255, 0.1)';
+                clanDiv.style.borderRadius = '10px';
+                clanDiv.style.borderLeft = '4px solid #D4AF37';
+                
+                // Compter les joueurs remplis
+                const filledPlayers = clan.players ? 
+                    clan.players.filter(p => p.nom && p.nom.trim() !== '').length : 0;
+                
+                // Date d'enregistrement
+                const date = clan.timestamp ? 
+                    new Date(clan.timestamp).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : 'Date inconnue';
+                
+                clanDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: #FFFFFF; font-size: 1.1rem; font-weight: 700;">
+                            ${clan.clanName || clanName}
+                        </h4>
+                        <span style="background: ${filledPlayers >= 10 ? '#2ECC71' : '#E74C3C'}; 
+                             color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.9rem;">
+                            ${filledPlayers}/15 joueurs
+                        </span>
+                    </div>
+                    <div style="color: #BDC3C7; font-size: 0.9rem;">
+                        <div>Année: 20${clan.year?.start || '??'}-20${clan.year?.end || '??'}</div>
+                        <div>Enregistré: ${date}</div>
+                    </div>
+                `;
+                
+                dataList.appendChild(clanDiv);
+            });
+        }
+
+        function exportData() {
+            // Récupérer toutes les données de Firebase
+            database.ref('clans').once('value')
+                .then(snapshot => {
+                    const clansData = snapshot.val();
+                    
+                    if (!clansData) {
+                        alert('Aucune donnée à exporter.');
+                        return;
+                    }
+                    
+                    // Créer le CSV
+                    let csv = "Clan,Nom,Prénom,Voyage,Âge,Coach Nom,Coach Téléphone,Année,Date\n";
+                    
+                    Object.values(clansData).forEach(clan => {
+                        const clanName = clan.clanName || 'Inconnu';
+                        const year = `20${clan.year?.start || '??'}-20${clan.year?.end || '??'}`;
+                        const date = clan.timestamp ? 
+                            new Date(clan.timestamp).toLocaleDateString('fr-FR') : 'Inconnue';
+                        
+                        // Ajouter les joueurs
+                        if (clan.players) {
+                            clan.players.forEach((player, index) => {
+                                if (player.nom && player.nom.trim() !== '') {
+                                    const coachIndex = Math.floor(index / 5) + 1;
+                                    const coach = clan.coaches ? clan.coaches[coachIndex] : {};
+                                    
+                                    csv += `"${clanName}","${player.nom || ''}","${player.prenom || ''}",`;
+                                    csv += `"${player.voyage || ''}","${player.age || ''}",`;
+                                    csv += `"${coach.nom || ''}","${coach.telephone || ''}",`;
+                                    csv += `"${year}","${date}"\n`;
+                                }
+                            });
+                        }
+                    });
+                    
+                    // Télécharger le CSV
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `lwg_khg_clans_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    alert('Données exportées avec succès !');
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'export:', error);
+                    alert('Erreur lors de l\'export des données.');
+                });
         }
 
         // Animation au chargement
