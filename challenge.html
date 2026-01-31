@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -952,6 +951,27 @@
 
         .delay-1 { animation-delay: 0.2s; }
         .delay-2 { animation-delay: 0.4s; }
+        
+        /* Test Button */
+        .test-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .test-btn:hover {
+            background: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -1154,241 +1174,24 @@
         </div>
     </div>
 
+    <!-- Bouton de test -->
+    <button class="test-btn" id="testBtn">Test Firebase</button>
+
     <script>
-        // Configuration Firebase
-
-// Configuration Firebase CORRIGÉE
-const firebaseConfig = {
-    apiKey: "AIzaSyDzqpBeTgALSf4a-uVAqFdowjB0AnT7dis",
-    authDomain: "genieka-2026.firebaseapp.com",
-    databaseURL: "https://genieka-2026-default-rtdb.firebaseio.com", // LIGNE AJOUTÉE
-    projectId: "genieka-2026",
-    storageBucket: "genieka-2026.firebasestorage.app",
-    messagingSenderId: "303752964623",
-    appId: "1:303752964623:web:b4d0cf171ea948fc94517a",
-    measurementId: "G-1DMZRJSF05"
-};
-
-// Initialiser Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// Vérification de la connexion
-function testFirebaseConnection() {
-    const testRef = database.ref('.info/connected');
-    
-    testRef.on('value', function(snapshot) {
-        if (snapshot.val() === true) {
-            console.log('✅ Connecté à Firebase Realtime Database');
-            showStatusMessage('✅ Connecté à Firebase - Prêt à sauvegarder', 'success');
-        } else {
-            console.log('❌ Déconnecté de Firebase');
-            showStatusMessage('⚠️ Déconnecté de Firebase - Mode hors ligne', 'warning');
-        }
-    });
-    
-    // Tester également avec un set simple
-    const testWriteRef = database.ref('test_connection');
-    testWriteRef.set({
-        test: 'connection_test',
-        timestamp: new Date().toISOString()
-    })
-    .then(() => {
-        console.log('✅ Écriture test réussie');
-        // Nettoyer le test
-        testWriteRef.remove();
-    })
-    .catch(error => {
-        console.error('❌ Erreur d\'écriture test:', error);
-        showStatusMessage('❌ Erreur de connexion à Firebase', 'error');
-    });
-}
-
-// Fonction de sauvegarde améliorée avec meilleure gestion des erreurs
-async function saveToFirebase() {
-    if (isSaving) return;
-    
-    // Validation
-    let hasPlayers = false;
-    const currentPlayers = playersData[currentClanIndex];
-    
-    for (let i = 0; i < currentPlayers.length; i++) {
-        const player = currentPlayers[i];
-        if (player.nom.trim() !== '' || player.prenom.trim() !== '') {
-            hasPlayers = true;
-            break;
-        }
-    }
-    
-    if (!hasPlayers) {
-        showStatusMessage('Veuillez remplir au moins un joueur avant de sauvegarder.', 'error');
-        return;
-    }
-    
-    // Début de la sauvegarde
-    isSaving = true;
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.classList.add('saving');
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SAUVEGARDE EN COURS...';
-    saveBtn.disabled = true;
-    
-    // Préparer les données
-    const clanData = {
-        clanName: clans[currentClanIndex],
-        clanNumber: currentClanIndex + 1,
-        players: currentPlayers,
-        coaches: coachesData[currentClanIndex],
-        year: {
-            start: document.getElementById('yearStart').value,
-            end: document.getElementById('yearEnd').value
-        },
-        timestamp: new Date().toISOString(),
-        timestamp_ms: Date.now(),
-        date: new Date().toLocaleDateString('fr-FR'),
-        time: new Date().toLocaleTimeString('fr-FR'),
-        filledPlayers: document.getElementById('filledPlayersCount').textContent,
-        userAgent: navigator.userAgent
-    };
-    
-    try {
-        // Utiliser une clé unique pour chaque sauvegarde
-        const clanKey = clans[currentClanIndex].replace(/\s+/g, '_').toUpperCase();
-        const timestampKey = Date.now(); // Ajouter timestamp pour clé unique
-        
-        // Chemin 1 : Sauvegarde par clan
-        const clanRef = database.ref('clans/' + clanKey);
-        await clanRef.set(clanData);
-        
-        // Chemin 2 : Historique avec ID unique
-        const historyRef = database.ref('history/' + timestampKey);
-        await historyRef.set({
-            ...clanData,
-            clanKey: clanKey,
-            id: timestampKey
-        });
-        
-        // Chemin 3 : Enregistrement simple (pour backup)
-        const simpleRef = database.ref('registrations').push();
-        await simpleRef.set(clanData);
-        
-        // Succès
-        showStatusMessage(`✅ Clan ${clans[currentClanIndex]} sauvegardé avec succès!`, 'success');
-        console.log('Données sauvegardées:', clanData);
-        
-        // Animation de confirmation
-        saveBtn.classList.remove('saving');
-        saveBtn.classList.add('saved');
-        saveBtn.innerHTML = '<i class="fas fa-check"></i> ENREGISTRÉ AVEC SUCCÈS';
-        
-        // Réinitialiser après 3 secondes
-        setTimeout(() => {
-            saveBtn.classList.remove('saved');
-            saveBtn.innerHTML = '<i class="fas fa-database"></i> SAUVEGARDER L\'ENREGISTREMENT';
-            saveBtn.disabled = false;
-            isSaving = false;
-        }, 3000);
-        
-    } catch (error) {
-        console.error('❌ Erreur Firebase détaillée:', error);
-        
-        // Afficher des détails sur l'erreur
-        let errorMessage = 'Erreur lors de la sauvegarde: ';
-        if (error.code) {
-            errorMessage += `Code: ${error.code} - `;
-        }
-        if (error.message) {
-            errorMessage += error.message;
-        }
-        
-        showStatusMessage('❌ ' + errorMessage, 'error');
-        
-        // Sauvegarde locale de secours
-        try {
-            saveLocalBackup();
-            showStatusMessage('📱 Données sauvegardées localement', 'info');
-        } catch (backupError) {
-            console.error('Erreur backup:', backupError);
-        }
-        
-        // Réinitialiser le bouton
-        saveBtn.classList.remove('saving');
-        saveBtn.innerHTML = '<i class="fas fa-database"></i> SAUVEGARDER L\'ENREGISTREMENT';
-        saveBtn.disabled = false;
-        isSaving = false;
-    }
-}
-
-// Fonction pour vérifier les données dans Firebase
-async function checkFirebaseData() {
-    try {
-        const ref = database.ref('clans');
-        const snapshot = await ref.once('value');
-        
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            console.log('Données existantes dans Firebase:', data);
-            alert(`✅ Base de données existe ! ${Object.keys(data).length} clans trouvés.`);
-            return true;
-        } else {
-            console.log('Aucune donnée dans Firebase');
-            alert('⚠️ Base vide - Prête à recevoir des données');
-            return false;
-        }
-    } catch (error) {
-        console.error('Erreur de vérification:', error);
-        alert('❌ Impossible d\'accéder à la base de données');
-        return false;
-    }
-}
-
-// Ajoutez cette fonction pour tester manuellement
-function testDatabaseConnection() {
-    console.log('Test de connexion Firebase...');
-    testFirebaseConnection();
-    
-    // Test d'écriture simple
-    const testRef = database.ref('test/' + Date.now());
-    testRef.set({
-        test: 'test_' + Date.now(),
-        message: 'Ceci est un test de connexion'
-    })
-    .then(() => {
-        console.log('✅ Test d\'écriture réussi');
-        alert('✅ Connexion Firebase fonctionnelle !');
-        testRef.remove(); // Nettoyer
-    })
-    .catch(error => {
-        console.error('❌ Échec du test:', error);
-        alert(`❌ Erreur: ${error.message || error.code || error}`);
-    });
-}
-
-// Appelez cette fonction au chargement
-document.addEventListener('DOMContentLoaded', function() {
-    // ... votre code existant ...
-    
-    // Tester la connexion Firebase
-    testFirebaseConnection();
-    
-    // Ajouter un bouton de test manuel (optionnel)
-    const testBtn = document.createElement('button');
-    testBtn.textContent = 'Tester Connexion Firebase';
-    testBtn.style.position = 'fixed';
-    testBtn.style.bottom = '10px';
-    testBtn.style.right = '10px';
-    testBtn.style.zIndex = '9999';
-    testBtn.style.padding = '10px';
-    testBtn.style.background = '#4CAF50';
-    testBtn.style.color = 'white';
-    testBtn.style.border = 'none';
-    testBtn.style.borderRadius = '5px';
-    testBtn.style.cursor = 'pointer';
-    testBtn.onclick = testDatabaseConnection;
-    document.body.appendChild(testBtn);
-});
+        // Configuration Firebase COMPLÈTE et CORRECTE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzqpBeTgALSf4a-uVAqFdowjB0AnT7dis",
+            authDomain: "genieka-2026.firebaseapp.com",
+            databaseURL: "https://genieka-2026-default-rtdb.firebaseio.com", // TRÈS IMPORTANT
+            projectId: "genieka-2026",
+            storageBucket: "genieka-2026.firebasestorage.app",
+            messagingSenderId: "303752964623",
+            appId: "1:303752964623:web:b4d0cf171ea948fc94517a",
+            measurementId: "G-1DMZRJSF05"
+        };
 
         // Initialiser Firebase
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
         // Liste des vrais noms des clans
@@ -1405,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "SAINT CÉLESTIN"
         ];
         
-        // Options pour le voyage (1er, 2ème, 3ème, 4ème) - CORRIGÉ
+        // Options pour le voyage
         const voyageOptions = [
             { value: "", label: "Choisir..." },
             { value: "1er", label: "1er Voyage" },
@@ -1420,9 +1223,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let coachesData = {};
         let isSaving = false;
         let adminData = [];
+        let isConnected = false;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initialisation de l\'application...');
+            
             // Initialiser les données
             initData();
             
@@ -1462,15 +1268,26 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('yearStart').addEventListener('input', saveYearData);
             document.getElementById('yearEnd').addEventListener('input', saveYearData);
             
+            // Bouton de test
+            document.getElementById('testBtn').addEventListener('click', testFirebaseConnection);
+            
             // Vérifier la connexion Firebase
-            testFirebaseConnection();
+            checkFirebaseConnection();
             
             // Charger les données sauvegardées localement
             loadLocalData();
+            
+            // Initialiser l'affichage
+            updateClanDisplay();
+            updateFilledPlayersCount();
+            
+            console.log('Application initialisée avec succès');
         });
 
         // Initialiser les structures de données
         function initData() {
+            console.log('Initialisation des données...');
+            
             // Initialiser les données des joueurs pour chaque clan
             clans.forEach((clan, index) => {
                 playersData[index] = [];
@@ -1491,6 +1308,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     2: { nom: '', telephone: '' },
                     3: { nom: '', telephone: '' }
                 };
+            });
+            
+            console.log('Données initialisées pour', clans.length, 'clans');
+        }
+
+        // Vérifier la connexion Firebase
+        function checkFirebaseConnection() {
+            const connectedRef = database.ref(".info/connected");
+            
+            connectedRef.on("value", function(snap) {
+                if (snap.val() === true) {
+                    isConnected = true;
+                    console.log("✅ Connecté à Firebase");
+                    showStatusMessage("✅ Connecté à Firebase - Prêt à sauvegarder", "success");
+                    
+                    // Test d'écriture rapide
+                    const testRef = database.ref('test_connection');
+                    testRef.set({
+                        test: 'connection_test',
+                        timestamp: new Date().toISOString()
+                    }).then(() => {
+                        console.log("✅ Test d'écriture réussi");
+                        testRef.remove(); // Nettoyer
+                    });
+                    
+                } else {
+                    isConnected = false;
+                    console.log("❌ Déconnecté de Firebase");
+                    showStatusMessage("⚠️ Mode hors ligne - Sauvegarde locale uniquement", "warning");
+                }
             });
         }
 
@@ -1549,6 +1396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mettre à jour l'affichage du clan courant
         function updateClanDisplay() {
             document.getElementById('currentClanName').textContent = clans[currentClanIndex];
+            document.getElementById('currentClanSubtitle').textContent = `Clan ${currentClanIndex + 1}/${clans.length}`;
         }
 
         // Générer le tableau des joueurs avec les options de voyage
@@ -1655,6 +1503,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 element.classList.remove('filled');
             }
+            
+            // Sauvegarder localement
+            saveLocalData();
         }
 
         // Mettre à jour un champ coach
@@ -1673,11 +1524,14 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 element.classList.remove('filled');
             }
+            
+            // Sauvegarder localement
+            saveLocalData();
         }
 
         // Sauvegarder les données du clan courant
         function saveCurrentClanData() {
-            // Les données sont déjà sauvegardées au fur et à mesure via updatePlayerField et updateCoachField
+            // Les données sont déjà sauvegardées au fur et à mesure
         }
 
         // Mettre à jour le compteur de joueurs remplis
@@ -1696,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Sauvegarder les données d'année
         function saveYearData() {
-            // Les années sont sauvegardées automatiquement
+            saveLocalData();
         }
 
         // Sauvegarder dans Firebase
@@ -1739,6 +1593,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Début de la sauvegarde
             isSaving = true;
             const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
             saveBtn.classList.add('saving');
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SAUVEGARDE EN COURS...';
             saveBtn.disabled = true;
@@ -1754,33 +1609,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     end: document.getElementById('yearEnd').value
                 },
                 timestamp: new Date().toISOString(),
-                lastUpdate: firebase.database.ServerValue.TIMESTAMP,
-                filledPlayers: document.getElementById('filledPlayersCount').textContent,
-                status: 'completed',
-                coachSignature: 'Enregistré par le Coach',
+                timestamp_ms: Date.now(),
                 date: new Date().toLocaleDateString('fr-FR'),
-                time: new Date().toLocaleTimeString('fr-FR')
+                time: new Date().toLocaleTimeString('fr-FR'),
+                filledPlayers: document.getElementById('filledPlayersCount').textContent,
+                userAgent: navigator.userAgent.substring(0, 100),
+                savedFrom: 'LWG_KHG_App',
+                version: '1.0.0'
             };
             
             try {
-                // Envoyer à Firebase - Structure organisée par clan
+                console.log('Tentative de sauvegarde pour le clan:', clans[currentClanIndex]);
+                
+                // Vérifier la connexion
+                if (!isConnected) {
+                    throw new Error('Non connecté à Firebase');
+                }
+                
+                // Envoyer à Firebase - Structure organisée
                 const clanKey = clans[currentClanIndex].replace(/\s+/g, '_').toUpperCase();
-                const clanRef = database.ref('clans/' + clanKey);
+                const timestamp = Date.now();
+                const uniqueKey = `${clanKey}_${timestamp}`;
                 
-                // Sauvegarder les données principales
-                await clanRef.set(clanData);
+                // Chemin 1 : Sauvegarde principale
+                const mainRef = database.ref('clans/' + clanKey);
+                await mainRef.set(clanData);
                 
-                // Créer également un enregistrement dans l'historique
-                const historyRef = database.ref('registrations').push();
-                const registrationId = historyRef.key;
-                await historyRef.set({
-                    ...clanData,
-                    registrationId: registrationId,
-                    registrationKey: clanKey
-                });
+                // Chemin 2 : Historique
+                const historyRef = database.ref('history/' + uniqueKey);
+                await historyRef.set(clanData);
+                
+                // Chemin 3 : Registre simple (pour facilité d'accès)
+                const registryRef = database.ref('registry').push();
+                await registryRef.set(clanData);
+                
+                console.log('✅ Données sauvegardées avec succès');
+                console.log('Clé:', clanKey);
+                console.log('Données:', clanData);
                 
                 // Succès
-                showStatusMessage(`✅ Clan ${clans[currentClanIndex]} sauvegardé avec succès dans Firebase! ID: ${registrationId}`, 'success');
+                showStatusMessage(`✅ Clan ${clans[currentClanIndex]} sauvegardé avec succès dans Firebase!`, 'success');
                 
                 // Animation de confirmation
                 saveBtn.classList.remove('saving');
@@ -1788,83 +1656,86 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.innerHTML = '<i class="fas fa-check"></i> ENREGISTRÉ AVEC SUCCÈS';
                 
                 // Sauvegarder aussi localement pour éviter les pertes
-                saveLocalBackup();
+                saveLocalData();
                 
                 // Mettre à jour les statistiques admin
                 if (document.getElementById('adminPanel').style.display === 'block') {
                     loadAdminData();
                 }
                 
+                // Afficher un résumé
+                showSummary(clanData);
+                
                 // Réinitialiser après 3 secondes
                 setTimeout(() => {
                     saveBtn.classList.remove('saved');
-                    saveBtn.innerHTML = '<i class="fas fa-database"></i> SAUVEGARDER L\'ENREGISTREMENT';
+                    saveBtn.innerHTML = originalText;
                     saveBtn.disabled = false;
                     isSaving = false;
                 }, 3000);
                 
-                // Afficher un résumé
-                showSummary(clanData);
-                
             } catch (error) {
-                console.error('Erreur Firebase:', error);
-                showStatusMessage('❌ Erreur lors de la sauvegarde. Tentative de sauvegarde locale...', 'error');
+                console.error('❌ Erreur lors de la sauvegarde Firebase:', error);
                 
-                // Essayer de sauvegarder localement en cas d'erreur
+                // Afficher un message d'erreur détaillé
+                let errorMessage = 'Erreur lors de la sauvegarde: ';
+                if (error.code) {
+                    errorMessage += `Code: ${error.code} - `;
+                }
+                if (error.message) {
+                    errorMessage += error.message;
+                }
+                
+                showStatusMessage('❌ ' + errorMessage, 'error');
+                
+                // Sauvegarde locale de secours
                 try {
-                    saveLocalBackup();
-                    showStatusMessage('📱 Données sauvegardées localement en attendant la reconnexion Firebase.', 'info');
+                    saveLocalData();
+                    console.log('📱 Données sauvegardées localement');
+                    showStatusMessage('📱 Données sauvegardées localement en attendant la reconnexion', 'info');
                 } catch (backupError) {
                     console.error('Erreur de sauvegarde locale:', backupError);
-                    showStatusMessage('⚠️ Erreur critique. Veuillez noter les données et réessayer plus tard.', 'error');
                 }
                 
                 // Réinitialiser le bouton
                 saveBtn.classList.remove('saving');
-                saveBtn.innerHTML = '<i class="fas fa-database"></i> SAUVEGARDER L\'ENREGISTREMENT';
+                saveBtn.innerHTML = originalText;
                 saveBtn.disabled = false;
                 isSaving = false;
             }
         }
 
-        // Sauvegarde locale de secours
-        function saveLocalBackup() {
+        // Sauvegarde locale
+        function saveLocalData() {
             const data = {
                 players: playersData,
                 coaches: coachesData,
                 yearStart: document.getElementById('yearStart').value,
                 yearEnd: document.getElementById('yearEnd').value,
                 currentClanIndex: currentClanIndex,
-                lastBackup: new Date().toISOString()
+                lastSave: new Date().toISOString()
             };
             
-            localStorage.setItem('lwg_khg_backup_data', JSON.stringify(data));
-            console.log('Sauvegarde locale effectuée');
+            try {
+                localStorage.setItem('lwg_khg_data', JSON.stringify(data));
+            } catch (error) {
+                console.warn('Impossible de sauvegarder localement:', error);
+            }
         }
 
         // Charger les données sauvegardées localement
         function loadLocalData() {
-            const savedData = localStorage.getItem('lwg_khg_backup_data');
-            if (savedData) {
-                try {
+            try {
+                const savedData = localStorage.getItem('lwg_khg_data');
+                if (savedData) {
                     const data = JSON.parse(savedData);
                     
                     if (data.players) {
-                        // Charger les données des joueurs
-                        Object.keys(data.players).forEach(key => {
-                            if (playersData[key]) {
-                                playersData[key] = data.players[key];
-                            }
-                        });
+                        playersData = data.players;
                     }
                     
                     if (data.coaches) {
-                        // Charger les données des coaches
-                        Object.keys(data.coaches).forEach(key => {
-                            if (coachesData[key]) {
-                                coachesData[key] = data.coaches[key];
-                            }
-                        });
+                        coachesData = data.coaches;
                     }
                     
                     if (data.yearStart) {
@@ -1894,30 +1765,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     generateCoachesTable();
                     updateFilledPlayersCount();
                     
-                    console.log('Données de secours chargées avec succès');
-                    showStatusMessage('📱 Données de secours chargées depuis la sauvegarde locale.', 'info');
-                    
-                } catch (error) {
-                    console.error('Erreur lors du chargement des données de secours:', error);
+                    console.log('📱 Données locales chargées avec succès');
                 }
+            } catch (error) {
+                console.error('Erreur lors du chargement des données locales:', error);
             }
         }
 
-        // Tester la connexion Firebase
+        // Test Firebase
         function testFirebaseConnection() {
-            const testRef = database.ref('connection_test');
+            console.log('Test de connexion Firebase...');
+            
+            const testRef = database.ref('test/' + Date.now());
+            
             testRef.set({
+                test: 'test_connection',
                 timestamp: new Date().toISOString(),
-                status: 'connected',
-                app: 'LWG_KHG_Clans'
+                message: 'Test depuis LWG_KHG App'
             })
             .then(() => {
-                console.log('Connexion Firebase établie avec succès');
-                showStatusMessage('✅ Connecté à Firebase - Prêt à sauvegarder', 'success');
+                console.log('✅ Test d\'écriture réussi');
+                alert('✅ Connexion Firebase fonctionnelle !\nLes données peuvent être sauvegardées.');
+                
+                // Vérifier la lecture
+                testRef.once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        console.log('✅ Test de lecture réussi');
+                        console.log('Données lues:', snapshot.val());
+                        
+                        // Nettoyer le test
+                        testRef.remove().then(() => {
+                            console.log('✅ Données de test nettoyées');
+                        });
+                    }
+                });
             })
             .catch(error => {
-                console.error('Erreur de connexion Firebase:', error);
-                showStatusMessage('⚠️ Mode hors ligne - Les données seront sauvegardées localement', 'warning');
+                console.error('❌ Échec du test:', error);
+                alert(`❌ Erreur Firebase:\n${error.message || error.code || error}`);
             });
         }
 
@@ -2246,6 +2131,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             try {
                 await database.ref('clans').remove();
+                await database.ref('history').remove();
+                await database.ref('registry').remove();
                 alert('✅ Toutes les données ont été supprimées avec succès !');
                 loadAdminData();
             } catch (error) {
@@ -2261,9 +2148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 element.style.transform = 'translateY(0)';
             });
             
-            // Initialiser l'affichage du clan
-            updateClanDisplay();
-            updateFilledPlayersCount();
+            console.log('Application LWG-KHG prête');
         });
     </script>
 </body>
