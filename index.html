@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Excellentia Academia – Excellence Académique</title>
-    <!-- Font Awesome & Google Fonts -->
+    <title>✨ Excellentia Academia – L'excellence absolue ✨</title>
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- AOS pour animations au scroll -->
+    <!-- Google Fonts de prestige -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS pour défilement fabuleux -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
-        /* RESET & VARIABLES */
         * {
             margin: 0;
             padding: 0;
@@ -19,692 +19,548 @@
 
         :root {
             --primary: #1a237e;
-            --primary-light: #534bae;
-            --primary-lighter: #e8eaf6;
-            --primary-dark: #000051;
+            --primary-dark: #0d1b5c;
             --secondary: #d32f2f;
-            --secondary-light: #ff6659;
-            --secondary-dark: #9a0007;
             --accent: #ffab00;
-            --accent-light: #ffdd4b;
-            --accent-dark: #c67c00;
-            --success: #4caf50;
-            --info: #2196f3;
-            --light: #f8f9fa;
-            --light-gray: #f5f5f7;
-            --dark: #121212;
-            --gray: #5f6368;
-            --gray-light: #dadce0;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
-            --shadow-md: 0 5px 20px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
-            --radius: 12px;
-            --radius-lg: 20px;
+            --gold: #ffd700;
+            --royal: #4169e1;
+            --deep-blue: #0a1128;
+            --cream: #fff8e7;
+            --light: #faf9f6;
+            --shadow-xl: 0 25px 60px -15px rgba(0,0,0,0.3);
+            --glow: 0 0 30px rgba(255,215,0,0.5);
         }
 
-        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Source Sans Pro', sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
-            background-color: var(--light);
-            overflow-x: hidden;
-            width: 100%;
-        }
-        h1, h2, h3, h4, h5, h6 {
+            background: linear-gradient(145deg, #0b0f2a, #030514);
             font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            line-height: 1.2;
+            color: var(--light);
+            overflow-x: hidden;
         }
-        .container {
+
+        /* Fond étoilé magique */
+        .starry-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 0 20px;
-            margin: 0 auto;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(3px 3px at 80px 120px, #ffd700, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            animation: twinkle 4s infinite;
+            opacity: 0.7;
         }
-        @media (min-width: 640px) { .container { max-width: 600px; } }
-        @media (min-width: 768px) { .container { max-width: 720px; } }
-        @media (min-width: 1024px) { .container { max-width: 960px; } }
-        @media (min-width: 1280px) { .container { max-width: 1200px; } }
-
-        .section-padding { padding: 80px 0; }
-        @media (min-width: 768px) { .section-padding { padding: 100px 0; } }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        .section-title h2 {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        .section-title p {
-            font-size: 1.1rem;
-            color: var(--gray);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        @media (min-width: 768px) {
-            .section-title h2 { font-size: 2.5rem; }
+        @keyframes twinkle {
+            0%,100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
-        /* BOUTONS */
-        .btn {
-            display: inline-flex;
-            align-items: center;
+        /* LOGO GÉANT CENTRÉ – PREMIER PLAN */
+        .hero-welcome {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            padding: 14px 28px;
-            background: var(--secondary);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            gap: 10px;
-            box-shadow: var(--shadow-sm);
-            width: auto;
-            min-width: 160px;
-        }
-        .btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
-        .btn-accent { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: var(--dark); }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-success { background: linear-gradient(135deg, var(--success), #2e7d32); }
-
-        /* HEADER RESPONSIVE */
-        header {
-            background: rgba(255,255,255,0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-sm);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            padding: 12px 0;
-            transition: var(--transition);
-        }
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        .logo-image {
-            height: 45px;
-            width: 45px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-        .logo-text { display: flex; flex-direction: column; }
-        .logo-main {
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-        }
-        .logo-sub { font-size: 0.7rem; color: var(--secondary); font-weight: 600; }
-        .logo-slogan { display: none; }
-        @media (min-width: 768px) {
-            .logo-main { font-size: 1.8rem; }
-            .logo-sub { font-size: 0.9rem; }
-            .logo-slogan { display: block; font-size: 0.8rem; color: var(--accent); font-style: italic; }
-        }
-
-        /* MENU BURGER */
-        .menu-toggle {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
-            cursor: pointer;
-            z-index: 1001;
-        }
-        .menu-toggle span {
-            width: 100%;
-            height: 3px;
-            background: var(--primary);
-            transition: 0.4s;
-            border-radius: 3px;
-        }
-        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
-
-        .nav-links {
-            position: fixed;
-            top: 70px;
-            left: -100%;
-            width: 100%;
-            height: calc(100vh - 70px);
-            background: white;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 40px 20px;
-            transition: left 0.4s ease;
-            z-index: 999;
-            overflow-y: auto;
-            list-style: none;
-            box-shadow: var(--shadow-lg);
-        }
-        .nav-links.active { left: 0; }
-        .nav-links li {
-            margin: 20px 0;
-            width: 100%;
             text-align: center;
-        }
-        .nav-links a {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--dark);
-            text-decoration: none;
-            padding: 10px;
-            display: block;
-        }
-        @media (min-width: 1024px) {
-            .menu-toggle { display: none; }
-            .nav-links {
-                position: static;
-                width: auto;
-                height: auto;
-                background: transparent;
-                flex-direction: row;
-                padding: 0;
-                box-shadow: none;
-                left: 0;
-                display: flex !important;
-            }
-            .nav-links li { margin: 0 0 0 30px; width: auto; }
-            .nav-links a { font-size: 1rem; padding: 5px 0; }
-        }
-
-        .action-buttons {
-            display: none;
-        }
-        @media (min-width: 1200px) {
-            .action-buttons {
-                display: flex;
-                gap: 8px;
-                margin-right: 20px;
-            }
-            .action-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-                border-radius: 30px;
-                background: var(--primary);
-                color: white;
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                white-space: nowrap;
-            }
-        }
-
-        /* HERO RESPONSIVE */
-        .hero {
-            padding-top: 120px;
-            padding-bottom: 60px;
-            background: linear-gradient(135deg, rgba(26,35,126,0.03), rgba(255,171,0,0.03));
+            padding: 20px;
             position: relative;
         }
-        .hero-content {
+
+        .logo-magnifique {
+            margin-bottom: 30px;
+            animation: apparitionMajestueuse 2s ease-out, flottement 6s infinite 2s;
+        }
+
+        @keyframes apparitionMajestueuse {
+            0% { opacity: 0; transform: scale(0.3) translateY(100px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        @keyframes flottement {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .logo-principal {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 18vw, 10rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, 
+                #ffd700 0%, 
+                #ffffff 20%, 
+                #ffd700 40%, 
+                #f1c40f 60%, 
+                #e6b800 80%,
+                #ffd700 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 50px rgba(255,215,0,0.8), 0 0 100px #ffd700, 0 0 150px #b8860b;
+            letter-spacing: 4px;
+            line-height: 1;
+            filter: drop-shadow(0 10px 20px black);
+            margin-bottom: 20px;
+        }
+
+        .sous-titre-royal {
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            background: linear-gradient(135deg, #e0e0e0, #ffffff, #c0c0c0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-top: -20px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+            text-shadow: 0 0 20px silver;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px); }
+        }
+
+        .acronyme-celeste {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.8);
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            border-radius: 60px;
+            border: 1px solid rgba(255,215,0,0.5);
+            box-shadow: 0 0 50px rgba(255,215,0,0.3);
+            margin-top: 40px;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            color: gold;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes bounce {
+            0%,100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(20px); }
+        }
+
+        /* SECTION ÉLEVER L'INTELLIGENCE – FABULEUSE */
+        .section-elever {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            justify-content: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(10,17,40,0.95), rgba(26,35,126,0.8)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><path d="M0 0 L100 100 M100 0 L0 100" stroke="%23ffd700" stroke-width="0.3" opacity="0.2"/></svg>');
+            background-size: 50px 50px;
+            backdrop-filter: blur(2px);
+            position: relative;
         }
-        .hero-text { width: 100%; }
-        .hero-text h1 {
-            font-size: 2.2rem;
+
+        .container-elever {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .titre-divin {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #ffe6a6, #ffd700, #f9a825, #ffb300);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: scintille 3s infinite;
         }
-        .hero-intro {
-            font-size: 1.1rem;
-            padding: 15px;
-            background: rgba(255,255,255,0.9);
-            border-radius: var(--radius);
+        @keyframes scintille {
+            0%,100% { text-shadow: 0 0 20px gold, 0 0 40px orange; }
+            50% { text-shadow: 0 0 40px yellow, 0 0 80px #ffaa00; }
         }
-        .fondateur-info {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+
+        .texte-epique {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-family: 'Cormorant Garamond', serif;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 80px 20px 80px 20px;
+            border: 2px solid rgba(255,215,0,0.6);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7), inset 0 0 100px rgba(255,215,0,0.2);
+            color: #fff5e0;
+            line-height: 1.8;
+            margin: 40px 0;
+            text-align: center;
+            font-weight: 600;
+            transform: rotate(0.5deg);
         }
-        .comite-membres {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+
+        /* PRÉSENTATION FONDATEUR & COMITÉ */
+        .comite-section {
+            padding: 100px 20px;
+            background: radial-gradient(circle at 20% 30%, #16213e, #0a0f2a);
         }
-        .hero-btns {
+
+        .coffre-tresor {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 60px;
+        }
+
+        .carte-fondateur {
+            background: rgba(20,30,50,0.7);
+            backdrop-filter: blur(15px);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #ffd700, #b8860b) 1;
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.7), 0 0 100px rgba(255,215,0,0.3);
+            transition: 1s;
+            animation: lueur 4s infinite;
+        }
+        @keyframes lueur {
+            0%,100% { box-shadow: 0 30px 50px rgba(0,0,0,0.7), 0 0 70px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 150px gold; }
+        }
+
+        .carte-fondateur:hover {
+            transform: scale(1.03) rotate(0.5deg);
+            border-color: gold;
+        }
+
+        .titre-honorable {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 0 20px #b8860b;
+            border-bottom: 3px solid gold;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .detail-prestige {
+            font-size: 1.4rem;
+            margin: 15px 0;
+            display: flex;
             align-items: center;
             gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px 25px;
+            border-radius: 60px;
+            border: 1px solid rgba(255,215,0,0.3);
         }
-        .hero-visual { display: none; }
-        @media (min-width: 768px) {
-            .hero-text h1 { font-size: 2.8rem; }
-            .fondateur-info { grid-template-columns: repeat(2,1fr); }
-            .comite-membres { grid-template-columns: repeat(2,1fr); }
-            .hero-btns { flex-direction: row; justify-content: center; }
-        }
-        @media (min-width: 1024px) {
-            .hero-content { flex-direction: row; align-items: center; }
-            .hero-text { flex: 1; text-align: left; }
-            .hero-text h1 { text-align: left; font-size: 3.2rem; }
-            .hero-btns { justify-content: flex-start; }
-            .hero-visual { display: block; flex: 1; }
+        .detail-prestige i {
+            font-size: 2rem;
+            color: gold;
+            width: 40px;
         }
 
-        /* GRILLES RESPONSIVES */
-        .grid-2, .grid-3, .avantages-grid, .faculties-grid, .activite-grid, .ateliers-grid {
+        .comite-magnifique {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-        @media (min-width: 640px) {
-            .grid-2, .avantages-grid, .activite-grid, .ateliers-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1024px) {
-            .grid-3, .faculties-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
         }
 
-        .card {
-            background: white;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: 0.4s;
-            height: 100%;
+        .membre-legend {
+            background: linear-gradient(145deg, #1e2a47, #0f1a2f);
+            padding: 30px;
+            border-radius: 40px;
+            border-left: 8px solid gold;
+            border-bottom: 8px solid #b8860b;
+            transform: perspective(500px) rotateX(2deg);
+            transition: 0.6s;
+            box-shadow: 0 30px 40px -20px black;
         }
-        .card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+        .membre-legend:hover {
+            transform: perspective(500px) rotateX(0) translateY(-15px);
+            box-shadow: 0 40px 60px gold;
+        }
+        .membre-legend h3 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #fff, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .membre-legend p {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            font-style: italic;
+        }
 
-        /* TABS RESPONSIVES */
+        /* 13 FACULTÉS AVEC AMBASSADEURS */
+        .facultes-section {
+            padding: 80px 20px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+        .grid-facultes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        .faculte-card {
+            background: linear-gradient(145deg, #1a237e, #0d1b5c);
+            border-radius: 30px;
+            padding: 25px;
+            border: 2px solid gold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: 0.5s;
+        }
+        .faculte-card:hover { transform: translateY(-15px) scale(1.02); box-shadow: 0 30px 50px gold; }
+        .faculte-card h3 { font-size: 1.6rem; color: #ffd700; }
+        .faculte-card p { color: white; font-size: 1.1rem; }
+
+        /* ACTIVITÉS TABS */
         .activites-tabs {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 30px;
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 50px 0;
         }
         .activite-tab {
-            padding: 15px;
-            background: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            color: var(--gray);
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            padding: 15px 30px; background: rgba(255,255,255,0.1); border: 1px solid gold; border-radius: 60px;
+            color: white; cursor: pointer; font-weight: 600; transition: 0.4s;
         }
-        .activite-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+        .activite-tab.active, .activite-tab:hover { background: gold; color: black; transform: scale(1.05); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ATELIERS */
+        .ateliers-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 30px; margin-top: 50px;
         }
-        @media (min-width: 768px) {
-            .activites-tabs {
-                flex-direction: row;
-                justify-content: center;
-            }
-            .activite-tab { padding: 15px 30px; }
+        .atelier-card {
+            background: #16213e; padding: 30px; border-radius: 30px; border-right: 8px solid gold; border-bottom: 8px solid #b8860b;
         }
 
-        /* FORMULAIRE RESPONSIVE */
-        .form-container {
-            background: white;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
+        /* FORMULAIRE */
+        .formulaire-royal {
+            max-width: 800px; margin: 60px auto; background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
+            border-radius: 80px; padding: 50px; border: 2px solid gold; box-shadow: 0 0 100px rgba(255,215,0,0.3);
         }
-        .form-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        .form-body { padding: 30px 20px; }
-        .form-group { margin-bottom: 25px; }
         .form-control {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--gray-light);
-            border-radius: 12px;
-            font-size: 1rem;
+            width: 100%; padding: 15px; margin: 15px 0; border-radius: 50px; border: 2px solid gold;
+            background: rgba(0,0,0,0.6); color: white; font-size: 1.1rem;
         }
-        @media (min-width: 768px) {
-            .form-body { padding: 40px; }
-            .form-row {
-                display: flex;
-                gap: 20px;
-            }
-            .form-row .form-group { flex: 1; }
+        .btn-submit {
+            background: gold; color: black; font-weight: 800; padding: 15px 50px; border: none; border-radius: 60px;
+            font-size: 1.5rem; cursor: pointer; transition: 0.4s; margin-top: 20px;
         }
+        .btn-submit:hover { transform: scale(1.05); box-shadow: 0 0 50px gold; }
 
-        /* FOOTER RESPONSIVE */
         footer {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: white;
-            padding: 60px 0 20px;
+            background: #020617; padding: 60px 20px 20px; text-align: center; color: white;
         }
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-        }
-        @media (min-width: 768px) {
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1024px) {
-            .footer-content {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .social-icons a {
-            width: 45px;
-            height: 45px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: 0.4s;
-        }
-        .copyright { text-align: center; padding-top: 40px; font-size: 0.9rem; }
+        .footer-links a { color: gold; margin: 0 15px; font-size: 1.2rem; }
 
-        /* PAGE CARDS (liens vers sous-pages) */
-        .page-links {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .page-card {
-            background: white;
-            padding: 20px 10px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            transition: 0.4s;
-            cursor: pointer;
-        }
-        .page-card i { font-size: 2rem; color: var(--primary); margin-bottom: 8px; }
-        .page-card h3 { font-size: 1rem; }
-        @media (min-width: 768px) {
-            .page-links { grid-template-columns: repeat(4, 1fr); }
+        @media (max-width: 768px) {
+            .logo-principal { font-size: 15vw; }
+            .sous-titre-royal { font-size: 5vw; }
+            .detail-prestige { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container nav-container">
-            <a href="#" class="logo">
-                <img src="IMG_1812.jpeg" alt="Excellentia Academia" class="logo-image" onerror="this.src='https://via.placeholder.com/45/1a237e/ffffff?text=EA'">
-                <div class="logo-text">
-                    <div class="logo-main">Excellentia</div>
-                    <div class="logo-sub">ACADEMIA</div>
-                    <div class="logo-slogan">Au-delà de l'excellence</div>
-                </div>
-            </a>
-            
-            <div class="nav-wrapper" style="display: flex; align-items: center; gap: 15px;">
-                <div class="menu-toggle" id="menuToggle">
-                    <span></span><span></span><span></span>
-                </div>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#accueil">Accueil</a></li>
-                    <li><a href="#avantages">Avantages</a></li>
-                    <li><a href="#facultes">Facultés</a></li>
-                    <li><a href="#activites">Activités</a></li>
-                    <li><a href="#ateliers">Ateliers</a></li>
-                    <li><a href="#inscription">Inscription</a></li>
-                </ul>
+    <div class="starry-bg"></div>
+
+    <!-- LOGO GÉANT CENTRÉ -->
+    <section class="hero-welcome" id="accueil">
+        <div class="logo-magnifique">
+            <div class="logo-principal">Excellentia</div>
+            <div class="logo-principal" style="font-size: clamp(2.5rem, 12vw, 7rem); margin-top: -0.5em;">Academia</div>
+        </div>
+        <div class="sous-titre-royal">
+            <i class="fas fa-chevron-left" style="color:gold;"></i> Au-delà de l'excellence académique <i class="fas fa-chevron-right" style="color:gold;"></i>
+        </div>
+        <div class="acronyme-celeste">
+            <i class="fas fa-star"></i> UNIKIN · 13 facultés · Ambassadeurs <i class="fas fa-star"></i>
+        </div>
+        <div class="scroll-down" onclick="document.getElementById('elevation').scrollIntoView({behavior:'smooth'})">
+            <i class="fas fa-chevron-circle-down"></i>
+        </div>
+    </section>
+
+    <!-- SECTION ÉLEVER L'INTELLIGENCE -->
+    <section class="section-elever" id="elevation">
+        <div class="container-elever">
+            <h1 class="titre-divin">✨ Élever l'intelligence, inspirer l'excellence ✨</h1>
+            <div class="texte-epique" data-aos="flip-up">
+                <i class="fas fa-quote-left" style="color:gold; font-size:3rem; opacity:0.6;"></i><br>
+                Excellentia Academia transcende l'excellence académique pour former des leaders complets, engagés et visionnaires, prêts à contribuer au développement de la République Démocratique du Congo et de l'Afrique.
+                <br><i class="fas fa-quote-right" style="color:gold; font-size:3rem; opacity:0.6; display:block; text-align:right;"></i>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:30px; justify-content:center; color:white; font-size:1.5rem;">
+                <span><i class="fas fa-brain" style="color:gold;"></i> 13 Facultés</span>
+                <span><i class="fas fa-trophy" style="color:gold;"></i> Concours d'éloquence</span>
+                <span><i class="fas fa-users" style="color:gold;"></i> Ambassadeurs par faculté</span>
             </div>
         </div>
-    </header>
+    </section>
 
-    <main>
-        <!-- HERO SECTION -->
-        <section class="hero" id="accueil">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text" data-aos="fade-up">
-                        <h1>Élever l'intelligence, <span style="color:var(--secondary)">inspirer l'excellence.</span></h1>
-                        <div class="hero-intro">
-                            Excellentia Academia transcende l'excellence académique pour former des leaders complets, engagés et visionnaires, prêts à contribuer au développement de la RDC et de l'Afrique.
-                        </div>
-                        <p>Notre structure accompagne et développe les compétences des étudiants de l'Université de Kinshasa à travers 13 facultés.</p>
-                        
-                        <!-- Fondateur -->
-                        <div class="fondateur-details" style="background:white; padding:20px; border-radius:var(--radius); margin:20px 0;" data-aos="fade-up">
-                            <h4><i class="fas fa-user-tie"></i> Fondateur & Coordonnateur Général</h4>
-                            <div class="fondateur-info">
-                                <div class="info-item"><h5>Credo MALALE MUSAO</h5><p>Master 1 Droit</p></div>
-                                <div class="info-item"><h5>Droit International Public</h5><p>UNIKIN</p></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Comité -->
-                        <div class="comite-directeur" style="background:var(--primary-lighter); padding:20px; border-radius:var(--radius);" data-aos="fade-up">
-                            <h4><i class="fas fa-users"></i> Comité Directeur</h4>
-                            <div class="comite-membres">
-                                <div class="membre"><h5>Arnid DJONGA</h5><p>Secrétaire Général</p></div>
-                                <div class="membre"><h5>Paul KASONGO</h5><p>Secrétaire Adjoint</p></div>
-                                <div class="membre"><h5>Chris</h5><p>Chargé des Projets</p></div>
-                                <div class="membre"><h5>Gemima BEMBIDE</h5><p>Directrice Financière</p></div>
-                            </div>
-                        </div>
-                        
-                        <div class="hero-btns">
-                            <a href="#inscription" class="btn btn-primary">Devenir Membre</a>
-                            <a href="#ambassadeur" class="btn btn-accent">Ambassadeur</a>
-                            <a href="#activites" class="btn btn-outline">Activités</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- FONDATEUR & COMITÉ DIRECTEUR -->
+    <section class="comite-section" id="comite">
+        <div style="text-align:center;">
+            <span style="font-size:4rem;">👑</span>
+            <h2 style="font-size:clamp(2rem,6vw,5rem); background:linear-gradient(135deg, #ffe6a6, #ffd700); -webkit-background-clip:text; background-clip:text; color:transparent;">Le Comité Directeur</h2>
+            <p style="font-size:1.5rem; color:#d4af37;">L'élite qui guide l'élite</p>
+        </div>
 
-        <!-- LIENS VERS SOUS-PAGES -->
-        <div class="container page-links">
-            <div class="page-card" onclick="window.open('concours.html', '_blank')" data-aos="zoom-in">
-                <i class="fas fa-trophy"></i>
-                <h3>Concours</h3>
-            </div>
-            <div class="page-card" onclick="window.open('formations.html', '_blank')" data-aos="zoom-in" data-aos-delay="50">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <h3>Formations</h3>
-            </div>
-            <div class="page-card" onclick="window.open('galerie.html', '_blank')" data-aos="zoom-in" data-aos-delay="100">
-                <i class="fas fa-images"></i>
-                <h3>Galerie</h3>
-            </div>
-            <div class="page-card" onclick="window.open('equipe.html', '_blank')" data-aos="zoom-in" data-aos-delay="150">
-                <i class="fas fa-users"></i>
-                <h3>Équipe</h3>
+        <!-- FONDATEUR -->
+        <div class="coffre-tresor">
+            <div class="carte-fondateur">
+                <div class="titre-honorable"><i class="fas fa-crown" style="margin-right:15px;"></i> Fondateur & Coordonnateur Général</div>
+                <div class="detail-prestige"><i class="fas fa-user-tie"></i> Credo MALALE MUSAO</div>
+                <div class="detail-prestige"><i class="fas fa-graduation-cap"></i> Master 1 (M1) en Droit</div>
+                <div class="detail-prestige"><i class="fas fa-globe-africa"></i> Droit International Public et Africain</div>
+                <div class="detail-prestige"><i class="fas fa-university"></i> Université de Kinshasa (UNIKIN)</div>
+                <div class="detail-prestige"><i class="fas fa-star"></i> Visionnaire · Bâtisseur</div>
             </div>
         </div>
 
-        <!-- AVANTAGES -->
-        <section class="section-padding" id="avantages" style="background:var(--light-gray);">
-            <div class="container">
-                <div class="section-title" data-aos="fade-down">
-                    <h2><span class="title-decoration">Avantages Membres</span></h2>
-                    <p>Privilèges exclusifs pour votre développement</p>
-                </div>
-                <div class="avantages-grid">
-                    <div class="card" data-aos="flip-left">
-                        <div style="background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; padding:20px; text-align:center;"><h3>Formations Exclusives</h3></div>
-                        <div style="padding:25px;"><ul style="list-style:none;"><li><i class="fas fa-check" style="color:var(--success);"></i> Éloquence & art oratoire</li><li><i class="fas fa-check"></i> Écriture académique</li><li><i class="fas fa-check"></i> Soft skills</li><li><i class="fas fa-check"></i> Coaching</li></ul></div>
-                    </div>
-                    <div class="card" data-aos="flip-left" data-aos-delay="100">
-                        <div style="background:linear-gradient(135deg, var(--secondary), #b71c1c); color:white; padding:20px; text-align:center;"><h3>Activités Privilégiées</h3></div>
-                        <div style="padding:25px;"><ul><li><i class="fas fa-check"></i> Concours d'éloquence</li><li><i class="fas fa-check"></i> Conférences experts</li><li><i class="fas fa-check"></i> Cafés scientifiques</li><li><i class="fas fa-check"></i> Networking</li></ul></div>
-                    </div>
-                    <div class="card" data-aos="flip-left" data-aos-delay="200">
-                        <div style="background:linear-gradient(135deg, var(--success), #1b5e20); color:white; padding:20px; text-align:center;"><h3>Opportunités Uniques</h3></div>
-                        <div style="padding:25px;"><ul><li><i class="fas fa-check"></i> Ambassadeur de faculté</li><li><i class="fas fa-check"></i> Intégrer la coordination</li><li><i class="fas fa-check"></i> Stages</li><li><i class="fas fa-check"></i> Mentorat</li></ul></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- COMITÉ 4 MEMBRES -->
+        <div class="comite-magnifique">
+            <div class="membre-legend"><h3><i class="fas fa-feather-alt"></i> Arnid DJONGA</h3><p>Secrétaire Général</p><small>L'organisation incarnée</small></div>
+            <div class="membre-legend"><h3><i class="fas fa-feather-alt"></i> Paul KASONGO</h3><p>Secrétaire Général Adjoint</p><small>Le bras droit stratégique</small></div>
+            <div class="membre-legend"><h3><i class="fas fa-project-diagram"></i> Chris</h3><p>Chargé des Projets</p><small>Innovateur en chef</small></div>
+            <div class="membre-legend"><h3><i class="fas fa-coins"></i> Gemima BEMBIDE</h3><p>Directrice Financière</p><small>La rigueur au service de l'excellence</small></div>
+        </div>
+    </section>
 
-        <!-- FACULTÉS (13) -->
-        <section class="section-padding" id="facultes">
-            <div class="container">
-                <div class="section-title" data-aos="fade-down">
-                    <h2><span class="title-decoration">13 Facultés - Ambassadeurs</span></h2>
-                    <p>Nos représentants par faculté</p>
-                </div>
-                <div class="faculties-grid" id="facultiesContainer"></div>
-                <div style="text-align:center; margin-top:40px;">
-                    <a href="#inscription" class="btn btn-success">Postuler Ambassadeur</a>
-                </div>
-            </div>
-        </section>
+    <!-- 13 FACULTÉS AVEC AMBASSADEURS -->
+    <section class="facultes-section" id="facultes">
+        <div style="text-align:center; margin-bottom:40px;">
+            <h2 style="font-size:3rem; color:gold;">✨ Les 13 Facultés & leurs Ambassadeurs ✨</h2>
+        </div>
+        <div class="grid-facultes" id="facultesContainer"></div>
+    </section>
 
-        <!-- ACTIVITÉS TABS -->
-        <section class="section-padding" id="activites" style="background:var(--light-gray);">
-            <div class="container">
-                <div class="section-title" data-aos="fade-down"><h2>Nos Activités</h2></div>
-                <div class="activites-tabs">
-                    <button class="activite-tab active" data-tab="tab1"><i class="fas fa-trophy"></i> Concours</button>
-                    <button class="activite-tab" data-tab="tab2"><i class="fas fa-chalkboard-teacher"></i> Ateliers</button>
-                    <button class="activite-tab" data-tab="tab3"><i class="fas fa-microphone"></i> Conférences</button>
-                </div>
-                <div class="activite-content active" id="tab1">
-                    <div class="grid-2">
-                        <div class="card"><div style="background:linear-gradient(135deg,var(--secondary),#b71c1c); color:white; padding:20px;"><h3>Concours d'Éloquence</h3></div><div style="padding:20px;"><p>13 facultés, thème national, prix prestigieux.</p><a href="#" class="btn btn-accent" style="margin-top:15px;">Page officielle</a></div></div>
-                        <div class="card"><div style="background:linear-gradient(135deg,var(--primary),#000051); color:white; padding:20px;"><h3>Formation Éloquence</h3></div><div style="padding:20px;"><p>Techniques, gestion du stress, coaching.</p><a href="#inscription" class="btn btn-primary">S'inscrire</a></div></div>
-                    </div>
-                </div>
-                <div class="activite-content" id="tab2">
-                    <div class="grid-2">
-                        <div class="card"><div style="background:linear-gradient(135deg,var(--success),#1b5e20); padding:20px; color:white;"><h3>Écriture Académique</h3></div><div style="padding:20px;"><p>TFC, mémoires, thèses, normes APA.</p></div></div>
-                        <div class="card"><div style="background:linear-gradient(135deg,var(--accent),#c67c00); padding:20px;"><h3>Soft Skills</h3></div><div style="padding:20px;"><p>Leadership, gestion du temps, communication.</p></div></div>
-                    </div>
-                </div>
-                <div class="activite-content" id="tab3">
-                    <div class="grid-2">
-                        <div class="card"><div style="background:linear-gradient(135deg,var(--info),#0d47a1); padding:20px; color:white;"><h3>Conférences Mensuelles</h3></div><div style="padding:20px;"><p>Experts internationaux, networking.</p></div></div>
-                        <div class="card"><div style="background:linear-gradient(135deg,#9c27b0,#4a148c); padding:20px; color:white;"><h3>Cafés Scientifiques</h3></div><div style="padding:20px;"><p>Débats conviviaux, esprit critique.</p></div></div>
-                    </div>
-                </div>
+    <!-- ACTIVITÉS TABS (Concours, Ateliers, Conférences) -->
+    <section style="padding:80px 20px; background:#030514;">
+        <div style="text-align:center;">
+            <h2 style="font-size:3rem; color:gold;">Nos Activités Grandioses</h2>
+        </div>
+        <div class="activites-tabs">
+            <button class="activite-tab active" data-tab="tab1">🏆 Concours d'Éloquence</button>
+            <button class="activite-tab" data-tab="tab2">📚 Ateliers de Formation</button>
+            <button class="activite-tab" data-tab="tab3">🎤 Conférences</button>
+        </div>
+        <div class="tab-content active" id="tab1">
+            <div class="ateliers-grid">
+                <div class="atelier-card"><h3>Concours Inter-facultés</h3><p>13 facultés, thème national, prix prestigieux.</p><a href="#" style="color:gold;">Page officielle →</a></div>
+                <div class="atelier-card"><h3>Formation à l'Éloquence</h3><p>Techniques vocales, improvisation, coaching.</p><a href="#inscription" style="color:gold;">S'inscrire →</a></div>
             </div>
-        </section>
+        </div>
+        <div class="tab-content" id="tab2">
+            <div class="ateliers-grid">
+                <div class="atelier-card"><h3>Écriture Académique</h3><p>TFC, mémoires, thèses, normes APA.</p></div>
+                <div class="atelier-card"><h3>Soft Skills</h3><p>Leadership, gestion du temps, communication.</p></div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab3">
+            <div class="ateliers-grid">
+                <div class="atelier-card"><h3>Conférences Mensuelles</h3><p>Experts internationaux, networking.</p></div>
+                <div class="atelier-card"><h3>Cafés Scientifiques</h3><p>Débats conviviaux, esprit critique.</p></div>
+            </div>
+        </div>
+    </section>
 
-        <!-- ATELIERS SPÉCIALISÉS -->
-        <section class="section-padding" id="ateliers">
-            <div class="container">
-                <div class="section-title"><h2>Ateliers Spécialisés</h2></div>
-                <div class="ateliers-grid">
-                    <div class="card" data-aos="fade-up"><div style="background:linear-gradient(135deg,var(--accent),var(--accent-dark)); padding:20px;"><h3>Cafés Scientifiques</h3></div><div style="padding:20px;"><ul><li>Actualité scientifique</li><li>Experts invités</li><li>Argumentation</li></ul></div></div>
-                    <div class="card" data-aos="fade-up" data-aos-delay="100"><div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark)); padding:20px; color:white;"><h3>Workshops Pratiques</h3></div><div style="padding:20px;"><ul><li>PowerPoint avancé</li><li>Recherche doc</li><li>Analyse données</li></ul></div></div>
-                    <div class="card" data-aos="fade-up" data-aos-delay="200"><div style="background:linear-gradient(135deg,var(--secondary),#b71c1c); padding:20px; color:white;"><h3>Activités Diversifiées</h3></div><div style="padding:20px;"><ul><li>Simulations entretiens</li><li>Team building</li><li>Forums carrière</li></ul></div></div>
-                </div>
-            </div>
-        </section>
+    <!-- ATELIERS SPÉCIALISÉS -->
+    <section style="padding:80px 20px; background:#0a0f2a;">
+        <div style="text-align:center;"><h2 style="font-size:3rem; color:gold;">Ateliers Spécialisés</h2></div>
+        <div class="ateliers-grid">
+            <div class="atelier-card"><h3>Cafés Scientifiques</h3><p>Actualité scientifique, experts invités.</p></div>
+            <div class="atelier-card"><h3>Workshops Pratiques</h3><p>PowerPoint, recherche doc, analyse données.</p></div>
+            <div class="atelier-card"><h3>Activités Diversifiées</h3><p>Simulations entretiens, team building, forums.</p></div>
+        </div>
+    </section>
 
-        <!-- GALERIE PHOTOS -->
-        <section class="section-padding" id="photos" style="background:var(--light-gray);">
-            <div class="container">
-                <div class="section-title"><h2>Galerie Photos</h2></div>
-                <div class="grid-3">
-                    <div class="card" style="text-align:center;"><i class="fas fa-camera" style="font-size:3rem; margin:20px 0;"></i><h3>Événements</h3><p>Sur Facebook</p></div>
-                    <div class="card" style="text-align:center;"><i class="fas fa-video" style="font-size:3rem; margin:20px 0;"></i><h3>Concours</h3><p>Sur Instagram</p></div>
-                    <div class="card" style="text-align:center;"><i class="fas fa-photo-video" style="font-size:3rem; margin:20px 0;"></i><h3>Vie associative</h3><p>#Excellentia</p></div>
-                </div>
-            </div>
-        </section>
+    <!-- GALERIE PHOTOS -->
+    <section style="padding:80px 20px; background:#020617;">
+        <div style="text-align:center;"><h2 style="font-size:3rem; color:gold;">Galerie Royale</h2></div>
+        <div style="display:flex; flex-wrap:wrap; gap:30px; justify-content:center;">
+            <div style="background:#1a237e; padding:40px; border-radius:50px;"><i class="fas fa-camera" style="font-size:4rem; color:gold;"></i><p>Événements</p></div>
+            <div style="background:#1a237e; padding:40px; border-radius:50px;"><i class="fas fa-video" style="font-size:4rem; color:gold;"></i><p>Concours</p></div>
+            <div style="background:#1a237e; padding:40px; border-radius:50px;"><i class="fas fa-photo-video" style="font-size:4rem; color:gold;"></i><p>Vie associative</p></div>
+        </div>
+    </section>
 
-        <!-- FORMULAIRE INSCRIPTION -->
-        <section class="section-padding" id="inscription">
-            <div class="container">
-                <div class="section-title"><h2>Adhésion</h2></div>
-                <div class="form-container" data-aos="flip-up">
-                    <div class="form-header"><h2>Devenir Membre</h2><p>Accès à toutes nos activités</p></div>
-                    <form class="form-body" id="regForm">
-                        <div class="form-group"><input type="text" class="form-control" placeholder="Prénom *" required></div>
-                        <div class="form-group"><input type="text" class="form-control" placeholder="Nom *" required></div>
-                        <div class="form-row">
-                            <div class="form-group"><input type="email" class="form-control" placeholder="Email *" required></div>
-                            <div class="form-group"><input type="tel" class="form-control" placeholder="Téléphone"></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><select class="form-control" id="facultySelectMobile"></select></div>
-                            <div class="form-group"><select class="form-control"><option>Licence 1</option><option>Licence 2</option><option>Licence 3</option><option>Master 1</option><option>Master 2</option></select></div>
-                        </div>
-                        <div class="form-group"><select class="form-control"><option>Membre régulier</option><option>Ambassadeur</option><option>Coordination</option></select></div>
-                        <div class="form-group"><textarea class="form-control" rows="4" placeholder="Votre motivation..."></textarea></div>
-                        <div style="text-align:center;"><button type="submit" class="btn btn-primary">Envoyer</button></div>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
+    <!-- FORMULAIRE D'INSCRIPTION -->
+    <section id="inscription" style="padding:80px 20px;">
+        <div class="formulaire-royal">
+            <h2 style="font-size:3rem; color:gold; text-align:center;">Adhésion</h2>
+            <p style="text-align:center;">Devenez membre et accédez à tous nos programmes</p>
+            <form id="regForm">
+                <input type="text" class="form-control" placeholder="Prénom *" required>
+                <input type="text" class="form-control" placeholder="Nom *" required>
+                <input type="email" class="form-control" placeholder="Email *" required>
+                <select class="form-control" id="facultySelect"></select>
+                <select class="form-control"><option>Licence 1</option><option>Licence 2</option><option>Licence 3</option><option>Master 1</option><option>Master 2</option></select>
+                <select class="form-control"><option>Membre régulier</option><option>Ambassadeur</option><option>Coordination</option></select>
+                <textarea class="form-control" rows="4" placeholder="Votre motivation..."></textarea>
+                <div style="text-align:center;"><button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Rejoindre l'élite</button></div>
+            </form>
+        </div>
+    </section>
 
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div><img src="IMG_1812.jpeg" style="height:50px; border-radius:10px;" onerror="this.src='https://via.placeholder.com/50/1a237e/ffffff?text=EA'"><h3>Excellentia Academia</h3><p>UNIKIN, RDC</p></div>
-                <div><h4>Liens</h4><ul><li><a href="#accueil" style="color:white;">Accueil</a></li><li><a href="#facultes" style="color:white;">Facultés</a></li><li><a href="#inscription" style="color:white;">Adhésion</a></li></ul></div>
-                <div><h4>Contact</h4><p><i class="fas fa-phone"></i> +243 81 234 5678</p><p><i class="fas fa-envelope"></i> contact@excellentia.cd</p></div>
-            </div>
-            <div class="copyright">© 2023 Excellentia Academia</div>
+        <div class="footer-links">
+            <a href="#accueil">Accueil</a> | <a href="#facultes">Facultés</a> | <a href="#inscription">Adhésion</a>
         </div>
+        <p style="margin-top:30px;">© 2023 Excellentia Academia – UNIKIN. Tous droits réservés.</p>
+        <p>✨ Au-delà de l'excellence académique ✨</p>
     </footer>
 
     <!-- SCRIPTS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 800, once: true, offset: 50 });
+        AOS.init({ duration: 1000, once: true });
 
-        // Menu burger
-        const toggle = document.getElementById('menuToggle');
-        const nav = document.getElementById('navLinks');
-        toggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-            toggle.classList.toggle('active');
+        // Données des facultés avec ambassadeurs
+        const faculties = [
+            "Droit (Aristote MBO)","Lettres (Adoption MWAMUKASA)","Sciences Éco (Grâce Eloko)","Sciences Sociales (Keren TUAVUKIDI)",
+            "Sciences et Tech (Jonathan MATONDON)","Pharmaceutiques (Précieux KUZAMBA)","Psychologie (Jeff NGANDU)","Polytechnique (À désigner)",
+            "Médecine Dentaire (À désigner)","Médecine Vétérinaire (À désigner)","Pétrole, Gaz (À désigner)","Agronomiques (À désigner)","Médecine (À désigner)"
+        ];
+        const container = document.getElementById('facultesContainer');
+        faculties.forEach(f => {
+            let div = document.createElement('div');
+            div.className = 'faculte-card';
+            div.innerHTML = `<h3>${f.split('(')[0]}</h3><p>Ambassadeur : ${f.includes('(') ? f.split('(')[1].replace(')','') : 'À désigner'}</p>`;
+            container.appendChild(div);
         });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-                toggle.classList.remove('active');
-            });
+
+        // Select faculté
+        const facSelect = document.getElementById('facultySelect');
+        faculties.forEach(f => {
+            let opt = document.createElement('option');
+            opt.value = f;
+            opt.textContent = f;
+            facSelect.appendChild(opt);
         });
 
         // Tabs
         const tabs = document.querySelectorAll('.activite-tab');
-        const contents = document.querySelectorAll('.activite-content');
+        const contents = document.querySelectorAll('.tab-content');
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
@@ -714,38 +570,15 @@
             });
         });
 
-        // Facultés data
-        const faculties = [
-            "Droit (Aristote MBO)","Lettres (Adoption MWAMUKASA)","Sciences Éco (Grâce Eloko)","Sciences Sociales (Keren TUAVUKIDI)","Sciences et Tech (Jonathan MATONDON)","Pharmaceutiques (Précieux KUZAMBA)","Psychologie (Jeff NGANDU)","Polytechnique","Médecine Dentaire","Médecine Vétérinaire","Pétrole, Gaz","Agronomiques","Médecine"
-        ];
-        const container = document.getElementById('facultiesContainer');
-        faculties.forEach((f,idx) => {
-            let card = document.createElement('div');
-            card.className = 'card';
-            card.setAttribute('data-aos','fade-up');
-            card.setAttribute('data-aos-delay', (idx%5)*50);
-            card.innerHTML = `<div style="background:linear-gradient(135deg, #1a237e, #3949ab); padding:15px; color:white;"><h4>${f.split('(')[0]}</h4></div><div style="padding:15px;"><p>Ambassadeur: ${f.includes('(') ? f.split('(')[1].replace(')','') : 'À désigner'}</p></div>`;
-            container.appendChild(card);
-        });
-
-        // Select faculté mobile
-        const facSelect = document.getElementById('facultySelectMobile');
-        faculties.forEach(f => {
-            let opt = document.createElement('option');
-            opt.value = f;
-            opt.textContent = f;
-            facSelect.appendChild(opt);
-        });
-
         // Formulaire
         document.getElementById('regForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            alert('✅ Félicitations ! Votre candidature a été soumise.');
+            alert('✅ Félicitations ! Votre candidature a été soumise. L\'excellence vous attend.');
         });
 
-        // Scroll header
-        window.addEventListener('scroll', () => {
-            document.querySelector('header').classList.toggle('scrolled', window.scrollY > 50);
+        // Scroll doux pour la flèche
+        document.querySelector('.scroll-down').addEventListener('click', function() {
+            document.getElementById('elevation').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>
