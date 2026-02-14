@@ -3,691 +3,1113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cerveau Juridique · Assistant Intelligent</title>
+    <title>DroitRattrapage - Rattrape ton retard en droit + IA</title>
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ========== STYLES CSS COMPLETS ========== */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap');
-
+        /* === RESET & VARIABLES === */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
-            --bg-color: #f8fafc;
-            --surface-color: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #334155;
-            --accent-color: #2563eb;
-            --accent-hover: #1d4ed8;
-            --border-light: #e2e8f0;
-            --assistant-bg: #f1f5f9;
-            --user-bg: #2563eb;
-            --user-text: #ffffff;
-            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            --success-color: #059669;
-            --warning-color: #d97706;
-            --header-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --bleu-fonce: #0a2540;
+            --bleu-clair: #2c3e50;
+            --or: #d4af37;
+            --blanc: #ffffff;
+            --gris-clair: #f5f7fa;
+            --gris: #e0e0e0;
+            --texte-fonce: #333;
+            --message-user: #e3f2fd;
+            --message-assistant: #f1f1f1;
         }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #0b1120;
-                --surface-color: #1e293b;
-                --text-primary: #f1f5f9;
-                --text-secondary: #cbd5e1;
-                --accent-color: #3b82f6;
-                --accent-hover: #60a5fa;
-                --border-light: #334155;
-                --assistant-bg: #2d3a4f;
-                --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-                --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            }
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: var(--texte-fonce);
+            background-color: var(--blanc);
         }
-
-        .header {
-            background: var(--header-gradient);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: var(--shadow);
-            border-bottom: 3px solid var(--accent-color);
+        a {
+            text-decoration: none;
+            color: inherit;
         }
-
-        .header-content {
+        .container {
+            width: 90%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 2rem 0;
+        }
+        section {
+            padding: 3rem 0;
+        }
+        h1, h2, h3 {
+            color: var(--bleu-fonce);
+        }
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        h2:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--or);
+            margin: 0.5rem auto 0;
+        }
+        .btn {
+            display: inline-block;
+            background-color: var(--or);
+            color: var(--bleu-fonce);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #b8960f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--or);
+            color: var(--or);
+        }
+        .btn-outline:hover {
+            background: var(--or);
+            color: var(--bleu-fonce);
+        }
+        .btn-small {
+            background: var(--or);
+            color: var(--bleu-fonce);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* === HEADER === */
+        header {
+            background-color: var(--bleu-fonce);
+            color: var(--blanc);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        header .container {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 1rem;
+            padding: 0.5rem 0;
         }
-
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--or);
         }
-
-        .header .badge {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 0.25rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
+        .logo span {
+            color: var(--blanc);
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        nav a {
+            color: var(--blanc);
             font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: var(--or);
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* === HERO === */
+        .hero {
+            background: linear-gradient(135deg, var(--bleu-fonce) 0%, #1a3a5f 100%);
+            color: var(--blanc);
+            padding: 5rem 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--blanc);
+        }
+        .hero .highlight {
+            color: var(--or);
+        }
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        /* === PROBLEME/SOLUTION === */
+        .problem-solution {
+            background-color: var(--gris-clair);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+        .card {
+            background: var(--blanc);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card i {
+            font-size: 2.5rem;
+            color: var(--or);
+            margin-bottom: 1rem;
+        }
+        .card h3 {
+            margin-bottom: 1rem;
+        }
+
+        /* === COURS SIMPLIFIES === */
+        .cours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .cours-item {
+            background: var(--blanc);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid var(--gris);
+        }
+        .cours-item:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .cours-item .content {
+            padding: 1.5rem;
+        }
+        .cours-item h4 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--bleu-fonce);
+        }
+        .cours-item p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        .badge {
+            background-color: var(--or);
+            color: var(--bleu-fonce);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .cours-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .cours-footer a {
+            color: var(--or);
+            font-weight: bold;
+        }
+
+        /* === PROGRAMMES (TABS) === */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: var(--gris-clair);
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .tab-btn.active {
+            background: var(--or);
+            color: var(--bleu-fonce);
+        }
+        .programme-content {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .programme-content.active {
+            display: grid;
+        }
+        .programme-card {
+            background: var(--blanc);
+            border: 1px solid var(--gris);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .programme-card:hover {
+            transform: scale(1.03);
+            border-color: var(--or);
+        }
+        .programme-card h4 {
+            font-size: 1.6rem;
+            color: var(--bleu-fonce);
+            margin-bottom: 0.5rem;
+        }
+        .programme-card .duree {
+            font-size: 1.1rem;
+            color: var(--or);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .programme-card ul {
+            text-align: left;
+            list-style: none;
+            margin: 1rem 0;
+        }
+        .programme-card li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .programme-card li:before {
+            content: "✓";
+            color: var(--or);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* === MÉTHODES DE TRAVAIL === */
+        .methodes-grid, .ressources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .methode-item, .ressource-item {
+            background: var(--blanc);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--gris);
+            text-align: center;
+        }
+        .methode-item i, .ressource-item i {
+            font-size: 2.5rem;
+            color: var(--or);
+            margin-bottom: 1rem;
+        }
+
+        /* === COMMUNAUTÉ / FORUM + ASSISTANT IA === */
+        .communaute-section {
+            background: linear-gradient(135deg, var(--bleu-fonce), #1a3a5f);
+            color: var(--blanc);
+            border-radius: 15px;
+            padding: 3rem;
+        }
+        .communaute-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .forum-preview {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 10px;
             backdrop-filter: blur(10px);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            flex: 1;
-            width: 100%;
-        }
-
-        /* Stats cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--surface-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-        }
-
-        .stat-info h3 {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .stat-info p {
+        .forum-preview h3, .assistant-preview h3 {
+            color: var(--or);
+            margin-bottom: 1rem;
             font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--accent-color);
         }
-
-        /* Chat interface */
-        .chat-interface {
-            background: var(--surface-color);
-            border-radius: 1.5rem;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .chat-header {
-            background: var(--assistant-bg);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-light);
+        .forum-stats {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            justify-content: space-around;
+            margin: 2rem 0;
         }
-
-        .chat-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .stat {
+            text-align: center;
         }
-
-        .online-indicator {
-            width: 0.75rem;
-            height: 0.75rem;
-            background-color: var(--success-color);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        .stat .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--or);
         }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+        .assistant-preview {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
         }
-
-        .chat-messages {
-            padding: 1.5rem;
-            height: 400px;
+        .chat-mini {
+            background: var(--blanc);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            max-height: 250px;
             overflow-y: auto;
+        }
+        .chat-message {
+            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .chat-message.user {
+            background: var(--message-user);
+            text-align: right;
+            color: var(--bleu-fonce);
+        }
+        .chat-message.assistant {
+            background: var(--message-assistant);
+            text-align: left;
+        }
+        .chat-message small {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.2rem;
+        }
+        .chat-input-group {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            background: var(--surface-color);
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
-
-        .message {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            animation: slideIn 0.3s ease-out;
+        .chat-input-group input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--gris);
+            border-radius: 5px;
+            font-size: 0.9rem;
         }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .chat-input-group button {
+            background: var(--or);
+            color: var(--bleu-fonce);
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-        .message.user {
-            flex-direction: row-reverse;
+        .chat-input-group button:hover {
+            background: #b8960f;
         }
-
-        .message .avatar {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
+        .chat-input-group button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-
-        .assistant .avatar {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-        }
-
-        .user .avatar {
-            background: linear-gradient(135deg, #059669, #047857);
-            color: white;
-        }
-
-        .message .content {
-            max-width: 70%;
-            padding: 1rem 1.25rem;
-            border-radius: 1.25rem;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .assistant .content {
-            background: var(--assistant-bg);
-            border-bottom-left-radius: 0.25rem;
-            color: var(--text-primary);
-        }
-
-        .user .content {
-            background: var(--user-bg);
-            color: var(--user-text);
-            border-bottom-right-radius: 0.25rem;
-        }
-
         .typing-indicator {
             display: flex;
             gap: 0.3rem;
-            padding: 1rem 1.5rem;
-            background: var(--assistant-bg);
-            border-radius: 1.25rem;
-            border-bottom-left-radius: 0.25rem;
+            padding: 0.5rem;
+            background: var(--message-assistant);
+            border-radius: 8px;
             width: fit-content;
+            margin-bottom: 0.8rem;
         }
-
         .typing-indicator span {
             width: 0.5rem;
             height: 0.5rem;
-            background-color: var(--text-secondary);
+            background: var(--bleu-fonce);
             border-radius: 50%;
-            display: inline-block;
-            animation: typing 1.4s infinite ease-in-out both;
+            animation: typing 1.4s infinite;
         }
-
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.6; }
-            40% { transform: scale(1); opacity: 1; }
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
         }
-
-        .chat-input-area {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-light);
-            background: var(--assistant-bg);
-        }
-
-        #question-form {
-            display: flex;
-            gap: 1rem;
-        }
-
-        #user-question {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--border-light);
-            border-radius: 3rem;
-            font-size: 1rem;
-            background: var(--surface-color);
-            color: var(--text-primary);
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        #user-question:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
-
-        #user-question:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        #send-button {
-            padding: 1rem 2rem;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 3rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-
-        #send-button:hover:not(:disabled) {
-            background: var(--accent-hover);
-            transform: scale(1.02);
-        }
-
-        #send-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Disclaimer */
-        .disclaimer-box {
-            background: var(--warning-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.9rem;
-            margin-top: 2rem;
-        }
-
-        .disclaimer-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        /* Quick actions */
-        .quick-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 1.5rem 0;
-        }
-
-        .quick-action-btn {
-            padding: 0.75rem 1.5rem;
-            background: var(--surface-color);
-            border: 2px solid var(--border-light);
-            border-radius: 2rem;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .quick-action-btn:hover {
-            border-color: var(--accent-color);
-            background: var(--accent-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--surface-color);
-            border-top: 1px solid var(--border-light);
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        .assistant-disclaimer {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
             text-align: center;
-            color: var(--text-secondary);
         }
 
-        /* Responsive */
+        /* === RESSOURCES TÉLÉCHARGEABLES & NEWSLETTER === */
+        .ressource-item .btn-small {
+            margin-top: 1rem;
+        }
+        .newsletter {
+            background-color: var(--gris-clair);
+            text-align: center;
+        }
+        .newsletter form {
+            max-width: 500px;
+            margin: 2rem auto 0;
+            display: flex;
+            gap: 1rem;
+        }
+        .newsletter input {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--gris);
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        /* === FOOTER === */
+        footer {
+            background-color: var(--bleu-fonce);
+            color: var(--blanc);
+            padding: 3rem 0 1rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-col h4 {
+            color: var(--or);
+            margin-bottom: 1rem;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-col a:hover {
+            color: var(--or);
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
+            .menu-toggle {
+                display: block;
             }
-            
-            .stats-grid {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--bleu-fonce);
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem 0;
+                gap: 1.5rem;
+            }
+            nav ul.show {
+                display: flex;
+            }
+            .grid-2, .communaute-grid {
                 grid-template-columns: 1fr;
             }
-            
-            #question-form {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .tabs {
                 flex-direction: column;
+                align-items: center;
             }
-            
-            #send-button {
-                justify-content: center;
+            .tab-btn {
+                width: 80%;
             }
-            
-            .message .content {
-                max-width: 85%;
-            }
-            
-            .quick-actions {
+            .newsletter form {
                 flex-direction: column;
-            }
-            
-            .quick-action-btn {
-                width: 100%;
-                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <h1>⚖️ Cerveau Juridique</h1>
-            <span class="badge">Assistant IA · Bêta</span>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="logo">Droit<span>Rattrapage</span></div>
+            <nav>
+                <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+                <ul id="menu">
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#cours">Cours</a></li>
+                    <li><a href="#programmes">Programmes</a></li>
+                    <li><a href="#methodes">Méthodes</a></li>
+                    <li><a href="#exercices">Exercices</a></li>
+                    <li><a href="#communaute">Communauté + IA</a></li>
+                    <li><a href="#ressources">Ressources</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Statistiques rapides -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">📚</div>
-                <div class="stat-info">
-                    <h3>Bases juridiques</h3>
-                    <p>150+ concepts</p>
+    <!-- HERO -->
+    <section id="accueil" class="hero">
+        <div class="container">
+            <h1>Rattrape ton retard <span class="highlight">et maîtrise le droit</span> facilement</h1>
+            <p>Des cours simplifiés, des programmes adaptés, une communauté et un assistant IA pour t'aider à réussir.</p>
+            <a href="#programmes" class="btn">Commencer le rattrapage</a>
+        </div>
+    </section>
+
+    <!-- PROBLEME / SOLUTION -->
+    <section class="problem-solution">
+        <div class="container">
+            <div class="grid-2">
+                <div class="card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Le constat</h3>
+                    <p>Trop d'étudiants en droit se sentent dépassés par le volume des cours, les délais et la complexité des matières. Résultat : du stress, des nuits blanches et des examens ratés.</p>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-info">
-                    <h3>Réponses instantanées</h3>
-                    <p>Temps réel</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🎓</div>
-                <div class="stat-info">
-                    <h3>Étudiants aidés</h3>
-                    <p>1000+</p>
+                <div class="card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Notre solution</h3>
+                    <p>DroitRattrapage te propose des fiches claires, des vidéos, des quiz, des programmes de rattrapage sur mesure et un assistant IA disponible 24/7 pour répondre à toutes tes questions juridiques.</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Interface de chat principale -->
-        <div class="chat-interface">
-            <div class="chat-header">
-                <div class="online-indicator"></div>
-                <h2>Assistant juridique intelligent</h2>
-            </div>
-            
-            <div id="chat-messages" class="chat-messages">
-                <div class="message assistant">
-                    <div class="avatar">🤖</div>
+    <!-- COURS SIMPLIFIES -->
+    <section id="cours">
+        <div class="container">
+            <h2>Cours simplifiés</h2>
+            <div class="cours-grid">
+                <div class="cours-item">
                     <div class="content">
-                        Bonjour ! Je suis ton assistant juridique. Pose-moi toutes tes questions sur le droit, les lois, les concepts juridiques, ou demande-moi de t'aider à comprendre un texte de loi.
+                        <h4>Droit civil</h4>
+                        <p>Les bases du droit des personnes, de la famille et des obligations.</p>
+                        <span class="badge">Résumé</span>
+                        <span class="badge">PDF</span>
+                        <span class="badge">Vidéo</span>
+                        <div class="cours-footer">
+                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
+                            <i class="fas fa-question-circle" title="Quiz disponible"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Droit constitutionnel</h4>
+                        <p>Comprendre la Ve République, la séparation des pouvoirs et la constitution.</p>
+                        <span class="badge">Résumé</span>
+                        <span class="badge">Quiz</span>
+                        <div class="cours-footer">
+                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Droit pénal</h4>
+                        <p>Infractions, responsabilité pénale et procédure.</p>
+                        <span class="badge">Fiches</span>
+                        <span class="badge">Vidéo</span>
+                        <div class="cours-footer">
+                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Droit administratif</h4>
+                        <p>Organisation administrative, actes, contrats et responsabilité.</p>
+                        <span class="badge">Résumé</span>
+                        <span class="badge">PDF</span>
+                        <div class="cours-footer">
+                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Méthodologie juridique</h4>
+                        <p>Dissertation, commentaire d'arrêt, cas pratique : les techniques.</p>
+                        <span class="badge">Vidéo</span>
+                        <span class="badge">Exercices</span>
+                        <div class="cours-footer">
+                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="chat-input-area">
-                <!-- Questions rapides -->
-                <div class="quick-actions">
-                    <button class="quick-action-btn" onclick="askQuickQuestion('Qu\'est-ce que la présomption d\'innocence ?')">
-                        <span>⚖️</span> Présomption d'innocence
-                    </button>
-                    <button class="quick-action-btn" onclick="askQuickQuestion('Quels sont les différents types de contrats ?')">
-                        <span>📝</span> Types de contrats
-                    </button>
-                    <button class="quick-action-btn" onclick="askQuickQuestion('Explique la différence entre droit civil et droit pénal')">
-                        <span>🔍</span> Civil vs Pénal
-                    </button>
+    <!-- PROGRAMMES DE RATTRAPAGE (TABS) -->
+    <section id="programmes">
+        <div class="container">
+            <h2>Programmes de rattrapage</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="7jours">7 jours</button>
+                <button class="tab-btn" data-tab="14jours">14 jours</button>
+                <button class="tab-btn" data-tab="30jours">30 jours</button>
+            </div>
+            <!-- Contenu 7 jours -->
+            <div id="7jours" class="programme-content active">
+                <div class="programme-card">
+                    <h4>Express</h4>
+                    <div class="duree">7 jours</div>
+                    <ul>
+                        <li>Jour 1 : Droit civil</li>
+                        <li>Jour 2 : Droit constitutionnel</li>
+                        <li>Jour 3 : Méthodologie</li>
+                        <li>Jour 4 : Droit pénal</li>
+                        <li>Jour 5 : Révisions</li>
+                        <li>Jour 6 : Exercices</li>
+                        <li>Jour 7 : Bilan</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
                 </div>
-
-                <form id="question-form">
-                    <input type="text" id="user-question" 
-                           placeholder="Pose ta question juridique ici..." 
-                           autocomplete="off">
-                    <button type="submit" id="send-button">
-                        <span>📤</span> Envoyer
-                    </button>
-                </form>
+                <div class="programme-card">
+                    <h4>Intensif</h4>
+                    <div class="duree">7 jours</div>
+                    <ul>
+                        <li>Focus sur 3 matières</li>
+                        <li>Quiz quotidiens</li>
+                        <li>Cas pratiques</li>
+                        <li>Suivi personnalisé</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
+                <div class="programme-card">
+                    <h4>Révision express</h4>
+                    <div class="duree">7 jours</div>
+                    <ul>
+                        <li>Fiches de révision</li>
+                        <li>Vidéos condensées</li>
+                        <li>Simulation d'examen</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
+            </div>
+            <!-- Contenu 14 jours -->
+            <div id="14jours" class="programme-content">
+                <div class="programme-card">
+                    <h4>Standard</h4>
+                    <div class="duree">14 jours</div>
+                    <ul>
+                        <li>Programme équilibré</li>
+                        <li>Toutes les matières</li>
+                        <li>2 exercices par jour</li>
+                        <li>Planning détaillé</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
+                <div class="programme-card">
+                    <h4>Approfondi</h4>
+                    <div class="duree">14 jours</div>
+                    <ul>
+                        <li>+ de vidéos</li>
+                        <li>Quiz avancés</li>
+                        <li>Méthodologie renforcée</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
+            </div>
+            <!-- Contenu 30 jours -->
+            <div id="30jours" class="programme-content">
+                <div class="programme-card">
+                    <h4>Complet</h4>
+                    <div class="duree">30 jours</div>
+                    <ul>
+                        <li>Rattrapage intégral</li>
+                        <li>Planning personnalisé</li>
+                        <li>Suivi par tuteur</li>
+                        <li>Accès à tous les cours</li>
+                        <li>Certificat de rattrapage</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
+                <div class="programme-card">
+                    <h4>Master</h4>
+                    <div class="duree">30 jours</div>
+                    <ul>
+                        <li>Préparation aux examens</li>
+                        <li>Cas pratiques corrigés</li>
+                        <li>Dissertations commentées</li>
+                        <li>Coaching individuel</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Choisir</a>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Disclaimer légal important -->
-        <div class="disclaimer-box">
-            <div class="disclaimer-icon">⚠️</div>
-            <div>
-                <strong>Information importante :</strong> Les réponses fournies par cet assistant sont générées par intelligence artificielle à titre informatif et éducatif uniquement. Elles ne constituent en aucun cas un avis juridique professionnel. Pour toute question légale spécifique, consulte un avocat.
+    <!-- MÉTHODES DE TRAVAIL -->
+    <section id="methodes">
+        <div class="container">
+            <h2>Méthodes de travail</h2>
+            <div class="methodes-grid">
+                <div class="methode-item">
+                    <i class="fas fa-brain"></i>
+                    <h3>Mémoriser les lois</h3>
+                    <p>Techniques de mnémotechnique et fiches de révision pour retenir les articles clés.</p>
+                </div>
+                <div class="methode-item">
+                    <i class="fas fa-pen-fancy"></i>
+                    <h3>Dissertation juridique</h3>
+                    <p>Structure, introduction, problématique : la méthode pas à pas.</p>
+                </div>
+                <div class="methode-item">
+                    <i class="fas fa-gavel"></i>
+                    <h3>Commenter un arrêt</h3>
+                    <p>Savoir analyser une décision de justice et rédiger un commentaire.</p>
+                </div>
+                <div class="methode-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Réviser efficacement</h3>
+                    <p>Planning de révision, techniques de répétition espacée et gestion du temps.</p>
+                </div>
             </div>
         </div>
-    </main>
+    </section>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <p>© 2024 Cerveau Juridique · Plateforme éducative · Tous droits réservés</p>
-            <p style="margin-top: 0.5rem; font-size: 0.875rem;">Propulsé par l'IA au service du droit</p>
+    <!-- EXERCICES & QUIZ -->
+    <section id="exercices">
+        <div class="container">
+            <h2>Exercices & Quiz</h2>
+            <div class="cours-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>QCM Droit civil</h4>
+                        <p>Teste tes connaissances sur les obligations.</p>
+                        <a href="#" class="btn-small">Commencer</a>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Cas pratique</h4>
+                        <p>Situation réelle à résoudre en droit pénal.</p>
+                        <a href="#" class="btn-small">Commencer</a>
+                    </div>
+                </div>
+                <div class="cours-item">
+                    <div class="content">
+                        <h4>Question ouverte</h4>
+                        <p>Rédige une introduction de dissertation.</p>
+                        <a href="#" class="btn-small">Commencer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMUNAUTÉ / FORUM + ASSISTANT IA -->
+    <section id="communaute">
+        <div class="container">
+            <div class="communaute-section">
+                <h2 style="color: white; margin-bottom: 0;">Communauté & Assistant IA</h2>
+                <p style="text-align: center; color: white; opacity: 0.9;">Échange avec d'autres étudiants et pose toutes tes questions à l'assistant juridique intelligent</p>
+                
+                <div class="communaute-grid">
+                    <!-- Forum Preview -->
+                    <div class="forum-preview">
+                        <h3><i class="fas fa-users"></i> Forum d'entraide</h3>
+                        <p>Rejoins une communauté active de 1200+ étudiants en droit.</p>
+                        <div class="forum-stats">
+                            <div class="stat">
+                                <div class="number">1 200+</div>
+                                <div>Étudiants</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number">350+</div>
+                                <div>Sujets</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number">24/7</div>
+                                <div>Entraide</div>
+                            </div>
+                        </div>
+                        <a href="#" class="btn" style="width: 100%; text-align: center;">Accéder au forum</a>
+                    </div>
+                    
+                    <!-- Assistant IA -->
+                    <div class="assistant-preview">
+                        <h3><i class="fas fa-robot"></i> Assistant juridique IA</h3>
+                        <p>Pose ta question, l'IA te répond instantanément.</p>
+                        
+                        <!-- Zone de chat -->
+                        <div class="chat-mini" id="chatBox">
+                            <div class="chat-message assistant">
+                                <strong>🤖 Assistant :</strong> Bonjour ! Je suis ton assistant juridique. Pose-moi une question sur le droit, les lois, ou demande-moi de t'expliquer un concept.
+                                <small>À l'instant</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Indicateur de frappe (caché par défaut) -->
+                        <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                            <span></span><span></span><span></span>
+                        </div>
+                        
+                        <!-- Zone de saisie -->
+                        <div class="chat-input-group">
+                            <input type="text" id="questionInput" placeholder="Ex: Qu'est-ce que la présomption d'innocence ?" autocomplete="off">
+                            <button id="sendButton" onclick="sendQuestion()">Envoyer</button>
+                        </div>
+                        
+                        <!-- Disclaimer -->
+                        <div class="assistant-disclaimer">
+                            ⚠️ Information éducative uniquement. Ne remplace pas un avis juridique professionnel.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESSOURCES TÉLÉCHARGEABLES -->
+    <section id="ressources">
+        <div class="container">
+            <h2>Ressources téléchargeables</h2>
+            <div class="ressources-grid">
+                <div class="ressource-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <h3>Fiches de révision</h3>
+                    <p>Pack de 50 fiches sur les matières fondamentales.</p>
+                    <a href="#" class="btn-small">Télécharger</a>
+                </div>
+                <div class="ressource-item">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Modèles juridiques</h3>
+                    <p>Exemples de dissertations et commentaires corrigés.</p>
+                    <a href="#" class="btn-small">Télécharger</a>
+                </div>
+                <div class="ressource-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Planning d'étude</h3>
+                    <p>Template Excel pour organiser tes révisions.</p>
+                    <a href="#" class="btn-small">Télécharger</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container">
+            <h2>Ne manque aucune ressource</h2>
+            <p>Inscris-toi pour recevoir des fiches gratuites et des conseils chaque semaine.</p>
+            <form id="newsletterForm">
+                <input type="email" id="newsletterEmail" placeholder="Ton adresse email" required>
+                <button type="submit" class="btn">Je m'inscris</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>DroitRattrapage</h4>
+                    <p>Le site qui aide les étudiants en droit à rattraper leur retard et réussir grâce à des cours simplifiés et un assistant IA.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liens utiles</h4>
+                    <ul>
+                        <li><a href="#cours">Cours</a></li>
+                        <li><a href="#programmes">Programmes</a></li>
+                        <li><a href="#methodes">Méthodes</a></li>
+                        <li><a href="#ressources">Ressources</a></li>
+                        <li><a href="#communaute">Assistant IA</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Légal</h4>
+                    <ul>
+                        <li><a href="#">Mentions légales</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">CGU</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suivez-nous</h4>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 DroitRattrapage - Tous droits réservés. | Site propulsé par l'IA Gemini</p>
+            </div>
         </div>
     </footer>
 
+    <!-- JavaScript -->
     <script>
-        // ========== CODE JAVASCRIPT COMPLET ==========
+        // ===========================================
+        // 1. FONCTIONNALITÉS EXISTANTES (MENU, TABS, NEWSLETTER)
+        // ===========================================
         
-        // --- CONFIGURATION ---
-        // !!! REMPLACE CE CI-DESSOUS PAR TA PROPRE CLÉ API GEMINI !!!
-        const API_KEY = 'AIzaSyDqJOMoN9jvf1QvLpOltkKqj8-jzn2RH08'; // À remplacer par ta clé
+        // Menu mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const menu = document.getElementById('menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('show');
+        });
+
+        // Tabs pour les programmes
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const programmes = document.querySelectorAll('.programme-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                programmes.forEach(p => p.classList.remove('active'));
+
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Newsletter
+        const newsletterForm = document.getElementById('newsletterForm');
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newsletterEmail').value;
+            alert(`Merci ${email} ! Tu recevras bientôt des nouvelles.`);
+            newsletterForm.reset();
+        });
+
+        // ===========================================
+        // 2. ASSISTANT IA AVEC TA CLÉ API GEMINI
+        // ===========================================
         
-        // Modèle à utiliser
+        // Configuration - TA CLÉ API (celle que tu m'as donnée)
+        const API_KEY = 'AIzaSyAy7c8T8jqWoy4OOtoJI1Bqmh5wmaWJxAc';
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
         
-        // Éléments du DOM
-        const chatMessages = document.getElementById('chat-messages');
-        const questionForm = document.getElementById('question-form');
-        const userInput = document.getElementById('user-question');
-        const sendButton = document.getElementById('send-button');
+        // Éléments du DOM pour l'assistant
+        const chatBox = document.getElementById('chatBox');
+        const questionInput = document.getElementById('questionInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
         
-        // État de l'application
+        // État
         let isProcessing = false;
         
-        // Contexte système pour l'IA (important pour le domaine juridique)
-        const SYSTEM_CONTEXT = `Tu es un assistant juridique spécialisé, expert en droit français et européen. 
-        Tu dois répondre aux questions de manière :
-        1. Précise et juridiquement exacte
-        2. Pédagogique et accessible aux étudiants
-        3. Structurée (avec des points clés si nécessaire)
-        4. Objective et impartiale
+        // Contexte juridique pour l'IA
+        const LEGAL_CONTEXT = `Tu es un professeur de droit français expert, spécialisé dans l'aide aux étudiants.
+        Réponds de façon claire, pédagogique et structurée.
         
-        Règles importantes :
-        - Commence toujours par un disclaimer si la question demande un avis juridique spécifique
-        - Cite les articles de loi pertinents quand c'est possible
-        - Propose des exemples concrets pour illustrer les concepts
-        - Reste prudent sur les sujets sensibles
-        - Si tu ne sais pas, recommande de consulter un professionnel`;
+        STRUCTURE TA RÉPONSE AINSI (si pertinent) :
+        1. Définition simple
+        2. Explication détaillée
+        3. Base légale (articles de loi)
+        4. Exemple concret
+        5. Points clés à retenir
+        
+        RÈGLES :
+        - Utilise un langage accessible
+        - Cite les articles de loi quand c'est possible
+        - Donne des exemples concrets
+        - Reste objectif et précis
+        - Ajoute un petit disclaimer si nécessaire
+        
+        Question de l'étudiant : `;
         
         // Fonction pour ajouter un message dans le chat
-        function addMessage(content, isUser = false) {
+        function addMessage(sender, text) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+            messageDiv.className = `chat-message ${sender}`;
             
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            avatar.textContent = isUser ? '👤' : '🤖';
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                           now.getMinutes().toString().padStart(2, '0');
             
-            const messageContent = document.createElement('div');
-            messageContent.className = 'content';
-            
-            // Traiter le texte pour le formatage (gras, listes, etc.)
-            const formattedContent = formatMessage(content);
-            
-            if (typeof formattedContent === 'string') {
-                messageContent.innerHTML = formattedContent;
+            if (sender === 'user') {
+                messageDiv.innerHTML = `<strong>👤 Vous :</strong> ${text}<small>${timeStr}</small>`;
             } else {
-                messageContent.appendChild(formattedContent);
+                // Formater le texte (remplacer ** par du gras)
+                const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                         .replace(/\n/g, '<br>');
+                messageDiv.innerHTML = `<strong>🤖 Assistant :</strong> ${formattedText}<small>${timeStr}</small>`;
             }
             
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(messageContent);
-            
-            chatMessages.appendChild(messageDiv);
-            
-            // Scroll automatique vers le bas
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
         
-        // Fonction pour formater le message (gras, listes, etc.)
-        function formatMessage(text) {
-            if (!text) return '';
-            
-            // Échapper les caractères HTML
-            let escaped = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-            
-            // Convertir les **gras** en <strong>
-            escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Convertir les *italique* en <em>
-            escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            // Convertir les listes
-            const lines = escaped.split('\n');
-            let inList = false;
-            let html = '';
-            
-            for (let line of lines) {
-                if (line.trim().startsWith('- ') || line.trim().startsWith('• ')) {
-                    if (!inList) {
-                        html += '<ul>';
-                        inList = true;
-                    }
-                    html += `<li>${line.trim().substring(2)}</li>`;
-                } else if (line.trim().match(/^\d+\. /)) {
-                    if (!inList) {
-                        html += '<ol>';
-                        inList = true;
-                    }
-                    const match = line.trim().match(/^\d+\. (.*)/);
-                    html += `<li>${match[1]}</li>`;
-                } else {
-                    if (inList) {
-                        html += inList === 'ul' ? '</ul>' : '</ol>';
-                        inList = false;
-                    }
-                    if (line.trim() !== '') {
-                        html += `<p>${line}</p>`;
-                    }
-                }
-            }
-            
-            if (inList) {
-                html += inList === 'ul' ? '</ul>' : '</ol>';
-            }
-            
-            return html || escaped;
-        }
-        
-        // Fonction pour afficher l'indicateur de frappe
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'message assistant';
-            indicator.id = 'typing-indicator';
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            avatar.textContent = '🤖';
-            
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.innerHTML = '<span></span><span></span><span></span>';
-            
-            indicator.appendChild(avatar);
-            indicator.appendChild(typingDiv);
-            
-            chatMessages.appendChild(indicator);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        // Fonction pour cacher l'indicateur de frappe
-        function hideTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) {
-                indicator.remove();
+        // Fonction pour afficher/cacher l'indicateur de frappe
+        function setTyping(show) {
+            typingIndicator.style.display = show ? 'flex' : 'none';
+            if (show) {
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
         
-        // Fonction pour appeler l'API Gemini
-        async function callGeminiAPI(question) {
+        // Fonction pour envoyer une question à l'IA
+        async function sendQuestion() {
+            const question = questionInput.value.trim();
+            if (!question || isProcessing) return;
+            
+            // Afficher la question
+            addMessage('user', question);
+            questionInput.value = '';
+            
+            // Désactiver l'input
+            isProcessing = true;
+            sendButton.disabled = true;
+            questionInput.disabled = true;
+            
+            // Afficher l'indicateur de frappe
+            setTyping(true);
+            
             try {
+                // Appel à l'API Gemini
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        contents: [
-                            {
-                                role: "user",
-                                parts: [{ text: SYSTEM_CONTEXT + "\n\nQuestion de l'utilisateur : " + question }]
-                            }
-                        ],
+                        contents: [{
+                            parts: [{
+                                text: LEGAL_CONTEXT + question
+                            }]
+                        }],
                         generationConfig: {
-                            temperature: 0.3, // Plus bas pour des réponses plus précises
-                            maxOutputTokens: 2048,
+                            temperature: 0.3,
+                            maxOutputTokens: 1024,
                         }
                     })
                 });
@@ -698,88 +1120,59 @@
                 
                 const data = await response.json();
                 
+                // Cacher l'indicateur de frappe
+                setTyping(false);
+                
+                // Vérifier et afficher la réponse
                 if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                    return data.candidates[0].content.parts[0].text;
+                    const answer = data.candidates[0].content.parts[0].text;
+                    addMessage('assistant', answer);
                 } else {
-                    throw new Error('Réponse invalide de l\'API');
+                    addMessage('assistant', "Désolé, je n'ai pas pu générer une réponse. Réessaie.");
                 }
                 
             } catch (error) {
-                console.error('Erreur Gemini:', error);
-                return "Désolé, je rencontre des difficultés techniques. Voici une réponse générique :\n\n**En droit, il est important de consulter un professionnel pour les cas spécifiques.**\n\nPour ta question sur le droit, voici quelques principes généraux :\n- Le droit est un système de règles qui organisent la société\n- Chaque domaine (civil, pénal, administratif) a ses propres règles\n- Les sources du droit sont la loi, la jurisprudence, la doctrine\n\nPour une réponse plus précise, réessaie dans quelques instants ou consulte un avocat.";
+                console.error('Erreur:', error);
+                setTyping(false);
+                addMessage('assistant', "❌ Erreur de connexion. Vérifie ta connexion internet ou réessaie plus tard.");
             }
-        }
-        
-        // Fonction principale pour traiter la question
-        async function processQuestion(question) {
-            if (!question.trim() || isProcessing) return;
-            
-            // Désactiver l'input pendant le traitement
-            isProcessing = true;
-            userInput.disabled = true;
-            sendButton.disabled = true;
-            
-            // Ajouter la question de l'utilisateur
-            addMessage(question, true);
-            
-            // Vider l'input
-            userInput.value = '';
-            
-            // Afficher l'indicateur de frappe
-            showTypingIndicator();
-            
-            // Appeler l'API
-            const answer = await callGeminiAPI(question);
-            
-            // Cacher l'indicateur de frappe
-            hideTypingIndicator();
-            
-            // Ajouter la réponse
-            addMessage(answer);
             
             // Réactiver l'input
             isProcessing = false;
-            userInput.disabled = false;
             sendButton.disabled = false;
-            userInput.focus();
+            questionInput.disabled = false;
+            questionInput.focus();
         }
         
-        // Fonction pour les questions rapides
-        window.askQuickQuestion = function(question) {
-            userInput.value = question;
-            processQuestion(question);
-        };
-        
-        // Gestionnaire d'événement pour le formulaire
-        questionForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const question = userInput.value.trim();
-            if (question) {
-                await processQuestion(question);
+        // Permettre l'envoi avec Entrée
+        questionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendQuestion();
             }
         });
         
-        // Permettre l'envoi avec Ctrl+Enter
-        userInput.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault();
-                const question = userInput.value.trim();
-                if (question) {
-                    processQuestion(question);
-                }
-            }
-        });
-        
-        // Message de bienvenue supplémentaire après chargement
+        // Ajouter un message de bienvenue différé
         window.addEventListener('load', () => {
             setTimeout(() => {
-                addMessage("👋 N'hésite pas à me poser des questions sur :\n- Les concepts juridiques fondamentaux\n- Les différents codes (civil, pénal...)\n- La méthodologie du commentaire d'arrêt\n- Les définitions juridiques\n- Ou tout autre sujet lié au droit !");
-            }, 500);
+                addMessage('assistant', '👋 Pose-moi une question sur :\n• Le droit civil\n• Le droit pénal\n• La méthodologie\n• Les articles de loi\n• Ou tout autre sujet juridique !');
+            }, 1000);
         });
         
-        // Gestionnaire d'erreur global
-        window.addEventListener('error', (e) => {
-            console.error('Erreur globale:', e.error);
+        // ===========================================
+        // 3. QUELQUES QUESTIONS RAPIDES EN CLIQUANT SUR LES COURS
+        // ===========================================
+        
+        // Permettre de cliquer sur les cours pour poser une question
+        document.querySelectorAll('.cours-item h4').forEach((title, index) => {
+            title.style.cursor = 'pointer';
+            title.title = 'Clique pour poser une question à l\'IA sur ce sujet';
+            title.addEventListener('click', () => {
+                const sujet = title.innerText;
+                questionInput.value = `Explique-moi les bases du ${sujet}`;
+                questionInput.focus();
+                // Scroll vers l'assistant
+                document.getElementById('communaute').scrollIntoView({ behavior: 'smooth' });
+            });
         });
     </script>
 </body>
