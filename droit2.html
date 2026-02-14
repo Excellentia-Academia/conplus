@@ -3,1177 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DroitRattrapage - Rattrape ton retard en droit + IA</title>
-    <!-- Font Awesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>DIH – Cours complet</title>
     <style>
-        /* === RESET & VARIABLES === */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            --bleu-fonce: #0a2540;
-            --bleu-clair: #2c3e50;
-            --or: #d4af37;
-            --blanc: #ffffff;
-            --gris-clair: #f5f7fa;
-            --gris: #e0e0e0;
-            --texte-fonce: #333;
-            --message-user: #e3f2fd;
-            --message-assistant: #f1f1f1;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--texte-fonce);
-            background-color: var(--blanc);
-        }
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 0;
-        }
-        section {
-            padding: 3rem 0;
-        }
-        h1, h2, h3 {
-            color: var(--bleu-fonce);
-        }
-        h2 {
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            position: relative;
-        }
-        h2:after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: var(--or);
-            margin: 0.5rem auto 0;
-        }
-        .btn {
-            display: inline-block;
-            background-color: var(--or);
-            color: var(--bleu-fonce);
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .btn:hover {
-            background-color: #b8960f;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--or);
-            color: var(--or);
-        }
-        .btn-outline:hover {
-            background: var(--or);
-            color: var(--bleu-fonce);
-        }
-        .btn-small {
-            background: var(--or);
-            color: var(--bleu-fonce);
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* === HEADER === */
-        header {
-            background-color: var(--bleu-fonce);
-            color: var(--blanc);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-        }
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--or);
-        }
-        .logo span {
-            color: var(--blanc);
-        }
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-        nav a {
-            color: var(--blanc);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        nav a:hover {
-            color: var(--or);
-        }
-        .menu-toggle {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* === HERO === */
-        .hero {
-            background: linear-gradient(135deg, var(--bleu-fonce) 0%, #1a3a5f 100%);
-            color: var(--blanc);
-            padding: 5rem 0;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--blanc);
-        }
-        .hero .highlight {
-            color: var(--or);
-        }
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            opacity: 0.9;
-        }
-
-        /* === PROBLEME/SOLUTION === */
-        .problem-solution {
-            background-color: var(--gris-clair);
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 3rem;
-            align-items: center;
-        }
-        .card {
-            background: var(--blanc);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card i {
-            font-size: 2.5rem;
-            color: var(--or);
-            margin-bottom: 1rem;
-        }
-        .card h3 {
-            margin-bottom: 1rem;
-        }
-
-        /* === COURS SIMPLIFIES === */
-        .cours-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .cours-item {
-            background: var(--blanc);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            border: 1px solid var(--gris);
-        }
-        .cours-item:hover {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        .cours-item .content {
-            padding: 1.5rem;
-        }
-        .cours-item h4 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: var(--bleu-fonce);
-        }
-        .cours-item p {
-            margin-bottom: 1rem;
-            color: #666;
-        }
-        .badge {
-            background-color: var(--or);
-            color: var(--bleu-fonce);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .cours-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-        }
-        .cours-footer a {
-            color: var(--or);
-            font-weight: bold;
-        }
-
-        /* === PROGRAMMES (TABS) === */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .tab-btn {
-            padding: 0.8rem 2rem;
-            background: var(--gris-clair);
-            border: none;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-        .tab-btn.active {
-            background: var(--or);
-            color: var(--bleu-fonce);
-        }
-        .programme-content {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .programme-content.active {
-            display: grid;
-        }
-        .programme-card {
-            background: var(--blanc);
-            border: 1px solid var(--gris);
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        .programme-card:hover {
-            transform: scale(1.03);
-            border-color: var(--or);
-        }
-        .programme-card h4 {
-            font-size: 1.6rem;
-            color: var(--bleu-fonce);
-            margin-bottom: 0.5rem;
-        }
-        .programme-card .duree {
-            font-size: 1.1rem;
-            color: var(--or);
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        .programme-card ul {
-            text-align: left;
-            list-style: none;
-            margin: 1rem 0;
-        }
-        .programme-card li {
-            margin: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-        .programme-card li:before {
-            content: "✓";
-            color: var(--or);
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-        }
-
-        /* === MÉTHODES DE TRAVAIL === */
-        .methodes-grid, .ressources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .methode-item, .ressource-item {
-            background: var(--blanc);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            border: 1px solid var(--gris);
-            text-align: center;
-        }
-        .methode-item i, .ressource-item i {
-            font-size: 2.5rem;
-            color: var(--or);
-            margin-bottom: 1rem;
-        }
-
-        /* === COMMUNAUTÉ / FORUM + ASSISTANT IA === */
-        .communaute-section {
-            background: linear-gradient(135deg, var(--bleu-fonce), #1a3a5f);
-            color: var(--blanc);
-            border-radius: 15px;
-            padding: 3rem;
-        }
-        .communaute-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .forum-preview {
-            background: rgba(255,255,255,0.1);
-            padding: 2rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-        .forum-preview h3, .assistant-preview h3 {
-            color: var(--or);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        .forum-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 2rem 0;
-        }
-        .stat {
-            text-align: center;
-        }
-        .stat .number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--or);
-        }
-        .assistant-preview {
-            background: rgba(255,255,255,0.1);
-            padding: 2rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-        .chat-mini {
-            background: var(--blanc);
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-        .chat-message {
-            margin-bottom: 0.8rem;
-            padding: 0.5rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-        .chat-message.user {
-            background: var(--message-user);
-            text-align: right;
-            color: var(--bleu-fonce);
-        }
-        .chat-message.assistant {
-            background: var(--message-assistant);
-            text-align: left;
-        }
-        .chat-message small {
-            display: block;
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 0.2rem;
-        }
-        .chat-input-group {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .chat-input-group input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 1px solid var(--gris);
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-        .chat-input-group button {
-            background: var(--or);
-            color: var(--bleu-fonce);
-            border: none;
-            padding: 0.8rem 1.2rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .chat-input-group button:hover {
-            background: #b8960f;
-        }
-        .chat-input-group button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .typing-indicator {
-            display: flex;
-            gap: 0.3rem;
-            padding: 0.5rem;
-            background: var(--message-assistant);
-            border-radius: 8px;
-            width: fit-content;
-            margin-bottom: 0.8rem;
-        }
-        .typing-indicator span {
-            width: 0.5rem;
-            height: 0.5rem;
-            background: var(--bleu-fonce);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
-            30% { transform: translateY(-5px); opacity: 1; }
-        }
-        .assistant-disclaimer {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-
-        /* === RESSOURCES TÉLÉCHARGEABLES & NEWSLETTER === */
-        .ressource-item .btn-small {
-            margin-top: 1rem;
-        }
-        .newsletter {
-            background-color: var(--gris-clair);
-            text-align: center;
-        }
-        .newsletter form {
-            max-width: 500px;
-            margin: 2rem auto 0;
-            display: flex;
-            gap: 1rem;
-        }
-        .newsletter input {
-            flex: 1;
-            padding: 1rem;
-            border: 1px solid var(--gris);
-            border-radius: 50px;
-            font-size: 1rem;
-        }
-
-        /* === FOOTER === */
-        footer {
-            background-color: var(--bleu-fonce);
-            color: var(--blanc);
-            padding: 3rem 0 1rem;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        .footer-col h4 {
-            color: var(--or);
-            margin-bottom: 1rem;
-        }
-        .footer-col ul {
-            list-style: none;
-        }
-        .footer-col li {
-            margin-bottom: 0.5rem;
-        }
-        .footer-col a:hover {
-            color: var(--or);
-        }
-        .copyright {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            nav ul {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--bleu-fonce);
-                flex-direction: column;
-                align-items: center;
-                padding: 2rem 0;
-                gap: 1.5rem;
-            }
-            nav ul.show {
-                display: flex;
-            }
-            .grid-2, .communaute-grid {
-                grid-template-columns: 1fr;
-            }
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            .tabs {
-                flex-direction: column;
-                align-items: center;
-            }
-            .tab-btn {
-                width: 80%;
-            }
-            .newsletter form {
-                flex-direction: column;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body { background: #f5f5f5; color: #333; line-height: 1.6; }
+        header { background: #b31b1b; color: white; padding: 1.5rem; text-align: center; }
+        .tabs { display: flex; background: #333; justify-content: center; flex-wrap: wrap; }
+        .tab-button { background: #333; color: white; border: none; padding: 1rem 2rem; cursor: pointer; font-size: 1rem; transition: background 0.3s; }
+        .tab-button:hover { background: #555; }
+        .tab-button.active { background: #b31b1b; }
+        .tab-content { display: none; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .tab-content.active { display: block; }
+        h2, h3 { color: #b31b1b; margin: 1rem 0; }
+        section { margin-bottom: 2rem; }
+        footer { background: #333; color: white; text-align: center; padding: 1rem; margin-top: 3rem; }
+        #chat-container { border: 1px solid #ccc; background: white; border-radius: 5px; height: 500px; display: flex; flex-direction: column; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 1rem; }
+        .message { margin: 0.5rem 0; padding: 0.5rem; border-radius: 5px; max-width: 80%; }
+        .user { background: #b31b1b; color: white; align-self: flex-end; margin-left: auto; }
+        .bot { background: #e0e0e0; align-self: flex-start; }
+        #chat-input-area { display: flex; padding: 0.5rem; border-top: 1px solid #ccc; }
+        #user-question { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; }
+        #send-btn { background: #b31b1b; color: white; border: none; padding: 0.5rem 1rem; margin-left: 0.5rem; cursor: pointer; border-radius: 3px; }
+        .exercise { background: white; border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 5px; }
+        .exercise button { background: #b31b1b; color: white; border: none; padding: 0.5rem 1rem; margin-right: 0.5rem; cursor: pointer; border-radius: 3px; margin-top: 0.5rem; }
+        .result { margin-left: 1rem; font-weight: bold; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+        ul { list-style-type: disc; margin-left: 2rem; }
+        .study-plan ul { list-style-type: none; margin-left: 0; }
+        .study-plan li { margin-bottom: 0.5rem; }
+        .highlight { background: #f9f9c9; padding: 0.2rem; }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <header>
-        <div class="container">
-            <div class="logo">Droit<span>Rattrapage</span></div>
-            <nav>
-                <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
-                <ul id="menu">
-                    <li><a href="#accueil">Accueil</a></li>
-                    <li><a href="#cours">Cours</a></li>
-                    <li><a href="#programmes">Programmes</a></li>
-                    <li><a href="#methodes">Méthodes</a></li>
-                    <li><a href="#exercices">Exercices</a></li>
-                    <li><a href="#communaute">Communauté + IA</a></li>
-                    <li><a href="#ressources">Ressources</a></li>
-                </ul>
-            </nav>
-        </div>
+        <h1>📘 Droit International Humanitaire</h1>
+        <p>Introduction détaillée – CICR / Nils Melzer</p>
     </header>
 
-    <!-- HERO -->
-    <section id="accueil" class="hero">
-        <div class="container">
-            <h1>Rattrape ton retard <span class="highlight">et maîtrise le droit</span> facilement</h1>
-            <p>Des cours simplifiés, des programmes adaptés, une communauté et un assistant IA pour t'aider à réussir.</p>
-            <a href="#programmes" class="btn">Commencer le rattrapage</a>
-        </div>
-    </section>
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('resume')">📋 Résumé</button>
+        <button class="tab-button" onclick="showTab('chatbot')">💬 Chatbot IA</button>
+        <button class="tab-button" onclick="showTab('exercices')">📝 Exercices</button>
+        <button class="tab-button" onclick="showTab('plan')">⏳ Plan d'étude</button>
+    </div>
 
-    <!-- PROBLEME / SOLUTION -->
-    <section class="problem-solution">
-        <div class="container">
-            <div class="grid-2">
-                <div class="card">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Le constat</h3>
-                    <p>Trop d'étudiants en droit se sentent dépassés par le volume des cours, les délais et la complexité des matières. Résultat : du stress, des nuits blanches et des examens ratés.</p>
-                </div>
-                <div class="card">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Notre solution</h3>
-                    <p>DroitRattrapage te propose des fiches claires, des vidéos, des quiz, des programmes de rattrapage sur mesure et un assistant IA disponible 24/7 pour répondre à toutes tes questions juridiques.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Onglet Résumé -->
+    <div id="tab-resume" class="tab-content active">
+        <main>
+            <h2>📚 Résumé du cours</h2>
+            <p>Ce cours présente les fondements, le champ d’application, la conduite des hostilités, la protection des personnes et la mise en œuvre du DIH.</p>
 
-    <!-- COURS SIMPLIFIES -->
-    <section id="cours">
-        <div class="container">
-            <h2>Cours simplifiés</h2>
-            <div class="cours-grid">
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Droit civil</h4>
-                        <p>Les bases du droit des personnes, de la famille et des obligations.</p>
-                        <span class="badge">Résumé</span>
-                        <span class="badge">PDF</span>
-                        <span class="badge">Vidéo</span>
-                        <div class="cours-footer">
-                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
-                            <i class="fas fa-question-circle" title="Quiz disponible"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Droit constitutionnel</h4>
-                        <p>Comprendre la Ve République, la séparation des pouvoirs et la constitution.</p>
-                        <span class="badge">Résumé</span>
-                        <span class="badge">Quiz</span>
-                        <div class="cours-footer">
-                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Droit pénal</h4>
-                        <p>Infractions, responsabilité pénale et procédure.</p>
-                        <span class="badge">Fiches</span>
-                        <span class="badge">Vidéo</span>
-                        <div class="cours-footer">
-                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Droit administratif</h4>
-                        <p>Organisation administrative, actes, contrats et responsabilité.</p>
-                        <span class="badge">Résumé</span>
-                        <span class="badge">PDF</span>
-                        <div class="cours-footer">
-                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Méthodologie juridique</h4>
-                        <p>Dissertation, commentaire d'arrêt, cas pratique : les techniques.</p>
-                        <span class="badge">Vidéo</span>
-                        <span class="badge">Exercices</span>
-                        <div class="cours-footer">
-                            <a href="#">Voir plus <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            <section>
+                <h3>Chapitre 1 – Introduction au DIH</h3>
+                <ul>
+                    <li><strong>Définition :</strong> ensemble de règles limitant les effets des conflits armés.</li>
+                    <li><strong>Principes :</strong> distinction, proportionnalité, précaution, traitement humain, interdiction des maux superflus.</li>
+                    <li><strong>Sources :</strong> traités (Conventions de Genève), coutume, principes généraux.</li>
+                    <li><strong>Historique :</strong> de Solferino (1859) aux défis actuels (cyberguerre, drones).</li>
+                </ul>
+            </section>
 
-    <!-- PROGRAMMES DE RATTRAPAGE (TABS) -->
-    <section id="programmes">
-        <div class="container">
-            <h2>Programmes de rattrapage</h2>
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="7jours">7 jours</button>
-                <button class="tab-btn" data-tab="14jours">14 jours</button>
-                <button class="tab-btn" data-tab="30jours">30 jours</button>
-            </div>
-            <!-- Contenu 7 jours -->
-            <div id="7jours" class="programme-content active">
-                <div class="programme-card">
-                    <h4>Express</h4>
-                    <div class="duree">7 jours</div>
-                    <ul>
-                        <li>Jour 1 : Droit civil</li>
-                        <li>Jour 2 : Droit constitutionnel</li>
-                        <li>Jour 3 : Méthodologie</li>
-                        <li>Jour 4 : Droit pénal</li>
-                        <li>Jour 5 : Révisions</li>
-                        <li>Jour 6 : Exercices</li>
-                        <li>Jour 7 : Bilan</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-                <div class="programme-card">
-                    <h4>Intensif</h4>
-                    <div class="duree">7 jours</div>
-                    <ul>
-                        <li>Focus sur 3 matières</li>
-                        <li>Quiz quotidiens</li>
-                        <li>Cas pratiques</li>
-                        <li>Suivi personnalisé</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-                <div class="programme-card">
-                    <h4>Révision express</h4>
-                    <div class="duree">7 jours</div>
-                    <ul>
-                        <li>Fiches de révision</li>
-                        <li>Vidéos condensées</li>
-                        <li>Simulation d'examen</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-            </div>
-            <!-- Contenu 14 jours -->
-            <div id="14jours" class="programme-content">
-                <div class="programme-card">
-                    <h4>Standard</h4>
-                    <div class="duree">14 jours</div>
-                    <ul>
-                        <li>Programme équilibré</li>
-                        <li>Toutes les matières</li>
-                        <li>2 exercices par jour</li>
-                        <li>Planning détaillé</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-                <div class="programme-card">
-                    <h4>Approfondi</h4>
-                    <div class="duree">14 jours</div>
-                    <ul>
-                        <li>+ de vidéos</li>
-                        <li>Quiz avancés</li>
-                        <li>Méthodologie renforcée</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-            </div>
-            <!-- Contenu 30 jours -->
-            <div id="30jours" class="programme-content">
-                <div class="programme-card">
-                    <h4>Complet</h4>
-                    <div class="duree">30 jours</div>
-                    <ul>
-                        <li>Rattrapage intégral</li>
-                        <li>Planning personnalisé</li>
-                        <li>Suivi par tuteur</li>
-                        <li>Accès à tous les cours</li>
-                        <li>Certificat de rattrapage</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-                <div class="programme-card">
-                    <h4>Master</h4>
-                    <div class="duree">30 jours</div>
-                    <ul>
-                        <li>Préparation aux examens</li>
-                        <li>Cas pratiques corrigés</li>
-                        <li>Dissertations commentées</li>
-                        <li>Coaching individuel</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Choisir</a>
-                </div>
-            </div>
-        </div>
-    </section>
+            <section>
+                <h3>Chapitre 2 – Champ d’application</h3>
+                <ul>
+                    <li><strong>Conflit armé international :</strong> entre États, occupation comprise.</li>
+                    <li><strong>Conflit armé non international :</strong> entre État et groupe armé organisé.</li>
+                    <li><strong>Seuils :</strong> intensité et organisation.</li>
+                    <li><strong>Occupation :</strong> contrôle effectif sans consentement.</li>
+                </ul>
+            </section>
 
-    <!-- MÉTHODES DE TRAVAIL -->
-    <section id="methodes">
-        <div class="container">
-            <h2>Méthodes de travail</h2>
-            <div class="methodes-grid">
-                <div class="methode-item">
-                    <i class="fas fa-brain"></i>
-                    <h3>Mémoriser les lois</h3>
-                    <p>Techniques de mnémotechnique et fiches de révision pour retenir les articles clés.</p>
-                </div>
-                <div class="methode-item">
-                    <i class="fas fa-pen-fancy"></i>
-                    <h3>Dissertation juridique</h3>
-                    <p>Structure, introduction, problématique : la méthode pas à pas.</p>
-                </div>
-                <div class="methode-item">
-                    <i class="fas fa-gavel"></i>
-                    <h3>Commenter un arrêt</h3>
-                    <p>Savoir analyser une décision de justice et rédiger un commentaire.</p>
-                </div>
-                <div class="methode-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Réviser efficacement</h3>
-                    <p>Planning de révision, techniques de répétition espacée et gestion du temps.</p>
+            <section>
+                <h3>Chapitre 3 – Conduite des hostilités</h3>
+                <ul>
+                    <li><strong>Protection des civils :</strong> interdiction des attaques directes, boucliers humains.</li>
+                    <li><strong>Biens protégés :</strong> culturels, installations dangereuses, environnement.</li>
+                    <li><strong>Moyens et méthodes :</strong> interdiction des armes causant des maux superflus, perfidie, représailles.</li>
+                    <li><strong>Participation directe aux hostilités :</strong> perte temporaire de protection.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Chapitre 4 – Blessés, malades, mission médicale</h3>
+                <ul>
+                    <li><strong>Respect et protection :</strong> personnel sanitaire, hôpitaux, transports.</li>
+                    <li><strong>Signes distinctifs :</strong> croix rouge, croissant rouge, cristal rouge.</li>
+                    <li><strong>Personnes disparues :</strong> droit des familles de connaître le sort.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Chapitre 5 – Détention et internement</h3>
+                <ul>
+                    <li><strong>Prisonniers de guerre :</strong> statut, traitement, libération.</li>
+                    <li><strong>Internés civils :</strong> garanties procédurales, conditions.</li>
+                    <li><strong>Non-refoulement.</strong></li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Chapitre 6 – Civils en territoire ennemi</h3>
+                <ul>
+                    <li><strong>Protection générale :</strong> traitement humain, non-discrimination.</li>
+                    <li><strong>Territoire occupé :</strong> administration temporaire, interdiction des transferts forcés.</li>
+                    <li><strong>Assistance humanitaire :</strong> libre passage des secours.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Chapitre 7 – Mise en œuvre du DIH</h3>
+                <ul>
+                    <li><strong>Respect et faire respecter :</strong> obligation des États.</li>
+                    <li><strong>Répression pénale :</strong> crimes de guerre, compétence universelle.</li>
+                    <li><strong>Mécanismes :</strong> enquêtes, réparations, rôle de l’ONU.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Chapitre 8 – Rôle du CICR</h3>
+                <ul>
+                    <li><strong>Mandat :</strong> organisation neutre et indépendante.</li>
+                    <li><strong>Actions :</strong> visites de détenus, Agence centrale de recherches, promotion du DIH.</li>
+                    <li><strong>Droit d’initiative humanitaire.</strong></li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Onglet Chatbot -->
+    <div id="tab-chatbot" class="tab-content">
+        <main>
+            <h2>💬 Posez votre question sur le DIH</h2>
+            <div id="chat-container">
+                <div id="chat-log"></div>
+                <div id="chat-input-area">
+                    <input type="text" id="user-question" placeholder="Ex: Qu'est-ce que le principe de distinction ?">
+                    <button id="send-btn">Envoyer</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </main>
+    </div>
 
-    <!-- EXERCICES & QUIZ -->
-    <section id="exercices">
-        <div class="container">
-            <h2>Exercices & Quiz</h2>
-            <div class="cours-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>QCM Droit civil</h4>
-                        <p>Teste tes connaissances sur les obligations.</p>
-                        <a href="#" class="btn-small">Commencer</a>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Cas pratique</h4>
-                        <p>Situation réelle à résoudre en droit pénal.</p>
-                        <a href="#" class="btn-small">Commencer</a>
-                    </div>
-                </div>
-                <div class="cours-item">
-                    <div class="content">
-                        <h4>Question ouverte</h4>
-                        <p>Rédige une introduction de dissertation.</p>
-                        <a href="#" class="btn-small">Commencer</a>
-                    </div>
-                </div>
+    <!-- Onglet Exercices -->
+    <div id="tab-exercices" class="tab-content">
+        <main>
+            <h2>📝 Exercices interactifs</h2>
+
+            <div class="exercise">
+                <h3>QCM 1 – Principes du DIH</h3>
+                <p>Quel principe interdit les attaques sans discrimination ?</p>
+                <input type="radio" name="q1" value="a"> Distinction<br>
+                <input type="radio" name="q1" value="b"> Proportionnalité<br>
+                <input type="radio" name="q1" value="c"> Précaution<br>
+                <button onclick="checkQ1()">Vérifier</button>
+                <span id="result1" class="result"></span>
             </div>
-        </div>
-    </section>
 
-    <!-- COMMUNAUTÉ / FORUM + ASSISTANT IA -->
-    <section id="communaute">
-        <div class="container">
-            <div class="communaute-section">
-                <h2 style="color: white; margin-bottom: 0;">Communauté & Assistant IA</h2>
-                <p style="text-align: center; color: white; opacity: 0.9;">Échange avec d'autres étudiants et pose toutes tes questions à l'assistant juridique intelligent</p>
-                
-                <div class="communaute-grid">
-                    <!-- Forum Preview -->
-                    <div class="forum-preview">
-                        <h3><i class="fas fa-users"></i> Forum d'entraide</h3>
-                        <p>Rejoins une communauté active de 1200+ étudiants en droit.</p>
-                        <div class="forum-stats">
-                            <div class="stat">
-                                <div class="number">1 200+</div>
-                                <div>Étudiants</div>
-                            </div>
-                            <div class="stat">
-                                <div class="number">350+</div>
-                                <div>Sujets</div>
-                            </div>
-                            <div class="stat">
-                                <div class="number">24/7</div>
-                                <div>Entraide</div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn" style="width: 100%; text-align: center;">Accéder au forum</a>
-                    </div>
-                    
-                    <!-- Assistant IA -->
-                    <div class="assistant-preview">
-                        <h3><i class="fas fa-robot"></i> Assistant juridique IA</h3>
-                        <p>Pose ta question, l'IA te répond instantanément.</p>
-                        
-                        <!-- Zone de chat -->
-                        <div class="chat-mini" id="chatBox">
-                            <div class="chat-message assistant">
-                                <strong>🤖 Assistant :</strong> Bonjour ! Je suis ton assistant juridique. Pose-moi une question sur le droit, les lois, ou demande-moi de t'expliquer un concept.
-                                <small>À l'instant</small>
-                            </div>
-                        </div>
-                        
-                        <!-- Indicateur de frappe (caché par défaut) -->
-                        <div id="typingIndicator" class="typing-indicator" style="display: none;">
-                            <span></span><span></span><span></span>
-                        </div>
-                        
-                        <!-- Zone de saisie -->
-                        <div class="chat-input-group">
-                            <input type="text" id="questionInput" placeholder="Ex: Qu'est-ce que la présomption d'innocence ?" autocomplete="off">
-                            <button id="sendButton" onclick="sendQuestion()">Envoyer</button>
-                        </div>
-                        
-                        <!-- Disclaimer -->
-                        <div class="assistant-disclaimer">
-                            ⚠️ Information éducative uniquement. Ne remplace pas un avis juridique professionnel.
-                        </div>
-                    </div>
-                </div>
+            <div class="exercise">
+                <h3>Vrai / Faux</h3>
+                <p>Les représailles contre les civils sont autorisées si l’ennemi ne respecte pas le DIH.</p>
+                <button onclick="checkVF(true)">Vrai</button>
+                <button onclick="checkVF(false)">Faux</button>
+                <span id="result2" class="result"></span>
             </div>
-        </div>
-    </section>
 
-    <!-- RESSOURCES TÉLÉCHARGEABLES -->
-    <section id="ressources">
-        <div class="container">
-            <h2>Ressources téléchargeables</h2>
-            <div class="ressources-grid">
-                <div class="ressource-item">
-                    <i class="fas fa-file-pdf"></i>
-                    <h3>Fiches de révision</h3>
-                    <p>Pack de 50 fiches sur les matières fondamentales.</p>
-                    <a href="#" class="btn-small">Télécharger</a>
-                </div>
-                <div class="ressource-item">
-                    <i class="fas fa-file-alt"></i>
-                    <h3>Modèles juridiques</h3>
-                    <p>Exemples de dissertations et commentaires corrigés.</p>
-                    <a href="#" class="btn-small">Télécharger</a>
-                </div>
-                <div class="ressource-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Planning d'étude</h3>
-                    <p>Template Excel pour organiser tes révisions.</p>
-                    <a href="#" class="btn-small">Télécharger</a>
-                </div>
+            <div class="exercise">
+                <h3>QCM 2 – Statut des personnes</h3>
+                <p>Qui a droit au statut de prisonnier de guerre ?</p>
+                <input type="radio" name="q3" value="a"> Les membres des forces armées régulières uniquement<br>
+                <input type="radio" name="q3" value="b"> Tous les combattants (y compris milices) sous certaines conditions<br>
+                <input type="radio" name="q3" value="c"> Les civils participant aux hostilités<br>
+                <button onclick="checkQ3()">Vérifier</button>
+                <span id="result3" class="result"></span>
             </div>
-        </div>
-    </section>
+        </main>
+    </div>
 
-    <!-- NEWSLETTER -->
-    <section class="newsletter">
-        <div class="container">
-            <h2>Ne manque aucune ressource</h2>
-            <p>Inscris-toi pour recevoir des fiches gratuites et des conseils chaque semaine.</p>
-            <form id="newsletterForm">
-                <input type="email" id="newsletterEmail" placeholder="Ton adresse email" required>
-                <button type="submit" class="btn">Je m'inscris</button>
-            </form>
-        </div>
-    </section>
+    <!-- Onglet Plan d'étude -->
+    <div id="tab-plan" class="tab-content">
+        <main class="study-plan">
+            <h2>⏳ Plan d'étude – Maîtrise du DIH</h2>
+            <p><strong>Estimation :</strong> 40 à 60 heures (5 semaines, environ 10 h / semaine)</p>
+            <ul>
+                <li><span class="highlight">Semaine 1 :</span> Chapitres 1 et 2 – Fondements, sources, champ d’application</li>
+                <li><span class="highlight">Semaine 2 :</span> Chapitre 3 – Conduite des hostilités (lecture + exercices)</li>
+                <li><span class="highlight">Semaine 3 :</span> Chapitres 4 et 5 – Blessés, mission médicale, détention</li>
+                <li><span class="highlight">Semaine 4 :</span> Chapitres 6 et 7 – Civils en territoire ennemi, mise en œuvre</li>
+                <li><span class="highlight">Semaine 5 :</span> Chapitre 8 – Rôle du CICR + révision générale et tests</li>
+            </ul>
+            <p>📌 <strong>Conseils :</strong> utilisez le chatbot pour vérifier vos connaissances, faites les QCM, lisez les encadrés du manuel.</p>
+        </main>
+    </div>
 
-    <!-- FOOTER -->
     <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>DroitRattrapage</h4>
-                    <p>Le site qui aide les étudiants en droit à rattraper leur retard et réussir grâce à des cours simplifiés et un assistant IA.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Liens utiles</h4>
-                    <ul>
-                        <li><a href="#cours">Cours</a></li>
-                        <li><a href="#programmes">Programmes</a></li>
-                        <li><a href="#methodes">Méthodes</a></li>
-                        <li><a href="#ressources">Ressources</a></li>
-                        <li><a href="#communaute">Assistant IA</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Légal</h4>
-                    <ul>
-                        <li><a href="#">Mentions légales</a></li>
-                        <li><a href="#">Politique de confidentialité</a></li>
-                        <li><a href="#">CGU</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Suivez-nous</h4>
-                    <ul>
-                        <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
-                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
-                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2025 DroitRattrapage - Tous droits réservés. | Site propulsé par l'IA Gemini</p>
-            </div>
-        </div>
+        <p>© 2025 – Adaptation libre du manuel du CICR</p>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- Inclusion de Fuse.js pour la recherche floue -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
+
     <script>
-        // ===========================================
-        // 1. FONCTIONNALITÉS EXISTANTES (MENU, TABS, NEWSLETTER)
-        // ===========================================
-        
-        // Menu mobile
-        const menuToggle = document.getElementById('menuToggle');
-        const menu = document.getElementById('menu');
+        // ---------- Gestion des onglets ----------
+        function showTab(tabId) {
+            // Masquer tous les contenus
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Désactiver tous les boutons
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            // Afficher le contenu sélectionné
+            document.getElementById('tab-' + tabId).classList.add('active');
+            // Activer le bouton cliqué
+            event.target.classList.add('active');
+        }
 
-        menuToggle.addEventListener('click', () => {
-            menu.classList.toggle('show');
-        });
+        // ---------- Base de connaissances (extraite du PDF) ----------
+        const knowledgeBase = [
+            {
+                question: "Qu'est-ce que le droit international humanitaire ?",
+                answer: "Le DIH est un ensemble de règles destinées à limiter les conséquences des conflits armés. Il protège les personnes qui ne participent pas aux hostilités et restreint les moyens et méthodes de guerre."
+            },
+            {
+                question: "Quels sont les principes fondamentaux du DIH ?",
+                answer: "Distinction, proportionnalité, précaution, interdiction des maux superflus, traitement humain, non-réciprocité."
+            },
+            {
+                question: "Quelle différence entre conflit armé international et non international ?",
+                answer: "International : oppose deux États ou plus. Non international : oppose un État à un groupe armé organisé, ou des groupes entre eux, sur le territoire d’un État."
+            },
+            {
+                question: "Qu'est-ce que le principe de distinction ?",
+                answer: "Les parties au conflit doivent en tout temps distinguer entre civils et combattants, et entre biens civils et objectifs militaires. Les attaques ne peuvent être dirigées que contre des objectifs militaires."
+            },
+            {
+                question: "Qu'est-ce qu'une occupation belligérante ?",
+                answer: "Un territoire est occupé lorsqu'il se trouve placé de fait sous l'autorité de l'armée ennemie. L'occupant doit assurer l'ordre et la vie publics, sans modifier les institutions."
+            },
+            {
+                question: "Quels sont les droits des prisonniers de guerre ?",
+                answer: "Ils doivent être traités avec humanité, logés, nourris, soignés, autorisés à correspondre avec leur famille. Ils ne peuvent être poursuivis pour des actes de guerre licites."
+            },
+            {
+                question: "Qu'est-ce que la participation directe aux hostilités ?",
+                answer: "Un civil perd sa protection contre les attaques directes lorsqu'il participe directement aux hostilités, et pendant la durée de cette participation."
+            },
+            {
+                question: "Quelles sont les infractions graves au DIH ?",
+                answer: "Homicide intentionnel, torture, traitements inhumains, prise d'otages, destructions massives non justifiées, etc. Ce sont des crimes de guerre."
+            },
+            {
+                question: "Quel est le rôle du CICR ?",
+                answer: "Organisation neutre et indépendante, le CICR protège et assiste les victimes des conflits armés, promeut le DIH, visite les détenus et gère l'Agence centrale de recherches."
+            },
+            {
+                question: "Qu'est-ce que le principe de proportionnalité ?",
+                answer: "Il interdit les attaques dont on peut attendre qu'elles causent des dommages incidents excessifs par rapport à l'avantage militaire concret et direct attendu."
+            },
+            {
+                question: "Peut-on attaquer une école ?",
+                answer: "Non, sauf si elle est utilisée à des fins militaires et devient un objectif militaire. En cas de doute, elle est présumée civile."
+            }
+        ];
 
-        // Tabs pour les programmes
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const programmes = document.querySelectorAll('.programme-content');
+        // ---------- Configuration de Fuse ----------
+        const fuseOptions = {
+            keys: ['question'],
+            threshold: 0.4,
+            includeScore: true
+        };
+        const fuse = new Fuse(knowledgeBase, fuseOptions);
 
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        // ---------- Fonction du chatbot ----------
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendBtn = document.getElementById('send-btn');
+            const userInput = document.getElementById('user-question');
+            const chatLog = document.getElementById('chat-log');
 
-                programmes.forEach(p => p.classList.remove('active'));
+            function addMessage(sender, text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', sender);
+                msgDiv.textContent = text;
+                chatLog.appendChild(msgDiv);
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }
 
-                const tabId = btn.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
+            sendBtn.addEventListener('click', function() {
+                const question = userInput.value.trim();
+                if (!question) return;
+
+                addMessage('user', question);
+                userInput.value = '';
+
+                setTimeout(() => {
+                    const results = fuse.search(question);
+                    let answer = "Désolé, je n'ai pas trouvé de réponse. Essayez avec des mots-clés différents.";
+                    if (results.length > 0 && results[0].score < 0.4) {
+                        answer = results[0].item.answer;
+                    }
+                    addMessage('bot', answer);
+                }, 500);
+            });
+
+            // Permettre l'envoi avec la touche Entrée
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
             });
         });
 
-        // Newsletter
-        const newsletterForm = document.getElementById('newsletterForm');
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('newsletterEmail').value;
-            alert(`Merci ${email} ! Tu recevras bientôt des nouvelles.`);
-            newsletterForm.reset();
-        });
-
-        // ===========================================
-        // 2. ASSISTANT IA AVEC TA CLÉ API GEMINI
-        // ===========================================
-        
-        // Configuration - TA CLÉ API (celle que tu m'as donnée)
-        const API_KEY = 'AIzaSyAy7c8T8jqWoy4OOtoJI1Bqmh5wmaWJxAc';
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
-        
-        // Éléments du DOM pour l'assistant
-        const chatBox = document.getElementById('chatBox');
-        const questionInput = document.getElementById('questionInput');
-        const sendButton = document.getElementById('sendButton');
-        const typingIndicator = document.getElementById('typingIndicator');
-        
-        // État
-        let isProcessing = false;
-        
-        // Contexte juridique pour l'IA
-        const LEGAL_CONTEXT = `Tu es un professeur de droit français expert, spécialisé dans l'aide aux étudiants.
-        Réponds de façon claire, pédagogique et structurée.
-        
-        STRUCTURE TA RÉPONSE AINSI (si pertinent) :
-        1. Définition simple
-        2. Explication détaillée
-        3. Base légale (articles de loi)
-        4. Exemple concret
-        5. Points clés à retenir
-        
-        RÈGLES :
-        - Utilise un langage accessible
-        - Cite les articles de loi quand c'est possible
-        - Donne des exemples concrets
-        - Reste objectif et précis
-        - Ajoute un petit disclaimer si nécessaire
-        
-        Question de l'étudiant : `;
-        
-        // Fonction pour ajouter un message dans le chat
-        function addMessage(sender, text) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
-            
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
-                           now.getMinutes().toString().padStart(2, '0');
-            
-            if (sender === 'user') {
-                messageDiv.innerHTML = `<strong>👤 Vous :</strong> ${text}<small>${timeStr}</small>`;
+        // ---------- Fonctions des exercices ----------
+        function checkQ1() {
+            const radios = document.getElementsByName('q1');
+            let selected = null;
+            for (let r of radios) {
+                if (r.checked) {
+                    selected = r.value;
+                    break;
+                }
+            }
+            const resultSpan = document.getElementById('result1');
+            if (selected === 'a') {
+                resultSpan.innerHTML = '✅ Correct';
+                resultSpan.className = 'result correct';
             } else {
-                // Formater le texte (remplacer ** par du gras)
-                const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                         .replace(/\n/g, '<br>');
-                messageDiv.innerHTML = `<strong>🤖 Assistant :</strong> ${formattedText}<small>${timeStr}</small>`;
-            }
-            
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-        
-        // Fonction pour afficher/cacher l'indicateur de frappe
-        function setTyping(show) {
-            typingIndicator.style.display = show ? 'flex' : 'none';
-            if (show) {
-                chatBox.scrollTop = chatBox.scrollHeight;
+                resultSpan.innerHTML = '❌ Faux. La bonne réponse est "Distinction".';
+                resultSpan.className = 'result incorrect';
             }
         }
-        
-        // Fonction pour envoyer une question à l'IA
-        async function sendQuestion() {
-            const question = questionInput.value.trim();
-            if (!question || isProcessing) return;
-            
-            // Afficher la question
-            addMessage('user', question);
-            questionInput.value = '';
-            
-            // Désactiver l'input
-            isProcessing = true;
-            sendButton.disabled = true;
-            questionInput.disabled = true;
-            
-            // Afficher l'indicateur de frappe
-            setTyping(true);
-            
-            try {
-                // Appel à l'API Gemini
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: LEGAL_CONTEXT + question
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.3,
-                            maxOutputTokens: 1024,
-                        }
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Erreur API: ${response.status}`);
+
+        function checkVF(userSaidTrue) {
+            const resultSpan = document.getElementById('result2');
+            // La bonne réponse est "Faux" (les représailles contre les civils sont interdites)
+            if (userSaidTrue === false) {
+                resultSpan.innerHTML = '✅ Correct';
+                resultSpan.className = 'result correct';
+            } else {
+                resultSpan.innerHTML = '❌ Faux. Les représailles contre les civils sont interdites en toutes circonstances.';
+                resultSpan.className = 'result incorrect';
+            }
+        }
+
+        function checkQ3() {
+            const radios = document.getElementsByName('q3');
+            let selected = null;
+            for (let r of radios) {
+                if (r.checked) {
+                    selected = r.value;
+                    break;
                 }
-                
-                const data = await response.json();
-                
-                // Cacher l'indicateur de frappe
-                setTyping(false);
-                
-                // Vérifier et afficher la réponse
-                if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                    const answer = data.candidates[0].content.parts[0].text;
-                    addMessage('assistant', answer);
-                } else {
-                    addMessage('assistant', "Désolé, je n'ai pas pu générer une réponse. Réessaie.");
-                }
-                
-            } catch (error) {
-                console.error('Erreur:', error);
-                setTyping(false);
-                addMessage('assistant', "❌ Erreur de connexion. Vérifie ta connexion internet ou réessaie plus tard.");
             }
-            
-            // Réactiver l'input
-            isProcessing = false;
-            sendButton.disabled = false;
-            questionInput.disabled = false;
-            questionInput.focus();
+            const resultSpan = document.getElementById('result3');
+            if (selected === 'b') {
+                resultSpan.innerHTML = '✅ Correct (les milices et volontaires peuvent y prétendre sous conditions).';
+                resultSpan.className = 'result correct';
+            } else if (selected === 'a') {
+                resultSpan.innerHTML = '❌ Faux. Les forces irrégulières peuvent aussi y avoir droit si elles respectent certaines conditions.';
+                resultSpan.className = 'result incorrect';
+            } else if (selected === 'c') {
+                resultSpan.innerHTML = '❌ Faux. Les civils participant directement aux hostilités n’ont pas droit au statut de prisonnier de guerre.';
+                resultSpan.className = 'result incorrect';
+            } else {
+                resultSpan.innerHTML = '❌ Veuillez sélectionner une réponse.';
+                resultSpan.className = 'result incorrect';
+            }
         }
-        
-        // Permettre l'envoi avec Entrée
-        questionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendQuestion();
-            }
-        });
-        
-        // Ajouter un message de bienvenue différé
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                addMessage('assistant', '👋 Pose-moi une question sur :\n• Le droit civil\n• Le droit pénal\n• La méthodologie\n• Les articles de loi\n• Ou tout autre sujet juridique !');
-            }, 1000);
-        });
-        
-        // ===========================================
-        // 3. QUELQUES QUESTIONS RAPIDES EN CLIQUANT SUR LES COURS
-        // ===========================================
-        
-        // Permettre de cliquer sur les cours pour poser une question
-        document.querySelectorAll('.cours-item h4').forEach((title, index) => {
-            title.style.cursor = 'pointer';
-            title.title = 'Clique pour poser une question à l\'IA sur ce sujet';
-            title.addEventListener('click', () => {
-                const sujet = title.innerText;
-                questionInput.value = `Explique-moi les bases du ${sujet}`;
-                questionInput.focus();
-                // Scroll vers l'assistant
-                document.getElementById('communaute').scrollIntoView({ behavior: 'smooth' });
-            });
-        });
     </script>
 </body>
 </html>
