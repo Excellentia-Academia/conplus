@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éloquence en Scène - Compte à rebours</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, #1a0f0c 0%, #2d1a14 50%, #1f0e0a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f5e6d3;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Effets de lumière dramatiques */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            animation: lumiere 15s infinite alternate;
+        }
+        
+        @keyframes lumiere {
+            0% { opacity: 0.3; transform: translate(0, 0); }
+            100% { opacity: 0.8; transform: translate(-5%, -5%); }
+        }
+        
+        .scene-container {
+            text-align: center;
+            padding: 3rem;
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            width: 90%;
+        }
+        
+        /* Éléments de scène - Rideaux */
+        .rideau {
+            position: fixed;
+            top: 0;
+            width: 15%;
+            height: 100vh;
+            background: linear-gradient(135deg, #4a1f0d 0%, #2c1208 100%);
+            z-index: 20;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+        }
+        
+        .rideau-gauche {
+            left: 0;
+            transform: skewX(-5deg) translateX(-5%);
+            border-right: 3px solid #d4af37;
+        }
+        
+        .rideau-droit {
+            right: 0;
+            transform: skewX(5deg) translateX(5%);
+            border-left: 3px solid #d4af37;
+        }
+        
+        .rideau::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(212, 175, 55, 0.1) 20px, rgba(212, 175, 55, 0.1) 40px);
+        }
+        
+        /* Titre principal */
+        .titre-principal {
+            font-size: 4.5rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #d4af37, 2px 2px 4px rgba(0,0,0,0.5);
+            animation: apparitionTitre 2s ease-out;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .titre-principal::before,
+        .titre-principal::after {
+            content: '✦';
+            font-size: 3rem;
+            color: #d4af37;
+            margin: 0 20px;
+            opacity: 0.8;
+            animation: scintillement 3s infinite;
+        }
+        
+        @keyframes apparitionTitre {
+            0% { opacity: 0; transform: translateY(-50px); letter-spacing: 20px; }
+            100% { opacity: 1; transform: translateY(0); letter-spacing: 8px; }
+        }
+        
+        @keyframes scintillement {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; text-shadow: 0 0 15px gold; }
+        }
+        
+        /* Sous-titre */
+        .sous-titre {
+            font-size: 1.8rem;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 3rem;
+            color: #e6cba0;
+            border-bottom: 1px solid #d4af37;
+            border-top: 1px solid #d4af37;
+            padding: 1rem 0;
+            display: inline-block;
+        }
+        
+        /* Chronomètre / Compte à rebours */
+        .chrono-container {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chrono-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+            animation: rotation 20s linear infinite;
+        }
+        
+        @keyframes rotation {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .chrono-titre {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #d4af37;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .chrono-grid {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+        }
+        
+        .chrono-unit {
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .chrono-nombre {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            background: linear-gradient(135deg, #fff5e6, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            animation: pulseNombre 2s infinite;
+        }
+        
+        @keyframes pulseNombre {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .chrono-label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #e6cba0;
+            margin-top: 0.5rem;
+        }
+        
+        .chrono-separateur {
+            font-size: 5rem;
+            color: #d4af37;
+            animation: clignoter 1.5s infinite;
+            align-self: flex-start;
+        }
+        
+        @keyframes clignoter {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Message "Bientôt" */
+        .bientot {
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            padding: 1rem;
+            color: #1a0f0c;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+        
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        
+        /* Description de l'événement */
+        .description {
+            max-width: 700px;
+            margin: 3rem auto;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            font-weight: 300;
+            border-left: 3px solid #d4af37;
+            padding-left: 2rem;
+            text-align: left;
+            background: rgba(0,0,0,0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Bouton GitHub */
+        .github-link {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            margin: 2rem 0;
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .github-link:hover {
+            background: #d4af37;
+            color: #1a0f0c;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #d4af37;
+        }
+        
+        .github-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .github-link:hover::before {
+            left: 100%;
+        }
+        
+        /* Pied de page */
+        .footer {
+            margin-top: 4rem;
+            font-size: 1rem;
+            color: #b8a07c;
+            border-top: 1px solid #d4af37;
+            padding-top: 2rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .titre-principal {
+                font-size: 2.5rem;
+            }
+            
+            .chrono-nombre {
+                font-size: 3rem;
+            }
+            
+            .chrono-unit {
+                min-width: 80px;
+            }
+            
+            .rideau {
+                width: 8%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Rideaux de scène -->
+    <div class="rideau rideau-gauche"></div>
+    <div class="rideau rideau-droit"></div>
+    
+    <div class="scene-container">
+        <h1 class="titre-principal">ÉLOQUENCE EN SCÈNE</h1>
+        <div class="sous-titre">L'art de la parole en mouvement</div>
+        
+        <!-- Chronomètre élégant -->
+        <div class="chrono-container" id="chrono">
+            <div class="chrono-titre">🎭 Le rideau s'ouvre dans...</div>
+            <div class="chrono-grid">
+                <div class="chrono-unit">
+                    <div class="chrono-nombre" id="jours">00</div>
+                    <div class="chrono-label">Jours</div>
+                </div>
+                <div class="chrono-separateur">:</div>
+                <div class="chrono-unit">
+                    <div class="chrono-nombre" id="heures">00</div>
+                    <div class="chrono-label">Heures</div>
+                </div>
+                <div class="chrono-separateur">:</div>
+                <div class="chrono-unit">
+                    <div class="chrono-nombre" id="minutes">00</div>
+                    <div class="chrono-label">Minutes</div>
+                </div>
+                <div class="chrono-separateur">:</div>
+                <div class="chrono-unit">
+                    <div class="chrono-nombre" id="secondes">00</div>
+                    <div class="chrono-label">Secondes</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bientot">✨ MAGNIFIQUE & FANTASTIQUE ✨</div>
+        
+        <div class="description">
+            <p>🌟 <strong>Une expérience unique où l'éloquence rencontre la scène</strong> 🌟</p>
+            <p>Préparez-vous à vivre un moment d'exception. Les mots danseront, les émotions vibreront, et la magie opérera sous les projecteurs.</p>
+            <p style="margin-top: 1rem; font-style: italic;">"La parole est un art, la scène est son écrin."</p>
+        </div>
+        
+        <!-- Lien GitHub symbolique -->
+        <a href="https://github.com/votre-compte/eloquence-en-scene" class="github-link" target="_blank">
+            𓂀 Voir sur GitHub 𓂀
+        </a>
+        
+        <div class="footer">
+            <p>Code parfait, magnifique et fantastique pour Éloquence en Scène</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">✨ Un projet où la beauté du code rencontre l'art de la parole ✨</p>
+        </div>
+    </div>
+
+    <script>
+        // Date de l'événement (à modifier selon tes besoins)
+        // Exemple : dans 7 jours à partir de maintenant
+        function getEventDate() {
+            const now = new Date();
+            // Met la date à 7 jours dans le futur à 20h00
+            const eventDate = new Date(now);
+            eventDate.setDate(now.getDate() + 7);
+            eventDate.setHours(20, 0, 0, 0); // 20h00
+            return eventDate;
+        }
+        
+        const eventDate = getEventDate();
+        
+        function updateChrono() {
+            const now = new Date();
+            const diff = eventDate - now;
+            
+            if (diff <= 0) {
+                // L'événement a commencé !
+                document.getElementById('jours').textContent = '00';
+                document.getElementById('heures').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('secondes').textContent = '00';
+                
+                // Ajouter un message spécial
+                const chronoDiv = document.getElementById('chrono');
+                chronoDiv.innerHTML = `
+                    <div class="chrono-titre">🎭 LE SPECTACLE COMMENCE ! 🎭</div>
+                    <div style="font-size: 3rem; margin: 2rem; animation: pulseNombre 2s infinite;">✨</div>
+                `;
+                return;
+            }
+            
+            const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secondes = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('jours').textContent = jours.toString().padStart(2, '0');
+            document.getElementById('heures').textContent = heures.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('secondes').textContent = secondes.toString().padStart(2, '0');
+        }
+        
+        // Mettre à jour immédiatement
+        updateChrono();
+        
+        // Mettre à jour chaque seconde
+        setInterval(updateChrono, 1000);
+        
+        // Effet supplémentaire : changer la couleur du fond subtilement
+        let hue = 0;
+        setInterval(() => {
+            hue = (hue + 0.1) % 360;
+            document.body.style.background = `linear-gradient(135deg, 
+                hsl(${hue}, 30%, 10%) 0%, 
+                hsl(${hue + 20}, 30%, 15%) 50%, 
+                hsl(${hue - 10}, 30%, 8%) 100%)`;
+        }, 100);
+    </script>
+</body>
+</html>
