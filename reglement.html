@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Excellentia Academia : Éloquence en Scène</title>
+    <title>Excellentia Academia : Éloquence en Scène - Vote en temps réel</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
@@ -18,13 +18,13 @@
     <style>
         /* ========== VARIABLES ========== */
         :root {
-            --primary: #e11d48; /* Rouge vif */
-            --primary-dark: #9f1239; /* Rouge foncé */
-            --primary-light: #fb7185; /* Rouge clair */
-            --secondary: #2563eb; /* Bleu vif */
-            --secondary-dark: #1e40af; /* Bleu foncé */
-            --secondary-light: #60a5fa; /* Bleu clair */
-            --accent: #8b5cf6; /* Violet */
+            --primary: #e11d48;
+            --primary-dark: #9f1239;
+            --primary-light: #fb7185;
+            --secondary: #2563eb;
+            --secondary-dark: #1e40af;
+            --secondary-light: #60a5fa;
+            --accent: #8b5cf6;
             --light: #f8fafc;
             --dark: #0f172a;
             --text: #334155;
@@ -42,7 +42,6 @@
             --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
         }
         
-        /* ========== RESET & BASE ========== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -1513,7 +1512,6 @@
             animation: fadeIn 0.5s ease;
         }
         
-        /* Scrollbar personnalisée */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -1533,12 +1531,12 @@
     </style>
 </head>
 <body>
-    <!-- BOUTON ADMIN (visible en bas à droite) -->
+    <!-- BOUTON ADMIN -->
     <button class="admin-btn" id="adminBtn">
         <i class="fas fa-lock"></i>
     </button>
 
-    <!-- MODAL ADMIN (mot de passe) -->
+    <!-- MODAL ADMIN -->
     <div class="admin-modal" id="adminModal">
         <div class="admin-modal-content">
             <h2>
@@ -1571,7 +1569,7 @@
         </div>
     </div>
 
-    <!-- PANEL ADMIN (interface complète) -->
+    <!-- PANEL ADMIN -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-panel-header">
             <div class="admin-panel-header-content">
@@ -1651,7 +1649,6 @@
                 </h3>
                 
                 <div class="admin-codes-area">
-                    <!-- Import CSV -->
                     <div class="admin-codes-box">
                         <h4 style="color: var(--primary); margin-bottom: 15px;">
                             <i class="fas fa-file-import"></i> IMPORT CSV
@@ -1664,7 +1661,6 @@
                         </button>
                     </div>
                     
-                    <!-- Génération de codes -->
                     <div class="admin-codes-box">
                         <h4 style="color: var(--primary); margin-bottom: 15px;">
                             <i class="fas fa-plus-circle"></i> GÉNÉRER DES CODES
@@ -1682,7 +1678,6 @@
                     </div>
                 </div>
                 
-                <!-- Statistiques des codes -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
                     <div style="background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 1.5em; font-weight: 700; color: var(--primary);" id="totalCodes">0</div>
@@ -1736,7 +1731,6 @@
                 </div>
             </div>
             
-            <!-- Résultat de l'import -->
             <div class="alert" id="importResult" style="margin-top: 20px; display: none;"></div>
         </div>
     </div>
@@ -1857,7 +1851,7 @@
         <!-- Bouton Voir tous les résultats -->
         <button class="view-all-results-btn" id="viewAllResultsBtn">
             <i class="fas fa-chart-pie"></i>
-            VOIR TOUS LES RÉSULTATS
+            VOIR TOUS LES RÉSULTATS EN TEMPS RÉEL
             <i class="fas fa-arrow-right"></i>
         </button>
 
@@ -1866,7 +1860,7 @@
             <div class="all-results-header">
                 <div class="all-results-title">
                     <i class="fas fa-chart-bar"></i>
-                    TOUS LES RÉSULTATS
+                    TOUS LES RÉSULTATS EN DIRECT
                 </div>
                 <button class="close-results-btn" id="closeResultsBtn">
                     <i class="fas fa-times"></i>
@@ -1875,13 +1869,13 @@
             </div>
             
             <div class="all-results-grid" id="allResultsContainer">
-                <!-- Les résultats seront chargés ici -->
+                <!-- Les résultats seront chargés ici en temps réel -->
             </div>
             
             <div style="text-align: center; margin-top: 15px;">
                 <p style="color: #64748b; font-size: 0.9em;">
                     <i class="fas fa-info-circle"></i>
-                    1 voix = 1% • Maximum 30% = 30 voix
+                    1 voix = 1% • Maximum 30% = 30 voix • Mise à jour en temps réel
                 </p>
             </div>
         </div>
@@ -2198,11 +2192,11 @@
 
         // ========== CONSTANTES ==========
         const VOTE_END_DATE = new Date('2026-03-06T23:59:59');
-        const VOICE_PERCENTAGE = 1; // 1 voix = 1%
-        const MAX_PERCENTAGE = 30; // Maximum 30%
-        const MAX_VOTES = 30; // 30 voix maximum
-        const SPECIAL_CODE = "EXCELLENTIAENSCENE"; // Code spécial 30 voix
-        const ADMIN_PASSWORD = "ADMIN2026"; // Mot de passe admin
+        const VOICE_PERCENTAGE = 1;
+        const MAX_PERCENTAGE = 30;
+        const MAX_VOTES = 30;
+        const SPECIAL_CODE = "EXCELLENTIAENSCENE";
+        const ADMIN_PASSWORD = "ADMIN2026";
 
         // ========== VARIABLES GLOBALES ==========
         let currentCode = null;
@@ -2211,7 +2205,6 @@
         let isSpecialCodeActive = false;
         let isAdmin = false;
         
-        // Objet pour suivre les votes des candidats
         let candidateVotes = {
             'Emma Laurent': 0,
             'Thomas Dubois': 0,
@@ -2223,9 +2216,10 @@
             'James Omondi': 0
         };
 
+        let unsubscribers = [];
+
         // ========== FONCTIONS UTILITAIRES ==========
         
-        // Calculer le pourcentage
         function calculerPourcentage(voix) {
             let pourcentage = voix * VOICE_PERCENTAGE;
             if (pourcentage > MAX_PERCENTAGE) pourcentage = MAX_PERCENTAGE;
@@ -2236,7 +2230,6 @@
             };
         }
 
-        // Mettre à jour le chronomètre
         function updateCountdown() {
             const now = new Date();
             const timeLeft = VOTE_END_DATE - now;
@@ -2260,7 +2253,6 @@
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
         }
 
-        // Afficher une alerte
         function showAlert(elementId, type, message) {
             const alert = document.getElementById(elementId);
             alert.textContent = message;
@@ -2272,19 +2264,16 @@
             }, 5000);
         }
 
-        // Afficher/masquer le loading
         function showLoading(show) {
             document.getElementById('loading').classList.toggle('hidden', !show);
         }
 
-        // Mettre à jour l'affichage des votes pour tous les candidats
         function updateAllVotesDisplay() {
             for (const [candidat, votes] of Object.entries(candidateVotes)) {
                 const voteElement = document.getElementById(`votes-${candidat}`);
                 if (voteElement) {
                     voteElement.textContent = `${votes} voix`;
                     
-                    // Changer la couleur si proche du max
                     if (votes >= MAX_VOTES) {
                         voteElement.style.color = '#dc2626';
                         voteElement.style.fontWeight = '700';
@@ -2296,7 +2285,6 @@
                 }
             }
             
-            // Mettre à jour l'état max-reached des cartes
             document.querySelectorAll('.candidate-card').forEach(card => {
                 const candidateName = card.dataset.choice;
                 if (candidateVotes[candidateName] >= MAX_VOTES) {
@@ -2305,6 +2293,47 @@
                     card.classList.remove('max-reached');
                 }
             });
+            
+            afficherTousLesResultats();
+        }
+
+        // ========== ÉCOUTE EN TEMPS RÉEL ==========
+        function setupRealtimeListener() {
+            if (unsubscribers.length > 0) {
+                unsubscribers.forEach(unsub => unsub());
+                unsubscribers = [];
+            }
+
+            const unsubscribe = db.collection('votes').onSnapshot((snapshot) => {
+                candidateVotes = {
+                    'Emma Laurent': 0,
+                    'Thomas Dubois': 0,
+                    'Sophie Martin': 0,
+                    'Lucas Bernard': 0,
+                    'Chloe Rousseau': 0,
+                    'Amadou Diallo': 0,
+                    'Maria Santos': 0,
+                    'James Omondi': 0
+                };
+
+                snapshot.forEach(doc => {
+                    const vote = doc.data();
+                    if (candidateVotes[vote.candidat] !== undefined) {
+                        const nbVoix = vote.nbVoix || 1;
+                        candidateVotes[vote.candidat] += nbVoix;
+                    }
+                });
+
+                updateAllVotesDisplay();
+                
+                if (isAdmin) {
+                    chargerDonneesAdmin();
+                }
+            }, (error) => {
+                console.error("Erreur listener:", error);
+            });
+
+            unsubscribers.push(unsubscribe);
         }
 
         // ========== FONCTION DE RECHERCHE ==========
@@ -2313,7 +2342,6 @@
             const searchTerm = searchInput.value.toLowerCase().trim();
             const clearBtn = document.getElementById('clearSearch');
             
-            // Afficher/masquer le bouton clear
             if (searchTerm.length > 0) {
                 clearBtn.style.display = 'block';
             } else {
@@ -2330,7 +2358,6 @@
                 const candidateEcole = card.dataset.ecole ? card.dataset.ecole.toLowerCase() : '';
                 const quote = card.querySelector('.candidate-quote')?.textContent.toLowerCase() || '';
                 
-                // Vérifier si le terme de recherche correspond à n'importe quel champ
                 const matches = searchTerm === '' || 
                                candidateName.includes(searchTerm) || 
                                candidateTheme.includes(searchTerm) ||
@@ -2346,11 +2373,9 @@
                 }
             });
             
-            // Mettre à jour les statistiques de recherche
             document.getElementById('visibleCount').textContent = visibleCount;
             document.getElementById('totalCount').textContent = cards.length;
             
-            // Afficher un message si aucun résultat
             const grid = document.getElementById('candidatesGrid');
             const noResults = document.querySelector('.no-results');
             
@@ -2370,50 +2395,7 @@
 
         // ========== FONCTIONS DE RÉSULTATS ==========
         
-        // Charger les résultats depuis Firebase
-        async function chargerResultats() {
-            try {
-                const votesRef = db.collection('votes');
-                const snapshot = await votesRef.get();
-                
-                // Réinitialiser les votes
-                candidateVotes = {
-                    'Emma Laurent': 0,
-                    'Thomas Dubois': 0,
-                    'Sophie Martin': 0,
-                    'Lucas Bernard': 0,
-                    'Chloe Rousseau': 0,
-                    'Amadou Diallo': 0,
-                    'Maria Santos': 0,
-                    'James Omondi': 0
-                };
-                
-                let totalVotes = 0;
-                snapshot.forEach(doc => {
-                    const vote = doc.data();
-                    if (candidateVotes[vote.candidat] !== undefined) {
-                        const nbVoix = vote.nbVoix || 1;
-                        candidateVotes[vote.candidat] += nbVoix;
-                        totalVotes += nbVoix;
-                    }
-                });
-                
-                // Mettre à jour l'affichage
-                updateAllVotesDisplay();
-                afficherTousLesResultats();
-                
-                return { resultats: candidateVotes, totalVotes };
-                
-            } catch (error) {
-                console.error("Erreur chargement résultats:", error);
-                // Utiliser les données locales en cas d'erreur
-                afficherTousLesResultatsLocaux();
-                return null;
-            }
-        }
-
-        // Afficher tous les résultats (version locale si Firebase échoue)
-        function afficherTousLesResultatsLocaux() {
+        function afficherTousLesResultats() {
             const container = document.getElementById('allResultsContainer');
             
             const sortedResults = Object.entries(candidateVotes)
@@ -2449,23 +2431,15 @@
             container.innerHTML = html;
         }
 
-        // Afficher tous les résultats
-        async function afficherTousLesResultats() {
-            await chargerResultats();
-        }
-
         // ========== FONCTIONS DE VOTE ==========
         
-        // Vérifier le code
         async function verifierCode(code) {
             try {
-                // Vérifier si c'est le code spécial
                 if (code === SPECIAL_CODE) {
                     showAlert('codeAlert', 'special', '🎉 CODE SPÉCIAL : 30 VOIX DISPONIBLES !');
                     return { valide: true, special: true };
                 }
                 
-                // Vérifier dans Firebase
                 const codeRef = db.collection('codes').doc(code);
                 const doc = await codeRef.get();
                 
@@ -2496,13 +2470,11 @@
             }
         }
 
-        // Vérifier si un candidat peut encore recevoir des voix
         function peutVoterPour(candidat, nbVoix = 1) {
             const votesActuels = candidateVotes[candidat] || 0;
             return (votesActuels + nbVoix) <= MAX_VOTES;
         }
 
-        // Enregistrer le vote
         async function enregistrerVote(code, candidat, isSpecial = false) {
             try {
                 showLoading(true);
@@ -2514,7 +2486,6 @@
                 
                 const nbVoix = isSpecial ? 30 : 1;
                 
-                // Vérifier si le candidat n'a pas déjà atteint le maximum
                 if (!peutVoterPour(candidat, nbVoix)) {
                     showAlert('voteAlert', 'error', `❌ ${candidat} a déjà atteint le maximum de ${MAX_VOTES} voix. Impossible de voter pour ce candidat.`);
                     document.getElementById('maxAlert').style.display = 'block';
@@ -2524,7 +2495,6 @@
                     return false;
                 }
                 
-                // Créer le vote dans Firebase
                 const voteRef = db.collection('votes').doc();
                 await voteRef.set({
                     code: code,
@@ -2534,7 +2504,6 @@
                     isSpecial: isSpecial
                 });
                 
-                // Si ce n'est pas le code spécial, marquer le code comme utilisé
                 if (!isSpecial) {
                     const codeRef = db.collection('codes').doc(code);
                     await codeRef.update({
@@ -2543,13 +2512,6 @@
                     });
                 }
                 
-                // Mettre à jour les votes locaux
-                candidateVotes[candidat] = (candidateVotes[candidat] || 0) + nbVoix;
-                
-                // Mettre à jour l'affichage
-                updateAllVotesDisplay();
-                
-                // Afficher confirmation
                 userVoteData = { code, candidat, nbVoix };
                 
                 const message = isSpecial 
@@ -2557,9 +2519,6 @@
                     : '🎉 Vote enregistré avec succès !';
                 
                 showAlert('voteAlert', 'success', message);
-                
-                // Mettre à jour les résultats
-                afficherTousLesResultats();
                 
                 return true;
                 
@@ -2574,7 +2533,6 @@
 
         // ========== FONCTIONS ADMIN ==========
         
-        // Charger les données admin
         async function chargerDonneesAdmin() {
             try {
                 const votesRef = db.collection('votes');
@@ -2585,11 +2543,9 @@
                     codesRef.get()
                 ]);
                 
-                // Calculer les statistiques
                 let totalVotes = 0;
                 let resultats = {...candidateVotes};
                 
-                // Réinitialiser
                 for (let key in resultats) {
                     resultats[key] = 0;
                 }
@@ -2603,7 +2559,6 @@
                     }
                 });
                 
-                // Trouver le vainqueur
                 let winner = 'Aucun';
                 let maxVotes = 0;
                 for (const [candidat, votes] of Object.entries(resultats)) {
@@ -2613,7 +2568,6 @@
                     }
                 }
                 
-                // Statistiques des codes
                 let totalCodes = 0;
                 let usedCodes = 0;
                 codesSnapshot.forEach(doc => {
@@ -2621,7 +2575,6 @@
                     if (doc.data().utilise) usedCodes++;
                 });
                 
-                // Mettre à jour l'affichage
                 document.getElementById('adminTotalVotes').textContent = totalVotes;
                 document.getElementById('adminWinner').textContent = winner;
                 document.getElementById('adminParticipation').textContent = totalCodes > 0 ? ((totalVotes / totalCodes) * 100).toFixed(1) + '%' : '0%';
@@ -2634,7 +2587,6 @@
                 document.getElementById('usedCodes').textContent = usedCodes;
                 document.getElementById('availableCodes').textContent = totalCodes - usedCodes;
                 
-                // Afficher les résultats détaillés
                 const detailedContainer = document.getElementById('adminDetailedResults');
                 let detailedHTML = '';
                 
@@ -2677,7 +2629,6 @@
             }
         }
 
-        // Afficher une alerte dans le panel admin
         function showAdminAlert(type, message) {
             const alert = document.getElementById('importResult');
             alert.textContent = message;
@@ -2689,7 +2640,6 @@
             }, 5000);
         }
 
-        // Importer des codes CSV
         async function importerCodesCSV(csvText) {
             try {
                 const codes = csvText.split('\n')
@@ -2714,7 +2664,6 @@
                     });
                     imported++;
                     
-                    // Firebase limit: max 500 ops par batch
                     if (imported % 400 === 0) {
                         await batch.commit();
                     }
@@ -2731,7 +2680,6 @@
             }
         }
 
-        // Générer des codes
         async function genererCodes(nombre, prefix) {
             try {
                 const batch = db.batch();
@@ -2763,7 +2711,6 @@
             }
         }
 
-        // Exporter les données
         async function exporterDonnees() {
             try {
                 const votesRef = db.collection('votes');
@@ -2794,37 +2741,31 @@
 
         // ========== INITIALISATION ET ÉVÉNEMENTS ==========
         document.addEventListener('DOMContentLoaded', () => {
-            // Timer
             updateCountdown();
             setInterval(updateCountdown, 1000);
             
-            // Charger les résultats
-            chargerResultats();
-            afficherTousLesResultatsLocaux(); // Afficher immédiatement avec les données locales
+            setupRealtimeListener();
             
-            // ===== FERMER LA NOTIFICATION =====
             document.getElementById('closeNotification').addEventListener('click', () => {
                 document.getElementById('infoNotification').style.display = 'none';
             });
             
-            // ===== BOUTON ADMIN =====
             document.getElementById('adminBtn').addEventListener('click', () => {
                 document.getElementById('adminModal').style.display = 'flex';
                 document.body.classList.add('modal-open');
                 document.getElementById('adminPassword').focus();
             });
             
-            // ===== MODAL ADMIN =====
             document.getElementById('submitAdminPassword').addEventListener('click', () => {
                 const password = document.getElementById('adminPassword').value;
                 
                 if (password === ADMIN_PASSWORD) {
+                    isAdmin = true;
                     document.getElementById('adminModal').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     document.body.classList.remove('modal-open');
                     chargerDonneesAdmin();
                     
-                    // Rafraîchir automatiquement toutes les 10s
                     setInterval(chargerDonneesAdmin, 10000);
                 } else {
                     document.getElementById('adminAlert').textContent = '❌ Mot de passe incorrect';
@@ -2843,9 +2784,9 @@
             
             document.getElementById('closeAdminPanel').addEventListener('click', () => {
                 document.getElementById('adminPanel').style.display = 'none';
+                isAdmin = false;
             });
             
-            // ===== OUTILS ADMIN =====
             document.getElementById('refreshAdminResults').addEventListener('click', chargerDonneesAdmin);
             
             document.getElementById('importCSVBtn').addEventListener('click', () => {
@@ -2877,11 +2818,10 @@
                 }
             });
             
-            // ===== INTERFACE DE VOTE =====
             document.getElementById('viewAllResultsBtn').addEventListener('click', () => {
                 document.getElementById('allResultsSection').style.display = 'block';
                 document.getElementById('allResultsSection').scrollIntoView({ behavior: 'smooth' });
-                afficherTousLesResultats(); // Rafraîchir les résultats
+                afficherTousLesResultats();
             });
             
             document.getElementById('closeResultsBtn').addEventListener('click', () => {
@@ -2906,13 +2846,11 @@
                     document.getElementById('codeSection').classList.add('hidden');
                     document.getElementById('voteSection').classList.remove('hidden');
                     
-                    // Réinitialiser la recherche
                     document.getElementById('candidateSearch').value = '';
                     filterCandidates();
                 }
             });
             
-            // ===== SYSTÈME DE RECHERCHE =====
             const searchInput = document.getElementById('candidateSearch');
             const clearBtn = document.getElementById('clearSearch');
             
@@ -2924,12 +2862,10 @@
                 searchInput.focus();
             });
             
-            // ===== SÉLECTION DES CANDIDATS =====
             document.querySelectorAll('.candidate-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const candidateName = card.dataset.choice;
                     
-                    // Vérifier si le candidat a déjà atteint le max
                     if (candidateVotes[candidateName] >= MAX_VOTES) {
                         showAlert('voteAlert', 'error', `❌ ${candidateName} a déjà atteint le maximum de ${MAX_VOTES} voix.`);
                         document.getElementById('maxAlert').style.display = 'block';
@@ -2939,24 +2875,20 @@
                         return;
                     }
                     
-                    // Retirer la sélection précédente
                     document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
                     
-                    // Ajouter la nouvelle sélection
                     card.classList.add('selected');
                     selectedCandidate = candidateName;
                     document.getElementById('submitVoteBtn').disabled = false;
                 });
             });
             
-            // ===== SOUMISSION DU VOTE =====
             document.getElementById('submitVoteBtn').addEventListener('click', async () => {
                 if (!currentCode || !selectedCandidate) {
                     showAlert('voteAlert', 'error', '⚠️ Choisissez un candidat');
                     return;
                 }
                 
-                // Vérifier une dernière fois si le candidat n'a pas atteint le max
                 if (candidateVotes[selectedCandidate] >= MAX_VOTES) {
                     showAlert('voteAlert', 'error', `❌ ${selectedCandidate} a déjà atteint le maximum.`);
                     return;
@@ -2978,12 +2910,10 @@
                     document.getElementById('submitVoteBtn').disabled = true;
                     selectedCandidate = null;
                     
-                    // Réinitialiser la sélection
                     document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
                 }
             });
             
-            // ===== RACCOURCIS =====
             document.getElementById('codeInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     document.getElementById('verifyCodeBtn').click();
@@ -2994,7 +2924,6 @@
                 this.value = this.value.toUpperCase();
             });
             
-            // Fermer le modal en cliquant dehors
             window.addEventListener('click', (e) => {
                 if (e.target === document.getElementById('adminModal')) {
                     document.getElementById('adminModal').style.display = 'none';
