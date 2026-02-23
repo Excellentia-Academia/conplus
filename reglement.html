@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devinettes Rouges & Bleues</title>
+    <title>Quiz Lecture - Connexion Gmail Requise</title>
     <style>
         * {
             margin: 0;
@@ -45,17 +45,66 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header p {
+        .login-section {
+            padding: 30px;
+            background: #f0f4f8;
+            text-align: center;
+        }
+
+        .login-section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+
+        .gmail-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            margin: 10px auto;
+            border: 2px solid #1e3c72;
+            border-radius: 8px;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        .gmail-input:focus {
+            outline: none;
+            border-color: #ff3333;
+            box-shadow: 0 0 0 3px rgba(255,51,51,0.2);
+        }
+
+        .start-btn {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 15px 40px;
             font-size: 1.2em;
-            opacity: 0.95;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            border-bottom: 4px solid #990000;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover:not(:disabled) {
+            background: #ff5555;
+            transform: translateY(-2px);
+        }
+
+        .start-btn:disabled {
+            background: #cccccc;
+            border-bottom: 4px solid #999999;
+            cursor: not-allowed;
         }
 
         .game-area {
             padding: 30px;
             background: #f0f4f8;
+            display: none;
         }
 
-        .status-bar {
+        .user-info {
             background: #1e3c72;
             color: white;
             padding: 15px;
@@ -68,39 +117,22 @@
             gap: 15px;
         }
 
-        .timer {
-            font-size: 1.3em;
-            font-weight: bold;
-            background: #ff3333;
-            padding: 8px 20px;
-            border-radius: 25px;
-            box-shadow: 0 4px 0 #990000;
-        }
-
-        .reward-status {
+        .user-email {
             font-size: 1.1em;
             background: rgba(255,255,255,0.2);
             padding: 8px 20px;
             border-radius: 25px;
         }
 
-        .reward-display {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.3em;
-            border: 2px solid #ff3333;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: break-all;
+        .user-status {
+            font-size: 1.1em;
+            background: #ff3333;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
         }
 
-        .riddle-box {
+        .quiz-box {
             background: white;
             padding: 25px;
             border-radius: 10px;
@@ -110,137 +142,90 @@
             border-right: 5px solid #1e3c72;
         }
 
-        .riddle-text {
-            font-size: 1.3em;
+        .question-text {
+            font-size: 1.4em;
             color: #1e3c72;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             line-height: 1.6;
             font-weight: 500;
         }
 
-        .riddle-image {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 2px dashed #ff3333;
-        }
-
-        .riddle-image svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .answer-section {
-            display: flex;
-            gap: 10px;
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .answer-input {
-            flex: 1;
+        .option-btn {
             padding: 15px;
+            background: #f8f9fa;
             border: 2px solid #1e3c72;
             border-radius: 8px;
             font-size: 1.1em;
-            transition: all 0.3s;
-        }
-
-        .answer-input:focus {
-            outline: none;
-            border-color: #ff3333;
-            box-shadow: 0 0 0 3px rgba(255,51,51,0.2);
-        }
-
-        .submit-btn {
-            padding: 15px 30px;
-            background: #ff3333;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            border-bottom: 4px solid #990000;
+            text-align: left;
         }
 
-        .submit-btn:hover:not(:disabled) {
-            background: #ff5555;
-            transform: translateY(-2px);
+        .option-btn:hover:not(:disabled) {
+            background: #ff3333;
+            color: white;
+            border-color: #ff3333;
+            transform: translateX(5px);
         }
 
-        .submit-btn:disabled {
-            background: #cccccc;
-            border-bottom: 4px solid #999999;
+        .option-btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            opacity: 0.6;
         }
 
-        .players-list {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .players-list h3 {
-            color: #1e3c72;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            border-bottom: 2px solid #ff3333;
-            padding-bottom: 5px;
-        }
-
-        .player-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #1e3c72;
-        }
-
-        .player-name {
-            font-weight: 600;
-            color: #1e3c72;
-        }
-
-        .player-status {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-
-        .status-waiting {
-            background: #ffd700;
-            color: #856404;
-        }
-
-        .status-answered {
+        .option-btn.correct {
             background: #28a745;
             color: white;
+            border-color: #28a745;
         }
 
-        .status-blocked {
+        .option-btn.incorrect {
             background: #dc3545;
             color: white;
+            border-color: #dc3545;
         }
 
-        .winner-message {
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            border-radius: 10px;
+        .message-area {
             margin-top: 20px;
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #1e3c72;
-            border: 3px solid #ff3333;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .blocked-message {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 1.3em;
+        }
+
+        .blocked-message i {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 20px;
         }
 
         .reset-btn {
@@ -263,424 +248,365 @@
             transform: translateY(-2px);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .reward-active {
-            animation: pulse 1s infinite;
-            background: linear-gradient(135deg, #28a745, #20c997);
-        }
-
-        .hidden {
-            display: none;
-        }
-
         @media (max-width: 600px) {
             .header h1 { font-size: 1.8em; }
-            .answer-section { flex-direction: column; }
-            .status-bar { flex-direction: column; text-align: center; }
+            .options { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="header">
-            <h1>🔴 DEVINETTES ROUGE & BLEU ⚫</h1>
-            <p>Une seule réponse possible - Un seul code à gagner !</p>
+            <h1>📚 QUIZ LECTURE 📚</h1>
+            <p>Connexion Gmail requise - Une seule chance par personne !</p>
         </div>
 
-        <div class="game-area">
-            <div class="status-bar">
-                <div class="timer" id="timer">⏱️ 30s</div>
-                <div class="reward-status" id="rewardStatus">🎁 Code disponible</div>
+        <!-- Section Connexion -->
+        <div class="login-section" id="loginSection">
+            <h2>🔐 Connexion avec Gmail</h2>
+            <input type="email" class="gmail-input" id="gmailInput" placeholder="votre.email@gmail.com" required>
+            <p style="color: #666; margin: 10px 0;">💡 Seulement les adresses @gmail.com sont acceptées</p>
+            <button class="start-btn" id="startBtn">Commencer le Quiz</button>
+            <div id="loginError" style="color: #ff3333; margin-top: 15px;"></div>
+        </div>
+
+        <!-- Zone de Jeu (cachée au début) -->
+        <div class="game-area" id="gameArea">
+            <div class="user-info">
+                <div class="user-email" id="displayEmail"></div>
+                <div class="user-status" id="userStatus">🎯 En jeu</div>
             </div>
 
-            <div class="reward-display" id="rewardDisplay">
-                🎯 En attente d'une réponse...
+            <div id="quizContent">
+                <!-- Le quiz apparaîtra ici -->
             </div>
 
-            <div class="riddle-box">
-                <div class="riddle-text" id="riddleText">
-                    Chargement de la devinette...
-                </div>
-                
-                <div class="riddle-image" id="riddleImage">
-                    <!-- Image générée dynamiquement -->
-                </div>
-
-                <div class="answer-section">
-                    <input type="text" class="answer-input" id="answerInput" placeholder="Votre réponse..." autocomplete="off">
-                    <button class="submit-btn" id="submitBtn">Valider</button>
-                </div>
-            </div>
-
-            <div class="players-list">
-                <h3>👥 Candidats en jeu</h3>
-                <div id="playersContainer">
-                    <!-- Liste des joueurs générée dynamiquement -->
+            <div id="blockedView" style="display: none;">
+                <div class="blocked-message">
+                    <i>⛔</i>
+                    <h2>Accès Refusé</h2>
+                    <p>Vous avez déjà participé au quiz !</p>
+                    <p style="font-size: 0.9em; margin-top: 20px;">Une seule tentative par personne est autorisée.</p>
                 </div>
             </div>
 
-            <div id="winnerMessage" class="winner-message hidden"></div>
-            
-            <button class="reset-btn" id="resetBtn">🔄 Nouvelle partie</button>
+            <button class="reset-btn" id="resetBtn" style="display: none;">🔄 Nouvelle partie (Admin)</button>
         </div>
     </div>
 
     <script>
-        class Game {
+        class QuizGame {
             constructor() {
-                this.currentReward = this.generateReward();
-                this.rewardClaimed = false;
-                this.claimedBy = null;
-                this.players = new Map();
-                this.currentRiddleIndex = 0;
-                this.timerInterval = null;
-                this.timeLeft = 30;
+                this.players = this.loadPlayers(); // Stocke les emails des joueurs
+                this.currentPlayer = null;
+                this.hasAnswered = false;
                 
-                // Devinettes impossibles pour l'IA
-                this.riddles = [
+                // Questions du quiz sur la lecture
+                this.questions = [
                     {
-                        text: "J'ai dessiné une forme abstraite. À ton avis, ça ressemble à quoi ?",
-                        image: this.createShape1,
-                        answers: ["nuage", "montagne", "vague", "fleur", "arbre", "soleil", "lune", "étoile", "cœur", "poisson"],
-                        code: "R2D2-C3PO"
+                        question: "Quel est le pluriel de 'cheval' ?",
+                        options: ["chevaux", "chevals", "chevale", "cheval"],
+                        correct: 0
                     },
                     {
-                        text: "Regarde ce gribouillage. Quel objet du quotidien cela te fait-il penser ?",
-                        image: this.createShape2,
-                        answers: ["tasse", "chaise", "table", "lampe", "livre", "stylo", "téléphone", "ordinateur", "bouteille", "fourchette"],
-                        code: "SKYWALKER"
+                        question: "Que signifie le mot 'bibliothèque' ?",
+                        options: [
+                            "Un endroit où on vend des livres",
+                            "Un endroit où on emprunte des livres",
+                            "Une librairie",
+                            "Un magazine"
+                        ],
+                        correct: 1
                     },
                     {
-                        text: "Cette forme bizarre... ça te rappelle quel animal ?",
-                        image: this.createShape3,
-                        answers: ["chat", "chien", "lapin", "souris", "oiseau", "poisson", "cheval", "vache", "lion", "éléphant"],
-                        code: "YODA2024"
+                        question: "Quelle est la première lettre de l'alphabet ?",
+                        options: ["B", "A", "C", "D"],
+                        correct: 1
                     },
                     {
-                        text: "Et ça, c'est quoi selon toi ? (pas de mauvaise réponse !)",
-                        image: this.createShape4,
-                        answers: ["maison", "voiture", "bateau", "avion", "train", "vélo", "moto", "fusée", "château", "pont"],
-                        code: "BB8-FORCE"
+                        question: "Combien y a-t-il de voyelles dans 'MAISON' ?",
+                        options: ["2", "3", "4", "5"],
+                        correct: 1 // A,I,O = 3 voyelles
                     },
                     {
-                        text: "Dernière forme ! Ton imagination est la clé...",
-                        image: this.createShape5,
-                        answers: ["pizza", "gateau", "fruit", "legume", "pain", "fromage", "chocolat", "glace", "bonbon", "sandwich"],
-                        code: "JEDI-FIN"
+                        question: "Quel est le synonyme de 'content' ?",
+                        options: ["triste", "joyeux", "fatigué", "fâché"],
+                        correct: 1
+                    },
+                    {
+                        question: "Comment s'appelle une personne qui écrit des livres ?",
+                        options: ["un lecteur", "un éditeur", "un auteur", "un libraire"],
+                        correct: 2
+                    },
+                    {
+                        question: "Que veut dire le mot 'lire' ?",
+                        options: [
+                            "Déchiffrer des mots",
+                            "Écrire une lettre",
+                            "Dessiner une image",
+                            "Chanter une chanson"
+                        ],
+                        correct: 0
                     }
                 ];
 
+                this.currentQuestionIndex = 0;
                 this.init();
             }
 
-            generateReward() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let reward = '';
-                for (let i = 0; i < 12; i++) {
-                    if (i > 0 && i % 4 === 0) reward += '-';
-                    reward += chars[Math.floor(Math.random() * chars.length)];
-                }
-                return reward;
+            loadPlayers() {
+                // Charge les joueurs depuis le localStorage
+                const saved = localStorage.getItem('quizPlayers');
+                return saved ? JSON.parse(saved) : {};
             }
 
-            createShape1() {
-                const colors = ['#ff3333', '#1e3c72', '#ff9999', '#4a6fa5'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                return `
-                    <svg width="200" height="150" viewBox="0 0 200 150">
-                        <circle cx="70" cy="60" r="40" fill="${color}" opacity="0.7"/>
-                        <circle cx="130" cy="80" r="35" fill="${colors[1]}" opacity="0.7"/>
-                        <circle cx="100" cy="40" r="25" fill="${colors[2]}" opacity="0.7"/>
-                        <path d="M20 120 Q100 140 180 110" stroke="${colors[0]}" stroke-width="4" fill="none"/>
-                        <circle cx="50" cy="30" r="8" fill="white"/>
-                        <circle cx="150" cy="50" r="8" fill="white"/>
-                    </svg>
-                `;
-            }
-
-            createShape2() {
-                return `
-                    <svg width="200" height="150" viewBox="0 0 200 150">
-                        <rect x="50" y="30" width="100" height="80" fill="#1e3c72" rx="10"/>
-                        <circle cx="100" cy="70" r="25" fill="#ff3333"/>
-                        <line x1="30" y1="110" x2="170" y2="90" stroke="#ff3333" stroke-width="4"/>
-                        <rect x="80" y="10" width="40" height="20" fill="#ff9999" rx="5"/>
-                        <circle cx="60" cy="100" r="10" fill="white"/>
-                        <circle cx="140" cy="100" r="10" fill="white"/>
-                    </svg>
-                `;
-            }
-
-            createShape3() {
-                return `
-                    <svg width="200" height="150" viewBox="0 0 200 150">
-                        <ellipse cx="100" cy="80" rx="60" ry="40" fill="#1e3c72"/>
-                        <circle cx="70" cy="60" r="15" fill="#ff3333"/>
-                        <circle cx="130" cy="60" r="15" fill="#ff3333"/>
-                        <ellipse cx="100" cy="100" rx="30" ry="15" fill="white"/>
-                        <path d="M40 20 L70 40 L130 40 L160 20" stroke="#ff3333" stroke-width="4" fill="none"/>
-                        <circle cx="85" cy="55" r="5" fill="white"/>
-                        <circle cx="115" cy="55" r="5" fill="white"/>
-                    </svg>
-                `;
-            }
-
-            createShape4() {
-                return `
-                    <svg width="200" height="150" viewBox="0 0 200 150">
-                        <polygon points="100,20 180,60 180,120 20,120 20,60" fill="#1e3c72" opacity="0.8"/>
-                        <rect x="70" y="70" width="60" height="50" fill="#ff3333"/>
-                        <circle cx="100" cy="95" r="15" fill="white" opacity="0.5"/>
-                        <line x1="100" y1="20" x2="100" y2="50" stroke="#ff3333" stroke-width="4"/>
-                        <circle cx="140" cy="100" r="8" fill="white"/>
-                        <circle cx="60" cy="100" r="8" fill="white"/>
-                    </svg>
-                `;
-            }
-
-            createShape5() {
-                return `
-                    <svg width="200" height="150" viewBox="0 0 200 150">
-                        <circle cx="100" cy="75" r="50" fill="#ff3333" opacity="0.7"/>
-                        <circle cx="80" cy="60" r="10" fill="#1e3c72"/>
-                        <circle cx="120" cy="60" r="10" fill="#1e3c72"/>
-                        <path d="M70 95 Q100 115 130 95" stroke="#1e3c72" stroke-width="5" fill="none"/>
-                        <circle cx="140" cy="40" r="15" fill="#ff9999"/>
-                        <circle cx="50" cy="110" r="20" fill="#4a6fa5" opacity="0.6"/>
-                        <circle cx="160" cy="100" r="12" fill="white" opacity="0.8"/>
-                    </svg>
-                `;
+            savePlayers() {
+                localStorage.setItem('quizPlayers', JSON.stringify(this.players));
             }
 
             init() {
-                this.updateRiddle();
-                this.startTimer();
-                this.updateUI();
-                
-                // Simuler des joueurs (à remplacer par votre système)
-                this.addPlayer("Joueur 1");
-                this.addPlayer("Joueur 2");
-                this.addPlayer("Joueur 3");
-                
-                document.getElementById('submitBtn').addEventListener('click', () => this.checkAnswer());
+                document.getElementById('startBtn').addEventListener('click', () => this.login());
                 document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
-                document.getElementById('answerInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.checkAnswer();
-                });
-            }
-
-            addPlayer(name) {
-                this.players.set(name, {
-                    name: name,
-                    hasAnswered: false,
-                    isBlocked: false
-                });
-                this.updatePlayersList();
-            }
-
-            updatePlayersList() {
-                const container = document.getElementById('playersContainer');
-                container.innerHTML = '';
                 
-                this.players.forEach((player, name) => {
-                    const playerDiv = document.createElement('div');
-                    playerDiv.className = 'player-item';
-                    
-                    let statusClass = 'status-waiting';
-                    let statusText = 'En attente';
-                    
-                    if (player.isBlocked) {
-                        statusClass = 'status-blocked';
-                        statusText = 'Bloqué';
-                    } else if (player.hasAnswered) {
-                        statusClass = 'status-answered';
-                        statusText = 'A répondu';
-                    }
-                    
-                    playerDiv.innerHTML = `
-                        <span class="player-name">${name}</span>
-                        <span class="player-status ${statusClass}">${statusText}</span>
-                    `;
-                    
-                    container.appendChild(playerDiv);
-                });
-            }
-
-            blockPlayer(playerName) {
-                const player = this.players.get(playerName);
-                if (player) {
-                    player.isBlocked = true;
-                    this.updatePlayersList();
+                // Vérifier si l'utilisateur est déjà connecté
+                const lastEmail = sessionStorage.getItem('currentPlayer');
+                if (lastEmail && this.players[lastEmail] && !this.players[lastEmail].answered) {
+                    this.currentPlayer = lastEmail;
+                    this.showGame();
                 }
             }
 
-            updateRiddle() {
-                const riddle = this.riddles[this.currentRiddleIndex];
-                document.getElementById('riddleText').textContent = riddle.text;
-                document.getElementById('riddleImage').innerHTML = riddle.image();
-            }
+            login() {
+                const email = document.getElementById('gmailInput').value.trim().toLowerCase();
+                const errorDiv = document.getElementById('loginError');
 
-            checkAnswer() {
-                if (this.rewardClaimed) {
-                    alert('❌ Le code a déjà été gagné !');
+                // Validation Gmail
+                if (!email) {
+                    errorDiv.textContent = "❌ Veuillez entrer votre email";
                     return;
                 }
 
-                const answer = document.getElementById('answerInput').value.trim().toLowerCase();
-                if (!answer) return;
-
-                // Simuler un joueur (dans un vrai jeu, identifiez le joueur)
-                const currentPlayer = "Joueur 1";
-                
-                // Vérifier si le joueur est bloqué
-                const player = this.players.get(currentPlayer);
-                if (player && player.isBlocked) {
-                    alert('⛔ Vous avez déjà joué et n\'avez pas trouvé !');
+                if (!email.endsWith('@gmail.com')) {
+                    errorDiv.textContent = "❌ Seules les adresses @gmail.com sont acceptées";
                     return;
                 }
 
-                const riddle = this.riddles[this.currentRiddleIndex];
-                const isCorrect = riddle.answers.some(a => a.toLowerCase() === answer);
+                // Vérifier si le joueur a déjà joué
+                if (this.players[email] && this.players[email].answered) {
+                    errorDiv.textContent = "❌ Cet email a déjà participé au quiz !";
+                    return;
+                }
 
-                if (isCorrect) {
-                    // Récompense gagnée !
-                    this.rewardClaimed = true;
-                    this.claimedBy = currentPlayer;
-                    
-                    // Marquer le joueur comme ayant répondu
-                    if (player) {
-                        player.hasAnswered = true;
-                    }
-                    
-                    // Bloquer tous les autres joueurs
-                    this.players.forEach((p, name) => {
-                        if (name !== currentPlayer) {
-                            p.isBlocked = true;
-                        }
-                    });
-                    
-                    // Afficher la récompense
-                    const reward = this.riddles[this.currentRiddleIndex].code;
-                    document.getElementById('rewardDisplay').innerHTML = `
-                        🏆 CODE GAGNÉ ! 🏆<br>
-                        <span style="font-size: 1.5em; letter-spacing: 2px;">${reward}</span><br>
-                        <small>Gagné par ${currentPlayer}</small>
-                    `;
-                    
-                    document.getElementById('rewardDisplay').classList.add('reward-active');
-                    document.getElementById('rewardStatus').innerHTML = '🎁 Code gagné !';
-                    document.getElementById('submitBtn').disabled = true;
-                    
-                    // Afficher message de victoire
-                    const winnerMsg = document.getElementById('winnerMessage');
-                    winnerMsg.classList.remove('hidden');
-                    winnerMsg.innerHTML = `👑 Félicitations ${currentPlayer} ! Tu as gagné le code !`;
-                    
-                    clearInterval(this.timerInterval);
-                    
+                // Nouveau joueur
+                this.currentPlayer = email;
+                this.players[email] = {
+                    email: email,
+                    answered: false,
+                    score: 0,
+                    timestamp: new Date().toISOString()
+                };
+                
+                this.savePlayers();
+                sessionStorage.setItem('currentPlayer', email);
+                
+                this.showGame();
+            }
+
+            showGame() {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('gameArea').style.display = 'block';
+                document.getElementById('displayEmail').textContent = `📧 ${this.currentPlayer}`;
+
+                // Vérifier si le joueur a déjà répondu
+                if (this.players[this.currentPlayer].answered) {
+                    this.showBlockedView();
                 } else {
-                    // Mauvaise réponse - bloquer le joueur
-                    if (player) {
-                        player.isBlocked = true;
-                        this.updatePlayersList();
-                    }
-                    
-                    alert(`❌ Mauvaise réponse ! ${currentPlayer} est maintenant bloqué pour cette devinette.`);
-                    
-                    // Vérifier si tous les joueurs sont bloqués
-                    const allBlocked = Array.from(this.players.values()).every(p => p.isBlocked);
-                    if (allBlocked && !this.rewardClaimed) {
-                        setTimeout(() => {
-                            if (!this.rewardClaimed) {
-                                this.nextRiddle();
-                            }
-                        }, 1500);
-                    }
+                    this.startQuiz();
                 }
-                
-                document.getElementById('answerInput').value = '';
             }
 
-            nextRiddle() {
-                if (this.rewardClaimed) return;
-                
-                this.currentRiddleIndex = (this.currentRiddleIndex + 1) % this.riddles.length;
-                
-                // Réinitialiser les statuts des joueurs pour la nouvelle devinette
-                this.players.forEach(player => {
-                    player.hasAnswered = false;
-                    player.isBlocked = false;
+            showBlockedView() {
+                document.getElementById('quizContent').style.display = 'none';
+                document.getElementById('blockedView').style.display = 'block';
+                document.getElementById('userStatus').textContent = '⛔ Bloqué';
+                document.getElementById('userStatus').style.background = '#dc3545';
+            }
+
+            startQuiz() {
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('blockedView').style.display = 'none';
+                this.currentQuestionIndex = 0;
+                this.displayQuestion();
+            }
+
+            displayQuestion() {
+                if (this.currentQuestionIndex >= this.questions.length) {
+                    this.showFinalReward();
+                    return;
+                }
+
+                const question = this.questions[this.currentQuestionIndex];
+                let html = `
+                    <div class="quiz-box">
+                        <div class="question-text">
+                            Question ${this.currentQuestionIndex + 1}/${this.questions.length} :<br>
+                            ${question.question}
+                        </div>
+                        <div class="options" id="optionsContainer">
+                `;
+
+                question.options.forEach((option, index) => {
+                    html += `
+                        <button class="option-btn" data-index="${index}">
+                            ${option}
+                        </button>
+                    `;
                 });
-                
-                this.updateRiddle();
-                this.updatePlayersList();
-                
-                // Nouveau timer
-                clearInterval(this.timerInterval);
-                this.timeLeft = 30;
-                this.startTimer();
+
+                html += `
+                        </div>
+                        <div id="messageArea" class="message-area"></div>
+                    </div>
+                `;
+
+                document.getElementById('quizContent').innerHTML = html;
+
+                // Ajouter les événements aux boutons
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.checkAnswer(e));
+                });
             }
 
-            startTimer() {
-                this.timerInterval = setInterval(() => {
-                    if (this.rewardClaimed) {
-                        clearInterval(this.timerInterval);
-                        return;
+            checkAnswer(event) {
+                if (this.hasAnswered) return;
+
+                const selectedBtn = event.target;
+                const selectedIndex = parseInt(selectedBtn.dataset.index);
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                const isCorrect = (selectedIndex === currentQuestion.correct);
+
+                // Marquer comme répondu
+                this.hasAnswered = true;
+
+                // Désactiver tous les boutons
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+
+                // Colorier les réponses
+                document.querySelectorAll('.option-btn').forEach((btn, index) => {
+                    if (index === currentQuestion.correct) {
+                        btn.classList.add('correct');
+                    } else if (index === selectedIndex && !isCorrect) {
+                        btn.classList.add('incorrect');
                     }
+                });
+
+                // Afficher le message
+                const messageArea = document.getElementById('messageArea');
+                
+                if (isCorrect) {
+                    this.players[this.currentPlayer].score++;
                     
-                    this.timeLeft--;
-                    document.getElementById('timer').innerHTML = `⏱️ ${this.timeLeft}s`;
-                    
-                    if (this.timeLeft <= 0) {
-                        clearInterval(this.timerInterval);
-                        if (!this.rewardClaimed) {
-                            alert("⏰ Temps écoulé ! Nouvelle devinette...");
-                            this.nextRiddle();
+                    messageArea.innerHTML = `
+                        <div class="success-message">
+                            ✅ Bonne réponse !<br>
+                            Score: ${this.players[this.currentPlayer].score}/${this.questions.length}
+                        </div>
+                    `;
+
+                    // Passer à la question suivante après 1.5 secondes
+                    setTimeout(() => {
+                        this.currentQuestionIndex++;
+                        this.hasAnswered = false;
+                        
+                        if (this.currentQuestionIndex < this.questions.length) {
+                            this.displayQuestion();
+                        } else {
+                            this.showFinalReward();
                         }
-                    }
-                }, 1000);
+                    }, 1500);
+                } else {
+                    // Mauvaise réponse - FIN DU JEU !
+                    messageArea.innerHTML = `
+                        <div class="error-message">
+                            ❌ Mauvaise réponse !<br>
+                            La bonne réponse était : "${currentQuestion.options[currentQuestion.correct]}"<br>
+                            <strong>Quiz terminé !</strong>
+                        </div>
+                    `;
+
+                    // Marquer comme ayant répondu (même si c'est faux)
+                    this.players[this.currentPlayer].answered = true;
+                    this.players[this.currentPlayer].completed = true;
+                    this.savePlayers();
+                    
+                    document.getElementById('userStatus').textContent = '⛔ Quiz terminé';
+                }
+
+                this.savePlayers();
+            }
+
+            showFinalReward() {
+                // Marquer comme ayant répondu
+                this.players[this.currentPlayer].answered = true;
+                this.players[this.currentPlayer].completed = true;
+                this.savePlayers();
+
+                const score = this.players[this.currentPlayer].score;
+                const total = this.questions.length;
+                
+                let message = '';
+                let code = '';
+
+                if (score === total) {
+                    code = 'LECTURE-PRO-2024';
+                    message = '🎉 FÉLICITATIONS ! 🎉';
+                } else if (score >= total - 2) {
+                    code = 'BON-LECTEUR';
+                    message = '📚 BRAVO ! 📚';
+                } else {
+                    code = 'MERCI-PARTICIPATION';
+                    message = '📖 MERCI ! 📖';
+                }
+
+                document.getElementById('quizContent').innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: white; border-radius: 10px;">
+                        <h2 style="color: #1e3c72; margin-bottom: 20px;">${message}</h2>
+                        <p style="font-size: 1.3em; margin-bottom: 20px;">
+                            Score: ${score}/${total}
+                        </p>
+                        <div style="background: linear-gradient(135deg, #ff3333, #1e3c72); 
+                                    color: white; 
+                                    padding: 30px; 
+                                    border-radius: 10px;
+                                    margin: 20px 0;">
+                            <div style="font-size: 0.9em; margin-bottom: 10px;">🎁 VOTRE CODE DE RÉCOMPENSE :</div>
+                            <div style="font-size: 2em; font-weight: bold; letter-spacing: 3px;">
+                                ${code}
+                            </div>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em;">
+                            ⚠️ Ce code ne peut être utilisé qu'une seule fois
+                        </p>
+                    </div>
+                `;
+
+                document.getElementById('userStatus').textContent = '✅ Terminé';
+                document.getElementById('userStatus').style.background = '#28a745';
             }
 
             resetGame() {
-                this.currentReward = this.generateReward();
-                this.rewardClaimed = false;
-                this.claimedBy = null;
-                this.currentRiddleIndex = 0;
-                this.timeLeft = 30;
-                
-                // Réinitialiser les joueurs
-                this.players.forEach(player => {
-                    player.hasAnswered = false;
-                    player.isBlocked = false;
-                });
-                
-                document.getElementById('rewardDisplay').innerHTML = '🎯 En attente d\'une réponse...';
-                document.getElementById('rewardDisplay').classList.remove('reward-active');
-                document.getElementById('rewardStatus').innerHTML = '🎁 Code disponible';
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('winnerMessage').classList.add('hidden');
-                document.getElementById('answerInput').value = '';
-                
-                this.updateRiddle();
-                this.updatePlayersList();
-                
-                clearInterval(this.timerInterval);
-                this.startTimer();
-            }
-
-            updateUI() {
-                this.updatePlayersList();
+                // Réinitialisation (réservée à l'admin)
+                localStorage.removeItem('quizPlayers');
+                sessionStorage.removeItem('currentPlayer');
+                location.reload();
             }
         }
 
-        // Lancer le jeu au chargement
+        // Lancer le jeu
         document.addEventListener('DOMContentLoaded', () => {
-            new Game();
+            new QuizGame();
         });
     </script>
 </body>
