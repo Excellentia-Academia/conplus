@@ -3,474 +3,685 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excellentia Academia • Règlement d'éloquence • Bleu & Rouge</title>
+    <title>Devinettes Rouges & Bleues</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #0a0c15;
             min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 3px solid #ff3333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 3px solid #1e3c72;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .game-area {
+            padding: 30px;
+            background: #f0f4f8;
+        }
+
+        .status-bar {
+            background: #1e3c72;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .timer {
+            font-size: 1.3em;
+            font-weight: bold;
+            background: #ff3333;
+            padding: 8px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 0 #990000;
+        }
+
+        .reward-status {
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+        }
+
+        .reward-display {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.3em;
+            border: 2px solid #ff3333;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Cormorant Garamond', 'Times New Roman', serif;
-            padding: 2rem 1rem;
-            position: relative;
-            overflow-x: hidden;
+            word-break: break-all;
         }
 
-        /* ========== FOND DE LUXE ========== */
-        .velvet-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: radial-gradient(circle at 20% 30%, #1e2b5a 0%, #0b0e1a 80%);
+        .riddle-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #ff3333;
+            border-right: 5px solid #1e3c72;
         }
 
-        .draperie {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                repeating-linear-gradient(45deg, 
-                    rgba(140, 25, 40, 0.15) 0px, 
-                    rgba(140, 25, 40, 0.15) 2px,
-                    transparent 2px, 
-                    transparent 8px),
-                repeating-linear-gradient(135deg, 
-                    rgba(20, 40, 120, 0.2) 0px, 
-                    rgba(20, 40, 120, 0.2) 3px,
-                    transparent 3px, 
-                    transparent 12px);
-            z-index: -1;
+        .riddle-text {
+            font-size: 1.3em;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .riddle-image {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #ff3333;
+        }
+
+        .riddle-image svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .answer-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .answer-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #1e3c72;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #ff3333;
+            box-shadow: 0 0 0 3px rgba(255,51,51,0.2);
+        }
+
+        .submit-btn {
+            padding: 15px 30px;
+            background: #ff3333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 4px solid #990000;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #ff5555;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background: #cccccc;
+            border-bottom: 4px solid #999999;
+            cursor: not-allowed;
             opacity: 0.6;
         }
 
-        .reflet {
-            position: fixed;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background: radial-gradient(ellipse at 70% 30%, rgba(200, 50, 60, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(30, 60, 180, 0.2) 0%, transparent 55%);
-            filter: blur(50px);
-            z-index: -1;
-            animation: lumiere 18s infinite alternate;
+        .players-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        @keyframes lumiere {
-            0% { opacity: 0.5; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.1); }
+        .players-list h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #ff3333;
+            padding-bottom: 5px;
         }
 
-        /* ========== CADRE PRINCIPAL ========== */
-        .ecrin {
-            max-width: 1200px;
-            width: 100%;
-            background: rgba(8, 10, 22, 0.7);
-            backdrop-filter: blur(20px) saturate(200%);
-            -webkit-backdrop-filter: blur(20px) saturate(200%);
-            border-radius: 60px 20px 60px 20px;
-            border: 2px solid rgba(190, 40, 50, 0.6);
-            box-shadow: 
-                0 40px 90px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(180, 150, 30, 0.3) inset,
-                0 0 40px rgba(30, 60, 200, 0.4);
-            padding: 3rem 2.5rem;
-            position: relative;
-            transition: all 0.5s;
-        }
-
-        .ecrin::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            border-radius: 62px 22px 62px 22px;
-            background: linear-gradient(135deg, #c0293b, #1e3a8a, #b8860b);
-            opacity: 0.4;
-            z-index: -1;
-            filter: blur(8px);
-        }
-
-        /* ========== EN-TÊTE COURONNÉ ========== */
-        .couronnement {
+        .player-item {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-            border-bottom: 3px solid;
-            border-image: linear-gradient(to right, #b22234, #1e3a8a, #b22234) 1;
-            padding-bottom: 1.8rem;
-        }
-
-        .titre-royal {
-            font-family: 'Cinzel', 'Playfair Display', serif;
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1;
-            background: linear-gradient(to right, #f0484a, #f8c3af, #4a7bff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px #b03a4e, 0 0 40px #1e3a8a;
-            letter-spacing: 6px;
-            animation: scintillement 4s infinite alternate;
-        }
-
-        @keyframes scintillement {
-            0% { text-shadow: 0 0 20px #b22234, 0 0 40px #1e3a8a; }
-            100% { text-shadow: 0 0 35px #ff4d5e, 0 0 70px #3a5fd0; }
-        }
-
-        .academia-ecusson {
-            background: linear-gradient(145deg, #931b2b, #102a63);
-            padding: 0.8rem 2rem;
-            border-radius: 50px 10px 50px 10px;
-            border: 3px solid #c9a14b;
-            color: #f5e6c6;
-            font-size: 1.5rem;
-            font-weight: 600;
-            font-family: 'Cinzel', serif;
-            box-shadow: 0 0 30px #9e2a37;
-            transform: rotate(1deg);
-            backdrop-filter: blur(5px);
-            text-transform: uppercase;
-        }
-
-        .sous-titre-noble {
-            font-size: 1.7rem;
-            color: #dbc7a2;
-            margin: 0 0 2.5rem 0;
-            font-style: italic;
-            padding-left: 2rem;
-            border-left: 8px double #b32f3f;
-            background: linear-gradient(90deg, rgba(170, 40, 60, 0.2), transparent);
-            font-weight: 400;
-            text-shadow: 2px 2px 3px black;
-        }
-
-        /* ========== GRILLE DES ARTICLES ========== */
-        .articles-solemnes {
-            display: flex;
-            flex-direction: column;
-            gap: 2.2rem;
-        }
-
-        .feuillet {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 40px 12px 40px 12px;
-            padding: 2rem 2.5rem;
-            border: 1px solid rgba(200, 50, 60, 0.7);
-            box-shadow: 12px 16px 30px -10px black, 0 0 0 1px rgba(200, 180, 50, 0.3) inset;
-            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), border-color 0.3s, box-shadow 0.4s;
-            position: relative;
-            overflow: hidden;
-            animation: lever-rideau 1s backwards;
-        }
-
-        .feuillet:nth-child(1) { animation-delay: 0.1s; }
-        .feuillet:nth-child(2) { animation-delay: 0.2s; }
-        .feuillet:nth-child(3) { animation-delay: 0.3s; }
-        .feuillet:nth-child(4) { animation-delay: 0.4s; }
-        .feuillet:nth-child(5) { animation-delay: 0.5s; }
-        .feuillet:nth-child(6) { animation-delay: 0.6s; }
-        .feuillet:nth-child(7) { animation-delay: 0.7s; }
-
-        @keyframes lever-rideau {
-            0% { opacity: 0; transform: translateY(60px) rotateX(5deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-
-        .feuillet:hover {
-            transform: scale(1.01) translateY(-6px);
-            border-color: #dd4b55;
-            box-shadow: 0 30px 45px -15px #020614, 0 0 0 2px #c92f3f inset, 0 0 25px #273e92;
-        }
-
-        .feuillet::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 80%;
-            height: 200%;
-            background: linear-gradient(90deg, transparent, rgba(210, 50, 60, 0.2), rgba(60, 80, 200, 0.2), transparent);
-            transform: rotate(25deg);
-            transition: left 0.8s;
-        }
-
-        .feuillet:hover::after {
-            left: 130%;
-        }
-
-        .numero-article {
-            font-family: 'Cinzel', serif;
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(145deg, #b42834, #253e8b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            float: left;
-            margin-right: 1.5rem;
-            line-height: 1;
-            text-shadow: 0 0 15px #c0394b;
-        }
-
-        .titre-article {
-            font-family: 'Cinzel', serif;
-            font-size: 2.2rem;
-            font-weight: 600;
-            color: #efdbbc;
-            border-bottom: 2px groove #a02b37;
-            padding-bottom: 0.7rem;
-            margin-bottom: 1rem;
-            letter-spacing: 1.5px;
-        }
-
-        .corps-article {
-            color: #f0e1ca;
-            font-size: 1.25rem;
-            line-height: 1.7;
-            font-weight: 400;
-            padding-left: 1rem;
-            border-left: 4px solid #8b1e2b;
-        }
-
-        .corps-article strong {
-            color: #ff9570;
-            font-weight: 700;
-        }
-
-        .badge-vote {
-            display: inline-block;
-            background: #1d2b57;
-            color: #ffc49b;
-            border-radius: 30px 6px 30px 6px;
-            padding: 0.3rem 1.2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: 2px solid #b94e57;
-            box-shadow: 0 0 15px #c0394b;
-            margin: 0.5rem 0.25rem;
-        }
-
-        .exception-finale {
-            background: rgba(105, 20, 30, 0.5);
-            border-radius: 40px 8px 40px 8px;
-            padding: 1.2rem 2rem;
-            border: 3px solid #c93746;
-            box-shadow: 0 0 35px #263e91;
-        }
-
-        /* ========== RAPPEL VOTE ========== */
-        .rappel-vote {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2rem;
-            margin: 3rem 0 2rem;
-        }
-
-        .rappel-tour {
-            background: linear-gradient(145deg, #0c1633, #1d1220);
-            border-radius: 100px 20px 100px 20px;
-            padding: 0.9rem 2.5rem;
-            border: 1px solid #b3643f;
-            color: #f1dbb2;
-            font-size: 1.3rem;
-            font-weight: 500;
-            box-shadow: 0 0 25px #9e2b38;
-        }
-
-        .rappel-tour span {
-            font-weight: 700;
-            background: linear-gradient(135deg, #e04b5a, #4b7bec);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* ========== PIED DE PAGE ========== */
-        .basale {
-            margin-top: 3rem;
-            border-top: 3px double #b52c3a;
-            padding: 2rem 0.5rem 0.5rem;
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            color: #bbaa88;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #1e3c72;
         }
 
-        .griffe {
-            font-family: 'Cinzel', cursive;
-            font-size: 2.3rem;
-            background: linear-gradient(135deg, #c53a44, #2e49a3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            border-right: 3px solid #b8474f;
-            padding-right: 2rem;
-        }
-
-        .bouton-sacre {
-            background: transparent;
-            border: 3px solid #b72f3b;
-            color: #f2dba5;
-            font-size: 1.4rem;
-            padding: 0.8rem 2.8rem;
-            border-radius: 60px 10px 60px 10px;
-            font-family: 'Cinzel', serif;
+        .player-name {
             font-weight: 600;
-            backdrop-filter: blur(6px);
-            cursor: pointer;
-            transition: 0.4s;
-            box-shadow: 0 0 20px #1b2f6a;
-            letter-spacing: 2px;
+            color: #1e3c72;
         }
 
-        .bouton-sacre:hover {
-            background: #921f2b;
-            color: #ffefcf;
-            border-color: #e4b95b;
-            box-shadow: 0 0 45px #c02b38, 0 0 90px #223e9e;
-            transform: scale(1.02);
+        .player-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
 
-        .devise {
+        .status-waiting {
+            background: #ffd700;
+            color: #856404;
+        }
+
+        .status-answered {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-blocked {
+            background: #dc3545;
+            color: white;
+        }
+
+        .winner-message {
             text-align: center;
-            margin-top: 2rem;
-            font-size: 1.5rem;
-            color: #b5976b;
-            font-style: italic;
-            text-shadow: 2px 2px 5px black;
-            border-top: 1px dashed #b8474f;
-            padding-top: 1.5rem;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1e3c72;
+            border: 3px solid #ff3333;
         }
 
-        @media (max-width: 750px) {
-            .titre-royal { font-size: 2.8rem; }
-            .titre-article { font-size: 1.8rem; }
-            .ecrin { padding: 1.8rem; }
+        .reset-btn {
+            width: 100%;
+            padding: 15px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            border-bottom: 4px solid #0a1a2f;
+        }
+
+        .reset-btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .reward-active {
+            animation: pulse 1s infinite;
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8em; }
+            .answer-section { flex-direction: column; }
+            .status-bar { flex-direction: column; text-align: center; }
         }
     </style>
-    <!-- Google Fonts élégantes -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="velvet-bg"></div>
-    <div class="draperie"></div>
-    <div class="reflet"></div>
-
-    <div class="ecrin">
-        <div class="couronnement">
-            <div class="titre-royal">EN SCÈNE</div>
-            <div class="academia-ecusson">EXCELLENTIA ACADEMIA</div>
+    <div class="game-container">
+        <div class="header">
+            <h1>🔴 DEVINETTES ROUGE & BLEU ⚫</h1>
+            <p>Une seule réponse possible - Un seul code à gagner !</p>
         </div>
 
-        <div class="sous-titre-noble">
-            ✦ Règlement du Concours d’Éloquence ✦ <br>Édition MMXXV — Bleu & Rouge
-        </div>
+        <div class="game-area">
+            <div class="status-bar">
+                <div class="timer" id="timer">⏱️ 30s</div>
+                <div class="reward-status" id="rewardStatus">🎁 Code disponible</div>
+            </div>
 
-        <!-- ARTICLES SOMPTUEUX -->
-        <div class="articles-solemnes">
-            <!-- 1 -->
-            <div class="feuillet">
-                <span class="numero-article">I</span>
-                <div class="titre-article">Conditions de participation</div>
-                <div class="corps-article">
-                    <strong>✦ 18–30 ans</strong> • toute nationalité • <strong>inscription avant le 30 mai 2025</strong> sur <span style="color:#dba46a;">excellentia.fr</span>.<br>
-                    Discours en français, original ou citations explicites. <span class="badge-vote">plagiat = exclusion</span>
-                </div>
+            <div class="reward-display" id="rewardDisplay">
+                🎯 En attente d'une réponse...
             </div>
-            <!-- 2 -->
-            <div class="feuillet">
-                <span class="numero-article">II</span>
-                <div class="titre-article">Trois tours de feu</div>
-                <div class="corps-article">
-                    <span style="color:#dd6868;">◈ 1ʳ tour :</span> 3–5 min (sujet imposé) → 12 finalistes.<br>
-                    <span style="color:#6886dd;">◈ 2ᵉ tour :</span> 5–7 min (thème libre) → 6 finalistes.<br>
-                    <span style="color:#d4a55e;">◈ FINALE :</span> 7–10 min (libre + question) · Grand Amphithéâtre.
-                </div>
-            </div>
-            <!-- 3 -->
-            <div class="feuillet">
-                <span class="numero-article">III</span>
-                <div class="titre-article">Notation 1ʳᵉ & 2ᵉ phases</div>
-                <div class="corps-article">
-                    <span style="color:#ff807b;">❤️‍🔥 Jury 70%</span> + <span style="color:#7f9cff;">💙 Public 30%</span><br>
-                    <strong>Jury pro :</strong> comédiens, avocats, maîtres de conférence. Critères : fond, forme, éloquence, timing.<br>
-                    <strong>Public :</strong> vote via QR code (10 min) → points proportionnels. <span class="badge-vote">total 100 pts</span>
-                </div>
-            </div>
-            <!-- 4 (exception finale) -->
-            <div class="feuillet exception-finale">
-                <span class="numero-article">IV</span>
-                <div class="titre-article">🔴 FINALE — JURY SOUVERAIN</div>
-                <div class="corps-article">
-                    <strong>Le public reste consultant (Prix du Public)</strong> mais le classement final est déterminé <em>uniquement par le jury (100%)</em>. Délibération secrète, proclamation solennelle.
-                </div>
-            </div>
-            <!-- 5 -->
-            <div class="feuillet">
-                <span class="numero-article">V</span>
-                <div class="titre-article">Récompenses</div>
-                <div class="corps-article">
-                    👑 <strong>Vainqueur :</strong> trophée Orfèvre, 4000€, stage à l’Académie.<br>
-                    🎭 <strong>Prix du Public :</strong> 1200€ & abonnement à l’Odéon.<br>
-                    🏅 Finalistes : médaille Excellentia & lots d’honneur.
-                </div>
-            </div>
-            <!-- 6 -->
-            <div class="feuillet">
-                <span class="numero-article">VI</span>
-                <div class="titre-article">Code d’éloquence</div>
-                <div class="corps-article">
-                    Ponctualité, tenue correcte exigée, respect des adversaires. Cession des droits à l’image pour la promotion du concours. <span class="badge-vote">esprit sportif</span>
-                </div>
-            </div>
-            <!-- 7 -->
-            <div class="feuillet">
-                <span class="numero-article">VII</span>
-                <div class="titre-article">Dispositions générales</div>
-                <div class="corps-article">
-                    Force majeure : modification possible. Droit à l’image accordé par la participation. Règlement complet sur <strong>excellentia.ac/reglement</strong>.
-                </div>
-            </div>
-        </div>
 
-        <!-- RÉSUMÉ VOTE COLORÉ -->
-        <div class="rappel-vote">
-            <div class="rappel-tour"><span>1er & 2e tour</span>  ➔  Jury 70%  /  Public 30%</div>
-            <div class="rappel-tour"><span>FINALE</span>  ➔  Jury 100%  (Prix du Public séparé)</div>
-        </div>
+            <div class="riddle-box">
+                <div class="riddle-text" id="riddleText">
+                    Chargement de la devinette...
+                </div>
+                
+                <div class="riddle-image" id="riddleImage">
+                    <!-- Image générée dynamiquement -->
+                </div>
 
-        <!-- BAS DE PAGE -->
-        <div class="basale">
-            <div class="griffe">Excellentia Academia</div>
-            <div style="color:#b5876e;">Paris · <span style="color:#c04851;"> Rouge & Bleu </span>· 2025</div>
-            <button class="bouton-sacre" onclick="alert('🎤 Que le verbe triomphe !')">Sceller</button>
-        </div>
+                <div class="answer-section">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Votre réponse..." autocomplete="off">
+                    <button class="submit-btn" id="submitBtn">Valider</button>
+                </div>
+            </div>
 
-        <div class="devise">
-            « La parole est un rubis serti dans le saphir de la raison. »
+            <div class="players-list">
+                <h3>👥 Candidats en jeu</h3>
+                <div id="playersContainer">
+                    <!-- Liste des joueurs générée dynamiquement -->
+                </div>
+            </div>
+
+            <div id="winnerMessage" class="winner-message hidden"></div>
+            
+            <button class="reset-btn" id="resetBtn">🔄 Nouvelle partie</button>
         </div>
     </div>
+
+    <script>
+        class Game {
+            constructor() {
+                this.currentReward = this.generateReward();
+                this.rewardClaimed = false;
+                this.claimedBy = null;
+                this.players = new Map();
+                this.currentRiddleIndex = 0;
+                this.timerInterval = null;
+                this.timeLeft = 30;
+                
+                // Devinettes impossibles pour l'IA
+                this.riddles = [
+                    {
+                        text: "J'ai dessiné une forme abstraite. À ton avis, ça ressemble à quoi ?",
+                        image: this.createShape1,
+                        answers: ["nuage", "montagne", "vague", "fleur", "arbre", "soleil", "lune", "étoile", "cœur", "poisson"],
+                        code: "R2D2-C3PO"
+                    },
+                    {
+                        text: "Regarde ce gribouillage. Quel objet du quotidien cela te fait-il penser ?",
+                        image: this.createShape2,
+                        answers: ["tasse", "chaise", "table", "lampe", "livre", "stylo", "téléphone", "ordinateur", "bouteille", "fourchette"],
+                        code: "SKYWALKER"
+                    },
+                    {
+                        text: "Cette forme bizarre... ça te rappelle quel animal ?",
+                        image: this.createShape3,
+                        answers: ["chat", "chien", "lapin", "souris", "oiseau", "poisson", "cheval", "vache", "lion", "éléphant"],
+                        code: "YODA2024"
+                    },
+                    {
+                        text: "Et ça, c'est quoi selon toi ? (pas de mauvaise réponse !)",
+                        image: this.createShape4,
+                        answers: ["maison", "voiture", "bateau", "avion", "train", "vélo", "moto", "fusée", "château", "pont"],
+                        code: "BB8-FORCE"
+                    },
+                    {
+                        text: "Dernière forme ! Ton imagination est la clé...",
+                        image: this.createShape5,
+                        answers: ["pizza", "gateau", "fruit", "legume", "pain", "fromage", "chocolat", "glace", "bonbon", "sandwich"],
+                        code: "JEDI-FIN"
+                    }
+                ];
+
+                this.init();
+            }
+
+            generateReward() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let reward = '';
+                for (let i = 0; i < 12; i++) {
+                    if (i > 0 && i % 4 === 0) reward += '-';
+                    reward += chars[Math.floor(Math.random() * chars.length)];
+                }
+                return reward;
+            }
+
+            createShape1() {
+                const colors = ['#ff3333', '#1e3c72', '#ff9999', '#4a6fa5'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                return `
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <circle cx="70" cy="60" r="40" fill="${color}" opacity="0.7"/>
+                        <circle cx="130" cy="80" r="35" fill="${colors[1]}" opacity="0.7"/>
+                        <circle cx="100" cy="40" r="25" fill="${colors[2]}" opacity="0.7"/>
+                        <path d="M20 120 Q100 140 180 110" stroke="${colors[0]}" stroke-width="4" fill="none"/>
+                        <circle cx="50" cy="30" r="8" fill="white"/>
+                        <circle cx="150" cy="50" r="8" fill="white"/>
+                    </svg>
+                `;
+            }
+
+            createShape2() {
+                return `
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <rect x="50" y="30" width="100" height="80" fill="#1e3c72" rx="10"/>
+                        <circle cx="100" cy="70" r="25" fill="#ff3333"/>
+                        <line x1="30" y1="110" x2="170" y2="90" stroke="#ff3333" stroke-width="4"/>
+                        <rect x="80" y="10" width="40" height="20" fill="#ff9999" rx="5"/>
+                        <circle cx="60" cy="100" r="10" fill="white"/>
+                        <circle cx="140" cy="100" r="10" fill="white"/>
+                    </svg>
+                `;
+            }
+
+            createShape3() {
+                return `
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <ellipse cx="100" cy="80" rx="60" ry="40" fill="#1e3c72"/>
+                        <circle cx="70" cy="60" r="15" fill="#ff3333"/>
+                        <circle cx="130" cy="60" r="15" fill="#ff3333"/>
+                        <ellipse cx="100" cy="100" rx="30" ry="15" fill="white"/>
+                        <path d="M40 20 L70 40 L130 40 L160 20" stroke="#ff3333" stroke-width="4" fill="none"/>
+                        <circle cx="85" cy="55" r="5" fill="white"/>
+                        <circle cx="115" cy="55" r="5" fill="white"/>
+                    </svg>
+                `;
+            }
+
+            createShape4() {
+                return `
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <polygon points="100,20 180,60 180,120 20,120 20,60" fill="#1e3c72" opacity="0.8"/>
+                        <rect x="70" y="70" width="60" height="50" fill="#ff3333"/>
+                        <circle cx="100" cy="95" r="15" fill="white" opacity="0.5"/>
+                        <line x1="100" y1="20" x2="100" y2="50" stroke="#ff3333" stroke-width="4"/>
+                        <circle cx="140" cy="100" r="8" fill="white"/>
+                        <circle cx="60" cy="100" r="8" fill="white"/>
+                    </svg>
+                `;
+            }
+
+            createShape5() {
+                return `
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <circle cx="100" cy="75" r="50" fill="#ff3333" opacity="0.7"/>
+                        <circle cx="80" cy="60" r="10" fill="#1e3c72"/>
+                        <circle cx="120" cy="60" r="10" fill="#1e3c72"/>
+                        <path d="M70 95 Q100 115 130 95" stroke="#1e3c72" stroke-width="5" fill="none"/>
+                        <circle cx="140" cy="40" r="15" fill="#ff9999"/>
+                        <circle cx="50" cy="110" r="20" fill="#4a6fa5" opacity="0.6"/>
+                        <circle cx="160" cy="100" r="12" fill="white" opacity="0.8"/>
+                    </svg>
+                `;
+            }
+
+            init() {
+                this.updateRiddle();
+                this.startTimer();
+                this.updateUI();
+                
+                // Simuler des joueurs (à remplacer par votre système)
+                this.addPlayer("Joueur 1");
+                this.addPlayer("Joueur 2");
+                this.addPlayer("Joueur 3");
+                
+                document.getElementById('submitBtn').addEventListener('click', () => this.checkAnswer());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+                document.getElementById('answerInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.checkAnswer();
+                });
+            }
+
+            addPlayer(name) {
+                this.players.set(name, {
+                    name: name,
+                    hasAnswered: false,
+                    isBlocked: false
+                });
+                this.updatePlayersList();
+            }
+
+            updatePlayersList() {
+                const container = document.getElementById('playersContainer');
+                container.innerHTML = '';
+                
+                this.players.forEach((player, name) => {
+                    const playerDiv = document.createElement('div');
+                    playerDiv.className = 'player-item';
+                    
+                    let statusClass = 'status-waiting';
+                    let statusText = 'En attente';
+                    
+                    if (player.isBlocked) {
+                        statusClass = 'status-blocked';
+                        statusText = 'Bloqué';
+                    } else if (player.hasAnswered) {
+                        statusClass = 'status-answered';
+                        statusText = 'A répondu';
+                    }
+                    
+                    playerDiv.innerHTML = `
+                        <span class="player-name">${name}</span>
+                        <span class="player-status ${statusClass}">${statusText}</span>
+                    `;
+                    
+                    container.appendChild(playerDiv);
+                });
+            }
+
+            blockPlayer(playerName) {
+                const player = this.players.get(playerName);
+                if (player) {
+                    player.isBlocked = true;
+                    this.updatePlayersList();
+                }
+            }
+
+            updateRiddle() {
+                const riddle = this.riddles[this.currentRiddleIndex];
+                document.getElementById('riddleText').textContent = riddle.text;
+                document.getElementById('riddleImage').innerHTML = riddle.image();
+            }
+
+            checkAnswer() {
+                if (this.rewardClaimed) {
+                    alert('❌ Le code a déjà été gagné !');
+                    return;
+                }
+
+                const answer = document.getElementById('answerInput').value.trim().toLowerCase();
+                if (!answer) return;
+
+                // Simuler un joueur (dans un vrai jeu, identifiez le joueur)
+                const currentPlayer = "Joueur 1";
+                
+                // Vérifier si le joueur est bloqué
+                const player = this.players.get(currentPlayer);
+                if (player && player.isBlocked) {
+                    alert('⛔ Vous avez déjà joué et n\'avez pas trouvé !');
+                    return;
+                }
+
+                const riddle = this.riddles[this.currentRiddleIndex];
+                const isCorrect = riddle.answers.some(a => a.toLowerCase() === answer);
+
+                if (isCorrect) {
+                    // Récompense gagnée !
+                    this.rewardClaimed = true;
+                    this.claimedBy = currentPlayer;
+                    
+                    // Marquer le joueur comme ayant répondu
+                    if (player) {
+                        player.hasAnswered = true;
+                    }
+                    
+                    // Bloquer tous les autres joueurs
+                    this.players.forEach((p, name) => {
+                        if (name !== currentPlayer) {
+                            p.isBlocked = true;
+                        }
+                    });
+                    
+                    // Afficher la récompense
+                    const reward = this.riddles[this.currentRiddleIndex].code;
+                    document.getElementById('rewardDisplay').innerHTML = `
+                        🏆 CODE GAGNÉ ! 🏆<br>
+                        <span style="font-size: 1.5em; letter-spacing: 2px;">${reward}</span><br>
+                        <small>Gagné par ${currentPlayer}</small>
+                    `;
+                    
+                    document.getElementById('rewardDisplay').classList.add('reward-active');
+                    document.getElementById('rewardStatus').innerHTML = '🎁 Code gagné !';
+                    document.getElementById('submitBtn').disabled = true;
+                    
+                    // Afficher message de victoire
+                    const winnerMsg = document.getElementById('winnerMessage');
+                    winnerMsg.classList.remove('hidden');
+                    winnerMsg.innerHTML = `👑 Félicitations ${currentPlayer} ! Tu as gagné le code !`;
+                    
+                    clearInterval(this.timerInterval);
+                    
+                } else {
+                    // Mauvaise réponse - bloquer le joueur
+                    if (player) {
+                        player.isBlocked = true;
+                        this.updatePlayersList();
+                    }
+                    
+                    alert(`❌ Mauvaise réponse ! ${currentPlayer} est maintenant bloqué pour cette devinette.`);
+                    
+                    // Vérifier si tous les joueurs sont bloqués
+                    const allBlocked = Array.from(this.players.values()).every(p => p.isBlocked);
+                    if (allBlocked && !this.rewardClaimed) {
+                        setTimeout(() => {
+                            if (!this.rewardClaimed) {
+                                this.nextRiddle();
+                            }
+                        }, 1500);
+                    }
+                }
+                
+                document.getElementById('answerInput').value = '';
+            }
+
+            nextRiddle() {
+                if (this.rewardClaimed) return;
+                
+                this.currentRiddleIndex = (this.currentRiddleIndex + 1) % this.riddles.length;
+                
+                // Réinitialiser les statuts des joueurs pour la nouvelle devinette
+                this.players.forEach(player => {
+                    player.hasAnswered = false;
+                    player.isBlocked = false;
+                });
+                
+                this.updateRiddle();
+                this.updatePlayersList();
+                
+                // Nouveau timer
+                clearInterval(this.timerInterval);
+                this.timeLeft = 30;
+                this.startTimer();
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    if (this.rewardClaimed) {
+                        clearInterval(this.timerInterval);
+                        return;
+                    }
+                    
+                    this.timeLeft--;
+                    document.getElementById('timer').innerHTML = `⏱️ ${this.timeLeft}s`;
+                    
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        if (!this.rewardClaimed) {
+                            alert("⏰ Temps écoulé ! Nouvelle devinette...");
+                            this.nextRiddle();
+                        }
+                    }
+                }, 1000);
+            }
+
+            resetGame() {
+                this.currentReward = this.generateReward();
+                this.rewardClaimed = false;
+                this.claimedBy = null;
+                this.currentRiddleIndex = 0;
+                this.timeLeft = 30;
+                
+                // Réinitialiser les joueurs
+                this.players.forEach(player => {
+                    player.hasAnswered = false;
+                    player.isBlocked = false;
+                });
+                
+                document.getElementById('rewardDisplay').innerHTML = '🎯 En attente d\'une réponse...';
+                document.getElementById('rewardDisplay').classList.remove('reward-active');
+                document.getElementById('rewardStatus').innerHTML = '🎁 Code disponible';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('winnerMessage').classList.add('hidden');
+                document.getElementById('answerInput').value = '';
+                
+                this.updateRiddle();
+                this.updatePlayersList();
+                
+                clearInterval(this.timerInterval);
+                this.startTimer();
+            }
+
+            updateUI() {
+                this.updatePlayersList();
+            }
+        }
+
+        // Lancer le jeu au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            new Game();
+        });
+    </script>
 </body>
 </html>
