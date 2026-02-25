@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formation Art Oratoire - Excellentia Academia</title>
     <style>
-        /* (style inchangé, identique à l'original) */
         * {
             margin: 0;
             padding: 0;
@@ -1184,7 +1183,7 @@
         
         /* Styles pour les animations et éléments cachés */
         .hidden {
-            display: none;
+            display: none !important;
         }
         
         .visible {
@@ -1223,6 +1222,22 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(to bottom, #FFD700, #D4AF37);
         }
+        
+        /* Style pour la liste des participants dans l'admin */
+        .participant-item {
+            padding: 18px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #D4AF37;
+            backdrop-filter: blur(5px);
+        }
+        .participant-item strong {
+            color: white;
+        }
+        .participant-item small {
+            color: #BDC3C7;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1258,8 +1273,7 @@
             
             <div class="date-box">
                 <div class="date-title">FORMATION INTENSIVE</div>
-                <!-- Modification effectuée ici : la fin reste jusqu'au 04 Mars -->
-                <div class="date-range">02 au 04 Mars 2026</div>
+                <div class="date-range">02 et 04 Mars 2026</div>
                 <div class="date-duration">
                     <i class="far fa-calendar-alt"></i>
                     <span>2 jours • Formation complète</span>
@@ -1728,7 +1742,7 @@
                 <h4 style="color: #D4AF37; margin-bottom: 20px; font-size: 1.2rem; font-weight: 700;">Dernières inscriptions :</h4>
                 <div style="max-height: 350px; overflow-y: auto; margin-bottom: 30px; border: 2px solid rgba(212, 175, 55, 0.3); border-radius: 15px; padding: 20px; background: rgba(40, 40, 60, 0.6); backdrop-filter: blur(10px);">
                     <div id="participantsList">
-                        <!-- Liste des participants -->
+                        <!-- La liste sera insérée ici dynamiquement -->
                     </div>
                 </div>
                 
@@ -1763,7 +1777,7 @@
         let participantsData = [];
         const ADMIN_PASSWORD = "eloquenceenscene2k26@";
         
-        // Dates de la formation mises à jour : du 02/03/2026 au 04/03/2026
+        // Dates de la formation
         const formationStart = new Date('2026-03-02T08:00:00').getTime();
         const formationEnd = new Date('2026-03-04T18:00:00').getTime();
         
@@ -1788,7 +1802,7 @@
         const nomPersonnePaiement = document.getElementById('nomPersonnePaiement');
 
         // Fonction WhatsApp
-        function joinWhatsAppGroup() {
+        window.joinWhatsAppGroup = function() {
             window.open("https://chat.whatsapp.com/EEbdxGaG6PO755NL41CCTQ", "_blank");
         }
 
@@ -1895,7 +1909,7 @@
                 mode_paiement: modePaiementValue,
                 nom_personne_paiement: modePaiementValue === 'presentiel' ? nomPersonnePaiement.value.trim() : '',
                 motivation: inscriptionForm.motivation.value.trim(),
-                formation: "Art Oratoire - 02-04 Mars 2026",
+                formation: "Art Oratoire - 17-18 Février 2026",
                 date_inscription: new Date().toISOString(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -1982,19 +1996,14 @@
             
             participantsData.slice(0, 10).forEach(p => {
                 const div = document.createElement('div');
-                div.style.padding = '18px';
-                div.style.marginBottom = '12px';
-                div.style.background = 'rgba(255, 255, 255, 0.1)';
-                div.style.borderRadius = '12px';
-                div.style.borderLeft = '4px solid #D4AF37';
-                div.style.backdropFilter = 'blur(5px)';
+                div.className = 'participant-item';
                 
-                const date = new Date(p.date_inscription).toLocaleDateString('fr-FR', {
+                const date = p.date_inscription ? new Date(p.date_inscription).toLocaleDateString('fr-FR', {
                     day: '2-digit',
                     month: 'short',
                     hour: '2-digit',
                     minute: '2-digit'
-                });
+                }) : 'Date inconnue';
                 
                 // Ajouter le mode de paiement dans l'affichage
                 const modePaiementText = p.mode_paiement === 'en_ligne' 
@@ -2002,10 +2011,10 @@
                     : `Paiement en présentiel (${p.nom_personne_paiement || 'Non spécifié'})`;
                 
                 div.innerHTML = `
-                    <div style="font-weight: 800; color: #FFFFFF; margin-bottom: 8px; font-size: 1.1rem;">${p.nom}</div>
+                    <div style="font-weight: 800; color: #FFFFFF; margin-bottom: 8px; font-size: 1.1rem;">${p.nom || 'Nom inconnu'}</div>
                     <div style="font-size: 0.9rem; color: #BDC3C7;">
-                        ${p.profession || ''} • ${p.faculte || ''} • ${p.experience || ''}<br>
-                        ${p.telephone || ''} • ${modePaiementText}<br>
+                        ${p.profession || 'Profession inconnue'} • ${p.faculte || 'Faculté inconnue'} • ${p.experience || 'Expérience inconnue'}<br>
+                        ${p.telephone || 'Téléphone inconnu'} • ${modePaiementText}<br>
                         ${date}
                     </div>
                 `;
@@ -2024,7 +2033,7 @@
             let csv = "Nom,Email,Téléphone,WhatsApp,Profession,Faculté,Concours,Expérience,Mode Paiement,Personne Paiement,Motivation,Date\n";
             
             participantsData.forEach(p => {
-                csv += `"${p.nom || ''}","${p.email || ''}","${p.telephone || ''}","${p.whatsapp || ''}","${p.profession || ''}","${p.faculte || ''}","${p.concours_eloquence || ''}","${p.experience || ''}","${p.mode_paiement || ''}","${p.nom_personne_paiement || ''}","${p.motivation?.replace(/"/g, '""') || ''}","${new Date(p.date_inscription).toLocaleDateString('fr-FR')}"\n`;
+                csv += `"${p.nom || ''}","${p.email || ''}","${p.telephone || ''}","${p.whatsapp || ''}","${p.profession || ''}","${p.faculte || ''}","${p.concours_eloquence || ''}","${p.experience || ''}","${p.mode_paiement || ''}","${p.nom_personne_paiement || ''}","${(p.motivation || '').replace(/"/g, '""')}","${p.date_inscription ? new Date(p.date_inscription).toLocaleDateString('fr-FR') : ''}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -2082,6 +2091,8 @@
                     participantsData.push({ id: doc.id, ...doc.data() });
                 });
                 updateAdminStats();
+            }, (error) => {
+                console.error("Erreur lors de l'écoute en temps réel:", error);
             });
 
         // Animation d'entrée
