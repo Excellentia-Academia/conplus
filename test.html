@@ -140,9 +140,9 @@
         }
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #1e293b;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }
         .progress-fill {
@@ -150,12 +150,11 @@
             background: linear-gradient(90deg, #e11d48, #f97316);
             width: 0%;
             transition: width 0.3s;
-            border-radius: 4px;
         }
         .progress-text {
             text-align: center;
-            font-size: 0.8rem;
-            margin-top: 8px;
+            font-size: 0.7rem;
+            margin-top: 6px;
             color: #94a3b8;
         }
         .video-preview-small { margin-top: 15px; display: none; }
@@ -270,17 +269,15 @@
         .alert { padding: 12px 18px; border-radius: 28px; margin: 15px 0; display: none; }
         .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
         .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
-        .alert.info { background: #3b82f620; border: 1px solid #3b82f6; color: #3b82f6; }
         .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; float: right; }
         .btn-download { background: #10b981; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .btn-download:hover { background: #059669; transform: translateY(-2px); }
         .search-bar { margin: 20px 30px; }
         .search-bar input { width: 100%; padding: 15px 20px; border-radius: 50px; background: #1e293b; border: 1px solid #e11d48; color: white; font-size: 1rem; }
-        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px; }
-        .status-connected { background: #10b981; color: white; }
-        .status-error { background: #ef4444; color: white; }
-        .status-testing { background: #f59e0b; color: white; }
         .size-info { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; text-align: center; }
+        
+        /* Caché pour les candidats - invisible */
+        .admin-only { display: none !important; }
     </style>
 </head>
 <body>
@@ -295,11 +292,6 @@
             <h1 class="hero-title">Éloquence en Scène</h1>
             <p class="hero-subtitle">Révélez votre talent oratoire - Inscrivez-vous dès maintenant</p>
         </div>
-    </div>
-
-    <!-- STATUS FIREBASE -->
-    <div id="firebaseStatus" style="margin-bottom: 20px; text-align: center;">
-        <span class="status-badge status-testing" id="statusBadge">🔌 TEST CONNEXION...</span>
     </div>
 
     <div class="form-card">
@@ -322,13 +314,13 @@
                 <div class="file-upload" id="videoUploadArea">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Cliquez ou déposez votre vidéo</p>
-                    <p style="font-size: 0.7rem;">MP4, MOV, WebM - Max 200 MB</p>
+                    <p style="font-size: 0.7rem;">MP4, MOV - Max 200 MB</p>
                     <input type="file" id="videoFile" accept="video/*" style="display: none;">
                     <div class="file-name" id="fileName"></div>
                 </div>
                 <div class="progress-container" id="progressContainer">
                     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                    <div class="progress-text" id="progressText">Préparation...</div>
+                    <div class="progress-text" id="progressText"></div>
                 </div>
                 <div class="video-preview-small" id="videoPreview"><video controls id="previewVideo"></video></div>
                 <div class="size-info" id="sizeInfo"></div>
@@ -342,7 +334,7 @@
     </div>
 </div>
 
-<!-- Admin Lock -->
+<!-- Admin Lock (visible uniquement pour admin) -->
 <div class="admin-lock" id="adminLockBtn"><i class="fas fa-lock"></i></div>
 
 <!-- Admin Password Modal -->
@@ -360,15 +352,15 @@
 <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> PANEL ORGANISATEUR</h1><p>Gestion complète des candidats - Vidéos stockées dans Firebase Storage</p></div>
+            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> PANEL ORGANISATEUR</h1><p>Gestion des inscriptions - Vidéos dans Firebase Storage</p></div>
             <div style="display: flex; gap: 15px;">
-                <button id="downloadCsvBtn" class="btn-download"><i class="fas fa-download"></i> Télécharger la liste (CSV)</button>
+                <button id="downloadCsvBtn" class="btn-download"><i class="fas fa-download"></i> Exporter CSV</button>
                 <button id="closeAdminPanelBtn" style="background:#e11d48; border:none; padding:12px 25px; border-radius:40px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Fermer</button>
             </div>
         </div>
-        <div class="admin-stats"><div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> Candidats</div></div>
+        <div class="admin-stats"><div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> Candidats inscrits</div></div>
     </div>
-    <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher un candidat..."></div>
+    <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université)..."></div>
     <div id="adminCandidatesContainer" class="admin-cards"><div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div></div>
 </div>
 
@@ -387,56 +379,50 @@
     let db = null;
     let storage = null;
     let firebaseReady = false;
+    let initAttempts = 0;
     
-    // TEST DE CONNEXION
-    async function testFirebaseConnection() {
-        const statusBadge = document.getElementById('statusBadge');
-        statusBadge.className = 'status-badge status-testing';
-        statusBadge.innerHTML = '🔄 TEST CONNEXION FIREBASE...';
-        
+    // Initialisation SILENCIEUSE - aucun message pour les candidats
+    async function initFirebaseSilently() {
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             storage = firebase.storage();
             
-            // Test simple
-            const testRef = db.collection('_test_connection').doc('test');
-            await testRef.set({ timestamp: firebase.firestore.FieldValue.serverTimestamp(), test: true });
-            await testRef.delete();
+            // Test rapide et silencieux
+            const testRef = db.collection('_system').doc('health');
+            await testRef.set({ ts: Date.now() }, { merge: true });
             
             firebaseReady = true;
-            statusBadge.className = 'status-badge status-connected';
-            statusBadge.innerHTML = '✅ CONNEXION RÉUSSIE ! Upload jusqu\'à 200 MB possible.';
-            showFormAlert('success', '✅ Connexion établie !');
-            
+            console.log('✅ Firebase prêt');
         } catch (error) {
-            console.error('Firebase error:', error);
+            console.error('Firebase init error:', error);
             firebaseReady = false;
-            statusBadge.className = 'status-badge status-error';
-            statusBadge.innerHTML = `❌ ERREUR: ${error.message.substring(0, 80)}`;
-            showFormAlert('error', `⚠️ Problème de connexion: ${error.message}`);
+            initAttempts++;
+            if (initAttempts < 3) {
+                setTimeout(initFirebaseSilently, 2000);
+            }
         }
     }
     
-    testFirebaseConnection();
+    initFirebaseSilently();
     
     let selectedFile = null;
     let uploadTask = null;
     const ADMIN_PASSWORD = "oncommence5";
     let allCandidats = [];
     
-    // Particules
+    // Particules décoratives
     function createParticles() {
         const container = document.getElementById('particles');
-        for(let i=0; i<60; i++) {
+        for(let i=0; i<50; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
-            const size = Math.random() * 8 + 2;
+            const size = Math.random() * 6 + 2;
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             particle.style.left = Math.random() * 100 + '%';
             particle.style.bottom = '-20px';
-            particle.style.animationDuration = Math.random() * 10 + 8 + 's';
+            particle.style.animationDuration = Math.random() * 12 + 6 + 's';
             particle.style.animationDelay = Math.random() * 15 + 's';
             container.appendChild(particle);
         }
@@ -482,7 +468,7 @@
         selectedFile = file;
         fileNameSpan.textContent = file.name;
         fileNameSpan.style.color = '#e11d48';
-        sizeInfo.innerHTML = `📹 Taille: ${formatFileSize(file.size)} - Prêt pour l'upload`;
+        sizeInfo.innerHTML = `📹 ${formatFileSize(file.size)} - Prêt`;
         
         // Preview
         const reader = new FileReader();
@@ -498,15 +484,15 @@
         alertDiv.textContent = message;
         alertDiv.className = `alert ${type}`;
         alertDiv.style.display = 'block';
-        setTimeout(() => alertDiv.style.display = 'none', 5000);
+        setTimeout(() => alertDiv.style.display = 'none', 4000);
     }
     
-    // INSCRIPTION AVEC UPLOAD DIRECT VERS STORAGE
+    // INSCRIPTION RAPIDE - avec barre de progression discrète
     document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!firebaseReady) {
-            showFormAlert('error', '❌ Base de données non connectée. Rafraîchissez la page.');
+            showFormAlert('error', 'Vérification de la connexion... Veuillez réessayer dans quelques secondes.');
             return;
         }
         
@@ -533,28 +519,27 @@
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Upload vidéo en cours...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
         
-        // Afficher la barre de progression
+        // Afficher progression discrète
         progressContainer.style.display = 'block';
         progressFill.style.width = '0%';
-        progressText.innerHTML = 'Début de l\'upload...';
+        progressText.innerHTML = 'Préparation...';
         
         try {
-            // 1. Upload vidéo vers Firebase Storage
+            // Upload vidéo vers Storage
             const videoId = Date.now() + '_' + Math.random().toString(36).substring(2);
             const fileExt = selectedFile.name.split('.').pop();
             const storageRef = storage.ref(`videos_candidats/${videoId}.${fileExt}`);
             
             uploadTask = storageRef.put(selectedFile);
             
-            // Suivi de progression
             uploadTask.on('state_changed', 
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     progressFill.style.width = progress + '%';
-                    progressText.innerHTML = `📤 Upload: ${Math.round(progress)}% (${formatFileSize(snapshot.bytesTransferred)} / ${formatFileSize(snapshot.totalBytes)})`;
-                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Upload: ${Math.round(progress)}%`;
+                    progressText.innerHTML = `${Math.round(progress)}%`;
+                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${Math.round(progress)}%`;
                 },
                 (error) => {
                     throw error;
@@ -564,10 +549,10 @@
             await uploadTask;
             const videoURL = await storageRef.getDownloadURL();
             
-            progressText.innerHTML = '✅ Vidéo uploadée ! Enregistrement des données...';
+            progressText.innerHTML = '✅ Finalisation...';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalisation...';
             
-            // 2. Enregistrement dans Firestore
+            // Enregistrement dans Firestore
             const candidatData = {
                 nom, postnom, prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
@@ -581,31 +566,37 @@
             
             await db.collection('candidats_eloquence').add(candidatData);
             
-            progressFill.style.width = '100%';
-            progressText.innerHTML = '✅ Inscription terminée avec succès !';
-            showFormAlert('success', '🎉 Inscription réussie ! Vidéo sauvegardée.');
+            // SUCCÈS - message élégant
+            showFormAlert('success', '🎉 Félicitations ! Votre inscription est validée. Vous recevrez un email de confirmation.');
             
-            // Réinitialiser
+            // Réinitialisation complète
             document.getElementById('inscriptionForm').reset();
             selectedFile = null;
             fileNameSpan.textContent = '';
             videoInput.value = '';
             videoPreviewDiv.style.display = 'none';
             previewVideo.src = '';
-            setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
+            sizeInfo.innerHTML = '';
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
             
         } catch(error) {
             console.error('Erreur:', error);
-            showFormAlert('error', `❌ Erreur: ${error.message || 'Échec de l\'upload'}`);
-            progressText.innerHTML = '❌ Erreur lors de l\'upload';
+            showFormAlert('error', `❌ Erreur: ${error.message || 'Échec de l\'inscription'}`);
+            progressText.innerHTML = '❌ Erreur';
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             uploadTask = null;
+            setTimeout(() => {
+                if (progressContainer.style.display !== 'none') {
+                    progressContainer.style.display = 'none';
+                }
+            }, 3000);
         }
     });
     
-    // ADMIN PANEL
+    // ========== ADMIN PANEL (caché pour les candidats) ==========
     const adminLockBtn = document.getElementById('adminLockBtn');
     const adminModal = document.getElementById('adminPasswordModal');
     const adminPanelDiv = document.getElementById('adminPanel');
@@ -646,30 +637,32 @@
                     <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
                     <div class="badge">Motivation</div>
                     <p style="margin:10px 0; background:#1e293b; padding:12px; border-radius:20px;">${c.motivation || '-'}</p>
-                    <div class="video-preview">${c.videoURL ? `<video controls src="${c.videoURL}" style="width:100%; border-radius:20px;"></video>` : '<p style="color:#f59e0b;">⚠️ Vidéo non disponible</p>'}</div>
-                    <p style="font-size:0.7rem; color:#94a3b8;">${c.videoName ? `📹 ${c.videoName}` : ''} | Inscrit le: ${c.dateInscription ? new Date(c.dateInscription.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                    <div class="video-preview">${c.videoURL ? `<video controls src="${c.videoURL}" style="width:100%; border-radius:20px;"></video>` : '<p>Vidéo non disponible</p>'}</div>
+                    <p style="font-size:0.7rem; color:#94a3b8;">${c.videoName ? `📹 ${c.videoName}` : ''}<br>📅 ${c.dateInscription ? new Date(c.dateInscription.seconds * 1000).toLocaleString() : 'N/A'}</p>
                 </div>`;
             });
-            container.innerHTML = html || '<div style="text-align:center; padding:50px;">Aucun candidat pour le moment.</div>';
+            container.innerHTML = html || '<div style="text-align:center; padding:50px;">Aucun candidat inscrit.</div>';
         } catch(err) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#ef4444;">Erreur de chargement.</div>'; }
     }
     
     document.getElementById('downloadCsvBtn').addEventListener('click', () => {
-        if(allCandidats.length === 0) { alert('Aucun candidat'); return; }
+        if(allCandidats.length === 0) { alert('Aucun candidat à exporter'); return; }
         const headers = ['Nom', 'Postnom', 'Prénom', 'Email', 'Téléphone', 'Université', 'Promotion', 'Faculté', 'Motivation', 'Lien Vidéo', 'Date Inscription'];
         const rows = allCandidats.map(c => [c.nom||'', c.postnom||'', c.prenom||'', c.email||'', c.telephone||'', c.universite||'', c.promotion||'', c.faculte||'', c.motivation||'', c.videoURL||'', c.dateInscription ? new Date(c.dateInscription.seconds*1000).toLocaleString() : '']);
         const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
         const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `candidats_${new Date().toISOString().split('T')[0]}.csv`;
+        link.download = `candidats_eloquence_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
         URL.revokeObjectURL(link.href);
         showFormAlert('success', 'Export CSV réussi !');
     });
     
+    // Rafraîchissement auto du panel admin
     setInterval(() => { if(adminPanelDiv.style.display === 'block') chargerCandidatsAdmin(); }, 10000);
     
+    // Animations inputs
     document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
