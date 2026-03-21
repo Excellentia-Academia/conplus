@@ -2,10 +2,20 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Clara & Junias - Invitation Mariage</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Excellentia Academia | Éloquence en Scène - Inscription</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -14,777 +24,739 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Poppins', 'Georgia', serif;
-            background: linear-gradient(135deg, #fff5f0 0%, #ffe8e0 100%);
-            color: #4a2c2c;
-            scroll-behavior: smooth;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(145deg, #0a0c12 0%, #0f1117 100%);
+            min-height: 100vh;
+            color: #eef2ff;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Mode admin - affichage différent */
-        body.admin-mode .invitation-container {
-            max-width: 1200px;
+        /* Particules d'arrière-plan animées */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
-        
-        body.admin-mode .admin-panel {
-            display: block;
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(225, 29, 72, 0.4) 0%, rgba(37, 99, 235, 0.2) 100%);
+            border-radius: 50%;
+            animation: floatParticle 15s infinite ease-in-out;
+            filter: blur(2px);
         }
-        
-        body.admin-mode .invite-content {
-            max-width: 700px;
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Glow animé */
+        .glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(225,29,72,0.15) 0%, rgba(37,99,235,0.05) 50%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulseGlow 8s infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
         }
-        
-        .admin-panel {
-            display: none;
-            background: #fff5ea;
+
+        /* Header avec image */
+        .hero-section {
+            position: relative;
+            margin-bottom: 40px;
+            border-radius: 48px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .hero-section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 35px 60px -15px rgba(225,29,72,0.3);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.85) saturate(1.1);
+            transition: all 0.7s ease;
+        }
+
+        .hero-section:hover .hero-image {
+            transform: scale(1.02);
+            filter: brightness(0.95) saturate(1.2);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(10,12,18,0.95) 0%, rgba(10,12,18,0.4) 100%);
+            padding: 40px 30px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #e11d48, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 10px rgba(225,29,72,0.3);
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(225,29,72,0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(225,29,72,0.6)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #cbd5e6;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Formulaire principal */
+        .form-card {
+            background: rgba(20, 24, 35, 0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 40px;
+            border: 1px solid rgba(225, 29, 72, 0.25);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
+            transition: all 0.4s ease;
+        }
+
+        .form-card:hover {
+            border-color: rgba(225, 29, 72, 0.5);
+            box-shadow: 0 25px 45px -12px rgba(225,29,72,0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title { font-size: 2.5rem; }
+            .hero-image { height: 220px; }
+            .form-card { padding: 25px; }
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #e11d48;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(10, 12, 18, 0.8);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 28px;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            outline: none;
+            border-color: #e11d48;
+            box-shadow: 0 0 0 4px rgba(225,29,72,0.2);
+            transform: scale(1.01);
+        }
+
+        .file-upload {
+            position: relative;
+            border: 2px dashed rgba(225,29,72,0.5);
             border-radius: 28px;
             padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .invitation-container {
-            max-width: 700px;
-            margin: 20px auto;
-            background-color: #fffef7;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border-radius: 32px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
-            height: 480px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            color: white;
+            background: rgba(10,12,18,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-family: 'Georgia', serif;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-            margin-bottom: 15px;
+        .file-upload:hover {
+            border-color: #e11d48;
+            background: rgba(225,29,72,0.1);
         }
 
-        .hero p {
-            font-size: 1.3rem;
-            font-style: italic;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 20px;
-            border-radius: 40px;
+        .file-upload i {
+            font-size: 2.5rem;
+            color: #e11d48;
+            margin-bottom: 10px;
         }
 
-        .date-badge {
-            margin-top: 30px;
-            background: #d4af7a;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .content {
-            padding: 30px 25px;
-        }
-
-        .invite-name {
-            font-size: 1.8rem;
-            text-align: center;
-            font-weight: 600;
-            color: #b97f44;
-            margin-bottom: 20px;
-            border-bottom: 2px dashed #f0cfb0;
-            display: inline-block;
-            width: auto;
-            margin-left: auto;
-            margin-right: auto;
-            padding-bottom: 8px;
-        }
-
-        .message {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            text-align: center;
-            margin: 25px 0;
-            color: #3e2a2a;
-        }
-
-        .heart-icon {
-            color: #e66767;
-            font-size: 1.8rem;
-            margin: 10px 0;
-        }
-
-        .location-card {
-            background: #fef7e9;
-            border-radius: 28px;
-            padding: 20px;
-            margin: 30px 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            border: 1px solid #f3e3ce;
-        }
-
-        .location-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #b1622c;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .address {
-            margin-bottom: 15px;
-            padding-left: 28px;
-            color: #4e3a2c;
-            font-size: 0.95rem;
-        }
-
-        #map {
-            height: 280px;
-            border-radius: 24px;
-            overflow: hidden;
+        .file-name {
             margin-top: 10px;
-            border: 2px solid #ffe0b5;
-        }
-
-        .btn-direction {
-            display: inline-block;
-            background: #b97f44;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        .btn-direction:hover {
-            background: #9a632f;
-            transform: scale(1.02);
-        }
-
-        .guestbook {
-            background: #fff5ea;
-            border-radius: 28px;
-            padding: 20px;
-            margin: 30px 0;
-        }
-
-        .guestbook h3 {
-            font-size: 1.7rem;
-            color: #b1622c;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .share-section {
-            background: #f0e4d4;
-            border-radius: 28px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .share-link {
-            background: white;
-            padding: 10px;
-            border-radius: 40px;
             font-size: 0.8rem;
-            word-break: break-all;
-            margin: 10px 0;
+            color: #94a3b8;
         }
 
-        select, textarea, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 40px;
-            border: 1px solid #e2cfb5;
-            background: white;
-            font-family: inherit;
-            margin-bottom: 12px;
-        }
-
-        button {
-            background: #d4af7a;
+        .submit-btn {
+            background: linear-gradient(135deg, #e11d48, #9f1239);
             border: none;
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #2c1a12;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            width: 100%;
             cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            transition: 0.3s;
+            transition: all 0.3s;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover {
-            background: #c29a5b;
-            color: white;
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
 
-        .signature {
-            text-align: center;
-            margin: 30px 0 10px;
-            font-style: italic;
-            color: #b68b60;
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.8rem;
-            background: #f9efe4;
-            color: #7c5f42;
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -10px #e11d48;
         }
 
-        /* Styles admin */
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .stat-card i {
-            font-size: 2rem;
-            color: #b97f44;
-            margin-bottom: 8px;
-        }
-        
-        .stat-card h3 {
-            font-size: 1.8rem;
-            color: #b97f44;
-        }
-        
-        .search-box {
-            width: 100%;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            border-radius: 40px;
-            border: 1px solid #e2cfb5;
-            font-size: 1rem;
-        }
-        
-        .invites-table {
-            width: 100%;
-            background: white;
-            border-radius: 20px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .invites-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .invites-table th,
-        .invites-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .invites-table th {
-            background: #d4af7a;
-            color: white;
-            font-weight: 600;
-        }
-        
-        .invites-table tr:hover {
-            background: #fef7e9;
-        }
-        
-        .action-btn {
-            padding: 5px 12px;
-            margin: 2px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            width: auto;
-            display: inline-block;
-        }
-        
-        .copy-btn {
-            background: #b97f44;
-            color: white;
-        }
-        
-        .whatsapp-btn {
-            background: #25D366;
-            color: white;
-        }
-        
-        .admin-toggle {
+        /* Admin Button */
+        .admin-lock {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #b97f44;
-            color: white;
-            width: 50px;
-            height: 50px;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 1000;
-            font-size: 1.2rem;
-            transition: 0.3s;
+            border: 2px solid #e11d48;
+            box-shadow: 0 0 20px rgba(225,29,72,0.4);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-        
-        .admin-toggle:hover {
-            background: #9a632f;
-            transform: scale(1.05);
+
+        .admin-lock:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 30px rgba(225,29,72,0.8);
         }
-        
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .invitation-container { margin: 10px; border-radius: 28px; }
-            .invites-table { font-size: 0.8rem; }
-            .invites-table th, .invites-table td { padding: 8px; }
+
+        .admin-lock i {
+            font-size: 1.8rem;
+            color: #e11d48;
         }
-        
-        @media (max-width: 550px) {
-            .invites-table th, .invites-table td { font-size: 0.7rem; }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #14181f, #0f1117);
+            border-radius: 48px;
+            max-width: 500px;
+            width: 100%;
+            padding: 35px;
+            border: 1px solid rgba(225,29,72,0.5);
+            animation: modalSlide 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            color: #e11d48;
+        }
+
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0c12;
+            z-index: 3000;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #0f1117, #1a1f2c);
+            padding: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #e11d48;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 30px;
+        }
+
+        .candidate-admin-card {
+            background: #14181f;
+            border-radius: 32px;
+            padding: 20px;
+            border: 1px solid rgba(225,29,72,0.3);
+            transition: all 0.3s;
+        }
+
+        .candidate-admin-card:hover {
+            transform: translateY(-5px);
+            border-color: #e11d48;
+            box-shadow: 0 15px 30px -10px rgba(225,29,72,0.3);
+        }
+
+        .video-preview {
+            background: #000;
+            border-radius: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .video-preview video {
+            width: 100%;
+            max-height: 200px;
+        }
+
+        .badge {
+            background: #e11d48;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 28px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
+        .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            float: right;
         }
     </style>
 </head>
 <body>
-    <div class="invitation-container">
-        <div class="hero">
-            <h1>Clara & Junias</h1>
-            <p>Nous nous marions !</p>
-            <div class="date-badge">
-                <i class="fas fa-calendar-alt"></i> 30 Juin 2025
-            </div>
-        </div>
 
-        <div class="content">
-            <!-- Panneau Admin (caché par défaut) -->
-            <div id="adminPanel" class="admin-panel">
-                <h2 style="color: #b97f44; margin-bottom: 20px; text-align: center;">
-                    <i class="fas fa-crown"></i> Administration - Gestion des invitations
-                </h2>
-                
-                <div class="admin-stats">
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <h3 id="totalInvites">0</h3>
-                        <p>Invitations totales</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-check-circle"></i>
-                        <h3 id="totalResponses">0</h3>
-                        <p>Réponses reçues</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-link"></i>
-                        <h3 id="totalLinks">0</h3>
-                        <p>Liens générés</p>
-                    </div>
+<div class="particles" id="particles"></div>
+<div class="glow"></div>
+
+<div class="container">
+    <div class="hero-section">
+        <img src="IMG_1812.jpeg" alt="Structure Organisation Centre" class="hero-image" onerror="this.src='https://placehold.co/1200x400/1e293b/e11d48?text=Excellentia+Academia'">
+        <div class="hero-overlay">
+            <h1 class="hero-title">Éloquence en Scène</h1>
+            <p class="hero-subtitle">Révélez votre talent oratoire - Inscrivez-vous dès maintenant</p>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form id="inscriptionForm">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Nom</label>
+                    <input type="text" id="nom" placeholder="Votre nom" required>
                 </div>
-                
-                <input type="text" id="searchInput" class="search-box" placeholder="🔍 Rechercher un invité par nom...">
-                
-                <div class="invites-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom complet</th>
-                                <th>Lien d'invitation</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invitesTableBody"></tbody>
-                    </table>
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Postnom</label>
+                    <input type="text" id="postnom" placeholder="Postnom">
                 </div>
-                
-                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button id="exportAllBtn" style="width: auto; padding: 10px 20px;">
-                        <i class="fas fa-download"></i> Exporter tous les liens (CSV)
-                    </button>
-                    <button id="exportResponsesBtn" style="width: auto; padding: 10px 20px;">
-                        <i class="fas fa-file-alt"></i> Exporter les réponses
-                    </button>
-                    <button id="clearResponsesBtn" style="width: auto; padding: 10px 20px; background: #dc3545;">
-                        <i class="fas fa-trash"></i> Effacer toutes les réponses
-                    </button>
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Prénom</label>
+                    <input type="text" id="prenom" placeholder="Votre prénom" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-university"></i> Université</label>
+                    <input type="text" id="universite" placeholder="Université / Institution" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-calendar"></i> Promotion</label>
+                    <input type="text" id="promotion" placeholder="Année / Promotion" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-book"></i> Faculté</label>
+                    <input type="text" id="faculte" placeholder="Faculté / Département" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-phone"></i> Téléphone</label>
+                    <input type="tel" id="telephone" placeholder="+243 XX XXX XXXX" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-heart"></i> Motivation</label>
+                    <textarea id="motivation" placeholder="Pourquoi souhaitez-vous participer ? (max 500 caractères)" required></textarea>
                 </div>
             </div>
             
-            <!-- Contenu de l'invitation -->
-            <div class="invite-content">
-                <div style="text-align: center;">
-                    <div class="invite-name">
-                        <i class="fas fa-envelope-open-text"></i> <span id="guestName">Chargement...</span>
-                    </div>
-                </div>
-
-                <div class="message">
-                    <i class="fas fa-heart heart-icon"></i><br>
-                    C'est avec une immense joie que Clara et Junias vous convient à célébrer leur mariage religieux 💍 le <strong>30 juin 2025</strong>.
-                    <br><br>
-                    Cet événement si spécial marquera l'union de deux âmes qui se sont trouvées et qui souhaitent partager leur bonheur avec vous.
-                    <br><br>
-                    La soirée dansante se passera au prestigieux :
-                </div>
-
-                <div class="location-card">
-                    <div class="location-title">
-                        <i class="fas fa-map-marker-alt" style="color:#b97f44;"></i> Pullman Kinshasa Grand Hôtel
-                    </div>
-                    <div class="address">
-                        <i class="fas fa-location-dot"></i> Avenue de l'OUA, Kinshasa, Gombe, République Démocratique du Congo
-                    </div>
-                    <div id="map"></div>
-                    <a href="https://maps.google.com/?q=Pullman+Kinshasa+Grand+Hotel" target="_blank" class="btn-direction">
-                        <i class="fas fa-directions"></i> Ouvrir dans Google Maps
-                    </a>
-                    <div style="margin-top: 12px; font-size: 0.85rem; text-align: center;">
-                        ⭐ Réception chic & soirée dansante – Nous vous attendons avec impatience !
-                    </div>
-                </div>
-
-                <div class="message">
-                    Au plaisir de vous retrouver pour cette occasion spéciale.<br>
-                    Avec tout notre amour,<br>
-                    <strong>Clara et Junias 💕</strong>
-                </div>
-
-                <div class="guestbook">
-                    <h3><i class="fas fa-book-open"></i> Livre d'or</h3>
-                    <p style="text-align:center;">Laissez un petit mot aux mariés</p>
-
-                    <div class="drink-choice">
-                        <label><i class="fas fa-wine-bottle"></i> Vos préférences (boissons) </label>
-                        <p style="font-size:0.85rem; margin-bottom:6px;">Aidez les mariés dans la planification en suggérant vos goûts (2 max)</p>
-                        
-                        <select id="alcoolSelect">
-                            <option value="">🍸 Boisson alcoolisée (optionnel)</option>
-                            <option>Champagne</option>
-                            <option>Vin rouge</option>
-                            <option>Vin blanc</option>
-                            <option>Whisky</option>
-                            <option>Cocktail</option>
-                            <option>Bière</option>
-                        </select>
-
-                        <select id="softSelect">
-                            <option value="">🥤 Boisson non alcoolisée</option>
-                            <option>Jus de fruits</option>
-                            <option>Coca-Cola</option>
-                            <option>Eau gazeuse</option>
-                            <option>Limonade</option>
-                            <option>Smoothie</option>
-                            <option>Thé glacé</option>
-                        </select>
-
-                        <label><i class="fas fa-pen-fancy"></i> Votre message :</label>
-                        <textarea id="messageText" rows="2" placeholder="Écrivez vos vœux aux mariés..."></textarea>
-                        
-                        <button id="submitBtn"><i class="fas fa-check-circle"></i> Envoyer mon vœu</button>
-                        <div id="feedbackMsg" style="margin-top: 10px; text-align:center; font-size:0.9rem; color:#6b4c2c;"></div>
-                    </div>
-                </div>
-
-                <div class="share-section">
-                    <i class="fas fa-share-alt"></i> <strong>Partagez votre invitation</strong>
-                    <div class="share-link" id="shareLink">Chargement...</div>
-                    <button class="copy-btn" id="copyLinkBtn" style="width: auto; padding: 8px 20px;">
-                        <i class="fas fa-copy"></i> Copier le lien
-                    </button>
-                </div>
-
-                <div class="signature">
-                    ♥ Merci de confirmer votre présence ♥
+            <div class="input-group">
+                <label><i class="fas fa-video"></i> Vidéo d'enregistrement (sujet au choix)</label>
+                <div class="file-upload" id="videoUploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Cliquez ou déposez votre vidéo</p>
+                    <p style="font-size: 0.7rem; margin-top: 5px;">MP4, MOV, WebM - Max 100MB</p>
+                    <input type="file" id="videoFile" accept="video/*" style="display: none;">
+                    <div class="file-name" id="fileName"></div>
                 </div>
             </div>
-        </div>
-        <footer>
-            © 2025 Clara & Junias – Un amour éternel
-        </footer>
+            
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-pen-fancy"></i> S'INSCRIRE AU CONCOURS
+            </button>
+            <div id="formAlert" class="alert"></div>
+        </form>
     </div>
+</div>
+
+<!-- Admin Lock -->
+<div class="admin-lock" id="adminLockBtn">
+    <i class="fas fa-lock"></i>
+</div>
+
+<!-- Admin Password Modal -->
+<div class="modal" id="adminPasswordModal">
+    <div class="modal-content">
+        <button class="close-btn" id="closeAdminModal">&times;</button>
+        <h2><i class="fas fa-shield-alt"></i> Accès Organisateur</h2>
+        <input type="password" id="adminPassInput" placeholder="Mot de passe" style="width:100%; padding:15px; border-radius:30px; background:#1e293b; border:none; color:white; margin:20px 0;">
+        <button id="submitAdminPass" class="submit-btn" style="background:#e11d48;">DÉVERROUILLER</button>
+        <div id="adminPassAlert" class="alert"></div>
+    </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="color:#e11d48;"><i class="fas fa-crown"></i> PANEL ORGANISATEUR</h1>
+            <button id="closeAdminPanelBtn" style="background:#e11d48; border:none; padding:12px 25px; border-radius:40px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Fermer</button>
+        </div>
+        <p>Gestion des candidats & vidéos</p>
+    </div>
+    <div id="adminCandidatesContainer" class="admin-cards">
+        <div style="text-align:center; padding:50px;">Chargement des candidats...</div>
+    </div>
+</div>
+
+<script>
+    // ========== FIREBASE CONFIG ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
+        authDomain: "pitch-c6e9a.firebaseapp.com",
+        projectId: "pitch-c6e9a",
+        storageBucket: "pitch-c6e9a.firebasestorage.app",
+        messagingSenderId: "37902068065",
+        appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
+        measurementId: "G-H7T7BEW22T"
+    };
     
-    <div class="admin-toggle" id="adminToggleBtn">
-        <i class="fas fa-user-shield"></i>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // ==================== LISTE DES 50 INVITÉS ====================
-        const invitesList = [
-            { id: 1, nom: "Serge ILUNGA" }, { id: 2, nom: "Marie MAMBU" }, { id: 3, nom: "Jean KASONGO" },
-            { id: 4, nom: "Aline MPOYO" }, { id: 5, nom: "Paul MUKENDI" }, { id: 6, nom: "Grace KABEYA" },
-            { id: 7, nom: "David LUMUMBA" }, { id: 8, nom: "Esther NGOY" }, { id: 9, nom: "Joseph KABILA" },
-            { id: 10, nom: "Francine BOSSU" }, { id: 11, nom: "Olivier TSHIBANGU" }, { id: 12, nom: "Nathalie KIMBEMBE" },
-            { id: 13, nom: "Pierre KALALA" }, { id: 14, nom: "Judith MBUYI" }, { id: 15, nom: "André KABANGU" },
-            { id: 16, nom: "Cécile MWANZA" }, { id: 17, nom: "Michel KASONGO" }, { id: 18, nom: "Bernadette NSIMBA" },
-            { id: 19, nom: "Robert KATUMBA" }, { id: 20, nom: "Jeanne MBUJI" }, { id: 21, nom: "Emmanuel TSHIMANGA" },
-            { id: 22, nom: "Louise KIBALA" }, { id: 23, nom: "Martin KAPEND" }, { id: 24, nom: "Thérèse NKULU" },
-            { id: 25, nom: "Augustin KALONJI" }, { id: 26, nom: "Véronique KASONGO" }, { id: 27, nom: "Albert MULUMBA" },
-            { id: 28, nom: "Marguerite KABEYA" }, { id: 29, nom: "Henri BAKAJIKA" }, { id: 30, nom: "Rose NKULU" },
-            { id: 31, nom: "Georges MUTOMBO" }, { id: 32, nom: "Anne KABONGO" }, { id: 33, nom: "Charles ILUNGA" },
-            { id: 34, nom: "Monique KASONGO" }, { id: 35, nom: "François KALALA" }, { id: 36, nom: "Joséphine MBUYI" },
-            { id: 37, nom: "Marcel KABANGU" }, { id: 38, nom: "Claire MWANZA" }, { id: 39, nom: "René KASONGO" },
-            { id: 40, nom: "Julienne NSIMBA" }, { id: 41, nom: "Maurice KATUMBA" }, { id: 42, nom: "Christine MBUJI" },
-            { id: 43, nom: "Alain TSHIMANGA" }, { id: 44, nom: "Fabienne KIBALA" }, { id: 45, nom: "Patrick KAPEND" },
-            { id: 46, nom: "Brigitte NKULU" }, { id: 47, nom: "Éric KALONJI" }, { id: 48, nom: "Sylvie KASONGO" },
-            { id: 49, nom: "Didier MULUMBA" }, { id: 50, nom: "Nicole KABEYA" }
-        ];
-
-        // ==================== VARIABLES GLOBALES ====================
-        let currentGuest = null;
-        let isAdminMode = false;
-
-        // ==================== FONCTIONS UTILITAIRES ====================
-        function getParameterByName(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    
+    // Variables
+    let selectedFile = null;
+    const ADMIN_PASSWORD = "oncommence5";
+    
+    // ========== PARTICULES ANIMÉES ==========
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for(let i=0; i<60; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 8 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.bottom = '-20px';
+            particle.style.animationDuration = Math.random() * 10 + 8 + 's';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            container.appendChild(particle);
         }
-
-        function getBaseUrl() {
-            return window.location.href.split('?')[0];
+    }
+    createParticles();
+    
+    // ========== UPLOAD VIDEO UI ==========
+    const uploadArea = document.getElementById('videoUploadArea');
+    const videoInput = document.getElementById('videoFile');
+    const fileNameSpan = document.getElementById('fileName');
+    
+    uploadArea.addEventListener('click', () => videoInput.click());
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#e11d48'; });
+    uploadArea.addEventListener('dragleave', () => uploadArea.style.borderColor = 'rgba(225,29,72,0.5)');
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if(file && file.type.startsWith('video/')) handleFile(file);
+        uploadArea.style.borderColor = 'rgba(225,29,72,0.5)';
+    });
+    
+    videoInput.addEventListener('change', (e) => {
+        if(e.target.files[0]) handleFile(e.target.files[0]);
+    });
+    
+    function handleFile(file) {
+        if(file.size > 100 * 1024 * 1024) {
+            showFormAlert('error', 'Vidéo trop volumineuse (max 100MB)');
+            return;
         }
-
-        // ==================== INITIALISATION DE LA CARTE ====================
-        function initMap() {
-            const pullmanLat = -4.3000;
-            const pullmanLng = 15.3130;
-            const map = L.map('map').setView([pullmanLat, pullmanLng], 16);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
-            L.marker([pullmanLat, pullmanLng]).addTo(map)
-                .bindPopup("<b>Pullman Kinshasa Grand Hôtel</b><br>Salle de réception & soirée dansante")
-                .openPopup();
+        selectedFile = file;
+        fileNameSpan.textContent = file.name;
+        fileNameSpan.style.color = '#e11d48';
+    }
+    
+    function showFormAlert(type, message) {
+        const alertDiv = document.getElementById('formAlert');
+        alertDiv.textContent = message;
+        alertDiv.className = `alert ${type}`;
+        alertDiv.style.display = 'block';
+        setTimeout(() => alertDiv.style.display = 'none', 5000);
+    }
+    
+    // ========== INSCRIPTION ==========
+    document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const nom = document.getElementById('nom').value.trim();
+        const postnom = document.getElementById('postnom').value.trim();
+        const prenom = document.getElementById('prenom').value.trim();
+        const universite = document.getElementById('universite').value.trim();
+        const promotion = document.getElementById('promotion').value.trim();
+        const faculte = document.getElementById('faculte').value.trim();
+        const telephone = document.getElementById('telephone').value.trim();
+        const motivation = document.getElementById('motivation').value.trim();
+        
+        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !motivation) {
+            showFormAlert('error', 'Veuillez remplir tous les champs obligatoires');
+            return;
         }
-
-        // ==================== GESTION DE L'INVITÉ COURANT ====================
-        function loadCurrentGuest() {
-            const guestParam = getParameterByName('nom');
-            if (guestParam) {
-                const decodedName = decodeURIComponent(guestParam);
-                currentGuest = invitesList.find(invite => invite.nom === decodedName);
-                if (currentGuest) {
-                    document.getElementById('guestName').innerText = currentGuest.nom;
-                } else {
-                    document.getElementById('guestName').innerText = decodedName;
-                }
-            } else {
-                document.getElementById('guestName').innerText = "Cher Invité";
-            }
+        
+        if(!selectedFile) {
+            showFormAlert('error', 'Veuillez télécharger votre vidéo d\'éloquence');
+            return;
         }
-
-        // ==================== PARTAGE DE LIEN ====================
-        function updateShareLink() {
-            const currentUrl = window.location.href;
-            document.getElementById('shareLink').innerText = currentUrl;
-            document.getElementById('copyLinkBtn').onclick = () => {
-                navigator.clipboard.writeText(currentUrl).then(() => {
-                    const btn = document.getElementById('copyLinkBtn');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
-                    setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-                });
-            };
-        }
-
-        // ==================== LIVRE D'OR ====================
-        function saveGuestbookResponse() {
-            const alcool = document.getElementById('alcoolSelect').value;
-            const soft = document.getElementById('softSelect').value;
-            const message = document.getElementById('messageText').value.trim();
-            const guestName = currentGuest ? currentGuest.nom : document.getElementById('guestName').innerText;
+        
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription en cours...';
+        
+        try {
+            // Upload vidéo vers Firebase Storage
+            const videoExt = selectedFile.name.split('.').pop();
+            const videoId = Date.now() + '_' + Math.random().toString(36).substring(2);
+            const storageRef = storage.ref(`videos_candidats/${videoId}.${videoExt}`);
+            await storageRef.put(selectedFile);
+            const videoURL = await storageRef.getDownloadURL();
             
-            if (!message) {
-                document.getElementById('feedbackMsg').innerHTML = "💌 Merci d'écrire un petit message avant d'envoyer !";
-                document.getElementById('feedbackMsg').style.color = "#b97f44";
+            // Créer document candidat
+            const candidatData = {
+                nom, postnom, prenom,
+                nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
+                universite, promotion, faculte, telephone, motivation,
+                videoURL,
+                dateInscription: firebase.firestore.FieldValue.serverTimestamp(),
+                statut: 'inscrit'
+            };
+            
+            await db.collection('candidats_eloquence').add(candidatData);
+            
+            showFormAlert('success', '🎉 Inscription réussie ! Vous recevrez un email de confirmation.');
+            document.getElementById('inscriptionForm').reset();
+            selectedFile = null;
+            fileNameSpan.textContent = '';
+            videoInput.value = '';
+            
+        } catch(error) {
+            console.error(error);
+            showFormAlert('error', 'Erreur lors de l\'inscription. Réessayez.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE AU CONCOURS';
+        }
+    });
+    
+    // ========== ADMIN PANEL ==========
+    const adminLockBtn = document.getElementById('adminLockBtn');
+    const adminModal = document.getElementById('adminPasswordModal');
+    const adminPanelDiv = document.getElementById('adminPanel');
+    
+    adminLockBtn.addEventListener('click', () => {
+        adminModal.style.display = 'flex';
+    });
+    
+    document.getElementById('closeAdminModal').addEventListener('click', () => {
+        adminModal.style.display = 'none';
+        document.getElementById('adminPassInput').value = '';
+    });
+    
+    document.getElementById('submitAdminPass').addEventListener('click', () => {
+        const pass = document.getElementById('adminPassInput').value;
+        if(pass === ADMIN_PASSWORD) {
+            adminModal.style.display = 'none';
+            adminPanelDiv.style.display = 'block';
+            chargerCandidatsAdmin();
+        } else {
+            const alertDiv = document.getElementById('adminPassAlert');
+            alertDiv.textContent = 'Mot de passe incorrect';
+            alertDiv.className = 'alert error';
+            alertDiv.style.display = 'block';
+            setTimeout(() => alertDiv.style.display = 'none', 2000);
+        }
+    });
+    
+    document.getElementById('closeAdminPanelBtn').addEventListener('click', () => {
+        adminPanelDiv.style.display = 'none';
+    });
+    
+    async function chargerCandidatsAdmin() {
+        const container = document.getElementById('adminCandidatesContainer');
+        container.innerHTML = '<div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement des candidats...</div>';
+        
+        try {
+            const snapshot = await db.collection('candidats_eloquence').orderBy('dateInscription', 'desc').get();
+            
+            if(snapshot.empty) {
+                container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat inscrit pour le moment.</div>';
                 return;
             }
             
-            const response = {
-                id: Date.now(),
-                guest: guestName,
-                alcool: alcool || "Non spécifié",
-                soft: soft || "Non spécifié",
-                message: message,
-                date: new Date().toLocaleString('fr-FR')
-            };
-            
-            let allResponses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
-            allResponses.push(response);
-            localStorage.setItem('wedding_responses', JSON.stringify(allResponses));
-            
-            document.getElementById('feedbackMsg').innerHTML = `✅ Merci ${guestName} ! Votre message a été enregistré. Nous avons bien noté vos préférences.`;
-            document.getElementById('feedbackMsg').style.color = "#2c7a4a";
-            
-            document.getElementById('messageText').value = "";
-            document.getElementById('alcoolSelect').value = "";
-            document.getElementById('softSelect').value = "";
-            
-            if (isAdminMode) updateAdminStats();
-        }
-
-        // ==================== ADMIN : AFFICHAGE DE LA LISTE ====================
-        let currentLinksList = [];
-
-        function renderAdminTable(searchTerm = '') {
-            const tbody = document.getElementById('invitesTableBody');
-            const baseUrl = getBaseUrl();
-            
-            const filteredInvites = invitesList.filter(invite => 
-                invite.nom.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            
-            tbody.innerHTML = '';
-            currentLinksList = [];
-            
-            filteredInvites.forEach((invite) => {
-                const encodedName = encodeURIComponent(invite.nom);
-                const link = `${baseUrl}?nom=${encodedName}`;
-                currentLinksList.push({ nom: invite.nom, lien: link });
-                
-                const row = tbody.insertRow();
-                row.insertCell(0).innerHTML = invite.id;
-                row.insertCell(1).innerHTML = `<strong>${invite.nom}</strong>`;
-                row.insertCell(2).innerHTML = `<span style="font-size: 0.75rem; word-break: break-all;">${link}</span>`;
-                row.insertCell(3).innerHTML = `
-                    <button class="action-btn copy-btn" onclick="copyToClipboard('${link}')">
-                        <i class="fas fa-copy"></i> Copier
-                    </button>
-                    <button class="action-btn whatsapp-btn" onclick="sendWhatsApp('${invite.nom}', '${link}')">
-                        <i class="fab fa-whatsapp"></i> WhatsApp
-                    </button>
+            let html = '';
+            snapshot.forEach(doc => {
+                const c = doc.data();
+                html += `
+                    <div class="candidate-admin-card">
+                        <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom}</h3>
+                        <p><i class="fas fa-university"></i> ${c.universite || '-'} | ${c.faculte || '-'}</p>
+                        <p><i class="fas fa-calendar"></i> Promotion: ${c.promotion || '-'}</p>
+                        <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
+                        <div class="badge"><i class="fas fa-heart"></i> Motivation</div>
+                        <p style="margin:10px 0; background:#1e293b; padding:12px; border-radius:20px;">${c.motivation || '-'}</p>
+                        <div class="video-preview">
+                            ${c.videoURL ? `<video controls src="${c.videoURL}" style="width:100%; border-radius:20px;"></video>` : '<p>Aucune vidéo</p>'}
+                        </div>
+                        <p style="font-size:0.7rem; color:#94a3b8;">Inscrit le: ${c.dateInscription ? new Date(c.dateInscription.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                    </div>
                 `;
             });
-            
-            document.getElementById('totalInvites').innerText = invitesList.length;
-            document.getElementById('totalLinks').innerText = filteredInvites.length;
-            updateAdminStats();
+            container.innerHTML = html;
+        } catch(err) {
+            console.error(err);
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:#ef4444;">Erreur de chargement des données.</div>';
         }
-        
-        function updateAdminStats() {
-            const responses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
-            document.getElementById('totalResponses').innerText = responses.length;
+    }
+    
+    // Recharger automatiquement toutes les 15 secondes si panel ouvert
+    setInterval(() => {
+        if(adminPanelDiv.style.display === 'block') {
+            chargerCandidatsAdmin();
         }
-        
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            alert('✅ Lien copié dans le presse-papier !');
-        }
-        
-        function sendWhatsApp(nom, lien) {
-            const message = `🎊 Bonjour ${nom} !\n\nVous êtes cordialement invité(e) au mariage de Clara & Junias le 30 juin 2025 au Pullman Kinshasa.\n\nVoici votre invitation personnalisée : ${lien}\n\nDans l'attente de vous voir pour célébrer ce moment unique ! 💕`;
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        }
-        
-        function exportAllLinks() {
-            let csv = "Nom, Lien d'invitation\n";
-            currentLinksList.forEach(link => {
-                csv += `"${link.nom}","${link.lien}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `invitations_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        function exportResponses() {
-            const responses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
-            if (responses.length === 0) {
-                alert("Aucune réponse n'a encore été enregistrée.");
-                return;
-            }
-            let csv = "Invité,Boisson alcoolisée,Boisson non alcoolisée,Message,Date\n";
-            responses.forEach(r => {
-                csv += `"${r.guest}","${r.alcool}","${r.soft}","${r.message.replace(/"/g, '""')}","${r.date}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `reponses_mariage_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        function clearAllResponses() {
-            if (confirm("⚠️ ATTENTION : Voulez-vous vraiment effacer TOUTES les réponses du livre d'or ? Cette action est irréversible.")) {
-                localStorage.removeItem('wedding_responses');
-                updateAdminStats();
-                alert("✅ Toutes les réponses ont été effacées.");
-            }
-        }
-
-        // ==================== ADMIN MODE TOGGLE ====================
-        function toggleAdminMode() {
-            isAdminMode = !isAdminMode;
-            const adminPanel = document.getElementById('adminPanel');
-            const adminToggleBtn = document.getElementById('adminToggleBtn');
-            
-            if (isAdminMode) {
-                adminPanel.style.display = 'block';
-                adminToggleBtn.style.background = '#2c7a4a';
-                document.body.classList.add('admin-mode');
-                renderAdminTable('');
-                document.getElementById('searchInput').addEventListener('input', (e) => {
-                    renderAdminTable(e.target.value);
-                });
-                document.getElementById('exportAllBtn').onclick = exportAllLinks;
-                document.getElementById('exportResponsesBtn').onclick = exportResponses;
-                document.getElementById('clearResponsesBtn').onclick = clearAllResponses;
-            } else {
-                adminPanel.style.display = 'none';
-                adminToggleBtn.style.background = '#b97f44';
-                document.body.classList.remove('admin-mode');
-            }
-        }
-
-        // ==================== INITIALISATION ====================
-        function init() {
-            initMap();
-            loadCurrentGuest();
-            updateShareLink();
-            
-            document.getElementById('submitBtn').addEventListener('click', saveGuestbookResponse);
-            document.getElementById('adminToggleBtn').addEventListener('click', toggleAdminMode);
-            
-            // Vérifier si admin est activé via URL
-            if (getParameterByName('admin') === 'true') {
-                toggleAdminMode();
-            }
-        }
-        
-        // Démarrer l'application
-        init();
-    </script>
+    }, 15000);
+    
+    // Animation supplémentaire : effets d'entrée
+    document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
+        el.addEventListener('focus', () => {
+            el.parentElement.style.transform = 'translateX(5px)';
+        });
+        el.addEventListener('blur', () => {
+            el.parentElement.style.transform = 'translateX(0)';
+        });
+    });
+</script>
 </body>
 </html>
