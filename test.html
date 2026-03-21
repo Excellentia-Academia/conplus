@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Clara & Junias - Notre Mariage</title>
-    <!-- Leaflet CSS pour la carte -->
+    <title>Clara & Junias - Invitation Mariage</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -22,19 +20,39 @@
             scroll-behavior: smooth;
         }
 
-        /* Conteneur principal */
-        .invitation-container {
+        /* Mode admin - affichage différent */
+        body.admin-mode .invitation-container {
+            max-width: 1200px;
+        }
+        
+        body.admin-mode .admin-panel {
+            display: block;
+        }
+        
+        body.admin-mode .invite-content {
             max-width: 700px;
             margin: 0 auto;
+        }
+        
+        .admin-panel {
+            display: none;
+            background: #fff5ea;
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .invitation-container {
+            max-width: 700px;
+            margin: 20px auto;
             background-color: #fffef7;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             border-radius: 32px;
             overflow: hidden;
-            margin: 20px auto;
             position: relative;
         }
 
-        /* Section Héro */
         .hero {
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
             height: 480px;
@@ -44,13 +62,11 @@
             align-items: center;
             text-align: center;
             color: white;
-            position: relative;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             font-family: 'Georgia', serif;
-            letter-spacing: 2px;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
             margin-bottom: 15px;
         }
@@ -61,7 +77,6 @@
             background: rgba(0,0,0,0.5);
             padding: 8px 20px;
             border-radius: 40px;
-            backdrop-filter: blur(4px);
         }
 
         .date-badge {
@@ -74,13 +89,12 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* Contenu principal */
         .content {
             padding: 30px 25px;
         }
 
         .invite-name {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             text-align: center;
             font-weight: 600;
             color: #b97f44;
@@ -107,7 +121,6 @@
             margin: 10px 0;
         }
 
-        /* Lieu avec carte */
         .location-card {
             background: #fef7e9;
             border-radius: 28px;
@@ -160,7 +173,6 @@
             transform: scale(1.02);
         }
 
-        /* Livre d'or */
         .guestbook {
             background: #fff5ea;
             border-radius: 28px;
@@ -175,14 +187,21 @@
             margin-bottom: 15px;
         }
 
-        .drink-choice {
+        .share-section {
+            background: #f0e4d4;
+            border-radius: 28px;
+            padding: 15px;
             margin: 20px 0;
+            text-align: center;
         }
 
-        .drink-choice label {
-            font-weight: 600;
-            display: block;
-            margin: 12px 0 5px;
+        .share-link {
+            background: white;
+            padding: 10px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin: 10px 0;
         }
 
         select, textarea, input {
@@ -193,11 +212,6 @@
             background: white;
             font-family: inherit;
             margin-bottom: 12px;
-        }
-
-        textarea {
-            border-radius: 24px;
-            resize: vertical;
         }
 
         button {
@@ -233,179 +247,544 @@
             color: #7c5f42;
         }
 
-        @media (max-width: 550px) {
+        /* Styles admin */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: #b97f44;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.8rem;
+            color: #b97f44;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 40px;
+            border: 1px solid #e2cfb5;
+            font-size: 1rem;
+        }
+        
+        .invites-table {
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .invites-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .invites-table th,
+        .invites-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invites-table th {
+            background: #d4af7a;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .invites-table tr:hover {
+            background: #fef7e9;
+        }
+        
+        .action-btn {
+            padding: 5px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: auto;
+            display: inline-block;
+        }
+        
+        .copy-btn {
+            background: #b97f44;
+            color: white;
+        }
+        
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+        }
+        
+        .admin-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #b97f44;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        
+        .admin-toggle:hover {
+            background: #9a632f;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
             .invitation-container { margin: 10px; border-radius: 28px; }
+            .invites-table { font-size: 0.8rem; }
+            .invites-table th, .invites-table td { padding: 8px; }
+        }
+        
+        @media (max-width: 550px) {
+            .invites-table th, .invites-table td { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-<div class="invitation-container">
-    <div class="hero">
-        <h1>Clara & Junias</h1>
-        <p>Nous nous marions !</p>
-        <div class="date-badge">
-            <i class="fas fa-calendar-alt"></i> 30 Juin 2025
+    <div class="invitation-container">
+        <div class="hero">
+            <h1>Clara & Junias</h1>
+            <p>Nous nous marions !</p>
+            <div class="date-badge">
+                <i class="fas fa-calendar-alt"></i> 30 Juin 2025
+            </div>
         </div>
+
+        <div class="content">
+            <!-- Panneau Admin (caché par défaut) -->
+            <div id="adminPanel" class="admin-panel">
+                <h2 style="color: #b97f44; margin-bottom: 20px; text-align: center;">
+                    <i class="fas fa-crown"></i> Administration - Gestion des invitations
+                </h2>
+                
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3 id="totalInvites">0</h3>
+                        <p>Invitations totales</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3 id="totalResponses">0</h3>
+                        <p>Réponses reçues</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-link"></i>
+                        <h3 id="totalLinks">0</h3>
+                        <p>Liens générés</p>
+                    </div>
+                </div>
+                
+                <input type="text" id="searchInput" class="search-box" placeholder="🔍 Rechercher un invité par nom...">
+                
+                <div class="invites-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom complet</th>
+                                <th>Lien d'invitation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invitesTableBody"></tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button id="exportAllBtn" style="width: auto; padding: 10px 20px;">
+                        <i class="fas fa-download"></i> Exporter tous les liens (CSV)
+                    </button>
+                    <button id="exportResponsesBtn" style="width: auto; padding: 10px 20px;">
+                        <i class="fas fa-file-alt"></i> Exporter les réponses
+                    </button>
+                    <button id="clearResponsesBtn" style="width: auto; padding: 10px 20px; background: #dc3545;">
+                        <i class="fas fa-trash"></i> Effacer toutes les réponses
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenu de l'invitation -->
+            <div class="invite-content">
+                <div style="text-align: center;">
+                    <div class="invite-name">
+                        <i class="fas fa-envelope-open-text"></i> <span id="guestName">Chargement...</span>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <i class="fas fa-heart heart-icon"></i><br>
+                    C'est avec une immense joie que Clara et Junias vous convient à célébrer leur mariage religieux 💍 le <strong>30 juin 2025</strong>.
+                    <br><br>
+                    Cet événement si spécial marquera l'union de deux âmes qui se sont trouvées et qui souhaitent partager leur bonheur avec vous.
+                    <br><br>
+                    La soirée dansante se passera au prestigieux :
+                </div>
+
+                <div class="location-card">
+                    <div class="location-title">
+                        <i class="fas fa-map-marker-alt" style="color:#b97f44;"></i> Pullman Kinshasa Grand Hôtel
+                    </div>
+                    <div class="address">
+                        <i class="fas fa-location-dot"></i> Avenue de l'OUA, Kinshasa, Gombe, République Démocratique du Congo
+                    </div>
+                    <div id="map"></div>
+                    <a href="https://maps.google.com/?q=Pullman+Kinshasa+Grand+Hotel" target="_blank" class="btn-direction">
+                        <i class="fas fa-directions"></i> Ouvrir dans Google Maps
+                    </a>
+                    <div style="margin-top: 12px; font-size: 0.85rem; text-align: center;">
+                        ⭐ Réception chic & soirée dansante – Nous vous attendons avec impatience !
+                    </div>
+                </div>
+
+                <div class="message">
+                    Au plaisir de vous retrouver pour cette occasion spéciale.<br>
+                    Avec tout notre amour,<br>
+                    <strong>Clara et Junias 💕</strong>
+                </div>
+
+                <div class="guestbook">
+                    <h3><i class="fas fa-book-open"></i> Livre d'or</h3>
+                    <p style="text-align:center;">Laissez un petit mot aux mariés</p>
+
+                    <div class="drink-choice">
+                        <label><i class="fas fa-wine-bottle"></i> Vos préférences (boissons) </label>
+                        <p style="font-size:0.85rem; margin-bottom:6px;">Aidez les mariés dans la planification en suggérant vos goûts (2 max)</p>
+                        
+                        <select id="alcoolSelect">
+                            <option value="">🍸 Boisson alcoolisée (optionnel)</option>
+                            <option>Champagne</option>
+                            <option>Vin rouge</option>
+                            <option>Vin blanc</option>
+                            <option>Whisky</option>
+                            <option>Cocktail</option>
+                            <option>Bière</option>
+                        </select>
+
+                        <select id="softSelect">
+                            <option value="">🥤 Boisson non alcoolisée</option>
+                            <option>Jus de fruits</option>
+                            <option>Coca-Cola</option>
+                            <option>Eau gazeuse</option>
+                            <option>Limonade</option>
+                            <option>Smoothie</option>
+                            <option>Thé glacé</option>
+                        </select>
+
+                        <label><i class="fas fa-pen-fancy"></i> Votre message :</label>
+                        <textarea id="messageText" rows="2" placeholder="Écrivez vos vœux aux mariés..."></textarea>
+                        
+                        <button id="submitBtn"><i class="fas fa-check-circle"></i> Envoyer mon vœu</button>
+                        <div id="feedbackMsg" style="margin-top: 10px; text-align:center; font-size:0.9rem; color:#6b4c2c;"></div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <i class="fas fa-share-alt"></i> <strong>Partagez votre invitation</strong>
+                    <div class="share-link" id="shareLink">Chargement...</div>
+                    <button class="copy-btn" id="copyLinkBtn" style="width: auto; padding: 8px 20px;">
+                        <i class="fas fa-copy"></i> Copier le lien
+                    </button>
+                </div>
+
+                <div class="signature">
+                    ♥ Merci de confirmer votre présence ♥
+                </div>
+            </div>
+        </div>
+        <footer>
+            © 2025 Clara & Junias – Un amour éternel
+        </footer>
+    </div>
+    
+    <div class="admin-toggle" id="adminToggleBtn">
+        <i class="fas fa-user-shield"></i>
     </div>
 
-    <div class="content">
-        <div style="text-align: center;">
-            <div class="invite-name">
-                <i class="fas fa-envelope-open-text"></i> Mr Serge ILUNGA
-            </div>
-        </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ==================== LISTE DES 50 INVITÉS ====================
+        const invitesList = [
+            { id: 1, nom: "Serge ILUNGA" }, { id: 2, nom: "Marie MAMBU" }, { id: 3, nom: "Jean KASONGO" },
+            { id: 4, nom: "Aline MPOYO" }, { id: 5, nom: "Paul MUKENDI" }, { id: 6, nom: "Grace KABEYA" },
+            { id: 7, nom: "David LUMUMBA" }, { id: 8, nom: "Esther NGOY" }, { id: 9, nom: "Joseph KABILA" },
+            { id: 10, nom: "Francine BOSSU" }, { id: 11, nom: "Olivier TSHIBANGU" }, { id: 12, nom: "Nathalie KIMBEMBE" },
+            { id: 13, nom: "Pierre KALALA" }, { id: 14, nom: "Judith MBUYI" }, { id: 15, nom: "André KABANGU" },
+            { id: 16, nom: "Cécile MWANZA" }, { id: 17, nom: "Michel KASONGO" }, { id: 18, nom: "Bernadette NSIMBA" },
+            { id: 19, nom: "Robert KATUMBA" }, { id: 20, nom: "Jeanne MBUJI" }, { id: 21, nom: "Emmanuel TSHIMANGA" },
+            { id: 22, nom: "Louise KIBALA" }, { id: 23, nom: "Martin KAPEND" }, { id: 24, nom: "Thérèse NKULU" },
+            { id: 25, nom: "Augustin KALONJI" }, { id: 26, nom: "Véronique KASONGO" }, { id: 27, nom: "Albert MULUMBA" },
+            { id: 28, nom: "Marguerite KABEYA" }, { id: 29, nom: "Henri BAKAJIKA" }, { id: 30, nom: "Rose NKULU" },
+            { id: 31, nom: "Georges MUTOMBO" }, { id: 32, nom: "Anne KABONGO" }, { id: 33, nom: "Charles ILUNGA" },
+            { id: 34, nom: "Monique KASONGO" }, { id: 35, nom: "François KALALA" }, { id: 36, nom: "Joséphine MBUYI" },
+            { id: 37, nom: "Marcel KABANGU" }, { id: 38, nom: "Claire MWANZA" }, { id: 39, nom: "René KASONGO" },
+            { id: 40, nom: "Julienne NSIMBA" }, { id: 41, nom: "Maurice KATUMBA" }, { id: 42, nom: "Christine MBUJI" },
+            { id: 43, nom: "Alain TSHIMANGA" }, { id: 44, nom: "Fabienne KIBALA" }, { id: 45, nom: "Patrick KAPEND" },
+            { id: 46, nom: "Brigitte NKULU" }, { id: 47, nom: "Éric KALONJI" }, { id: 48, nom: "Sylvie KASONGO" },
+            { id: 49, nom: "Didier MULUMBA" }, { id: 50, nom: "Nicole KABEYA" }
+        ];
 
-        <div class="message">
-            <i class="fas fa-heart heart-icon"></i><br>
-            C'est avec une immense joie que Clara et Junias vous convient à célébrer leur mariage religieux 💍 le <strong>30 juin 2025</strong>.
-            <br><br>
-            Cet événement si spécial marquera l'union de deux âmes qui se sont trouvées et qui souhaitent partager leur bonheur avec vous.
-            <br><br>
-            La soirée dansante se passera dans une salle prestigieuse :
-        </div>
+        // ==================== VARIABLES GLOBALES ====================
+        let currentGuest = null;
+        let isAdminMode = false;
 
-        <!-- Section Lieu Pullman avec carte -->
-        <div class="location-card">
-            <div class="location-title">
-                <i class="fas fa-map-marker-alt" style="color:#b97f44;"></i> Pullman Kinshasa Grand Hôtel
-            </div>
-            <div class="address">
-                <i class="fas fa-location-dot"></i>  Avenue de l'OUA, Kinshasa, Gombe, République Démocratique du Congo
-            </div>
-            <div id="map"></div>
-            <a href="https://maps.google.com/?q=Pullman+Kinshasa+Grand+Hotel" target="_blank" class="btn-direction">
-                <i class="fas fa-directions"></i> Ouvrir dans Google Maps
-            </a>
-            <div style="margin-top: 12px; font-size: 0.85rem; text-align: center;">
-                ⭐ Réception chic & soirée dansante – Nous vous attendons avec impatience !
-            </div>
-        </div>
+        // ==================== FONCTIONS UTILITAIRES ====================
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
 
-        <div class="message">
-            Au plaisir de vous retrouver pour cette occasion spéciale.<br>
-            Avec tout notre amour,<br>
-            <strong>Clara et Junias 💕</strong>
-        </div>
+        function getBaseUrl() {
+            return window.location.href.split('?')[0];
+        }
 
-        <!-- Livre d'or + boissons -->
-        <div class="guestbook">
-            <h3><i class="fas fa-book-open"></i> Livre d'or</h3>
-            <p style="text-align:center;">Laissez un petit mot aux mariés</p>
+        // ==================== INITIALISATION DE LA CARTE ====================
+        function initMap() {
+            const pullmanLat = -4.3000;
+            const pullmanLng = 15.3130;
+            const map = L.map('map').setView([pullmanLat, pullmanLng], 16);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            L.marker([pullmanLat, pullmanLng]).addTo(map)
+                .bindPopup("<b>Pullman Kinshasa Grand Hôtel</b><br>Salle de réception & soirée dansante")
+                .openPopup();
+        }
 
-            <div class="drink-choice">
-                <label><i class="fas fa-wine-bottle"></i> Vos préférences (boissons) </label>
-                <p style="font-size:0.85rem; margin-bottom:6px;">Aidez les mariés dans la planification en suggérant vos goûts (2 max)</p>
+        // ==================== GESTION DE L'INVITÉ COURANT ====================
+        function loadCurrentGuest() {
+            const guestParam = getParameterByName('nom');
+            if (guestParam) {
+                const decodedName = decodeURIComponent(guestParam);
+                currentGuest = invitesList.find(invite => invite.nom === decodedName);
+                if (currentGuest) {
+                    document.getElementById('guestName').innerText = currentGuest.nom;
+                } else {
+                    document.getElementById('guestName').innerText = decodedName;
+                }
+            } else {
+                document.getElementById('guestName').innerText = "Cher Invité";
+            }
+        }
+
+        // ==================== PARTAGE DE LIEN ====================
+        function updateShareLink() {
+            const currentUrl = window.location.href;
+            document.getElementById('shareLink').innerText = currentUrl;
+            document.getElementById('copyLinkBtn').onclick = () => {
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    const btn = document.getElementById('copyLinkBtn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                    setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+                });
+            };
+        }
+
+        // ==================== LIVRE D'OR ====================
+        function saveGuestbookResponse() {
+            const alcool = document.getElementById('alcoolSelect').value;
+            const soft = document.getElementById('softSelect').value;
+            const message = document.getElementById('messageText').value.trim();
+            const guestName = currentGuest ? currentGuest.nom : document.getElementById('guestName').innerText;
+            
+            if (!message) {
+                document.getElementById('feedbackMsg').innerHTML = "💌 Merci d'écrire un petit message avant d'envoyer !";
+                document.getElementById('feedbackMsg').style.color = "#b97f44";
+                return;
+            }
+            
+            const response = {
+                id: Date.now(),
+                guest: guestName,
+                alcool: alcool || "Non spécifié",
+                soft: soft || "Non spécifié",
+                message: message,
+                date: new Date().toLocaleString('fr-FR')
+            };
+            
+            let allResponses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
+            allResponses.push(response);
+            localStorage.setItem('wedding_responses', JSON.stringify(allResponses));
+            
+            document.getElementById('feedbackMsg').innerHTML = `✅ Merci ${guestName} ! Votre message a été enregistré. Nous avons bien noté vos préférences.`;
+            document.getElementById('feedbackMsg').style.color = "#2c7a4a";
+            
+            document.getElementById('messageText').value = "";
+            document.getElementById('alcoolSelect').value = "";
+            document.getElementById('softSelect').value = "";
+            
+            if (isAdminMode) updateAdminStats();
+        }
+
+        // ==================== ADMIN : AFFICHAGE DE LA LISTE ====================
+        let currentLinksList = [];
+
+        function renderAdminTable(searchTerm = '') {
+            const tbody = document.getElementById('invitesTableBody');
+            const baseUrl = getBaseUrl();
+            
+            const filteredInvites = invitesList.filter(invite => 
+                invite.nom.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            tbody.innerHTML = '';
+            currentLinksList = [];
+            
+            filteredInvites.forEach((invite) => {
+                const encodedName = encodeURIComponent(invite.nom);
+                const link = `${baseUrl}?nom=${encodedName}`;
+                currentLinksList.push({ nom: invite.nom, lien: link });
                 
-                <select id="alcoolSelect">
-                    <option value="">🍸 Boisson alcoolisée (optionnel)</option>
-                    <option>Champagne</option>
-                    <option>Vin rouge</option>
-                    <option>Vin blanc</option>
-                    <option>Whisky</option>
-                    <option>Cocktail</option>
-                    <option>Bière</option>
-                </select>
-
-                <select id="softSelect">
-                    <option value="">🥤 Boisson non alcoolisée</option>
-                    <option>Jus de fruits</option>
-                    <option>Coca-Cola</option>
-                    <option>Eau gazeuse</option>
-                    <option>Limonade</option>
-                    <option>Smoothie</option>
-                    <option>Thé glacé</option>
-                </select>
-
-                <label><i class="fas fa-pen-fancy"></i> Votre message :</label>
-                <textarea id="messageText" rows="2" placeholder="Écrivez vos vœux aux mariés..."></textarea>
-                
-                <button id="submitBtn"><i class="fas fa-check-circle"></i> Envoyer mon vœu</button>
-                <div id="feedbackMsg" style="margin-top: 10px; text-align:center; font-size:0.9rem; color:#6b4c2c;"></div>
-            </div>
-        </div>
-        <div class="signature">
-            ♥ Merci de confirmer votre présence ♥
-        </div>
-    </div>
-    <footer>
-        © 2025 Clara & Junias – Un amour éternel
-    </footer>
-</div>
-
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    // Initialisation de la carte pour Pullman Kinshasa Grand Hôtel
-    // Coordonnées approximatives : -4.3000, 15.3130 (Kinshasa)
-    const pullmanLat = -4.3000;
-    const pullmanLng = 15.3130;
-    
-    const map = L.map('map').setView([pullmanLat, pullmanLng], 16);
-    
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
-        subdomains: 'abcd',
-        maxZoom: 19
-    }).addTo(map);
-    
-    // Marqueur personnalisé
-    const marker = L.marker([pullmanLat, pullmanLng]).addTo(map);
-    marker.bindPopup("<b>Pullman Kinshasa Grand Hôtel</b><br>Salle de réception & soirée dansante").openPopup();
-    
-    // Optionnel: ajouter un cercle de style
-    L.circle([pullmanLat, pullmanLng], {
-        color: '#d4af7a',
-        fillColor: '#f5d7b3',
-        fillOpacity: 0.2,
-        radius: 80
-    }).addTo(map);
-    
-    // Gestion du livre d'or / boissons (simulation de sauvegarde)
-    const submitBtn = document.getElementById('submitBtn');
-    const feedbackDiv = document.getElementById('feedbackMsg');
-    
-    submitBtn.addEventListener('click', function() {
-        const alcool = document.getElementById('alcoolSelect').value;
-        const soft = document.getElementById('softSelect').value;
-        const message = document.getElementById('messageText').value.trim();
-        
-        let choices = [];
-        if (alcool) choices.push(alcool);
-        if (soft) choices.push(soft);
-        let drinkText = choices.length ? "Préférence(s) : " + choices.join(", ") : "Aucune préférence de boisson";
-        
-        if(message === "") {
-            feedbackDiv.innerHTML = "💌 Merci d'écrire un petit message avant d'envoyer !";
-            feedbackDiv.style.color = "#b97f44";
-            return;
+                const row = tbody.insertRow();
+                row.insertCell(0).innerHTML = invite.id;
+                row.insertCell(1).innerHTML = `<strong>${invite.nom}</strong>`;
+                row.insertCell(2).innerHTML = `<span style="font-size: 0.75rem; word-break: break-all;">${link}</span>`;
+                row.insertCell(3).innerHTML = `
+                    <button class="action-btn copy-btn" onclick="copyToClipboard('${link}')">
+                        <i class="fas fa-copy"></i> Copier
+                    </button>
+                    <button class="action-btn whatsapp-btn" onclick="sendWhatsApp('${invite.nom}', '${link}')">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                `;
+            });
+            
+            document.getElementById('totalInvites').innerText = invitesList.length;
+            document.getElementById('totalLinks').innerText = filteredInvites.length;
+            updateAdminStats();
         }
         
-        // Ici on simule l'envoi (dans un vrai projet on enverrait en base)
-        feedbackDiv.innerHTML = `✅ Merci ${alcool || soft ? "pour vos suggestions et " : ""}votre message !<br> "${message.substring(0, 80)}" – Nous avons bien reçu ${drinkText.toLowerCase()}. À bientôt !`;
-        feedbackDiv.style.color = "#2c7a4a";
+        function updateAdminStats() {
+            const responses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
+            document.getElementById('totalResponses').innerText = responses.length;
+        }
         
-        // Réinitialisation optionnelle (on garde pour l'exemple)
-        // On peut laisser pour ne pas effacer mais on clear après 5 sec ? on laisse affiché.
-        setTimeout(() => {
-            if(feedbackDiv.innerHTML.includes("Merci")) {
-                // juste pour info, on ne reset pas automatiquement pour ne pas frustrer
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('✅ Lien copié dans le presse-papier !');
+        }
+        
+        function sendWhatsApp(nom, lien) {
+            const message = `🎊 Bonjour ${nom} !\n\nVous êtes cordialement invité(e) au mariage de Clara & Junias le 30 juin 2025 au Pullman Kinshasa.\n\nVoici votre invitation personnalisée : ${lien}\n\nDans l'attente de vous voir pour célébrer ce moment unique ! 💕`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function exportAllLinks() {
+            let csv = "Nom, Lien d'invitation\n";
+            currentLinksList.forEach(link => {
+                csv += `"${link.nom}","${link.lien}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invitations_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportResponses() {
+            const responses = JSON.parse(localStorage.getItem('wedding_responses') || '[]');
+            if (responses.length === 0) {
+                alert("Aucune réponse n'a encore été enregistrée.");
+                return;
             }
-        }, 5000);
+            let csv = "Invité,Boisson alcoolisée,Boisson non alcoolisée,Message,Date\n";
+            responses.forEach(r => {
+                csv += `"${r.guest}","${r.alcool}","${r.soft}","${r.message.replace(/"/g, '""')}","${r.date}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reponses_mariage_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
         
-        // Ici on pourrait vider le textarea si souhaité, mais laissons l'utilisateur voir.
-        document.getElementById('messageText').value = "";
-        document.getElementById('alcoolSelect').value = "";
-        document.getElementById('softSelect').value = "";
-    });
-    
-    // Petit effet smooth pour les liens
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-</script>
+        function clearAllResponses() {
+            if (confirm("⚠️ ATTENTION : Voulez-vous vraiment effacer TOUTES les réponses du livre d'or ? Cette action est irréversible.")) {
+                localStorage.removeItem('wedding_responses');
+                updateAdminStats();
+                alert("✅ Toutes les réponses ont été effacées.");
+            }
+        }
+
+        // ==================== ADMIN MODE TOGGLE ====================
+        function toggleAdminMode() {
+            isAdminMode = !isAdminMode;
+            const adminPanel = document.getElementById('adminPanel');
+            const adminToggleBtn = document.getElementById('adminToggleBtn');
+            
+            if (isAdminMode) {
+                adminPanel.style.display = 'block';
+                adminToggleBtn.style.background = '#2c7a4a';
+                document.body.classList.add('admin-mode');
+                renderAdminTable('');
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    renderAdminTable(e.target.value);
+                });
+                document.getElementById('exportAllBtn').onclick = exportAllLinks;
+                document.getElementById('exportResponsesBtn').onclick = exportResponses;
+                document.getElementById('clearResponsesBtn').onclick = clearAllResponses;
+            } else {
+                adminPanel.style.display = 'none';
+                adminToggleBtn.style.background = '#b97f44';
+                document.body.classList.remove('admin-mode');
+            }
+        }
+
+        // ==================== INITIALISATION ====================
+        function init() {
+            initMap();
+            loadCurrentGuest();
+            updateShareLink();
+            
+            document.getElementById('submitBtn').addEventListener('click', saveGuestbookResponse);
+            document.getElementById('adminToggleBtn').addEventListener('click', toggleAdminMode);
+            
+            // Vérifier si admin est activé via URL
+            if (getParameterByName('admin') === 'true') {
+                toggleAdminMode();
+            }
+        }
+        
+        // Démarrer l'application
+        init();
+    </script>
 </body>
 </html>
