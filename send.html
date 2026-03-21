@@ -42,19 +42,30 @@
             pointer-events: none;
         }
 
-        /* Hero Background avec photo de la structure */
+        /* Hero Background avec photo de la structure et fond bleu-rouge */
         .hero-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.82) 100%),
-                        url('IMG_1812.jpeg');
+            background: linear-gradient(135deg, #002B5C 0%, #CE1126 50%, #002B5C 100%);
+            z-index: -2;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('IMG_1812.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            z-index: -2;
+            opacity: 0.4;
+            mix-blend-mode: overlay;
         }
 
         .hero-bg::after {
@@ -64,7 +75,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
         }
 
         /* Navigation Admin */
@@ -118,7 +129,7 @@
 
         /* En-tête avec photo de la structure */
         .card-header {
-            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.75) 100%),
+            background: linear-gradient(135deg, rgba(0,43,92,0.85) 0%, rgba(206,17,38,0.85) 100%),
                         url('IMG_1812.jpeg');
             background-size: cover;
             background-position: center 30%;
@@ -145,7 +156,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.3);
             pointer-events: none;
         }
 
@@ -264,6 +275,42 @@
             width: 28px;
             color: #d4af37;
             font-size: 1.2rem;
+        }
+
+        /* Carte GPS */
+        .map-container {
+            margin: 30px 0;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: #000;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 300px;
+            border: 0;
+            display: block;
+        }
+
+        .map-link {
+            text-align: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+        }
+
+        .map-link a {
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .map-link a:hover {
+            color: #fff;
         }
 
         .closing {
@@ -450,6 +497,7 @@
             h1 { font-size: 2.5rem; }
             .guest-name-large { font-size: 1.6rem; }
             .card-header { padding: 35px 25px; }
+            .map-container iframe { height: 220px; }
         }
     </style>
 </head>
@@ -531,6 +579,21 @@
                         <p><i class="fas fa-clock"></i> <strong>Horaire :</strong> 12h00 - 16h00 (accueil dès 11h30)</p>
                         <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa - RDC</p>
                         <p><i class="fas fa-ticket-alt"></i> <strong>Accès :</strong> Entrée libre sur invitation strictement personnelle</p>
+                    </div>
+                    
+                    <!-- Carte GPS visible avec lien Maps -->
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.527847323623!2d15.292396!3d-4.325638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a318a1e3b6b6b%3A0x2b2b2b2b2b2b2b2b!2sSilikin%20Village!5e0!3m2!1sfr!2scd!4v1700000000000!5m2!1sfr!2scd" 
+                            allowfullscreen="" 
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="map-link">
+                        <a href="https://maps.google.com/?q=Silikin+Village+Kinshasa" target="_blank">
+                            <i class="fas fa-directions"></i> Ouvrir dans Google Maps pour l'itinéraire
+                        </a>
                     </div>
                     
                     <!-- QR Code unique -->
