@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Scan QR Code - Éloquence en Scène | Contrôle d'accès</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- HTML5 QR Code Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- GSAP pour animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #002B5C 0%, #CE1126 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Particules animées */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Conteneur principal */
+        .scanner-container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 30px;
+            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.3);
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* En-tête */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo i {
+            font-size: 40px;
+            color: #0a0a0a;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #d4af37;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Zone du scanner */
+        .scanner-box {
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+        }
+
+        #qr-reader {
+            width: 100%;
+            border: none;
+        }
+
+        #qr-reader video {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+        }
+
+        /* Zone de résultat */
+        .result-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .result-message {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .result-details {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .success {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .warning {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Statut du scanner */
+        .scanner-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .btn-reset {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            color: #d4af37;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: #d4af37;
+            color: #0a0a0a;
+        }
+
+        /* Liste des scans récents */
+        .recent-scans {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .recent-scans h3 {
+            font-size: 0.9rem;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .scan-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .scan-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scan-name {
+            color: #fff;
+        }
+
+        .scan-time {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+        }
+
+        /* Bouton admin */
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 0.8rem;
+            z-index: 10;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .admin-link:hover {
+            background: #d4af37;
+            color: #0a0a0a;
+        }
+
+        @media (max-width: 600px) {
+            .scanner-container { padding: 20px; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    
+    <div class="scanner-container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <h1>Contrôle d'accès</h1>
+            <p class="subtitle">Scannez le QR Code d'invitation</p>
+        </div>
+        
+        <div class="scanner-status">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Scanner actif</span>
+            </div>
+            <button class="btn-reset" onclick="restartScanner()">
+                <i class="fas fa-sync-alt"></i> Redémarrer
+            </button>
+        </div>
+        
+        <div class="scanner-box">
+            <div id="qr-reader"></div>
+        </div>
+        
+        <div class="result-box" id="resultBox" style="display: none;">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+        
+        <div class="recent-scans">
+            <h3><i class="fas fa-history"></i> Derniers scans</h3>
+            <div class="scan-list" id="scanList">
+                <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">
+                    Aucun scan pour le moment
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <a href="#" class="admin-link" onclick="showAdminLogin()">
+        <i class="fas fa-chart-bar"></i> Statistiques
+    </a>
+    
+    <!-- Modal Admin Stats -->
+    <div id="adminModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(10px);">
+        <div style="background: linear-gradient(135deg, #0f0f17, #0a0a12); border-radius: 32px; padding: 30px; max-width: 500px; width: 90%; border: 1px solid rgba(212,175,55,0.3);">
+            <h2 style="color: #d4af37; margin-bottom: 20px;"><i class="fas fa-chart-line"></i> Statistiques</h2>
+            <div style="margin-bottom: 20px;">
+                <p><strong>Total des scans :</strong> <span id="totalScans">0</span></p>
+                <p><strong>Scans uniques :</strong> <span id="uniqueScans">0</span></p>
+                <p><strong>Scans multiples (fraudes) :</strong> <span id="fraudScans">0</span></p>
+            </div>
+            <button onclick="closeAdminModal()" style="background: #d4af37; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; width: 100%;">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
+            authDomain: "pitch-c6e9a.firebaseapp.com",
+            projectId: "pitch-c6e9a",
+            storageBucket: "pitch-c6e9a.firebasestorage.app",
+            messagingSenderId: "37902068065",
+            appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
+            measurementId: "G-H7T7BEW22T"
+        };
+
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Variables
+        let html5QrCode;
+        let isScanning = true;
+        let scannedCodes = new Set(); // Pour éviter les scans multiples rapides
+        
+        // Synthèse vocale
+        function speakMessage(message, isWarning = false) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.9;
+                utterance.pitch = isWarning ? 0.8 : 1.1;
+                window.speechSynthesis.cancel(); // Annule la parole en cours
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Afficher le résultat
+        function showResult(type, message, details = '') {
+            const resultBox = document.getElementById('resultBox');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultMessage = document.getElementById('resultMessage');
+            const resultDetails = document.getElementById('resultDetails');
+            
+            resultBox.style.display = 'block';
+            resultBox.className = 'result-box ' + type;
+            
+            if (type === 'success') {
+                resultIcon.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i>';
+            } else if (type === 'error') {
+                resultIcon.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i>';
+            } else {
+                resultIcon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>';
+            }
+            
+            resultMessage.innerHTML = message;
+            resultDetails.innerHTML = details;
+            
+            // Animation
+            gsap.fromTo(resultBox, 
+                { scale: 0.9, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(0.5)" }
+            );
+            
+            // Disparaît après 5 secondes
+            setTimeout(() => {
+                if (resultBox.style.display === 'block') {
+                    gsap.to(resultBox, { opacity: 0, duration: 0.5, onComplete: () => {
+                        resultBox.style.display = 'none';
+                        resultBox.style.opacity = 1;
+                    }});
+                }
+            }, 5000);
+        }
+        
+        // Ajouter un scan à la liste récente
+        async function addToRecentScans(guestName, status, timestamp) {
+            const scanList = document.getElementById('scanList');
+            const time = new Date(timestamp).toLocaleTimeString('fr-FR');
+            
+            const item = document.createElement('div');
+            item.className = 'scan-item';
+            item.innerHTML = `
+                <div class="scan-name">
+                    <i class="fas fa-user"></i> ${guestName}
+                    <span style="color: ${status === 'success' ? '#10b981' : '#f59e0b'}; margin-left: 8px;">
+                        ${status === 'success' ? '✓ Entrée validée' : '⚠ Refusé'}
+                    </span>
+                </div>
+                <div class="scan-time">${time}</div>
+            `;
+            
+            if (scanList.children[0] && scanList.children[0].innerText.includes('Aucun scan')) {
+                scanList.innerHTML = '';
+            }
+            scanList.insertBefore(item, scanList.firstChild);
+            
+            // Limiter à 10 scans
+            while (scanList.children.length > 10) {
+                scanList.removeChild(scanList.lastChild);
+            }
+        }
+        
+        // Traitement du QR Code scanné
+        async function onScanSuccess(decodedText, decodedResult) {
+            if (!isScanning) return;
+            
+            // Éviter les scans multiples du même code en rafale
+            if (scannedCodes.has(decodedText)) return;
+            scannedCodes.add(decodedText);
+            
+            // Extraire l'ID du QR Code (format: URL?id=xxx)
+            let guestId = null;
+            try {
+                const url = new URL(decodedText);
+                guestId = url.searchParams.get('id');
+            } catch (e) {
+                // Si c'est juste l'ID
+                guestId = decodedText;
+            }
+            
+            if (!guestId) {
+                showResult('error', 'QR Code invalide', 'Le code scanné n\'est pas une invitation valide.');
+                speakMessage("QR Code invalide. Veuillez présenter une invitation officielle.");
+                return;
+            }
+            
+            try {
+                // Vérifier dans Firebase
+                const guestDoc = await db.collection("guests").doc(guestId).get();
+                
+                if (!guestDoc.exists) {
+                    showResult('error', 'Invitation non trouvée', 'Ce QR Code ne correspond à aucune invitation enregistrée.');
+                    speakMessage("Invitation non trouvée. Veuillez contacter l'organisation.");
+                    return;
+                }
+                
+                const guest = guestDoc.data();
+                const scansRef = db.collection("scans").doc(guestId);
+                const scanDoc = await scansRef.get();
+                
+                if (!scanDoc.exists || !scanDoc.data().scanned) {
+                    // PREMIER SCAN - ENTRÉE VALIDÉE
+                    await scansRef.set({
+                        guestId: guestId,
+                        guestName: guest.name,
+                        scanned: true,
+                        scanCount: 1,
+                        firstScanAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastScanAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Mettre à jour le statut de l'invité
+                    await db.collection("guests").doc(guestId).update({
+                        entryScanned: true,
+                        entryTime: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    showResult('success', '✅ Bienvenue !', `${guest.name}, votre entrée est validée. Profitez de l'événement !`);
+                    speakMessage(`Bienvenue ${guest.name} ! Votre entrée est validée. Profitez de l'événement !`);
+                    addToRecentScans(guest.name, 'success', Date.now());
+                    
+                    // Animation de succès
+                    gsap.to(".scanner-container", { scale: 1.02, duration: 0.2, yoyo: true, repeat: 1 });
+                    
+                } else {
+                    // SCANNÉ DÉJÀ - TENTATIVE DE FRAUDE
+                    const scanData = scanDoc.data();
+                    const newCount = (scanData.scanCount || 1) + 1;
+                    
+                    await scansRef.update({
+                        scanCount: newCount,
+                        lastScanAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastAttemptTime: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Enregistrer la tentative frauduleuse
+                    await db.collection("fraudAttempts").add({
+                        guestId: guestId,
+                        guestName: guest.name,
+                        attemptTime: firebase.firestore.FieldValue.serverTimestamp(),
+                        scanNumber: newCount
+                    });
+                    
+                    showResult('warning', '⚠️ Désolé, ce code a déjà été scanné !', 
+                        `${guest.name}, ce QR Code a déjà été utilisé pour l'entrée. Veuillez présenter une pièce d'identité pour validation.`);
+                    speakMessage(`Désolé, le code a déjà été scanné. Veuillez montrer une pièce d'identité pour valider votre invitation.`, true);
+                    addToRecentScans(guest.name, 'warning', Date.now());
+                    
+                    // Animation d'alerte
+                    gsap.to(".scanner-container", { x: 5, duration: 0.05, repeat: 5, yoyo: true });
+                }
+                
+                // Rafraîchir les stats admin si ouvertes
+                if (document.getElementById('adminModal').style.display === 'flex') {
+                    loadStats();
+                }
+                
+            } catch (error) {
+                console.error("Erreur:", error);
+                showResult('error', 'Erreur technique', 'Veuillez réessayer ou contacter l\'administrateur.');
+                speakMessage("Erreur technique, veuillez réessayer.");
+            }
+            
+            // Réactiver le scan après 2 secondes
+            setTimeout(() => {
+                scannedCodes.delete(decodedText);
+            }, 2000);
+        }
+        
+        // Initialiser le scanner
+        function initScanner() {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                (error) => {
+                    // Silencieux, pas besoin d'afficher les erreurs
+                }
+            ).catch(err => {
+                console.error("Erreur scanner:", err);
+                document.getElementById('qr-reader').innerHTML = '<div style="padding: 50px; text-align: center; color: #ef4444;"><i class="fas fa-camera"></i> Impossible d\'accéder à la caméra. Vérifiez les permissions.</div>';
+            });
+        }
+        
+        // Redémarrer le scanner
+        function restartScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    initScanner();
+                });
+            } else {
+                initScanner();
+            }
+        }
+        
+        // Charger les statistiques admin
+        async function loadStats() {
+            const guestsSnapshot = await db.collection("guests").get();
+            const scansSnapshot = await db.collection("scans").get();
+            
+            let totalGuests = 0;
+            let scannedEntries = 0;
+            let fraudAttempts = 0;
+            
+            guestsSnapshot.forEach(doc => {
+                totalGuests++;
+                if (doc.data().entryScanned) scannedEntries++;
+            });
+            
+            scansSnapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.scanCount && data.scanCount > 1) {
+                    fraudAttempts += (data.scanCount - 1);
+                }
+            });
+            
+            document.getElementById('totalScans').textContent = scannedEntries;
+            document.getElementById('uniqueScans').textContent = totalGuests;
+            document.getElementById('fraudScans').textContent = fraudAttempts;
+        }
+        
+        function showAdminLogin() {
+            document.getElementById('adminModal').style.display = 'flex';
+            loadStats();
+        }
+        
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+        
+        // Système de particules
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particles');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.init();
+            }
+            
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.createParticles(60);
+                this.animate();
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            createParticles(count) {
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 2 + 1,
+                        alpha: Math.random() * 0.4 + 0.1,
+                        speedX: (Math.random() - 0.5) * 0.2,
+                        speedY: (Math.random() - 0.5) * 0.2
+                    });
+                }
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0) p.x = this.canvas.width;
+                    if (p.x > this.canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = this.canvas.height;
+                    if (p.y > this.canvas.height) p.y = 0;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha})`;
+                    this.ctx.fill();
+                });
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        new ParticleSystem();
+        
+        // Démarrer le scanner au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                initScanner();
+                speakMessage("Scanner activé. Veuillez présenter votre QR Code devant la caméra.");
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
