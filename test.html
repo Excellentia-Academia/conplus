@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Excellentia Academia | Éloquence en Scène - Inscription</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -270,14 +265,23 @@
         .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
         .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
         .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; float: right; }
-        .btn-download { background: #10b981; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-download { background: #10b981; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; margin: 5px; }
         .btn-download:hover { background: #059669; transform: translateY(-2px); }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
         .search-bar { margin: 20px 30px; }
         .search-bar input { width: 100%; padding: 15px 20px; border-radius: 50px; background: #1e293b; border: 1px solid #e11d48; color: white; font-size: 1rem; }
         .size-info { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; text-align: center; }
-        
-        /* Caché pour les candidats - invisible */
-        .admin-only { display: none !important; }
+        .backup-info {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            border: 1px dashed #e11d48;
+        }
     </style>
 </head>
 <body>
@@ -314,7 +318,7 @@
                 <div class="file-upload" id="videoUploadArea">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Cliquez ou déposez votre vidéo</p>
-                    <p style="font-size: 0.7rem;">MP4, MOV - Max 200 MB</p>
+                    <p style="font-size: 0.7rem;">MP4, MOV, WebM - Max 200 MB</p>
                     <input type="file" id="videoFile" accept="video/*" style="display: none;">
                     <div class="file-name" id="fileName"></div>
                 </div>
@@ -331,10 +335,15 @@
             </button>
             <div id="formAlert" class="alert"></div>
         </form>
+        
+        <div class="backup-info">
+            <i class="fas fa-database"></i> Toutes les données sont stockées localement dans votre navigateur (IndexedDB). 
+            L'administrateur peut exporter les données et vidéos via le panneau sécurisé.
+        </div>
     </div>
 </div>
 
-<!-- Admin Lock (visible uniquement pour admin) -->
+<!-- Admin Lock -->
 <div class="admin-lock" id="adminLockBtn"><i class="fas fa-lock"></i></div>
 
 <!-- Admin Password Modal -->
@@ -352,9 +361,10 @@
 <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> PANEL ORGANISATEUR</h1><p>Gestion des inscriptions - Vidéos dans Firebase Storage</p></div>
-            <div style="display: flex; gap: 15px;">
-                <button id="downloadCsvBtn" class="btn-download"><i class="fas fa-download"></i> Exporter CSV</button>
+            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> PANEL ORGANISATEUR</h1><p>Gestion des inscriptions - Stockage local (IndexedDB)</p></div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button id="exportAllDataBtn" class="btn-download"><i class="fas fa-database"></i> Exporter toutes les données</button>
+                <button id="exportVideosBtn" class="btn-download btn-warning"><i class="fas fa-video"></i> Exporter les vidéos (ZIP)</button>
                 <button id="closeAdminPanelBtn" style="background:#e11d48; border:none; padding:12px 25px; border-radius:40px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Fermer</button>
             </div>
         </div>
@@ -365,53 +375,87 @@
 </div>
 
 <script>
-    // Firebase Config
-    const firebaseConfig = {
-        apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
-        authDomain: "pitch-c6e9a.firebaseapp.com",
-        projectId: "pitch-c6e9a",
-        storageBucket: "pitch-c6e9a.firebasestorage.app",
-        messagingSenderId: "37902068065",
-        appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
-        measurementId: "G-H7T7BEW22T"
-    };
+    // ========== STOCKAGE LOCAL AVEC INDEXEDDB ==========
+    const DB_NAME = 'EloquenceDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'candidats';
     
     let db = null;
-    let storage = null;
-    let firebaseReady = false;
-    let initAttempts = 0;
-    
-    // Initialisation SILENCIEUSE - aucun message pour les candidats
-    async function initFirebaseSilently() {
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-            storage = firebase.storage();
-            
-            // Test rapide et silencieux
-            const testRef = db.collection('_system').doc('health');
-            await testRef.set({ ts: Date.now() }, { merge: true });
-            
-            firebaseReady = true;
-            console.log('✅ Firebase prêt');
-        } catch (error) {
-            console.error('Firebase init error:', error);
-            firebaseReady = false;
-            initAttempts++;
-            if (initAttempts < 3) {
-                setTimeout(initFirebaseSilently, 2000);
-            }
-        }
-    }
-    
-    initFirebaseSilently();
-    
-    let selectedFile = null;
-    let uploadTask = null;
-    const ADMIN_PASSWORD = "oncommence5";
     let allCandidats = [];
     
-    // Particules décoratives
+    // Ouvrir/initialiser la base de données
+    function openDatabase() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                db = request.result;
+                resolve(db);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const database = event.target.result;
+                if (!database.objectStoreNames.contains(STORE_NAME)) {
+                    const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    store.createIndex('email', 'email', { unique: false });
+                    store.createIndex('date', 'dateInscription', { unique: false });
+                    store.createIndex('nom', 'nom', { unique: false });
+                }
+            };
+        });
+    }
+    
+    // Ajouter un candidat
+    async function addCandidat(candidat) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.add(candidat);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    // Récupérer tous les candidats
+    async function getAllCandidats() {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    // Supprimer un candidat (optionnel)
+    async function deleteCandidat(id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.delete(id);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    // Initialisation
+    let dbReady = false;
+    openDatabase().then(() => {
+        dbReady = true;
+        console.log('✅ Base de données locale prête');
+        chargerListeAdmin();
+    }).catch(err => {
+        console.error('Erreur DB:', err);
+        dbReady = false;
+    });
+    
+    // Variables UI
+    let selectedFile = null;
+    let selectedVideoBlob = null;
+    const ADMIN_PASSWORD = "oncommence5";
+    
+    // Particules
     function createParticles() {
         const container = document.getElementById('particles');
         for(let i=0; i<50; i++) {
@@ -477,6 +521,13 @@
             videoPreviewDiv.style.display = 'block';
         };
         reader.readAsDataURL(file);
+        
+        // Stocker le blob pour plus tard
+        const blobReader = new FileReader();
+        blobReader.onload = function(e) {
+            selectedVideoBlob = e.target.result;
+        };
+        blobReader.readAsDataURL(file);
     }
     
     function showFormAlert(type, message) {
@@ -487,12 +538,12 @@
         setTimeout(() => alertDiv.style.display = 'none', 4000);
     }
     
-    // INSCRIPTION RAPIDE - avec barre de progression discrète
+    // INSCRIPTION AVEC STOCKAGE LOCAL
     document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if (!firebaseReady) {
-            showFormAlert('error', 'Vérification de la connexion... Veuillez réessayer dans quelques secondes.');
+        if (!dbReady) {
+            showFormAlert('error', 'Initialisation de la base de données... Veuillez réessayer dans 2 secondes.');
             return;
         }
         
@@ -511,7 +562,7 @@
             return;
         }
         
-        if(!selectedFile) {
+        if(!selectedVideoBlob) {
             showFormAlert('error', 'Veuillez télécharger votre vidéo d\'éloquence');
             return;
         }
@@ -519,66 +570,48 @@
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
         
-        // Afficher progression discrète
         progressContainer.style.display = 'block';
-        progressFill.style.width = '0%';
-        progressText.innerHTML = 'Préparation...';
+        progressFill.style.width = '50%';
+        progressText.innerHTML = 'Enregistrement...';
         
         try {
-            // Upload vidéo vers Storage
-            const videoId = Date.now() + '_' + Math.random().toString(36).substring(2);
-            const fileExt = selectedFile.name.split('.').pop();
-            const storageRef = storage.ref(`videos_candidats/${videoId}.${fileExt}`);
-            
-            uploadTask = storageRef.put(selectedFile);
-            
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressFill.style.width = progress + '%';
-                    progressText.innerHTML = `${Math.round(progress)}%`;
-                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${Math.round(progress)}%`;
-                },
-                (error) => {
-                    throw error;
-                }
-            );
-            
-            await uploadTask;
-            const videoURL = await storageRef.getDownloadURL();
-            
-            progressText.innerHTML = '✅ Finalisation...';
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalisation...';
-            
-            // Enregistrement dans Firestore
             const candidatData = {
                 nom, postnom, prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
                 universite, promotion, faculte, telephone, email, motivation,
-                videoURL: videoURL,
+                videoData: selectedVideoBlob,
                 videoName: selectedFile.name,
                 videoSize: selectedFile.size,
-                dateInscription: firebase.firestore.FieldValue.serverTimestamp(),
+                dateInscription: new Date().toISOString(),
                 statut: 'inscrit'
             };
             
-            await db.collection('candidats_eloquence').add(candidatData);
+            progressFill.style.width = '80%';
+            progressText.innerHTML = 'Sauvegarde...';
             
-            // SUCCÈS - message élégant
-            showFormAlert('success', '🎉 Félicitations ! Votre inscription est validée. Vous recevrez un email de confirmation.');
+            await addCandidat(candidatData);
             
-            // Réinitialisation complète
+            progressFill.style.width = '100%';
+            progressText.innerHTML = '✅ Terminé !';
+            
+            showFormAlert('success', '🎉 Félicitations ! Votre inscription est validée.');
+            
+            // Réinitialisation
             document.getElementById('inscriptionForm').reset();
             selectedFile = null;
+            selectedVideoBlob = null;
             fileNameSpan.textContent = '';
             videoInput.value = '';
             videoPreviewDiv.style.display = 'none';
             previewVideo.src = '';
             sizeInfo.innerHTML = '';
-            progressContainer.style.display = 'none';
-            progressFill.style.width = '0%';
+            
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+            }, 2000);
             
         } catch(error) {
             console.error('Erreur:', error);
@@ -587,16 +620,10 @@
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
-            uploadTask = null;
-            setTimeout(() => {
-                if (progressContainer.style.display !== 'none') {
-                    progressContainer.style.display = 'none';
-                }
-            }, 3000);
         }
     });
     
-    // ========== ADMIN PANEL (caché pour les candidats) ==========
+    // ========== ADMIN PANEL ==========
     const adminLockBtn = document.getElementById('adminLockBtn');
     const adminModal = document.getElementById('adminPasswordModal');
     const adminPanelDiv = document.getElementById('adminPanel');
@@ -607,7 +634,7 @@
         if(document.getElementById('adminPassInput').value === ADMIN_PASSWORD) {
             adminModal.style.display = 'none';
             adminPanelDiv.style.display = 'block';
-            chargerCandidatsAdmin();
+            chargerListeAdmin();
         } else {
             const alertDiv = document.getElementById('adminPassAlert');
             alertDiv.textContent = 'Mot de passe incorrect';
@@ -618,18 +645,26 @@
     });
     document.getElementById('closeAdminPanelBtn').addEventListener('click', () => { adminPanelDiv.style.display = 'none'; });
     
-    async function chargerCandidatsAdmin() {
-        if (!firebaseReady) { setTimeout(chargerCandidatsAdmin, 2000); return; }
+    async function chargerListeAdmin() {
+        if (!dbReady) { setTimeout(chargerListeAdmin, 1000); return; }
+        
         const container = document.getElementById('adminCandidatesContainer');
         container.innerHTML = '<div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>';
+        
         try {
-            const snapshot = await db.collection('candidats_eloquence').orderBy('dateInscription', 'desc').get();
-            allCandidats = [];
-            snapshot.forEach(doc => { allCandidats.push({ id: doc.id, ...doc.data() }); });
+            allCandidats = await getAllCandidats();
             document.getElementById('totalCandidats').textContent = allCandidats.length;
             
+            // Recherche
+            const searchTerm = document.getElementById('searchCandidat')?.value.toLowerCase() || '';
+            const filtered = allCandidats.filter(c => 
+                (c.nomComplet?.toLowerCase().includes(searchTerm) ||
+                 c.email?.toLowerCase().includes(searchTerm) ||
+                 c.universite?.toLowerCase().includes(searchTerm))
+            );
+            
             let html = '';
-            allCandidats.forEach(c => {
+            filtered.forEach(c => {
                 html += `<div class="candidate-admin-card">
                     <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom}</h3>
                     <p><i class="fas fa-envelope"></i> ${c.email || '-'}</p>
@@ -637,32 +672,76 @@
                     <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
                     <div class="badge">Motivation</div>
                     <p style="margin:10px 0; background:#1e293b; padding:12px; border-radius:20px;">${c.motivation || '-'}</p>
-                    <div class="video-preview">${c.videoURL ? `<video controls src="${c.videoURL}" style="width:100%; border-radius:20px;"></video>` : '<p>Vidéo non disponible</p>'}</div>
-                    <p style="font-size:0.7rem; color:#94a3b8;">${c.videoName ? `📹 ${c.videoName}` : ''}<br>📅 ${c.dateInscription ? new Date(c.dateInscription.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                    <div class="video-preview">${c.videoData ? `<video controls src="${c.videoData}" style="width:100%; border-radius:20px;"></video>` : '<p>Vidéo non disponible</p>'}</div>
+                    <p style="font-size:0.7rem; color:#94a3b8;">📹 ${c.videoName || ''}<br>📅 ${c.dateInscription ? new Date(c.dateInscription).toLocaleString() : 'N/A'}</p>
                 </div>`;
             });
             container.innerHTML = html || '<div style="text-align:center; padding:50px;">Aucun candidat inscrit.</div>';
-        } catch(err) { container.innerHTML = '<div style="text-align:center; padding:50px; color:#ef4444;">Erreur de chargement.</div>'; }
+        } catch(err) {
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:#ef4444;">Erreur de chargement.</div>';
+        }
     }
     
-    document.getElementById('downloadCsvBtn').addEventListener('click', () => {
-        if(allCandidats.length === 0) { alert('Aucun candidat à exporter'); return; }
-        const headers = ['Nom', 'Postnom', 'Prénom', 'Email', 'Téléphone', 'Université', 'Promotion', 'Faculté', 'Motivation', 'Lien Vidéo', 'Date Inscription'];
-        const rows = allCandidats.map(c => [c.nom||'', c.postnom||'', c.prenom||'', c.email||'', c.telephone||'', c.universite||'', c.promotion||'', c.faculte||'', c.motivation||'', c.videoURL||'', c.dateInscription ? new Date(c.dateInscription.seconds*1000).toLocaleString() : '']);
-        const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    document.getElementById('searchCandidat')?.addEventListener('input', () => chargerListeAdmin());
+    
+    // EXPORT COMPLET (données + vidéos)
+    document.getElementById('exportAllDataBtn').addEventListener('click', async () => {
+        const candidats = await getAllCandidats();
+        const exportData = candidats.map(c => ({
+            nom: c.nom,
+            postnom: c.postnom,
+            prenom: c.prenom,
+            nomComplet: c.nomComplet,
+            email: c.email,
+            telephone: c.telephone,
+            universite: c.universite,
+            promotion: c.promotion,
+            faculte: c.faculte,
+            motivation: c.motivation,
+            videoName: c.videoName,
+            videoSize: c.videoSize,
+            dateInscription: c.dateInscription,
+            videoData: c.videoData ? '(Vidéo incluse dans le ZIP)' : 'Aucune'
+        }));
+        
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `candidats_eloquence_${new Date().toISOString().split('T')[0]}.csv`;
+        link.download = `candidats_export_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        showFormAlert('success', 'Export CSV réussi !');
+        
+        showFormAlert('success', 'Export JSON réussi ! Les vidéos sont incluses dans les données.');
     });
     
-    // Rafraîchissement auto du panel admin
-    setInterval(() => { if(adminPanelDiv.style.display === 'block') chargerCandidatsAdmin(); }, 10000);
+    // EXPORT VIDÉOS EN ZIP (simulé - téléchargement individuel)
+    document.getElementById('exportVideosBtn').addEventListener('click', async () => {
+        const candidats = await getAllCandidats();
+        const videoCandidats = candidats.filter(c => c.videoData);
+        
+        if(videoCandidats.length === 0) {
+            alert('Aucune vidéo à exporter');
+            return;
+        }
+        
+        // Téléchargement individuel des vidéos
+        for(const c of videoCandidats) {
+            if(c.videoData) {
+                const link = document.createElement('a');
+                link.href = c.videoData;
+                link.download = `${c.nomComplet || 'candidat'}_${c.videoName || 'video.mp4'}`;
+                link.click();
+            }
+        }
+        
+        showFormAlert('success', `${videoCandidats.length} vidéo(s) téléchargée(s) individuellement.`);
+    });
     
-    // Animations inputs
+    // Rafraîchissement auto
+    setInterval(() => { if(adminPanelDiv.style.display === 'block') chargerListeAdmin(); }, 5000);
+    
+    // Animations
     document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
