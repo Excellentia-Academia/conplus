@@ -1,1 +1,574 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Concours d'Éloquence 2026 | Invitation</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hero Background avec overlay professionnel */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.7) 100%),
+                        url('https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+
+        /* Overlay élégant */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0.4) 100%);
+            z-index: -1;
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Carte d'invitation */
+        .invitation-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        /* En-tête avec image stylisée */
+        .card-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: #d4af37;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+        }
+
+        .event-date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .event-date i {
+            color: #d4af37;
+            margin-right: 8px;
+        }
+
+        /* Corps de la carte */
+        .card-body {
+            padding: 40px;
+        }
+
+        /* Message d'invitation */
+        .invitation-message {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .invitation-message p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        /* Infos événement */
+        .event-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            background: #f7f9fc;
+            padding: 25px;
+            border-radius: 24px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .info-icon i {
+            font-size: 28px;
+            color: #1a1a2e;
+        }
+
+        .info-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            font-size: 1rem;
+            color: #1a202c;
+            font-weight: 500;
+        }
+
+        /* Formulaire */
+        .form-section {
+            background: #fff;
+            border-radius: 24px;
+            padding: 30px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Bouton */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #2a2a3e 0%, #1e2a4e 100%);
+        }
+
+        /* Message de succès */
+        .success-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Compteur */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card-body {
+                padding: 25px;
+            }
+            
+            .event-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-bg"></div>
+    <div class="overlay"></div>
+    
+    <div class="container">
+        <div class="invitation-card">
+            <div class="card-header">
+                <div class="badge">
+                    <i class="fas fa-microphone-alt"></i> ÉVÉNEMENT OFFICIEL
+                </div>
+                <h1>Concours d'Éloquence<br>2026</h1>
+                <div class="event-date">
+                    <i class="fas fa-calendar-alt"></i> 07 Mars 2026 • 12h00 - 16h00
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="invitation-message">
+                    <p>L'art de la parole vous appelle !</p>
+                    <p>Nous avons l'honneur de vous inviter à assister à la <span class="highlight">première édition du Concours d'Éloquence</span>, un événement qui célèbre le pouvoir des mots, la rhétorique et l'expression orale.</p>
+                    <p>Venez découvrir et soutenir les talents qui feront vibrer la scène par leur passion et leur éloquence.</p>
+                </div>
+                
+                <div class="event-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3>LIEU</h3>
+                        <p>Silikin Village<br>Kinshasa, RDC</p>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>HORAIRE</h3>
+                        <p>12h00 - 16h00<br>Accueil dès 11h30</p>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <h3>ENTRÉE</h3>
+                        <p>Entrée libre<br>Sur invitation</p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle"></i> Merci ! Votre participation a été enregistrée avec succès.
+                    </div>
+                    
+                    <h3 class="form-title">Confirmez votre présence</h3>
+                    
+                    <form id="rsvpForm">
+                        <div class="form-group">
+                            <label for="name"><i class="fas fa-user"></i> Nom complet *</label>
+                            <input type="text" id="name" name="name" required placeholder="Votre nom et prénom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email"><i class="fas fa-envelope"></i> Email *</label>
+                            <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone"><i class="fas fa-phone"></i> Téléphone</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+243 ...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="status"><i class="fas fa-calendar-check"></i> Statut *</label>
+                            <select id="status" name="status" required>
+                                <option value="">-- Sélectionnez --</option>
+                                <option value="present">✅ Je serai présent(e)</option>
+                                <option value="absent">❌ Je ne pourrai pas venir</option>
+                                <option value="maybe">🤔 Je ne sais pas encore</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="guests"><i class="fas fa-users"></i> Nombre d'accompagnants</label>
+                            <select id="guests" name="guests">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4+">4+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message"><i class="fas fa-comment"></i> Message (optionnel)</label>
+                            <textarea id="message" name="message" rows="3" placeholder="Un message pour les organisateurs..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Confirmer ma participation
+                        </button>
+                    </form>
+                    
+                    <div class="stats" id="stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalCount">0</div>
+                            <div class="stat-label">Participants</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="presentCount">0</div>
+                            <div class="stat-label">Confirmés</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
+            authDomain: "pitch-c6e9a.firebaseapp.com",
+            projectId: "pitch-c6e9a",
+            storageBucket: "pitch-c6e9a.firebasestorage.app",
+            messagingSenderId: "37902068065",
+            appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
+            measurementId: "G-H7T7BEW22T"
+        };
+
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Référence à la collection
+        const participantsRef = db.collection("participants");
+
+        // Éléments DOM
+        const form = document.getElementById('rsvpForm');
+        const successMessage = document.getElementById('successMessage');
+
+        // Charger les statistiques
+        function loadStats() {
+            participantsRef.get().then((querySnapshot) => {
+                let total = 0;
+                let present = 0;
+                
+                querySnapshot.forEach((doc) => {
+                    total++;
+                    if (doc.data().status === 'present') {
+                        present++;
+                    }
+                });
+                
+                document.getElementById('totalCount').textContent = total;
+                document.getElementById('presentCount').textContent = present;
+            }).catch((error) => {
+                console.error("Erreur chargement stats: ", error);
+            });
+        }
+
+        // Soumission du formulaire
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Récupération des données
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const status = document.getElementById('status').value;
+            const guests = document.getElementById('guests').value;
+            const message = document.getElementById('message').value.trim();
+            
+            // Validation
+            if (!name || !email || !status) {
+                alert('Veuillez remplir tous les champs obligatoires (*)');
+                return;
+            }
+            
+            // Vérifier si l'email existe déjà
+            const existing = await participantsRef.where('email', '==', email).get();
+            if (!existing.empty) {
+                alert('Cet email a déjà été enregistré. Contactez les organisateurs pour toute modification.');
+                return;
+            }
+            
+            // Préparation des données
+            const participantData = {
+                name: name,
+                email: email,
+                phone: phone,
+                status: status,
+                guests: guests,
+                message: message,
+                dateReponse: firebase.firestore.FieldValue.serverTimestamp(),
+                evenement: "ConcoursEloquence2026"
+            };
+            
+            try {
+                // Enregistrement dans Firebase
+                await participantsRef.add(participantData);
+                
+                // Afficher message de succès
+                successMessage.style.display = 'block';
+                
+                // Réinitialiser le formulaire
+                form.reset();
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+                
+                // Recharger les stats
+                loadStats();
+                
+                // Scroll vers le haut
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error("Erreur lors de l'enregistrement: ", error);
+                alert('Une erreur est survenue. Veuillez réessayer.');
+            }
+        });
+        
+        // Charger les stats au démarrage
+        loadStats();
+        
+        // Animation d'entrée
+        document.querySelector('.invitation-card').style.opacity = '0';
+        document.querySelector('.invitation-card').style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            document.querySelector('.invitation-card').style.transition = 'all 0.8s ease';
+            document.querySelector('.invitation-card').style.opacity = '1';
+            document.querySelector('.invitation-card').style.transform = 'translateY(0)';
+        }, 100);
+    </script>
+</body>
+</html>
