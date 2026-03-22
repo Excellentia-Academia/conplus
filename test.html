@@ -117,43 +117,17 @@
             box-shadow: 0 0 0 4px rgba(225,29,72,0.2);
             transform: scale(1.01);
         }
-        .file-upload {
-            border: 2px dashed rgba(225,29,72,0.5);
-            border-radius: 28px;
-            padding: 25px;
-            text-align: center;
-            background: rgba(10,12,18,0.5);
-            cursor: pointer;
-            transition: all 0.3s;
+        .info-note {
+            background: rgba(225, 29, 72, 0.15);
+            border-left: 4px solid #e11d48;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin: 20px 0 10px;
+            font-size: 0.9rem;
+            color: #f1f5f9;
         }
-        .file-upload:hover { border-color: #e11d48; background: rgba(225,29,72,0.1); }
-        .file-upload i { font-size: 2.5rem; color: #e11d48; margin-bottom: 10px; }
-        .file-name { margin-top: 10px; font-size: 0.8rem; color: #94a3b8; }
-        .progress-container {
-            margin-top: 15px;
-            display: none;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #1e293b;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #e11d48, #f97316);
-            width: 0%;
-            transition: width 0.2s;
-        }
-        .progress-text {
-            text-align: center;
-            font-size: 0.65rem;
-            margin-top: 5px;
-            color: #64748b;
-        }
-        .video-preview-small { margin-top: 15px; display: none; }
-        .video-preview-small video { width: 100%; max-height: 150px; border-radius: 20px; }
+        .info-note i { color: #e11d48; margin-right: 10px; }
+        .info-note strong { color: #e11d48; }
         .submit-btn {
             background: linear-gradient(135deg, #e11d48, #9f1239);
             border: none;
@@ -258,8 +232,6 @@
             transition: all 0.3s;
         }
         .candidate-admin-card:hover { transform: translateY(-5px); border-color: #e11d48; }
-        .video-preview { background: #000; border-radius: 20px; margin: 15px 0; overflow: hidden; }
-        .video-preview video { width: 100%; max-height: 200px; }
         .badge { background: #e11d48; padding: 5px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin: 5px; }
         .alert { padding: 12px 18px; border-radius: 28px; margin: 15px 0; display: none; }
         .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
@@ -271,7 +243,6 @@
         .btn-warning:hover { background: #d97706; }
         .search-bar { margin: 20px 30px; }
         .search-bar input { width: 100%; padding: 15px 20px; border-radius: 50px; background: #1e293b; border: 1px solid #e11d48; color: white; font-size: 1rem; }
-        .size-info { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; text-align: center; }
         .storage-info {
             background: #1e293b;
             border-radius: 20px;
@@ -281,6 +252,44 @@
             font-size: 0.7rem;
             color: #64748b;
             border: 1px solid #334155;
+        }
+        .record-section {
+            background: rgba(10, 12, 18, 0.6);
+            border-radius: 32px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid rgba(225, 29, 72, 0.3);
+        }
+        .record-btn {
+            background: linear-gradient(135deg, #e11d48, #9f1239);
+            border: none;
+            padding: 18px 40px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        .record-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .record-status {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .record-preview {
+            margin-top: 20px;
+            display: none;
+        }
+        .record-preview video {
+            max-width: 100%;
+            border-radius: 20px;
+            max-height: 200px;
         }
     </style>
 </head>
@@ -299,6 +308,11 @@
     </div>
 
     <div class="form-card">
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> 
+            <strong>Information importante :</strong> Les frais d'inscription de <strong>5000 Fc</strong> concernent uniquement les <strong>50 candidats sélectionnés</strong> après la présélection.
+        </div>
+        
         <form id="inscriptionForm">
             <div class="form-grid">
                 <div class="input-group"><label><i class="fas fa-user"></i> Nom *</label><input type="text" id="nom" placeholder="Votre nom" required></div>
@@ -313,21 +327,29 @@
             
             <div class="input-group"><label><i class="fas fa-heart"></i> Motivation *</label><textarea id="motivation" placeholder="Pourquoi souhaitez-vous participer ?" required></textarea></div>
             
-            <div class="input-group">
-                <label><i class="fas fa-video"></i> Vidéo d'éloquence (sujet au choix) *</label>
-                <div class="file-upload" id="videoUploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Cliquez ou déposez votre vidéo</p>
-                    <p style="font-size: 0.7rem;">MP4, MOV - Max 200 MB</p>
-                    <input type="file" id="videoFile" accept="video/*" style="display: none;">
-                    <div class="file-name" id="fileName"></div>
+            <!-- Section d'enregistrement vidéo direct -->
+            <div class="record-section">
+                <label style="display: block; margin-bottom: 15px; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #e11d48;">
+                    <i class="fas fa-microphone-alt"></i> Enregistrement vidéo d'éloquence
+                </label>
+                <p style="margin-bottom: 15px; font-size: 0.85rem; color: #94a3b8;">Sujet au choix - Enregistrez directement votre prestation</p>
+                
+                <button type="button" id="startRecordBtn" class="record-btn">
+                    <i class="fas fa-video"></i> Commencer l'enregistrement
+                </button>
+                <button type="button" id="stopRecordBtn" class="record-btn" style="background: #475569;" disabled>
+                    <i class="fas fa-stop"></i> Arrêter
+                </button>
+                
+                <div class="record-status" id="recordStatus">
+                    Prêt à enregistrer
                 </div>
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                    <div class="progress-text" id="progressText"></div>
+                
+                <div class="record-preview" id="recordPreview">
+                    <video id="recordedVideo" controls></video>
                 </div>
-                <div class="video-preview-small" id="videoPreview"><video controls id="previewVideo"></video></div>
-                <div class="size-info" id="sizeInfo"></div>
+                
+                <input type="hidden" id="videoDataInput">
             </div>
             
             <button type="submit" class="submit-btn" id="submitBtn">
@@ -360,17 +382,15 @@
 <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> GESTION DES INSCRIPTIONS</h1><p>Export complet des données et vidéos</p></div>
+            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> GESTION DES INSCRIPTIONS</h1><p>Liste des candidats inscrits</p></div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter JSON</button>
-                <button id="exportVideosZipBtn" class="btn-download btn-warning"><i class="fas fa-video"></i> Télécharger vidéos</button>
                 <button id="closeAdminPanelBtn" style="background:#e11d48; border:none; padding:12px 25px; border-radius:40px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Fermer</button>
             </div>
         </div>
         <div class="admin-stats">
             <div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> inscrits</div>
             <div class="stat-card"><i class="fas fa-video"></i> <span id="totalVideos">0</span> vidéos</div>
-            <div class="stat-card"><i class="fas fa-database"></i> <span id="storageSize">0</span> Mo</div>
         </div>
     </div>
     <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université)..."></div>
@@ -378,15 +398,22 @@
 </div>
 
 <script>
-    // ========== INDEXEDDB OPTIMISÉ POUR 100+ VIDÉOS ==========
-    const DB_NAME = 'EloquenceDB_V2';
-    const DB_VERSION = 2;
+    // ========== INDEXEDDB ==========
+    const DB_NAME = 'EloquenceDB_V3';
+    const DB_VERSION = 3;
     const STORE_NAME = 'candidats';
     
     let db = null;
     let allCandidats = [];
     let isAdminPanelOpen = false;
-    let refreshTimer = null;
+    
+    // Variables pour l'enregistrement vidéo
+    let mediaStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecording = false;
+    let recordedVideoBlob = null;
+    let recordedVideoData = null;
     
     // Ouverture DB
     function openDatabase() {
@@ -436,7 +463,6 @@
         let totalSize = 0;
         candidats.forEach(c => {
             if (c.videoData) {
-                // Estimation taille base64
                 totalSize += (c.videoData.length * 0.75) / (1024 * 1024);
             }
         });
@@ -449,9 +475,6 @@
         if (isAdminPanelOpen) chargerListeAdmin();
     }).catch(err => console.error('DB Error:', err));
     
-    // Variables UI
-    let selectedFile = null;
-    let selectedVideoData = null;
     const ADMIN_PASSWORD = "oncommence5";
     
     // Particules
@@ -472,52 +495,72 @@
     }
     createParticles();
     
-    // Upload UI
-    const uploadArea = document.getElementById('videoUploadArea');
-    const videoInput = document.getElementById('videoFile');
-    const fileNameSpan = document.getElementById('fileName');
-    const previewVideo = document.getElementById('previewVideo');
-    const videoPreviewDiv = document.getElementById('videoPreview');
-    const progressContainer = document.getElementById('progressContainer');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    const sizeInfo = document.getElementById('sizeInfo');
+    // Enregistrement vidéo
+    const startRecordBtn = document.getElementById('startRecordBtn');
+    const stopRecordBtn = document.getElementById('stopRecordBtn');
+    const recordStatus = document.getElementById('recordStatus');
+    const recordPreview = document.getElementById('recordPreview');
+    const recordedVideo = document.getElementById('recordedVideo');
+    const videoDataInput = document.getElementById('videoDataInput');
     
-    uploadArea.addEventListener('click', () => videoInput.click());
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#e11d48'; });
-    uploadArea.addEventListener('dragleave', () => uploadArea.style.borderColor = 'rgba(225,29,72,0.5)');
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const file = e.dataTransfer.files[0];
-        if(file && file.type.startsWith('video/')) handleVideoFile(file);
-        uploadArea.style.borderColor = 'rgba(225,29,72,0.5)';
-    });
-    
-    videoInput.addEventListener('change', (e) => { if(e.target.files[0]) handleVideoFile(e.target.files[0]); });
-    
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0';
-        const mb = bytes / (1024 * 1024);
-        return mb.toFixed(1) + ' Mo';
-    }
-    
-    function handleVideoFile(file) {
-        if(file.size > 200 * 1024 * 1024) {
-            showFormAlert('error', 'Vidéo max 200 Mo');
-            return;
+    async function startRecording() {
+        try {
+            recordStatus.textContent = 'Demande d\'accès à la caméra...';
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            
+            mediaRecorder = new MediaRecorder(mediaStream);
+            recordedChunks = [];
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                recordedVideoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+                const url = URL.createObjectURL(recordedVideoBlob);
+                recordedVideo.src = url;
+                recordPreview.style.display = 'block';
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    recordedVideoData = e.target.result;
+                    videoDataInput.value = e.target.result;
+                    recordStatus.textContent = '✓ Vidéo enregistrée avec succès !';
+                };
+                reader.readAsDataURL(recordedVideoBlob);
+                
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+                recordStatus.textContent = '✓ Enregistrement terminé - Vidéo prête';
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            startRecordBtn.disabled = true;
+            stopRecordBtn.disabled = false;
+            recordStatus.textContent = '🎥 Enregistrement en cours... Parlez !';
+            
+        } catch (error) {
+            console.error('Erreur d\'accès à la caméra:', error);
+            recordStatus.textContent = '❌ Impossible d\'accéder à la caméra/microphone. Vérifiez vos permissions.';
+            startRecordBtn.disabled = false;
         }
-        selectedFile = file;
-        fileNameSpan.textContent = file.name;
-        sizeInfo.innerHTML = `📹 ${formatFileSize(file.size)}`;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewVideo.src = e.target.result;
-            videoPreviewDiv.style.display = 'block';
-            selectedVideoData = e.target.result;
-        };
-        reader.readAsDataURL(file);
     }
+    
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            startRecordBtn.disabled = false;
+            stopRecordBtn.disabled = true;
+        }
+    }
+    
+    startRecordBtn.addEventListener('click', startRecording);
+    stopRecordBtn.addEventListener('click', stopRecording);
     
     function showFormAlert(type, message) {
         const alertDiv = document.getElementById('formAlert');
@@ -551,8 +594,8 @@
             return;
         }
         
-        if(!selectedVideoData) {
-            showFormAlert('error', 'Vidéo requise');
+        if(!recordedVideoData) {
+            showFormAlert('error', 'Veuillez enregistrer une vidéo');
             return;
         }
         
@@ -560,55 +603,42 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
         
-        progressContainer.style.display = 'block';
-        progressFill.style.width = '50%';
-        progressText.innerHTML = 'Traitement...';
-        
         try {
             const candidatData = {
                 nom, postnom, prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
                 universite, promotion, faculte, telephone, email, motivation,
-                videoData: selectedVideoData,
-                videoName: selectedFile.name,
-                videoSize: selectedFile.size,
+                videoData: recordedVideoData,
+                videoName: `enregistrement_${Date.now()}.mp4`,
+                videoSize: recordedVideoBlob ? recordedVideoBlob.size : 0,
                 dateInscription: new Date().toISOString()
             };
             
-            progressFill.style.width = '80%';
             await addCandidat(candidatData);
-            
-            progressFill.style.width = '100%';
-            progressText.innerHTML = '✓ Terminé';
             
             showFormAlert('success', '🎉 Inscription réussie !');
             
             document.getElementById('inscriptionForm').reset();
-            selectedFile = null;
-            selectedVideoData = null;
-            fileNameSpan.textContent = '';
-            videoInput.value = '';
-            videoPreviewDiv.style.display = 'none';
-            previewVideo.src = '';
-            sizeInfo.innerHTML = '';
-            
-            setTimeout(() => {
-                progressContainer.style.display = 'none';
-                progressFill.style.width = '0%';
-            }, 1500);
+            recordedVideoData = null;
+            recordedVideoBlob = null;
+            recordedVideo.src = '';
+            recordPreview.style.display = 'none';
+            videoDataInput.value = '';
+            recordedChunks = [];
+            recordStatus.textContent = 'Prêt à enregistrer';
             
             if (isAdminPanelOpen) chargerListeAdmin();
             
         } catch(error) {
+            console.error(error);
             showFormAlert('error', 'Erreur, réessayez');
-            progressText.innerHTML = 'Erreur';
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE';
         }
     });
     
-    // ========== ADMIN PANEL - SANS CHARGEMENT AUTOMATIQUE INTEMPESTIF ==========
+    // ========== ADMIN PANEL ==========
     const adminLockBtn = document.getElementById('adminLockBtn');
     const adminModal = document.getElementById('adminPasswordModal');
     const adminPanelDiv = document.getElementById('adminPanel');
@@ -634,7 +664,6 @@
     document.getElementById('closeAdminPanelBtn').addEventListener('click', () => {
         adminPanelDiv.style.display = 'none';
         isAdminPanelOpen = false;
-        if (refreshTimer) clearTimeout(refreshTimer);
     });
     
     let searchTimeout = null;
@@ -671,8 +700,10 @@
                 <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
                 <div class="badge">Motivation</div>
                 <p style="margin:10px 0; background:#1e293b; padding:12px; border-radius:20px; font-size:0.85rem;">${c.motivation?.substring(0, 150) || '-'}${c.motivation?.length > 150 ? '...' : ''}</p>
-                <div class="video-preview">${c.videoData ? `<video controls src="${c.videoData}" style="width:100%; border-radius:20px;"></video>` : '<p>Vidéo indisponible</p>'}</div>
-                <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">📹 ${c.videoName || ''}<br>📅 ${c.dateInscription ? new Date(c.dateInscription).toLocaleString() : 'N/A'}</p>
+                <div style="background:#000; border-radius:20px; margin-top:10px; overflow:hidden;">
+                    ${c.videoData ? `<video controls src="${c.videoData}" style="width:100%; border-radius:20px;"></video>` : '<p style="padding:10px;">Vidéo indisponible</p>'}
+                </div>
+                <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">📹 ${c.videoName || 'Enregistrement direct'}<br>📅 ${c.dateInscription ? new Date(c.dateInscription).toLocaleString() : 'N/A'}</p>
             </div>`;
         });
         container.innerHTML = html;
@@ -687,7 +718,6 @@
             
             document.getElementById('totalCandidats').textContent = stats.count;
             document.getElementById('totalVideos').textContent = stats.videos;
-            document.getElementById('storageSize').textContent = stats.sizeMB;
             
             afficherCandidatsFiltres();
         } catch(err) {
@@ -703,8 +733,7 @@
             nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
             universite: c.universite, promotion: c.promotion, faculte: c.faculte,
             motivation: c.motivation, videoName: c.videoName, videoSize: c.videoSize,
-            dateInscription: c.dateInscription,
-            videoData: c.videoData || null
+            dateInscription: c.dateInscription
         }));
         
         const jsonStr = JSON.stringify(exportData, null, 2);
@@ -718,42 +747,13 @@
         showFormAlert('success', 'Export JSON réussi !');
     });
     
-    // EXPORT VIDÉOS (téléchargement groupé)
-    document.getElementById('exportVideosZipBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidats();
-        const withVideos = candidats.filter(c => c.videoData);
-        
-        if(withVideos.length === 0) {
-            alert('Aucune vidéo à exporter');
-            return;
-        }
-        
-        let downloaded = 0;
-        for(const c of withVideos) {
-            if(c.videoData) {
-                const link = document.createElement('a');
-                link.href = c.videoData;
-                const safeName = (c.nomComplet || 'candidat').replace(/[^a-z0-9]/gi, '_');
-                link.download = `${safeName}_${c.videoName || 'video.mp4'}`;
-                link.click();
-                downloaded++;
-                await new Promise(r => setTimeout(r, 300));
-            }
-        }
-        
-        showFormAlert('success', `${downloaded} vidéo(s) téléchargée(s)`);
-    });
-    
-    // Rafraîchissement MANUEL uniquement (pas automatique intempestif)
-    // L'admin peut recharger en rouvrant le panel ou en fermant/réouvrant
-    
     // Animation inputs
     document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
     });
     
-    console.log('✅ Système prêt - Capacité 100+ vidéos');
+    console.log('✅ Système prêt - Enregistrement direct intégré');
 </script>
 </body>
 </html>
