@@ -121,13 +121,20 @@
             background: rgba(225, 29, 72, 0.15);
             border-left: 4px solid #e11d48;
             border-radius: 16px;
-            padding: 16px 20px;
-            margin: 20px 0 10px;
-            font-size: 0.9rem;
+            padding: 20px 25px;
+            margin: 0 0 25px 0;
+            font-size: 0.95rem;
             color: #f1f5f9;
         }
-        .info-note i { color: #e11d48; margin-right: 10px; }
-        .info-note strong { color: #e11d48; }
+        .info-note i { color: #e11d48; margin-right: 12px; font-size: 1.2rem; }
+        .info-note strong { color: #e11d48; font-size: 1rem; }
+        .info-note .highlight { 
+            background: rgba(225, 29, 72, 0.3); 
+            padding: 2px 8px; 
+            border-radius: 20px; 
+            font-weight: bold;
+            color: #fff;
+        }
         .submit-btn {
             background: linear-gradient(135deg, #e11d48, #9f1239);
             border: none;
@@ -223,7 +230,7 @@
         }
         .admin-stats { display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap; }
         .stat-card { background: rgba(225,29,72,0.1); border-radius: 20px; padding: 12px 20px; border: 1px solid rgba(225,29,72,0.3); }
-        .admin-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 25px; padding: 30px; }
+        .admin-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; padding: 30px; }
         .candidate-admin-card {
             background: #14181f;
             border-radius: 32px;
@@ -233,14 +240,18 @@
         }
         .candidate-admin-card:hover { transform: translateY(-5px); border-color: #e11d48; }
         .badge { background: #e11d48; padding: 5px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin: 5px; }
+        .badge-selected { background: #10b981; padding: 5px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin: 5px; }
         .alert { padding: 12px 18px; border-radius: 28px; margin: 15px 0; display: none; }
         .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
         .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
+        .alert.info { background: #3b82f620; border: 1px solid #3b82f6; color: #3b82f6; }
         .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; float: right; }
         .btn-download { background: #10b981; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; margin: 5px; }
         .btn-download:hover { background: #059669; transform: translateY(-2px); }
         .btn-warning { background: #f59e0b; }
         .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #e11d48; }
+        .btn-danger:hover { background: #9f1239; }
         .search-bar { margin: 20px 30px; }
         .search-bar input { width: 100%; padding: 15px 20px; border-radius: 50px; background: #1e293b; border: 1px solid #e11d48; color: white; font-size: 1rem; }
         .storage-info {
@@ -253,43 +264,25 @@
             color: #64748b;
             border: 1px solid #334155;
         }
-        .record-section {
-            background: rgba(10, 12, 18, 0.6);
-            border-radius: 32px;
-            padding: 25px;
-            margin-bottom: 25px;
-            text-align: center;
-            border: 1px solid rgba(225, 29, 72, 0.3);
-        }
-        .record-btn {
-            background: linear-gradient(135deg, #e11d48, #9f1239);
+        .select-btn {
+            background: #3b82f6;
             border: none;
-            padding: 18px 40px;
-            border-radius: 60px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 30px;
             color: white;
             cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8rem;
             transition: all 0.3s;
-            margin: 10px;
         }
-        .record-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .record-status {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-        .record-preview {
-            margin-top: 20px;
-            display: none;
-        }
-        .record-preview video {
-            max-width: 100%;
-            border-radius: 20px;
-            max-height: 200px;
+        .select-btn:hover { background: #2563eb; }
+        .selected-badge {
+            display: inline-block;
+            background: #10b981;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -309,8 +302,11 @@
 
     <div class="form-card">
         <div class="info-note">
-            <i class="fas fa-info-circle"></i> 
-            <strong>Information importante :</strong> Les frais d'inscription de <strong>5000 Fc</strong> concernent uniquement les <strong>50 candidats sélectionnés</strong> après la présélection.
+            <i class="fas fa-trophy"></i> 
+            <strong>📢 Information importante</strong><br>
+            Seuls <span class="highlight">50 candidats</span> seront présélectionnés pour la phase finale.<br>
+            Les <strong>frais d'inscription de 5000 Fc</strong> ne concernent <strong>UNIQUEMENT</strong> les 50 candidats sélectionnés après la présélection.<br>
+            <i class="fas fa-check-circle" style="margin-top: 8px; display: inline-block;"></i> L'inscription est <strong>gratuite</strong> pour tous les candidats qui postulent.
         </div>
         
         <form id="inscriptionForm">
@@ -318,48 +314,21 @@
                 <div class="input-group"><label><i class="fas fa-user"></i> Nom *</label><input type="text" id="nom" placeholder="Votre nom" required></div>
                 <div class="input-group"><label><i class="fas fa-user"></i> Postnom</label><input type="text" id="postnom" placeholder="Postnom"></div>
                 <div class="input-group"><label><i class="fas fa-user"></i> Prénom *</label><input type="text" id="prenom" placeholder="Votre prénom" required></div>
-                <div class="input-group"><label><i class="fas fa-university"></i> Université *</label><input type="text" id="universite" placeholder="Université" required></div>
-                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="Année" required></div>
-                <div class="input-group"><label><i class="fas fa-book"></i> Faculté *</label><input type="text" id="faculte" placeholder="Faculté" required></div>
+                <div class="input-group"><label><i class="fas fa-university"></i> Université / Institut *</label><input type="text" id="universite" placeholder="Université" required></div>
+                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="Année d'étude" required></div>
+                <div class="input-group"><label><i class="fas fa-book"></i> Faculté / Filière *</label><input type="text" id="faculte" placeholder="Faculté" required></div>
                 <div class="input-group"><label><i class="fas fa-phone"></i> Téléphone *</label><input type="tel" id="telephone" placeholder="+243 XX XXX XXXX" required></div>
                 <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="email" placeholder="exemple@email.com" required></div>
             </div>
             
-            <div class="input-group"><label><i class="fas fa-heart"></i> Motivation *</label><textarea id="motivation" placeholder="Pourquoi souhaitez-vous participer ?" required></textarea></div>
-            
-            <!-- Section d'enregistrement vidéo direct -->
-            <div class="record-section">
-                <label style="display: block; margin-bottom: 15px; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #e11d48;">
-                    <i class="fas fa-microphone-alt"></i> Enregistrement vidéo d'éloquence
-                </label>
-                <p style="margin-bottom: 15px; font-size: 0.85rem; color: #94a3b8;">Sujet au choix - Enregistrez directement votre prestation</p>
-                
-                <button type="button" id="startRecordBtn" class="record-btn">
-                    <i class="fas fa-video"></i> Commencer l'enregistrement
-                </button>
-                <button type="button" id="stopRecordBtn" class="record-btn" style="background: #475569;" disabled>
-                    <i class="fas fa-stop"></i> Arrêter
-                </button>
-                
-                <div class="record-status" id="recordStatus">
-                    Prêt à enregistrer
-                </div>
-                
-                <div class="record-preview" id="recordPreview">
-                    <video id="recordedVideo" controls></video>
-                </div>
-                
-                <input type="hidden" id="videoDataInput">
-            </div>
-            
             <button type="submit" class="submit-btn" id="submitBtn">
-                <i class="fas fa-pen-fancy"></i> S'INSCRIRE
+                <i class="fas fa-pen-fancy"></i> S'INSCRIRE GRATUITEMENT
             </button>
             <div id="formAlert" class="alert"></div>
         </form>
         
         <div class="storage-info">
-            <i class="fas fa-database"></i> Stockage sécurisé • Toutes les données sont conservées localement
+            <i class="fas fa-users"></i> Inscriptions ouvertes • Présélection des 50 meilleurs candidats
         </div>
     </div>
 </div>
@@ -382,15 +351,16 @@
 <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> GESTION DES INSCRIPTIONS</h1><p>Liste des candidats inscrits</p></div>
+            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> GESTION DES INSCRIPTIONS</h1><p>Gérez les candidats et la sélection des 50 finalistes</p></div>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter JSON</button>
-                <button id="closeAdminPanelBtn" style="background:#e11d48; border:none; padding:12px 25px; border-radius:40px; color:white; cursor:pointer;"><i class="fas fa-times"></i> Fermer</button>
+                <button id="exportSelectedBtn" class="btn-download btn-warning"><i class="fas fa-star"></i> Exporter sélectionnés</button>
+                <button id="closeAdminPanelBtn" class="btn-download btn-danger"><i class="fas fa-times"></i> Fermer</button>
             </div>
         </div>
         <div class="admin-stats">
             <div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> inscrits</div>
-            <div class="stat-card"><i class="fas fa-video"></i> <span id="totalVideos">0</span> vidéos</div>
+            <div class="stat-card"><i class="fas fa-star" style="color: #f59e0b;"></i> <span id="selectedCount">0</span> / 50 sélectionnés</div>
         </div>
     </div>
     <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université)..."></div>
@@ -399,21 +369,13 @@
 
 <script>
     // ========== INDEXEDDB ==========
-    const DB_NAME = 'EloquenceDB_V3';
-    const DB_VERSION = 3;
+    const DB_NAME = 'EloquenceDB_V4';
+    const DB_VERSION = 4;
     const STORE_NAME = 'candidats';
     
     let db = null;
     let allCandidats = [];
     let isAdminPanelOpen = false;
-    
-    // Variables pour l'enregistrement vidéo
-    let mediaStream = null;
-    let mediaRecorder = null;
-    let recordedChunks = [];
-    let isRecording = false;
-    let recordedVideoBlob = null;
-    let recordedVideoData = null;
     
     // Ouverture DB
     function openDatabase() {
@@ -433,6 +395,7 @@
                     store.createIndex('email', 'email', { unique: false });
                     store.createIndex('date', 'dateInscription', { unique: false });
                     store.createIndex('nom', 'nom', { unique: false });
+                    store.createIndex('selected', 'selected', { unique: false });
                 }
             };
         });
@@ -458,15 +421,29 @@
         });
     }
     
-    async function getStorageStats() {
-        const candidats = await getAllCandidats();
-        let totalSize = 0;
-        candidats.forEach(c => {
-            if (c.videoData) {
-                totalSize += (c.videoData.length * 0.75) / (1024 * 1024);
-            }
+    async function updateCandidatSelection(id, selected) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const getRequest = store.get(id);
+            getRequest.onsuccess = () => {
+                const candidat = getRequest.result;
+                if (candidat) {
+                    candidat.selected = selected;
+                    const updateRequest = store.put(candidat);
+                    updateRequest.onsuccess = () => resolve(true);
+                    updateRequest.onerror = () => reject(updateRequest.error);
+                } else {
+                    reject('Candidat non trouvé');
+                }
+            };
+            getRequest.onerror = () => reject(getRequest.error);
         });
-        return { count: candidats.length, videos: candidats.filter(c => c.videoData).length, sizeMB: totalSize.toFixed(1) };
+    }
+    
+    async function getSelectedCount() {
+        const candidats = await getAllCandidats();
+        return candidats.filter(c => c.selected === true).length;
     }
     
     let dbReady = false;
@@ -495,73 +472,6 @@
     }
     createParticles();
     
-    // Enregistrement vidéo
-    const startRecordBtn = document.getElementById('startRecordBtn');
-    const stopRecordBtn = document.getElementById('stopRecordBtn');
-    const recordStatus = document.getElementById('recordStatus');
-    const recordPreview = document.getElementById('recordPreview');
-    const recordedVideo = document.getElementById('recordedVideo');
-    const videoDataInput = document.getElementById('videoDataInput');
-    
-    async function startRecording() {
-        try {
-            recordStatus.textContent = 'Demande d\'accès à la caméra...';
-            mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            
-            mediaRecorder = new MediaRecorder(mediaStream);
-            recordedChunks = [];
-            
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-            
-            mediaRecorder.onstop = () => {
-                recordedVideoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
-                const url = URL.createObjectURL(recordedVideoBlob);
-                recordedVideo.src = url;
-                recordPreview.style.display = 'block';
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    recordedVideoData = e.target.result;
-                    videoDataInput.value = e.target.result;
-                    recordStatus.textContent = '✓ Vidéo enregistrée avec succès !';
-                };
-                reader.readAsDataURL(recordedVideoBlob);
-                
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                }
-                recordStatus.textContent = '✓ Enregistrement terminé - Vidéo prête';
-            };
-            
-            mediaRecorder.start();
-            isRecording = true;
-            startRecordBtn.disabled = true;
-            stopRecordBtn.disabled = false;
-            recordStatus.textContent = '🎥 Enregistrement en cours... Parlez !';
-            
-        } catch (error) {
-            console.error('Erreur d\'accès à la caméra:', error);
-            recordStatus.textContent = '❌ Impossible d\'accéder à la caméra/microphone. Vérifiez vos permissions.';
-            startRecordBtn.disabled = false;
-        }
-    }
-    
-    function stopRecording() {
-        if (mediaRecorder && isRecording) {
-            mediaRecorder.stop();
-            isRecording = false;
-            startRecordBtn.disabled = false;
-            stopRecordBtn.disabled = true;
-        }
-    }
-    
-    startRecordBtn.addEventListener('click', startRecording);
-    stopRecordBtn.addEventListener('click', stopRecording);
-    
     function showFormAlert(type, message) {
         const alertDiv = document.getElementById('formAlert');
         alertDiv.textContent = message;
@@ -587,45 +497,30 @@
         const faculte = document.getElementById('faculte').value.trim();
         const telephone = document.getElementById('telephone').value.trim();
         const email = document.getElementById('email').value.trim();
-        const motivation = document.getElementById('motivation').value.trim();
         
-        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email || !motivation) {
+        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email) {
             showFormAlert('error', 'Tous les champs sont requis');
-            return;
-        }
-        
-        if(!recordedVideoData) {
-            showFormAlert('error', 'Veuillez enregistrer une vidéo');
             return;
         }
         
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
         
         try {
             const candidatData = {
                 nom, postnom, prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
-                universite, promotion, faculte, telephone, email, motivation,
-                videoData: recordedVideoData,
-                videoName: `enregistrement_${Date.now()}.mp4`,
-                videoSize: recordedVideoBlob ? recordedVideoBlob.size : 0,
-                dateInscription: new Date().toISOString()
+                universite, promotion, faculte, telephone, email,
+                dateInscription: new Date().toISOString(),
+                selected: false
             };
             
             await addCandidat(candidatData);
             
-            showFormAlert('success', '🎉 Inscription réussie !');
+            showFormAlert('success', '🎉 Inscription réussie ! Vous serez informé des résultats de la présélection.');
             
             document.getElementById('inscriptionForm').reset();
-            recordedVideoData = null;
-            recordedVideoBlob = null;
-            recordedVideo.src = '';
-            recordPreview.style.display = 'none';
-            videoDataInput.value = '';
-            recordedChunks = [];
-            recordStatus.textContent = 'Prêt à enregistrer';
             
             if (isAdminPanelOpen) chargerListeAdmin();
             
@@ -634,7 +529,7 @@
             showFormAlert('error', 'Erreur, réessayez');
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE';
+            submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE GRATUITEMENT';
         }
     });
     
@@ -684,6 +579,16 @@
         renderAdminCards(filtered);
     }
     
+    async function handleSelection(id, currentSelected) {
+        const selectedCount = await getSelectedCount();
+        if (!currentSelected && selectedCount >= 50) {
+            alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
+            return;
+        }
+        await updateCandidatSelection(id, !currentSelected);
+        await chargerListeAdmin();
+    }
+    
     function renderAdminCards(candidats) {
         const container = document.getElementById('adminCandidatesContainer');
         if(!candidats.length) {
@@ -693,17 +598,20 @@
         
         let html = '';
         candidats.forEach(c => {
+            const isSelected = c.selected === true;
             html += `<div class="candidate-admin-card">
-                <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom}</h3>
+                <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom} ${isSelected ? '<span class="selected-badge"><i class="fas fa-check-circle"></i> SÉLECTIONNÉ</span>' : ''}</h3>
                 <p><i class="fas fa-envelope"></i> ${c.email || '-'}</p>
                 <p><i class="fas fa-university"></i> ${c.universite || '-'} | ${c.faculte || '-'}</p>
+                <p><i class="fas fa-graduation-cap"></i> Promotion: ${c.promotion || '-'}</p>
                 <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
-                <div class="badge">Motivation</div>
-                <p style="margin:10px 0; background:#1e293b; padding:12px; border-radius:20px; font-size:0.85rem;">${c.motivation?.substring(0, 150) || '-'}${c.motivation?.length > 150 ? '...' : ''}</p>
-                <div style="background:#000; border-radius:20px; margin-top:10px; overflow:hidden;">
-                    ${c.videoData ? `<video controls src="${c.videoData}" style="width:100%; border-radius:20px;"></video>` : '<p style="padding:10px;">Vidéo indisponible</p>'}
+                <div class="badge">Inscrit le ${c.dateInscription ? new Date(c.dateInscription).toLocaleDateString() : 'N/A'}</div>
+                <div style="margin-top: 15px;">
+                    <button onclick="handleSelection(${c.id}, ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}">
+                        <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i> 
+                        ${isSelected ? 'Retirer de la sélection' : 'Sélectionner pour la finale'}
+                    </button>
                 </div>
-                <p style="font-size:0.7rem; color:#94a3b8; margin-top:10px;">📹 ${c.videoName || 'Enregistrement direct'}<br>📅 ${c.dateInscription ? new Date(c.dateInscription).toLocaleString() : 'N/A'}</p>
             </div>`;
         });
         container.innerHTML = html;
@@ -714,10 +622,10 @@
         
         try {
             allCandidats = await getAllCandidats();
-            const stats = await getStorageStats();
+            const selectedCount = await getSelectedCount();
             
-            document.getElementById('totalCandidats').textContent = stats.count;
-            document.getElementById('totalVideos').textContent = stats.videos;
+            document.getElementById('totalCandidats').textContent = allCandidats.length;
+            document.getElementById('selectedCount').textContent = `${selectedCount} / 50`;
             
             afficherCandidatsFiltres();
         } catch(err) {
@@ -729,11 +637,12 @@
     document.getElementById('exportAllBtn').addEventListener('click', async () => {
         const candidats = await getAllCandidats();
         const exportData = candidats.map(c => ({
+            id: c.id,
             nom: c.nom, postnom: c.postnom, prenom: c.prenom,
             nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
             universite: c.universite, promotion: c.promotion, faculte: c.faculte,
-            motivation: c.motivation, videoName: c.videoName, videoSize: c.videoSize,
-            dateInscription: c.dateInscription
+            dateInscription: c.dateInscription,
+            selected: c.selected || false
         }));
         
         const jsonStr = JSON.stringify(exportData, null, 2);
@@ -747,13 +656,45 @@
         showFormAlert('success', 'Export JSON réussi !');
     });
     
+    // EXPORT SÉLECTIONNÉS
+    document.getElementById('exportSelectedBtn').addEventListener('click', async () => {
+        const candidats = await getAllCandidats();
+        const selectedCandidats = candidats.filter(c => c.selected === true);
+        
+        if(selectedCandidats.length === 0) {
+            alert('Aucun candidat sélectionné pour le moment.');
+            return;
+        }
+        
+        const exportData = selectedCandidats.map(c => ({
+            id: c.id,
+            nom: c.nom, postnom: c.postnom, prenom: c.prenom,
+            nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
+            universite: c.universite, promotion: c.promotion, faculte: c.faculte,
+            dateInscription: c.dateInscription
+        }));
+        
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `candidats_selectionnes_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        
+        showFormAlert('success', `Export des ${selectedCandidats.length} candidats sélectionnés !`);
+    });
+    
+    // Rendre handleSelection accessible globalement
+    window.handleSelection = handleSelection;
+    
     // Animation inputs
-    document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
+    document.querySelectorAll('.input-group input').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
     });
     
-    console.log('✅ Système prêt - Enregistrement direct intégré');
+    console.log('✅ Système prêt - Inscriptions sans vidéo');
 </script>
 </body>
 </html>
