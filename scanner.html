@@ -3,370 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Éloquence en Scène | Invitation Officielle</title>
-    <!-- Firebase SDK -->
+    <title>Scanner - Contrôle d'accès | Éloquence en Scène</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <!-- GSAP -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <!-- QRCode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #002B5C 0%, #CE1126 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-
-        #particles {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .scanner-container {
+            max-width: 550px;
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 60px 24px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .admin-nav {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            z-index: 100;
-        }
-
-        .admin-btn {
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            color: #d4af37;
-            padding: 12px 28px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.4s ease;
-        }
-
-        .admin-btn:hover {
-            background: #d4af37;
-            color: #0a0a0a;
-        }
-
-        .invitation-card {
-            background: rgba(10, 10, 18, 0.92);
+            background: rgba(10,10,18,0.95);
             backdrop-filter: blur(20px);
             border-radius: 48px;
-            overflow: hidden;
-            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.25);
-            opacity: 0;
-            transform: translateY(60px);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, rgba(0,43,92,0.85) 0%, rgba(206,17,38,0.85) 100%);
-            padding: 50px 40px 40px;
-            text-align: center;
-            position: relative;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #d4af37, #b8941e, transparent);
-        }
-
-        .logo-accent {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 25px;
-            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
-        }
-
-        .logo-accent i {
-            font-size: 48px;
-            color: #0a0a0a;
-        }
-
-        h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 4rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .guest-name-large {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2rem;
-            font-weight: 600;
-            color: #d4af37;
-            margin-bottom: 30px;
-            border-left: 3px solid #d4af37;
-            padding-left: 20px;
-        }
-
-        .card-body {
-            padding: 50px;
-        }
-
-        .invitation-text p {
-            margin-bottom: 18px;
-            line-height: 1.6;
-        }
-
-        .event-details {
-            background: rgba(212, 175, 55, 0.08);
-            border-radius: 24px;
-            padding: 25px;
-            margin: 30px 0;
-        }
-
-        .event-details p {
-            margin: 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .event-details i {
-            width: 28px;
-            color: #d4af37;
-        }
-
-        .map-container {
-            margin: 30px 0;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .map-container iframe {
-            width: 100%;
-            height: 300px;
-        }
-
-        .qr-section {
-            background: rgba(255,255,255,0.05);
-            border-radius: 24px;
             padding: 30px;
-            margin: 30px 0;
-            text-align: center;
+            box-shadow: 0 40px 60px -20px rgba(0,0,0,0.8);
+            border: 1px solid rgba(212,175,55,0.3);
+            animation: fadeIn 0.6s ease;
         }
-
-        #qrcode {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        #qrcode canvas, #qrcode img {
-            border-radius: 16px;
-            background: white;
-            padding: 8px;
-        }
-
-        .btn-confirm {
-            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
-            color: #0a0a0a;
-            border: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-confirm:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Modal Admin */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.98);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #0f0f17, #0a0a12);
-            border-radius: 32px;
-            padding: 40px;
-            max-width: 650px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .generator-section {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-            color: white;
-        }
-
-        .guest-list {
-            margin-top: 20px;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-
-        .guest-item {
-            background: rgba(255,255,255,0.03);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-confirmed { color: #10b981; }
-        .status-pending { color: #f59e0b; }
-        .scanned-badge { color: #d4af37; font-size: 0.7rem; }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .guest-name-large { font-size: 1.6rem; }
-            .card-body { padding: 30px; }
-        }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        .logo { width: 80px; height: 80px; background: linear-gradient(135deg,#d4af37,#b8941e); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .logo i { font-size: 40px; color: #0a0a0a; }
+        h1 { text-align: center; color: #d4af37; font-size: 1.6rem; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 25px; }
+        .scanner-box { background: #000; border-radius: 24px; overflow: hidden; border: 2px solid rgba(212,175,55,0.5); margin-bottom: 20px; }
+        #qr-reader { width: 100%; }
+        #qr-reader video { width: 100%; height: auto; }
+        .result-box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; text-align: center; margin-top: 20px; display: none; border: 1px solid rgba(212,175,55,0.2); }
+        .success { border-color: #10b981; background: rgba(16,185,129,0.1); }
+        .error { border-color: #ef4444; background: rgba(239,68,68,0.1); }
+        .warning { border-color: #f59e0b; background: rgba(245,158,11,0.1); }
+        .result-icon { font-size: 3rem; margin-bottom: 10px; }
+        .result-message { font-size: 1.1rem; font-weight: 500; margin-bottom: 8px; }
+        .result-details { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .scanner-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .btn-reset { background: rgba(212,175,55,0.2); border: 1px solid rgba(212,175,55,0.5); color: #d4af37; padding: 8px 16px; border-radius: 40px; cursor: pointer; }
+        .recent-scans { margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 15px; }
+        .recent-scans h3 { font-size: 0.9rem; color: #d4af37; margin-bottom: 10px; }
+        .scan-list { max-height: 200px; overflow-y: auto; }
+        .scan-item { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .back-link { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 40px; color: #d4af37; text-decoration: none; font-size: 0.8rem; }
     </style>
 </head>
 <body>
-    <canvas id="particles"></canvas>
-    
-    <div class="admin-nav">
-        <button class="admin-btn" onclick="showAdminModal()">
-            <i class="fas fa-lock"></i> Espace Organisateur
-        </button>
-    </div>
-    
-    <div class="container">
-        <div class="invitation-card" id="invitationCard">
-            <div class="card-header">
-                <div class="logo-accent">
-                    <i class="fas fa-microphone-alt"></i>
-                </div>
-                <div class="badge-premium" style="color:#d4af37; margin-bottom:15px">ÉVÉNEMENT OFFICIEL • PREMIÈRE ÉDITION</div>
-                <h1>Éloquence<br>en Scène</h1>
-                <div class="event-date" style="margin-top:10px">07 MAI 2026 • SILIKIN VILLAGE</div>
-            </div>
-            
-            <div class="card-body">
-                <div class="salutation" style="color:#d4af37; font-size:1.2rem; margin-bottom:15px">Cher/Chère</div>
-                <div class="guest-name-large" id="guestNameDisplay">
-                    <i class="fas fa-spinner fa-pulse"></i> Chargement...
-                </div>
-                
-                <div class="invitation-text">
-                    <p>C'est avec un grand plaisir qu'<strong>Excellentia Academia</strong> vous invite à assister au <strong>Prime 1 du concours Éloquence en Scène</strong>, un événement dédié à l'art oratoire et à la valorisation du verbe.</p>
-                    <p>Ce rendez-vous unique rassemblera les talents les plus prometteurs autour de joutes verbales alliant rigueur, passion et créativité. Votre présence nous honorerait.</p>
-                </div>
-                
-                <div class="event-details">
-                    <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> 07 mai 2026</p>
-                    <p><i class="fas fa-clock"></i> <strong>Horaire :</strong> 12h00 - 16h00</p>
-                    <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
-                </div>
-                
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.527847323623!2d15.292396!3d-4.325638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a318a1e3b6b6b%3A0x2b2b2b2b2b2b2b2b!2sSilikin%20Village!5e0!3m2!1sfr!2scd!4v1700000000000!5m2!1sfr!2scd" allowfullscreen></iframe>
-                </div>
-                
-                <div class="qr-section">
-                    <div class="qr-title" style="color:#d4af37; letter-spacing:2px">VOTRE PASSEPORT ÉLECTRONIQUE</div>
-                    <div id="qrcode"></div>
-                    <div class="qr-note" style="color:rgba(255,255,255,0.5); margin-top:12px">Présentez ce QR Code à l'entrée</div>
-                </div>
-                
-                <div class="closing" style="margin:30px 0; font-style:italic">
-                    <p>Dans l'attente du plaisir de vous compter parmi nos invités, nous vous remercions de bien vouloir confirmer votre disponibilité.</p>
-                    <p style="margin-top:15px">Veuillez agréer, Cher/Chère <span id="closingName">[Nom]</span>, l'expression de nos salutations distinguées.</p>
-                    <p style="margin-top:20px"><strong>Excellentia Academia</strong></p>
-                </div>
-                
-                <button class="btn-confirm" onclick="confirmPresence()" id="confirmBtn">
-                    <i class="fas fa-check-circle"></i> Confirmer votre présence
-                </button>
-            </div>
+    <div class="scanner-container">
+        <div class="logo"><i class="fas fa-qrcode"></i></div>
+        <h1>Contrôle d'accès</h1>
+        <p class="subtitle">Scannez le QR Code d'invitation</p>
+        
+        <div class="scanner-status">
+            <div class="status-indicator" style="display:flex; align-items:center; gap:8px"><div class="status-dot"></div><span>Scanner actif</span></div>
+            <button class="btn-reset" onclick="restartScanner()"><i class="fas fa-sync-alt"></i> Redémarrer</button>
+        </div>
+        
+        <div class="scanner-box"><div id="qr-reader"></div></div>
+        
+        <div class="result-box" id="resultBox">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+        
+        <div class="recent-scans">
+            <h3><i class="fas fa-history"></i> Derniers scans</h3>
+            <div class="scan-list" id="scanList"><div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px">Aucun scan</div></div>
         </div>
     </div>
     
-    <!-- Modal Admin -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color:#d4af37"><i class="fas fa-crown"></i> Administration</h2>
-            <input type="password" id="adminPassword" class="password-input" style="width:100%; padding:12px; margin:15px 0; background:rgba(255,255,255,0.1); border:1px solid rgba(212,175,55,0.3); border-radius:12px; color:white" placeholder="Code d'accès">
-            <button class="btn-confirm" onclick="checkAdminAccess()" style="margin-bottom:20px">Accéder</button>
-            
-            <div id="adminPanel" style="display:none">
-                <div class="generator-section">
-                    <h3><i class="fas fa-qrcode"></i> Générer une invitation</h3>
-                    <div class="input-group"><input type="text" id="guestName" placeholder="Nom complet"></div>
-                    <div class="input-group"><input type="tel" id="guestPhone" placeholder="WhatsApp (243XXXXXXXXX)"></div>
-                    <button class="btn-confirm" onclick="generateInvitation()" style="background:#d4af37; color:#0a0a0a">Générer l'invitation</button>
-                    <div id="generatedLinkContainer" style="display:none; margin-top:15px">
-                        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px"><a href="#" id="inviteLink" target="_blank" style="color:#d4af37"></a></div>
-                        <button onclick="sendWhatsApp()" style="margin-top:10px; background:#25D366; color:white; border:none; padding:10px; border-radius:10px; width:100%"><i class="fab fa-whatsapp"></i> Envoyer sur WhatsApp</button>
-                    </div>
-                </div>
-                <h3><i class="fas fa-users"></i> Invités</h3>
-                <div id="guestList" class="guest-list"></div>
-            </div>
-        </div>
-    </div>
+    <a href="invitation.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour</a>
 
     <script>
         const firebaseConfig = {
@@ -381,140 +97,132 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        let urlParams = new URLSearchParams(window.location.search);
-        let guestId = urlParams.get('id');
-        let currentGuest = null;
+        let html5QrCode;
+        let isScanning = true;
+        let scannedCodes = new Set();
         
-        // Animation
-        gsap.to(".invitation-card", { duration: 1, opacity: 1, y: 0, ease: "power3.out" });
+        function speakMessage(message, isWarning = false) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.9;
+                utterance.pitch = isWarning ? 0.8 : 1.1;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            }
+        }
         
-        // Charger l'invité
-        async function loadGuest() {
-            if (!guestId) {
-                document.getElementById('guestNameDisplay').innerHTML = "Invité Spécial";
-                document.getElementById('closingName').innerHTML = "Invité Spécial";
+        function showResult(type, message, details = '') {
+            const box = document.getElementById('resultBox');
+            const icon = document.getElementById('resultIcon');
+            const msg = document.getElementById('resultMessage');
+            const det = document.getElementById('resultDetails');
+            
+            box.style.display = 'block';
+            box.className = 'result-box ' + type;
+            
+            if(type === 'success') icon.innerHTML = '<i class="fas fa-check-circle" style="color:#10b981"></i>';
+            else if(type === 'error') icon.innerHTML = '<i class="fas fa-times-circle" style="color:#ef4444"></i>';
+            else icon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#f59e0b"></i>';
+            
+            msg.innerHTML = message;
+            det.innerHTML = details;
+            
+            gsap.fromTo(box, { scale:0.9, opacity:0 }, { scale:1, opacity:1, duration:0.3 });
+            setTimeout(() => { gsap.to(box, { opacity:0, duration:0.5, onComplete:()=>{ box.style.display='none'; box.style.opacity=1 } }); }, 5000);
+        }
+        
+        async function addToRecentScans(guestName, status) {
+            const list = document.getElementById('scanList');
+            const time = new Date().toLocaleTimeString('fr-FR');
+            if(list.children[0]?.innerText.includes('Aucun scan')) list.innerHTML = '';
+            const item = document.createElement('div');
+            item.className = 'scan-item';
+            item.innerHTML = `<div><i class="fas fa-user"></i> ${guestName}</div><div><span style="color:${status==='success'?'#10b981':'#f59e0b'}">${status==='success'?'✓ Entrée':'⚠ Refus'}</span> ${time}</div>`;
+            list.insertBefore(item, list.firstChild);
+            while(list.children.length > 10) list.removeChild(list.lastChild);
+        }
+        
+        async function onScanSuccess(decodedText) {
+            if(!isScanning) return;
+            if(scannedCodes.has(decodedText)) return;
+            scannedCodes.add(decodedText);
+            
+            let guestId = null;
+            try { const url = new URL(decodedText); guestId = url.searchParams.get('id'); } catch(e) { guestId = decodedText; }
+            
+            if(!guestId) {
+                showResult('error', 'QR Code invalide', 'Ce code n\'est pas une invitation valide');
+                speakMessage("QR Code invalide");
+                setTimeout(() => scannedCodes.delete(decodedText), 1500);
                 return;
             }
             
-            const doc = await db.collection("guests").doc(guestId).get();
-            if (doc.exists) {
-                currentGuest = { id: doc.id, ...doc.data() };
-                document.getElementById('guestNameDisplay').innerHTML = currentGuest.name;
-                document.getElementById('closingName').innerHTML = currentGuest.name;
-                
-                const qrUrl = `${window.location.origin}${window.location.pathname}?id=${guestId}`;
-                new QRCode(document.getElementById("qrcode"), { text: qrUrl, width: 150, height: 150, colorDark: "#d4af37", colorLight: "#1a1a2e" });
-                
-                if (currentGuest.status === 'confirmed') {
-                    const btn = document.getElementById('confirmBtn');
-                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Présence confirmée';
-                    btn.disabled = true;
+            try {
+                const guestDoc = await db.collection("guests").doc(guestId).get();
+                if(!guestDoc.exists) {
+                    showResult('error', 'Invitation non trouvée', 'Ce QR Code n\'existe pas dans notre base');
+                    speakMessage("Invitation non trouvée");
+                    setTimeout(() => scannedCodes.delete(decodedText), 1500);
+                    return;
                 }
+                
+                const guest = guestDoc.data();
+                const scanRef = db.collection("scans").doc(guestId);
+                const scanDoc = await scanRef.get();
+                
+                // Vérifier si déjà scanné
+                if(scanDoc.exists && scanDoc.data().scanned === true) {
+                    const scanCount = (scanDoc.data().scanCount || 1) + 1;
+                    await scanRef.update({ scanCount: scanCount, lastAttemptAt: new Date() });
+                    await db.collection("fraudAttempts").add({ guestId, guestName: guest.name, attemptTime: new Date() });
+                    
+                    showResult('warning', '⚠️ Code déjà scanné !', `${guest.name}, ce QR Code a déjà été utilisé. Veuillez montrer une pièce d'identité.`);
+                    speakMessage(`Désolé, le code a déjà été scanné. Veuillez montrer une pièce d'identité pour valider votre invitation.`, true);
+                    addToRecentScans(guest.name, 'warning');
+                    gsap.to(".scanner-container", { x:5, duration:0.05, repeat:5, yoyo:true });
+                } 
+                else {
+                    // PREMIER SCAN - ENTRÉE VALIDÉE
+                    await scanRef.set({
+                        guestId: guestId,
+                        guestName: guest.name,
+                        scanned: true,
+                        scanCount: 1,
+                        firstScanAt: new Date()
+                    });
+                    
+                    await db.collection("guests").doc(guestId).update({
+                        entryScanned: true,
+                        entryTime: new Date()
+                    });
+                    
+                    showResult('success', '✅ Bienvenue !', `${guest.name}, votre entrée est validée. Profitez de l'événement !`);
+                    speakMessage(`Bienvenue ${guest.name} ! Votre entrée est validée. Profitez de l'événement !`);
+                    addToRecentScans(guest.name, 'success');
+                    gsap.to(".scanner-container", { scale:1.02, duration:0.2, yoyo:true, repeat:1 });
+                }
+            } catch(error) {
+                console.error(error);
+                showResult('error', 'Erreur technique', 'Veuillez réessayer');
+                speakMessage("Erreur technique");
             }
-        }
-        
-        async function confirmPresence() {
-            if (!guestId) { alert("Utilisez votre lien personnel"); return; }
-            if (currentGuest?.status === 'confirmed') { alert("Déjà confirmé"); return; }
             
-            await db.collection("guests").doc(guestId).update({ status: "confirmed", confirmationDate: new Date() });
-            const btn = document.getElementById('confirmBtn');
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> Présence confirmée';
-            btn.disabled = true;
-            alert(`Merci ${currentGuest.name} !`);
+            setTimeout(() => scannedCodes.delete(decodedText), 2000);
         }
         
-        // Admin
-        function checkAdminAccess() {
-            if (document.getElementById('adminPassword').value === "tousenscene5") {
-                document.getElementById('adminPanel').style.display = "block";
-                document.getElementById('adminPassword').style.display = "none";
-                loadGuestList();
-            } else alert("Code incorrect");
+        function initScanner() {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess, (err) => {})
+                .catch(err => { document.getElementById('qr-reader').innerHTML = '<div style="padding:50px;text-align:center;color:#ef4444"><i class="fas fa-camera"></i> Caméra inaccessible</div>'; });
         }
         
-        async function generateInvitation() {
-            const name = document.getElementById('guestName').value.trim();
-            if (!name) return;
-            
-            const docRef = await db.collection("guests").add({
-                name: name,
-                phone: document.getElementById('guestPhone').value.trim(),
-                status: "pending",
-                entryScanned: false,
-                createdAt: new Date()
-            });
-            
-            const link = `${window.location.origin}${window.location.pathname}?id=${docRef.id}`;
-            document.getElementById('inviteLink').href = link;
-            document.getElementById('inviteLink').textContent = link;
-            document.getElementById('generatedLinkContainer').style.display = "block";
-            loadGuestList();
+        function restartScanner() {
+            if(html5QrCode?.isScanning) html5QrCode.stop().then(() => initScanner());
+            else initScanner();
         }
         
-        function sendWhatsApp() {
-            const name = document.getElementById('guestName').value;
-            const phone = document.getElementById('guestPhone').value;
-            const link = document.getElementById('inviteLink').href;
-            if (!phone) return;
-            let cleanPhone = phone.replace(/\D/g, '');
-            if (!cleanPhone.startsWith('243')) cleanPhone = '243' + cleanPhone;
-            const msg = `Invitation Éloquence en Scène: ${link}`;
-            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-        
-        async function loadGuestList() {
-            const snapshot = await db.collection("guests").orderBy("createdAt", "desc").get();
-            const listDiv = document.getElementById('guestList');
-            listDiv.innerHTML = "";
-            snapshot.forEach(doc => {
-                const g = doc.data();
-                const link = `${window.location.origin}${window.location.pathname}?id=${doc.id}`;
-                listDiv.innerHTML += `
-                    <div class="guest-item">
-                        <div><strong>${g.name}</strong><br><small>${g.phone || ''}</small><br><small><a href="${link}" target="_blank" style="color:#d4af37">Lien</a></small></div>
-                        <div style="text-align:right">
-                            <span class="${g.status === 'confirmed' ? 'status-confirmed' : 'status-pending'}">${g.status === 'confirmed' ? '✓ Confirmé' : '⏳ En attente'}</span><br>
-                            ${g.entryScanned ? '<span class="scanned-badge"><i class="fas fa-check-circle"></i> Entrée validée</span>' : '<span class="scanned-badge">⭕ Non scanné</span>'}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        function showAdminModal() { document.getElementById('adminModal').style.display = "flex"; }
-        window.onclick = e => { if (e.target === document.getElementById('adminModal')) document.getElementById('adminModal').style.display = "none"; };
-        
-        // Particules
-        class Particles {
-            constructor() {
-                this.canvas = document.getElementById('particles');
-                this.ctx = this.canvas.getContext('2d');
-                this.particles = [];
-                this.init();
-            }
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                for(let i=0;i<60;i++) this.particles.push({ x:Math.random()*this.canvas.width, y:Math.random()*this.canvas.height, radius:Math.random()*2+1, alpha:Math.random()*0.4+0.1, speedX:(Math.random()-0.5)*0.2, speedY:(Math.random()-0.5)*0.2 });
-                this.animate();
-            }
-            resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
-            animate() {
-                this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-                this.particles.forEach(p => {
-                    p.x += p.speedX; p.y += p.speedY;
-                    if(p.x<0) p.x=this.canvas.width; if(p.x>this.canvas.width) p.x=0;
-                    if(p.y<0) p.y=this.canvas.height; if(p.y>this.canvas.height) p.y=0;
-                    this.ctx.beginPath(); this.ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-                    this.ctx.fillStyle = `rgba(212,175,55,${p.alpha})`;
-                    this.ctx.fill();
-                });
-                requestAnimationFrame(()=>this.animate());
-            }
-        }
-        new Particles();
-        loadGuest();
+        window.addEventListener('load', () => { setTimeout(() => { initScanner(); speakMessage("Scanner activé. Présentez votre QR Code."); }, 1000); });
     </script>
 </body>
 </html>
