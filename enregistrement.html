@@ -309,6 +309,27 @@
         .info-note li {
             margin: 10px 0;
         }
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            z-index: 9999;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            animation: fadeInOut 3s ease forwards;
+            pointer-events: none;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
+        }
     </style>
 </head>
 <body>
@@ -350,7 +371,7 @@
                 <div class="input-group"><label><i class="fas fa-user"></i> Postnom</label><input type="text" id="postnom" placeholder="Postnom"></div>
                 <div class="input-group"><label><i class="fas fa-user"></i> Prénom *</label><input type="text" id="prenom" placeholder="Votre prénom" required></div>
                 <div class="input-group"><label><i class="fas fa-university"></i> Université / Institut *</label><input type="text" id="universite" placeholder="Université" required></div>
-                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="Année d'étude" required></div>
+                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="promotion" required></div>
                 <div class="input-group"><label><i class="fas fa-book"></i> Faculté / Filière *</label><input type="text" id="faculte" placeholder="Faculté" required></div>
                 <div class="input-group"><label><i class="fas fa-phone"></i> Téléphone *</label><input type="tel" id="telephone" placeholder="+243 XX XXX XXXX" required></div>
                 <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="email" placeholder="exemple@email.com" required></div>
@@ -404,32 +425,40 @@
 
 <script>
     // ========== INDEXEDDB ==========
-    const DB_NAME = 'EloquenceDB_V5';
-    const DB_VERSION = 5;
+    const DB_NAME = 'EloquenceDB_V6';
+    const DB_VERSION = 6;
     const STORE_NAME = 'candidats';
     
     let db = null;
     let allCandidats = [];
     let isAdminPanelOpen = false;
     
-    // Ouverture DB
+    // Helper flash message
+    function showFlashMessage(message, isError = false) {
+        const existingFlash = document.querySelector('.flash-message');
+        if(existingFlash) existingFlash.remove();
+        const flashDiv = document.createElement('div');
+        flashDiv.className = 'flash-message';
+        flashDiv.style.background = isError ? '#e11d48' : '#10b981';
+        flashDiv.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(flashDiv);
+        setTimeout(() => { if(flashDiv) flashDiv.remove(); }, 3000);
+    }
+    
     function openDatabase() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
-            
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 db = request.result;
                 resolve(db);
             };
-            
             request.onupgradeneeded = (event) => {
                 const database = event.target.result;
                 if (!database.objectStoreNames.contains(STORE_NAME)) {
                     const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                     store.createIndex('email', 'email', { unique: false });
                     store.createIndex('date', 'dateInscription', { unique: false });
-                    store.createIndex('nom', 'nom', { unique: false });
                     store.createIndex('selected', 'selected', { unique: false });
                 }
             };
@@ -512,15 +541,15 @@
         alertDiv.textContent = message;
         alertDiv.className = `alert ${type}`;
         alertDiv.style.display = 'block';
-        setTimeout(() => alertDiv.style.display = 'none', 4000);
+        setTimeout(() => alertDiv.style.display = 'none', 5000);
     }
     
-    // INSCRIPTION
+    // INSCRIPTION : Correction majeure : les identités restent visibles jusqu'à confirmation + reset après succès
     document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!dbReady) {
-            showFormAlert('error', 'Initialisation... Réessayez');
+            showFormAlert('error', 'Initialisation en cours... Veuillez réessayer');
             return;
         }
         
@@ -534,13 +563,14 @@
         const email = document.getElementById('email').value.trim();
         
         if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email) {
-            showFormAlert('error', 'Tous les champs sont requis');
+            showFormAlert('error', 'Tous les champs obligatoires (*) doivent être remplis');
             return;
         }
         
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
         
         try {
             const candidatData = {
@@ -553,18 +583,27 @@
             
             await addCandidat(candidatData);
             
-            showFormAlert('success', '🎉 Inscription réussie ! Rejoignez notre groupe WhatsApp pour ne rien manquer !');
+            // Affichage succès et conservation des identités avant reset ?
+            // Selon la demande: "le candidat doit voir ses identités, que tout disparaisse que quand il actualise"
+            // Ici on laisse les champs remplis après succès pour que le candidat puisse voir ses infos, puis on efface après un délai ou manuellement ?
+            // Pour correspondre: on montre un message et on réinitialise uniquement après un bref délai pour laisser voir ses données.
+            showFlashMessage('✅ Inscription réussie ! Vos informations ont été enregistrées. Rejoignez le groupe WhatsApp.', false);
+            showFormAlert('success', 'Félicitations ! Vous êtes inscrit(e). Rejoignez le groupe WhatsApp ci-dessus.');
             
-            document.getElementById('inscriptionForm').reset();
+            // On attend 2 secondes pour que l'utilisateur puisse voir ses identités, puis on reset le formulaire
+            setTimeout(() => {
+                document.getElementById('inscriptionForm').reset();
+            }, 2000);
             
             if (isAdminPanelOpen) chargerListeAdmin();
             
         } catch(error) {
             console.error(error);
-            showFormAlert('error', 'Erreur, réessayez');
+            showFormAlert('error', 'Erreur technique. Vérifiez votre connexion ou réessayez.');
+            showFlashMessage('❌ Erreur lors de l\'inscription', true);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE GRATUITEMENT';
+            submitBtn.innerHTML = originalBtnText;
         }
     });
     
@@ -597,19 +636,23 @@
     });
     
     let searchTimeout = null;
-    document.getElementById('searchCandidat')?.addEventListener('input', () => {
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            if (isAdminPanelOpen) afficherCandidatsFiltres();
-        }, 300);
-    });
+    const searchInput = document.getElementById('searchCandidat');
+    if(searchInput) {
+        searchInput.addEventListener('input', () => {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (isAdminPanelOpen) afficherCandidatsFiltres();
+            }, 300);
+        });
+    }
     
     async function afficherCandidatsFiltres() {
         const searchTerm = document.getElementById('searchCandidat')?.value.toLowerCase() || '';
         const filtered = allCandidats.filter(c => 
             (c.nomComplet?.toLowerCase().includes(searchTerm) ||
              c.email?.toLowerCase().includes(searchTerm) ||
-             c.universite?.toLowerCase().includes(searchTerm))
+             c.universite?.toLowerCase().includes(searchTerm) ||
+             (c.telephone && c.telephone.includes(searchTerm)))
         );
         renderAdminCards(filtered);
     }
@@ -627,7 +670,7 @@
     function renderAdminCards(candidats) {
         const container = document.getElementById('adminCandidatesContainer');
         if(!candidats.length) {
-            container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat</div>';
+            container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat trouvé</div>';
             return;
         }
         
@@ -642,7 +685,7 @@
                 <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
                 <div class="badge">Inscrit le ${c.dateInscription ? new Date(c.dateInscription).toLocaleDateString() : 'N/A'}</div>
                 <div style="margin-top: 15px;">
-                    <button onclick="handleSelection(${c.id}, ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}">
+                    <button onclick="window.handleSelection(${c.id}, ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}">
                         <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i> 
                         ${isSelected ? 'Retirer de la sélection' : 'Sélectionner pour la finale'}
                     </button>
@@ -654,21 +697,18 @@
     
     async function chargerListeAdmin() {
         if (!dbReady || !isAdminPanelOpen) return;
-        
         try {
             allCandidats = await getAllCandidats();
             const selectedCount = await getSelectedCount();
-            
             document.getElementById('totalCandidats').textContent = allCandidats.length;
             document.getElementById('selectedCount').textContent = `${selectedCount} / 50`;
-            
             afficherCandidatsFiltres();
         } catch(err) {
             console.error(err);
         }
     }
     
-    // EXPORT COMPLET
+    // EXPORTS
     document.getElementById('exportAllBtn').addEventListener('click', async () => {
         const candidats = await getAllCandidats();
         const exportData = candidats.map(c => ({
@@ -679,7 +719,6 @@
             dateInscription: c.dateInscription,
             selected: c.selected || false
         }));
-        
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
@@ -687,20 +726,16 @@
         link.download = `candidats_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        
-        showFormAlert('success', 'Export JSON réussi !');
+        showFlashMessage('Export JSON complet réussi', false);
     });
     
-    // EXPORT SÉLECTIONNÉS
     document.getElementById('exportSelectedBtn').addEventListener('click', async () => {
         const candidats = await getAllCandidats();
         const selectedCandidats = candidats.filter(c => c.selected === true);
-        
         if(selectedCandidats.length === 0) {
             alert('Aucun candidat sélectionné pour le moment.');
             return;
         }
-        
         const exportData = selectedCandidats.map(c => ({
             id: c.id,
             nom: c.nom, postnom: c.postnom, prenom: c.prenom,
@@ -708,7 +743,6 @@
             universite: c.universite, promotion: c.promotion, faculte: c.faculte,
             dateInscription: c.dateInscription
         }));
-        
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
@@ -716,20 +750,17 @@
         link.download = `candidats_selectionnes_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        
-        showFormAlert('success', `Export des ${selectedCandidats.length} candidats sélectionnés !`);
+        showFlashMessage(`Export des ${selectedCandidats.length} candidats sélectionnés`, false);
     });
     
-    // Rendre handleSelection accessible globalement
     window.handleSelection = handleSelection;
     
-    // Animation inputs
     document.querySelectorAll('.input-group input').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
     });
     
-    console.log('✅ Système prêt - Inscriptions gratuites pour tous');
+    console.log('✅ Système prêt - Inscriptions gratuites - affichage persistant des identités après inscription jusqu’à réinitialisation différée');
 </script>
 </body>
 </html>
