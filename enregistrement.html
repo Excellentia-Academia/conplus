@@ -11,6 +11,10 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -110,7 +114,7 @@
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
         }
-        .input-group textarea { min-height: 100px; resize: vertical; }
+        .input-group textarea { min-height: 120px; resize: vertical; }
         .input-group input:focus, .input-group textarea:focus {
             outline: none;
             border-color: #e11d48;
@@ -211,6 +215,8 @@
         }
         @keyframes modalSlide { from { opacity: 0; transform: translateY(-40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         .modal-content h2 { font-family: 'Playfair Display', serif; margin-bottom: 20px; color: #e11d48; }
+        
+        /* ========== ADMIN PANEL AMÉLIORÉ - HEADER RÉDUIT ========== */
         .admin-panel {
             position: fixed;
             top: 0;
@@ -224,68 +230,246 @@
         }
         .admin-header {
             background: linear-gradient(135deg, #0f1117, #1a1f2c);
-            padding: 25px 30px;
+            padding: 15px 25px;
             position: sticky;
             top: 0;
             z-index: 10;
             border-bottom: 2px solid #e11d48;
         }
-        .admin-stats { display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap; }
-        .stat-card { background: rgba(225,29,72,0.1); border-radius: 20px; padding: 12px 20px; border: 1px solid rgba(225,29,72,0.3); }
-        .admin-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; padding: 30px; }
+        .admin-header h1 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        .admin-header p {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .admin-stats { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 10px; 
+            flex-wrap: wrap; 
+        }
+        .stat-card { 
+            background: rgba(225,29,72,0.15); 
+            border-radius: 12px; 
+            padding: 8px 15px; 
+            border: 1px solid rgba(225,29,72,0.4);
+        }
+        .stat-card i { font-size: 1.2rem; margin-right: 8px; color: #e11d48; }
+        .stat-card .stat-number { font-size: 1.3rem; font-weight: bold; color: #e11d48; }
+        .stat-card div { font-size: 0.8rem; }
+        
+        /* Filtres */
+        .admin-filters {
+            padding: 12px 25px;
+            background: #0f1117;
+            border-bottom: 1px solid rgba(225,29,72,0.2);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            position: sticky;
+            top: 85px;
+            z-index: 9;
+        }
+        .search-bar {
+            flex: 2;
+            min-width: 200px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: #1e293b;
+            border: 1px solid #e11d48;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 6px 15px;
+            border-radius: 25px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .filter-btn.active {
+            background: #e11d48;
+            border-color: #e11d48;
+        }
+        
+        /* Grille admin */
+        .admin-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); 
+            gap: 20px; 
+            padding: 20px 25px;
+        }
         .candidate-admin-card {
-            background: #14181f;
-            border-radius: 32px;
-            padding: 20px;
+            background: linear-gradient(135deg, #14181f, #0f1117);
+            border-radius: 20px;
+            padding: 0;
             border: 1px solid rgba(225,29,72,0.3);
             transition: all 0.3s;
+            overflow: hidden;
         }
-        .candidate-admin-card:hover { transform: translateY(-5px); border-color: #e11d48; }
-        .badge { background: #e11d48; padding: 5px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin: 5px; }
-        .badge-selected { background: #10b981; padding: 5px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin: 5px; }
+        .candidate-admin-card:hover { 
+            transform: translateY(-3px); 
+            border-color: #e11d48;
+        }
+        .candidate-header {
+            background: linear-gradient(135deg, #1e293b, #0f1117);
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(225,29,72,0.3);
+        }
+        .candidate-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e11d48;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .selected-badge-large {
+            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: white;
+        }
+        .candidate-info {
+            padding: 12px 15px;
+        }
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .info-row i {
+            width: 20px;
+            color: #e11d48;
+            font-size: 0.9rem;
+        }
+        .info-row .label {
+            font-weight: 600;
+            color: #94a3b8;
+            min-width: 75px;
+        }
+        .info-row .value {
+            color: #f1f5f9;
+            flex: 1;
+        }
+        .motivation-box {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 2px solid #e11d48;
+        }
+        .motivation-box p {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #cbd5e6;
+        }
+        .candidate-actions {
+            padding: 12px 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+        }
+        .select-btn-admin {
+            flex: 1;
+            padding: 8px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .select-btn-admin.selected {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        .select-btn-admin:not(.selected) {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        .delete-btn-admin {
+            padding: 8px 15px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Onglets */
+        .admin-tabs {
+            padding: 0 25px;
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(225,29,72,0.2);
+        }
+        .admin-tab {
+            padding: 8px 18px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-bottom: 2px solid transparent;
+        }
+        .admin-tab.active {
+            color: #e11d48;
+            border-bottom-color: #e11d48;
+        }
+        
+        .btn-download { 
+            background: #10b981; 
+            border: none; 
+            padding: 6px 15px; 
+            border-radius: 25px; 
+            color: white; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.75rem;
+            margin: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-warning { background: #f59e0b; }
+        .btn-danger { background: #e11d48; }
+        
         .alert { padding: 12px 18px; border-radius: 28px; margin: 15px 0; display: none; }
         .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
         .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
-        .alert.info { background: #3b82f620; border: 1px solid #3b82f6; color: #3b82f6; }
         .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; float: right; }
-        .btn-download { background: #10b981; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; margin: 5px; }
-        .btn-download:hover { background: #059669; transform: translateY(-2px); }
-        .btn-warning { background: #f59e0b; }
-        .btn-warning:hover { background: #d97706; }
-        .btn-danger { background: #e11d48; }
-        .btn-danger:hover { background: #9f1239; }
-        .search-bar { margin: 20px 30px; }
-        .search-bar input { width: 100%; padding: 15px 20px; border-radius: 50px; background: #1e293b; border: 1px solid #e11d48; color: white; font-size: 1rem; }
-        .storage-info {
-            background: #1e293b;
-            border-radius: 20px;
-            padding: 12px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: #64748b;
-            border: 1px solid #334155;
-        }
-        .select-btn {
-            background: #3b82f6;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-        .select-btn:hover { background: #2563eb; }
-        .selected-badge {
-            display: inline-block;
-            background: #10b981;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            margin-left: 10px;
-        }
+        
         .whatsapp-link {
             display: inline-block;
             background: #25D366;
@@ -329,6 +513,13 @@
             15% { opacity: 1; transform: translateX(-50%) translateY(0); }
             85% { opacity: 1; transform: translateX(-50%) translateY(0); }
             100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-cards { grid-template-columns: 1fr; padding: 15px; }
+            .admin-header { padding: 10px 15px; }
+            .admin-filters { padding: 10px 15px; top: 70px; flex-direction: column; }
+            .candidate-name { font-size: 1rem; }
         }
     </style>
 </head>
@@ -377,14 +568,19 @@
                 <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="email" placeholder="exemple@email.com" required></div>
             </div>
             
+            <div class="input-group" style="margin-top: 15px;">
+                <label><i class="fas fa-heart"></i> Pourquoi souhaitez-vous participer ? (Motivation) *</label>
+                <textarea id="motivation" placeholder="Décrivez votre motivation à participer à ce concours d'éloquence. Qu'est-ce qui vous anime ? Pourquoi devriez-vous être sélectionné(e) ?" required></textarea>
+            </div>
+            
             <button type="submit" class="submit-btn" id="submitBtn">
                 <i class="fas fa-pen-fancy"></i> S'INSCRIRE GRATUITEMENT
             </button>
             <div id="formAlert" class="alert"></div>
         </form>
         
-        <div class="storage-info">
-            <i class="fas fa-users"></i> Inscriptions ouvertes à tous les étudiant(e)s 
+        <div class="storage-info" style="background: #1e293b; border-radius: 20px; padding: 12px; margin-top: 20px; text-align: center; font-size: 0.7rem; color: #64748b; border: 1px solid #334155;">
+            <i class="fas fa-users"></i> Inscriptions ouvertes à tous les étudiant(e)s
         </div>
     </div>
 </div>
@@ -406,34 +602,78 @@
 <!-- Admin Panel -->
 <div class="admin-panel" id="adminPanel">
     <div class="admin-header">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color:#e11d48;"><i class="fas fa-crown"></i> GESTION DES INSCRIPTIONS</h1><p>Gérez les candidats et la sélection des 50 finalistes</p></div>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter JSON</button>
-                <button id="exportSelectedBtn" class="btn-download btn-warning"><i class="fas fa-star"></i> Exporter sélectionnés</button>
-                <button id="closeAdminPanelBtn" class="btn-download btn-danger"><i class="fas fa-times"></i> Fermer</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h1 style="color:#e11d48;"><i class="fas fa-crown"></i> Gestion des inscriptions</h1>
+                <p>Gérez les candidats et la sélection des 50 finalistes</p>
+            </div>
+            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter</button>
+                <button id="exportSelectedBtn" class="btn-download btn-warning"><i class="fas fa-star"></i> Sélectionnés</button>
+                <button id="refreshAdminBtn" class="btn-download"><i class="fas fa-sync-alt"></i></button>
+                <button id="closeAdminPanelBtn" class="btn-download btn-danger"><i class="fas fa-times"></i></button>
             </div>
         </div>
         <div class="admin-stats">
-            <div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> inscrits</div>
-            <div class="stat-card"><i class="fas fa-star" style="color: #f59e0b;"></i> <span id="selectedCount">0</span> / 50 sélectionnés</div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div><span class="stat-number" id="totalCandidats">0</span> inscrits</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <div><span class="stat-number" id="selectedCount">0</span> / 50</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-heart" style="color: #e11d48;"></i>
+                <div><span class="stat-number" id="pendingCount">0</span> en attente</div>
+            </div>
         </div>
     </div>
-    <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université)..."></div>
-    <div id="adminCandidatesContainer" class="admin-cards"><div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div></div>
+    
+    <!-- Onglets -->
+    <div class="admin-tabs">
+        <button class="admin-tab active" data-filter="all">📋 Tous</button>
+        <button class="admin-tab" data-filter="selected">⭐ Sélectionnés (<span id="selectedTabCount">0</span>)</button>
+        <button class="admin-tab" data-filter="pending">⏳ En attente (<span id="pendingTabCount">0</span>)</button>
+    </div>
+    
+    <!-- Filtres -->
+    <div class="admin-filters">
+        <div class="search-bar">
+            <input type="text" id="searchCandidat" placeholder="🔍 Rechercher...">
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn" data-sort="date">📅 Date</button>
+            <button class="filter-btn" data-sort="name">👤 Nom</button>
+            <button class="filter-btn" data-sort="univ">🏛 Université</button>
+        </div>
+    </div>
+    
+    <div id="adminCandidatesContainer" class="admin-cards">
+        <div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+    </div>
 </div>
 
 <script>
-    // ========== INDEXEDDB ==========
-    const DB_NAME = 'EloquenceDB_V6';
-    const DB_VERSION = 6;
-    const STORE_NAME = 'candidats';
+    // ========== CONFIGURATION FIREBASE ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
+        authDomain: "pitch-c6e9a.firebaseapp.com",
+        projectId: "pitch-c6e9a",
+        storageBucket: "pitch-c6e9a.firebasestorage.app",
+        messagingSenderId: "37902068065",
+        appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
+        measurementId: "G-H7T7BEW22T"
+    };
     
-    let db = null;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
     let allCandidats = [];
     let isAdminPanelOpen = false;
+    let currentFilter = 'all';
+    let currentSort = 'date';
     
-    // Helper flash message
     function showFlashMessage(message, isError = false) {
         const existingFlash = document.querySelector('.flash-message');
         if(existingFlash) existingFlash.remove();
@@ -445,80 +685,91 @@
         setTimeout(() => { if(flashDiv) flashDiv.remove(); }, 3000);
     }
     
-    function openDatabase() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
-            request.onerror = () => reject(request.error);
-            request.onsuccess = () => {
-                db = request.result;
-                resolve(db);
-            };
-            request.onupgradeneeded = (event) => {
-                const database = event.target.result;
-                if (!database.objectStoreNames.contains(STORE_NAME)) {
-                    const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                    store.createIndex('email', 'email', { unique: false });
-                    store.createIndex('date', 'dateInscription', { unique: false });
-                    store.createIndex('selected', 'selected', { unique: false });
-                }
-            };
-        });
+    async function checkEmailExists(email) {
+        try {
+            const snapshot = await db.collection('candidats').where('email', '==', email).get();
+            return !snapshot.empty;
+        } catch (error) {
+            console.error('Erreur vérification email:', error);
+            return false;
+        }
     }
     
-    async function addCandidat(candidat) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.add(candidat);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
+    async function addCandidatToFirestore(candidat) {
+        try {
+            const emailExists = await checkEmailExists(candidat.email);
+            if (emailExists) throw new Error('Cet email est déjà inscrit');
+            const docRef = await db.collection('candidats').add({
+                ...candidat,
+                dateInscription: firebase.firestore.FieldValue.serverTimestamp(),
+                selected: false
+            });
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            throw error;
+        }
     }
     
-    async function getAllCandidats() {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.getAll();
-            request.onsuccess = () => resolve(request.result || []);
-            request.onerror = () => reject(request.error);
-        });
+    async function getAllCandidatsFromFirestore() {
+        try {
+            const snapshot = await db.collection('candidats').orderBy('dateInscription', 'desc').get();
+            const candidats = [];
+            snapshot.forEach(doc => {
+                candidats.push({
+                    id: doc.id,
+                    ...doc.data(),
+                    dateInscription: doc.data().dateInscription?.toDate() || new Date()
+                });
+            });
+            return candidats;
+        } catch (error) {
+            console.error('Erreur récupération:', error);
+            return [];
+        }
     }
     
     async function updateCandidatSelection(id, selected) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const getRequest = store.get(id);
-            getRequest.onsuccess = () => {
-                const candidat = getRequest.result;
-                if (candidat) {
-                    candidat.selected = selected;
-                    const updateRequest = store.put(candidat);
-                    updateRequest.onsuccess = () => resolve(true);
-                    updateRequest.onerror = () => reject(updateRequest.error);
-                } else {
-                    reject('Candidat non trouvé');
-                }
-            };
-            getRequest.onerror = () => reject(getRequest.error);
-        });
+        try {
+            if (selected) {
+                const selectedCount = await getSelectedCount();
+                if (selectedCount >= 50) throw new Error('Limite de 50 sélectionnés atteinte');
+            }
+            await db.collection('candidats').doc(id).update({ selected: selected });
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    async function deleteCandidat(id) {
+        try {
+            await db.collection('candidats').doc(id).delete();
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
     
     async function getSelectedCount() {
-        const candidats = await getAllCandidats();
-        return candidats.filter(c => c.selected === true).length;
+        try {
+            const snapshot = await db.collection('candidats').where('selected', '==', true).get();
+            return snapshot.size;
+        } catch (error) {
+            return 0;
+        }
     }
     
-    let dbReady = false;
-    openDatabase().then(() => {
-        dbReady = true;
-        if (isAdminPanelOpen) chargerListeAdmin();
-    }).catch(err => console.error('DB Error:', err));
+    async function getTotalCount() {
+        try {
+            const snapshot = await db.collection('candidats').get();
+            return snapshot.size;
+        } catch (error) {
+            return 0;
+        }
+    }
     
     const ADMIN_PASSWORD = "oncommence5";
     
-    // Particules
     function createParticles() {
         const container = document.getElementById('particles');
         for(let i=0; i<50; i++) {
@@ -544,14 +795,8 @@
         setTimeout(() => alertDiv.style.display = 'none', 5000);
     }
     
-    // INSCRIPTION : Correction majeure : les identités restent visibles jusqu'à confirmation + reset après succès
     document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        if (!dbReady) {
-            showFormAlert('error', 'Initialisation en cours... Veuillez réessayer');
-            return;
-        }
         
         const nom = document.getElementById('nom').value.trim();
         const postnom = document.getElementById('postnom').value.trim();
@@ -561,9 +806,14 @@
         const faculte = document.getElementById('faculte').value.trim();
         const telephone = document.getElementById('telephone').value.trim();
         const email = document.getElementById('email').value.trim();
+        const motivation = document.getElementById('motivation').value.trim();
         
-        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email) {
+        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email || !motivation) {
             showFormAlert('error', 'Tous les champs obligatoires (*) doivent être remplis');
+            return;
+        }
+        if (motivation.length < 50) {
+            showFormAlert('error', 'Votre motivation doit contenir au moins 50 caractères');
             return;
         }
         
@@ -576,38 +826,26 @@
             const candidatData = {
                 nom, postnom, prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
-                universite, promotion, faculte, telephone, email,
-                dateInscription: new Date().toISOString(),
-                selected: false
+                universite, promotion, faculte, telephone, email, motivation
             };
-            
-            await addCandidat(candidatData);
-            
-            // Affichage succès et conservation des identités avant reset ?
-            // Selon la demande: "le candidat doit voir ses identités, que tout disparaisse que quand il actualise"
-            // Ici on laisse les champs remplis après succès pour que le candidat puisse voir ses infos, puis on efface après un délai ou manuellement ?
-            // Pour correspondre: on montre un message et on réinitialise uniquement après un bref délai pour laisser voir ses données.
-            showFlashMessage('✅ Inscription réussie ! Vos informations ont été enregistrées. Rejoignez le groupe WhatsApp.', false);
-            showFormAlert('success', 'Félicitations ! Vous êtes inscrit(e). Rejoignez le groupe WhatsApp ci-dessus.');
-            
-            // On attend 2 secondes pour que l'utilisateur puisse voir ses identités, puis on reset le formulaire
+            await addCandidatToFirestore(candidatData);
+            showFlashMessage('✅ Inscription réussie !', false);
+            showFormAlert('success', 'Félicitations ! Vous êtes inscrit(e).');
             setTimeout(() => {
                 document.getElementById('inscriptionForm').reset();
             }, 2000);
-            
             if (isAdminPanelOpen) chargerListeAdmin();
-            
         } catch(error) {
-            console.error(error);
-            showFormAlert('error', 'Erreur technique. Vérifiez votre connexion ou réessayez.');
-            showFlashMessage('❌ Erreur lors de l\'inscription', true);
+            let errorMessage = error.message === 'Cet email est déjà inscrit' ? 'Cette adresse email est déjà inscrite.' : 'Erreur technique.';
+            showFormAlert('error', errorMessage);
+            showFlashMessage('❌ ' + errorMessage, true);
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalBtnText;
         }
     });
     
-    // ========== ADMIN PANEL ==========
+    // Admin Panel
     const adminLockBtn = document.getElementById('adminLockBtn');
     const adminModal = document.getElementById('adminPasswordModal');
     const adminPanelDiv = document.getElementById('adminPanel');
@@ -634,133 +872,208 @@
         adminPanelDiv.style.display = 'none';
         isAdminPanelOpen = false;
     });
+    document.getElementById('refreshAdminBtn').addEventListener('click', () => { if (isAdminPanelOpen) chargerListeAdmin(); });
+    
+    // Onglets
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.filter;
+            afficherCandidatsFiltres();
+        });
+    });
+    
+    // Boutons de tri
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSort = btn.dataset.sort;
+            afficherCandidatsFiltres();
+        });
+    });
     
     let searchTimeout = null;
-    const searchInput = document.getElementById('searchCandidat');
-    if(searchInput) {
-        searchInput.addEventListener('input', () => {
-            if (searchTimeout) clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                if (isAdminPanelOpen) afficherCandidatsFiltres();
-            }, 300);
-        });
-    }
+    document.getElementById('searchCandidat').addEventListener('input', () => {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => { if (isAdminPanelOpen) afficherCandidatsFiltres(); }, 300);
+    });
     
-    async function afficherCandidatsFiltres() {
+    function getFilteredCandidats() {
+        let filtered = [...allCandidats];
         const searchTerm = document.getElementById('searchCandidat')?.value.toLowerCase() || '';
-        const filtered = allCandidats.filter(c => 
-            (c.nomComplet?.toLowerCase().includes(searchTerm) ||
-             c.email?.toLowerCase().includes(searchTerm) ||
-             c.universite?.toLowerCase().includes(searchTerm) ||
-             (c.telephone && c.telephone.includes(searchTerm)))
-        );
-        renderAdminCards(filtered);
-    }
-    
-    async function handleSelection(id, currentSelected) {
-        const selectedCount = await getSelectedCount();
-        if (!currentSelected && selectedCount >= 50) {
-            alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
-            return;
+        
+        if (searchTerm) {
+            filtered = filtered.filter(c => 
+                (c.nomComplet?.toLowerCase().includes(searchTerm)) ||
+                (c.email?.toLowerCase().includes(searchTerm)) ||
+                (c.universite?.toLowerCase().includes(searchTerm)) ||
+                (c.motivation?.toLowerCase().includes(searchTerm)) ||
+                (c.telephone?.includes(searchTerm))
+            );
         }
-        await updateCandidatSelection(id, !currentSelected);
-        await chargerListeAdmin();
+        
+        if (currentFilter === 'selected') filtered = filtered.filter(c => c.selected === true);
+        if (currentFilter === 'pending') filtered = filtered.filter(c => c.selected !== true);
+        
+        if (currentSort === 'name') filtered.sort((a, b) => (a.nomComplet || '').localeCompare(b.nomComplet || ''));
+        if (currentSort === 'univ') filtered.sort((a, b) => (a.universite || '').localeCompare(b.universite || ''));
+        if (currentSort === 'date') filtered.sort((a, b) => new Date(b.dateInscription) - new Date(a.dateInscription));
+        
+        return filtered;
     }
     
     function renderAdminCards(candidats) {
         const container = document.getElementById('adminCandidatesContainer');
         if(!candidats.length) {
-            container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat trouvé</div>';
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:#94a3b8;"><i class="fas fa-inbox"></i><br>Aucun candidat trouvé</div>';
             return;
         }
         
         let html = '';
         candidats.forEach(c => {
             const isSelected = c.selected === true;
-            html += `<div class="candidate-admin-card">
-                <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom} ${isSelected ? '<span class="selected-badge"><i class="fas fa-check-circle"></i> SÉLECTIONNÉ</span>' : ''}</h3>
-                <p><i class="fas fa-envelope"></i> ${c.email || '-'}</p>
-                <p><i class="fas fa-university"></i> ${c.universite || '-'} | ${c.faculte || '-'}</p>
-                <p><i class="fas fa-graduation-cap"></i> Promotion: ${c.promotion || '-'}</p>
-                <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
-                <div class="badge">Inscrit le ${c.dateInscription ? new Date(c.dateInscription).toLocaleDateString() : 'N/A'}</div>
-                <div style="margin-top: 15px;">
-                    <button onclick="window.handleSelection(${c.id}, ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}">
-                        <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i> 
-                        ${isSelected ? 'Retirer de la sélection' : 'Sélectionner pour la finale'}
-                    </button>
+            const motivationText = c.motivation || 'Non renseignée';
+            
+            html += `
+                <div class="candidate-admin-card">
+                    <div class="candidate-header">
+                        <div class="candidate-name">
+                            <i class="fas fa-user-circle"></i> ${c.nomComplet || c.prenom + ' ' + c.nom}
+                            ${isSelected ? '<span class="selected-badge-large"><i class="fas fa-check-circle"></i> SÉLECTIONNÉ</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="candidate-info">
+                        <div class="info-row">
+                            <i class="fas fa-envelope"></i>
+                            <span class="label">Email :</span>
+                            <span class="value">${c.email || '-'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-phone"></i>
+                            <span class="label">Tél :</span>
+                            <span class="value">${c.telephone || '-'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-university"></i>
+                            <span class="label">Université :</span>
+                            <span class="value">${c.universite || '-'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-book"></i>
+                            <span class="label">Faculté :</span>
+                            <span class="value">${c.faculte || '-'}</span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="label">Promotion :</span>
+                            <span class="value">${c.promotion || '-'}</span>
+                        </div>
+                        <div class="motivation-box">
+                            <i class="fas fa-quote-left" style="color:#e11d48; margin-right:5px;"></i>
+                            <strong>Motivation</strong>
+                            <p>"${motivationText}"</p>
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <button onclick="window.handleSelection('${c.id}', ${isSelected})" class="select-btn-admin ${isSelected ? 'selected' : ''}">
+                            <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i>
+                            ${isSelected ? 'Retirer' : 'Sélectionner'}
+                        </button>
+                        <button onclick="window.handleDelete('${c.id}', '${c.nomComplet}')" class="delete-btn-admin">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>`;
+            `;
         });
         container.innerHTML = html;
     }
     
+    async function afficherCandidatsFiltres() {
+        const filtered = getFilteredCandidats();
+        renderAdminCards(filtered);
+    }
+    
     async function chargerListeAdmin() {
-        if (!dbReady || !isAdminPanelOpen) return;
+        if (!isAdminPanelOpen) return;
         try {
-            allCandidats = await getAllCandidats();
+            allCandidats = await getAllCandidatsFromFirestore();
             const selectedCount = await getSelectedCount();
-            document.getElementById('totalCandidats').textContent = allCandidats.length;
-            document.getElementById('selectedCount').textContent = `${selectedCount} / 50`;
+            const totalCount = allCandidats.length;
+            const pendingCount = totalCount - selectedCount;
+            
+            document.getElementById('totalCandidats').textContent = totalCount;
+            document.getElementById('selectedCount').textContent = selectedCount;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('selectedTabCount').textContent = selectedCount;
+            document.getElementById('pendingTabCount').textContent = pendingCount;
+            
             afficherCandidatsFiltres();
         } catch(err) {
             console.error(err);
+            document.getElementById('adminCandidatesContainer').innerHTML = '<div style="text-align:center; padding:50px; color:#e11d48;">Erreur de chargement</div>';
         }
     }
     
-    // EXPORTS
+    async function handleSelection(id, currentSelected) {
+        try {
+            const selectedCount = await getSelectedCount();
+            if (!currentSelected && selectedCount >= 50) {
+                alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
+                return;
+            }
+            await updateCandidatSelection(id, !currentSelected);
+            await chargerListeAdmin();
+            showFlashMessage(currentSelected ? 'Candidat retiré de la sélection' : 'Candidat sélectionné', false);
+        } catch (error) {
+            alert('Erreur: ' + error.message);
+        }
+    }
+    
+    async function handleDelete(id, nomComplet) {
+        if (confirm(`Supprimer ${nomComplet} ?`)) {
+            try {
+                await deleteCandidat(id);
+                await chargerListeAdmin();
+                showFlashMessage('Candidat supprimé', false);
+            } catch (error) {
+                alert('Erreur lors de la suppression');
+            }
+        }
+    }
+    
+    // Exports
     document.getElementById('exportAllBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidats();
-        const exportData = candidats.map(c => ({
-            id: c.id,
-            nom: c.nom, postnom: c.postnom, prenom: c.prenom,
-            nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
-            universite: c.universite, promotion: c.promotion, faculte: c.faculte,
-            dateInscription: c.dateInscription,
-            selected: c.selected || false
-        }));
-        const jsonStr = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const candidats = await getAllCandidatsFromFirestore();
+        const blob = new Blob([JSON.stringify(candidats, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `candidats_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        showFlashMessage('Export JSON complet réussi', false);
+        showFlashMessage('Export réussi', false);
     });
     
     document.getElementById('exportSelectedBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidats();
+        const candidats = await getAllCandidatsFromFirestore();
         const selectedCandidats = candidats.filter(c => c.selected === true);
         if(selectedCandidats.length === 0) {
-            alert('Aucun candidat sélectionné pour le moment.');
+            alert('Aucun candidat sélectionné.');
             return;
         }
-        const exportData = selectedCandidats.map(c => ({
-            id: c.id,
-            nom: c.nom, postnom: c.postnom, prenom: c.prenom,
-            nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
-            universite: c.universite, promotion: c.promotion, faculte: c.faculte,
-            dateInscription: c.dateInscription
-        }));
-        const jsonStr = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(selectedCandidats, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `candidats_selectionnes_${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `selectionnes_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        showFlashMessage(`Export des ${selectedCandidats.length} candidats sélectionnés`, false);
+        showFlashMessage(`Export des ${selectedCandidats.length} sélectionnés`, false);
     });
     
     window.handleSelection = handleSelection;
-    
-    document.querySelectorAll('.input-group input').forEach(el => {
-        el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
-        el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
-    });
-    
-    console.log('✅ Système prêt - Inscriptions gratuites - affichage persistant des identités après inscription jusqu’à réinitialisation différée');
+    window.handleDelete = handleDelete;
 </script>
 </body>
 </html>
