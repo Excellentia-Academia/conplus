@@ -11,6 +11,10 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -110,7 +114,7 @@
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
         }
-        .input-group textarea { min-height: 100px; resize: vertical; }
+        .input-group textarea { min-height: 120px; resize: vertical; }
         .input-group input:focus, .input-group textarea:focus {
             outline: none;
             border-color: #e11d48;
@@ -128,6 +132,8 @@
         }
         .info-note i { color: #e11d48; margin-right: 12px; font-size: 1.2rem; }
         .info-note strong { color: #e11d48; font-size: 1rem; }
+        .info-note a { color: #e11d48; text-decoration: underline; font-weight: bold; transition: all 0.3s; }
+        .info-note a:hover { color: #f43f5e; text-shadow: 0 0 5px rgba(225,29,72,0.5); }
         .info-note .highlight { 
             background: rgba(225, 29, 72, 0.3); 
             padding: 2px 8px; 
@@ -284,6 +290,66 @@
             font-size: 0.7rem;
             margin-left: 10px;
         }
+        .whatsapp-link {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-top: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .whatsapp-link:hover {
+            background: #128C7E;
+            transform: scale(1.02);
+        }
+        .info-note ul {
+            margin-left: 25px;
+            margin-top: 10px;
+            list-style: none;
+        }
+        .info-note li {
+            margin: 10px 0;
+        }
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            z-index: 9999;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            animation: fadeInOut 3s ease forwards;
+            pointer-events: none;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
+        }
+        .motivation-preview {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 16px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #cbd5e6;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .character-counter {
+            text-align: right;
+            font-size: 0.7rem;
+            margin-top: 5px;
+            color: #64748b;
+        }
     </style>
 </head>
 <body>
@@ -302,11 +368,21 @@
 
     <div class="form-card">
         <div class="info-note">
-            <i class="fas fa-trophy"></i> 
-            <strong>📢 Information importante</strong><br>
-            Seuls <span class="highlight">50 candidats</span> seront présélectionnés pour la phase finale.<br>
-            Les <strong>frais d'inscription de 5000 Fc</strong> ne concernent <strong>UNIQUEMENT</strong> les 50 candidats sélectionnés après la présélection.<br>
-            <i class="fas fa-check-circle" style="margin-top: 8px; display: inline-block;"></i> L'inscription est <strong>gratuite</strong> pour tous les candidats qui postulent.
+            <i class="fas fa-info-circle"></i> 
+            <strong>📢 INFORMATION IMPORTANTE</strong>
+            <ul>
+                <li>✅ Les <strong class="highlight">frais de participation</strong> ne concernent <strong>UNIQUEMENT</strong> les candidats qui seront sélectionnés lors de la présélection.</li>
+                <li>✅ Pour cette phase d'enregistrement, <strong class="highlight">il n'y a AUCUN frais à payer</strong>.</li>
+                <li>✅ <strong>Rejoignez notre groupe WhatsApp</strong> pour ne rater aucune information :<br>
+                    <a href="https://chat.whatsapp.com/IQBgEAbmDe7AQCNxTG0u04?mode=gi_t" target="_blank" class="whatsapp-link">
+                        <i class="fab fa-whatsapp"></i> Rejoindre le groupe WhatsApp
+                    </a>
+                </li>
+            </ul>
+            <div style="margin-top: 12px; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 12px;">
+                <i class="fas fa-check-circle" style="color: #10b981;"></i> 
+                <strong>Pour rappel :</strong> Merci d'intégrer le groupe WhatsApp du concours si ce n'est pas déjà fait.
+            </div>
         </div>
         
         <form id="inscriptionForm">
@@ -315,10 +391,19 @@
                 <div class="input-group"><label><i class="fas fa-user"></i> Postnom</label><input type="text" id="postnom" placeholder="Postnom"></div>
                 <div class="input-group"><label><i class="fas fa-user"></i> Prénom *</label><input type="text" id="prenom" placeholder="Votre prénom" required></div>
                 <div class="input-group"><label><i class="fas fa-university"></i> Université / Institut *</label><input type="text" id="universite" placeholder="Université" required></div>
-                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="Année d'étude" required></div>
+                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="promotion" required></div>
                 <div class="input-group"><label><i class="fas fa-book"></i> Faculté / Filière *</label><input type="text" id="faculte" placeholder="Faculté" required></div>
                 <div class="input-group"><label><i class="fas fa-phone"></i> Téléphone *</label><input type="tel" id="telephone" placeholder="+243 XX XXX XXXX" required></div>
                 <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="email" placeholder="exemple@email.com" required></div>
+            </div>
+            
+            <!-- Nouvelle section Motivation -->
+            <div class="input-group" style="margin-top: 15px;">
+                <label><i class="fas fa-heart"></i> Pourquoi souhaitez-vous participer ? (Motivation) *</label>
+                <textarea id="motivation" placeholder="Décrivez votre motivation à participer à ce concours d'éloquence. Qu'est-ce qui vous anime ? Pourquoi devriez-vous être sélectionné(e) ? (Minimum 50 caractères)" required minlength="50" maxlength="1000"></textarea>
+                <div class="character-counter">
+                    <span id="charCount">0</span> / 1000 caractères (minimum 50)
+                </div>
             </div>
             
             <button type="submit" class="submit-btn" id="submitBtn">
@@ -328,7 +413,7 @@
         </form>
         
         <div class="storage-info">
-            <i class="fas fa-users"></i> Inscriptions ouvertes • Présélection des 50 meilleurs candidats
+            <i class="fas fa-cloud-upload-alt"></i> Données sauvegardées en toute sécurité dans le cloud
         </div>
     </div>
 </div>
@@ -355,102 +440,152 @@
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter JSON</button>
                 <button id="exportSelectedBtn" class="btn-download btn-warning"><i class="fas fa-star"></i> Exporter sélectionnés</button>
+                <button id="refreshAdminBtn" class="btn-download"><i class="fas fa-sync-alt"></i> Actualiser</button>
                 <button id="closeAdminPanelBtn" class="btn-download btn-danger"><i class="fas fa-times"></i> Fermer</button>
             </div>
         </div>
         <div class="admin-stats">
             <div class="stat-card"><i class="fas fa-users"></i> <span id="totalCandidats">0</span> inscrits</div>
             <div class="stat-card"><i class="fas fa-star" style="color: #f59e0b;"></i> <span id="selectedCount">0</span> / 50 sélectionnés</div>
+            <div class="stat-card"><i class="fas fa-heart"></i> Motivations à lire</div>
         </div>
     </div>
-    <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université)..."></div>
+    <div class="search-bar"><input type="text" id="searchCandidat" placeholder="🔍 Rechercher (nom, email, université, motivation)..."></div>
     <div id="adminCandidatesContainer" class="admin-cards"><div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div></div>
 </div>
 
 <script>
-    // ========== INDEXEDDB ==========
-    const DB_NAME = 'EloquenceDB_V4';
-    const DB_VERSION = 4;
-    const STORE_NAME = 'candidats';
+    // ========== CONFIGURATION FIREBASE ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
+        authDomain: "pitch-c6e9a.firebaseapp.com",
+        projectId: "pitch-c6e9a",
+        storageBucket: "pitch-c6e9a.firebasestorage.app",
+        messagingSenderId: "37902068065",
+        appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
+        measurementId: "G-H7T7BEW22T"
+    };
     
-    let db = null;
+    // Initialiser Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
     let allCandidats = [];
     let isAdminPanelOpen = false;
     
-    // Ouverture DB
-    function openDatabase() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
+    // Helper flash message
+    function showFlashMessage(message, isError = false) {
+        const existingFlash = document.querySelector('.flash-message');
+        if(existingFlash) existingFlash.remove();
+        const flashDiv = document.createElement('div');
+        flashDiv.className = 'flash-message';
+        flashDiv.style.background = isError ? '#e11d48' : '#10b981';
+        flashDiv.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(flashDiv);
+        setTimeout(() => { if(flashDiv) flashDiv.remove(); }, 3000);
+    }
+    
+    // Vérifier si l'email existe déjà
+    async function checkEmailExists(email) {
+        try {
+            const snapshot = await db.collection('candidats').where('email', '==', email).get();
+            return !snapshot.empty;
+        } catch (error) {
+            console.error('Erreur vérification email:', error);
+            return false;
+        }
+    }
+    
+    // Ajouter un candidat à Firestore
+    async function addCandidatToFirestore(candidat) {
+        try {
+            // Vérifier si l'email existe déjà
+            const emailExists = await checkEmailExists(candidat.email);
+            if (emailExists) {
+                throw new Error('Cet email est déjà inscrit');
+            }
             
-            request.onerror = () => reject(request.error);
-            request.onsuccess = () => {
-                db = request.result;
-                resolve(db);
-            };
-            
-            request.onupgradeneeded = (event) => {
-                const database = event.target.result;
-                if (!database.objectStoreNames.contains(STORE_NAME)) {
-                    const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                    store.createIndex('email', 'email', { unique: false });
-                    store.createIndex('date', 'dateInscription', { unique: false });
-                    store.createIndex('nom', 'nom', { unique: false });
-                    store.createIndex('selected', 'selected', { unique: false });
-                }
-            };
-        });
+            const docRef = await db.collection('candidats').add({
+                ...candidat,
+                dateInscription: firebase.firestore.FieldValue.serverTimestamp(),
+                selected: false
+            });
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            console.error('Erreur ajout Firestore:', error);
+            throw error;
+        }
     }
     
-    async function addCandidat(candidat) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.add(candidat);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
+    // Récupérer tous les candidats
+    async function getAllCandidatsFromFirestore() {
+        try {
+            const snapshot = await db.collection('candidats').orderBy('dateInscription', 'desc').get();
+            const candidats = [];
+            snapshot.forEach(doc => {
+                candidats.push({
+                    id: doc.id,
+                    ...doc.data(),
+                    dateInscription: doc.data().dateInscription?.toDate() || new Date()
+                });
+            });
+            return candidats;
+        } catch (error) {
+            console.error('Erreur récupération:', error);
+            return [];
+        }
     }
     
-    async function getAllCandidats() {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.getAll();
-            request.onsuccess = () => resolve(request.result || []);
-            request.onerror = () => reject(request.error);
-        });
-    }
-    
+    // Mettre à jour la sélection d'un candidat
     async function updateCandidatSelection(id, selected) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const getRequest = store.get(id);
-            getRequest.onsuccess = () => {
-                const candidat = getRequest.result;
-                if (candidat) {
-                    candidat.selected = selected;
-                    const updateRequest = store.put(candidat);
-                    updateRequest.onsuccess = () => resolve(true);
-                    updateRequest.onerror = () => reject(updateRequest.error);
-                } else {
-                    reject('Candidat non trouvé');
+        try {
+            if (selected) {
+                // Vérifier le nombre de sélectionnés
+                const selectedCount = await getSelectedCount();
+                if (selectedCount >= 50) {
+                    throw new Error('Limite de 50 sélectionnés atteinte');
                 }
-            };
-            getRequest.onerror = () => reject(getRequest.error);
-        });
+            }
+            await db.collection('candidats').doc(id).update({ selected: selected });
+            return true;
+        } catch (error) {
+            console.error('Erreur mise à jour:', error);
+            throw error;
+        }
     }
     
+    // Compter les sélectionnés
     async function getSelectedCount() {
-        const candidats = await getAllCandidats();
-        return candidats.filter(c => c.selected === true).length;
+        try {
+            const snapshot = await db.collection('candidats').where('selected', '==', true).get();
+            return snapshot.size;
+        } catch (error) {
+            console.error('Erreur comptage:', error);
+            return 0;
+        }
     }
     
-    let dbReady = false;
-    openDatabase().then(() => {
-        dbReady = true;
-        if (isAdminPanelOpen) chargerListeAdmin();
-    }).catch(err => console.error('DB Error:', err));
+    // Supprimer un candidat (optionnel)
+    async function deleteCandidat(id) {
+        try {
+            await db.collection('candidats').doc(id).delete();
+            return true;
+        } catch (error) {
+            console.error('Erreur suppression:', error);
+            throw error;
+        }
+    }
+    
+    // Compter tous les candidats
+    async function getTotalCount() {
+        try {
+            const snapshot = await db.collection('candidats').get();
+            return snapshot.size;
+        } catch (error) {
+            console.error('Erreur comptage total:', error);
+            return 0;
+        }
+    }
     
     const ADMIN_PASSWORD = "oncommence5";
     
@@ -477,17 +612,28 @@
         alertDiv.textContent = message;
         alertDiv.className = `alert ${type}`;
         alertDiv.style.display = 'block';
-        setTimeout(() => alertDiv.style.display = 'none', 4000);
+        setTimeout(() => alertDiv.style.display = 'none', 5000);
     }
     
-    // INSCRIPTION
+    // Compteur de caractères pour la motivation
+    const motivationTextarea = document.getElementById('motivation');
+    const charCountSpan = document.getElementById('charCount');
+    
+    motivationTextarea.addEventListener('input', function() {
+        const count = this.value.length;
+        charCountSpan.textContent = count;
+        if (count < 50 && count > 0) {
+            charCountSpan.style.color = '#f59e0b';
+        } else if (count >= 50) {
+            charCountSpan.style.color = '#10b981';
+        } else {
+            charCountSpan.style.color = '#64748b';
+        }
+    });
+    
+    // INSCRIPTION AVEC FIREBASE
     document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        if (!dbReady) {
-            showFormAlert('error', 'Initialisation... Réessayez');
-            return;
-        }
         
         const nom = document.getElementById('nom').value.trim();
         const postnom = document.getElementById('postnom').value.trim();
@@ -497,39 +643,62 @@
         const faculte = document.getElementById('faculte').value.trim();
         const telephone = document.getElementById('telephone').value.trim();
         const email = document.getElementById('email').value.trim();
+        const motivation = document.getElementById('motivation').value.trim();
         
-        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email) {
-            showFormAlert('error', 'Tous les champs sont requis');
+        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email || !motivation) {
+            showFormAlert('error', 'Tous les champs obligatoires (*) doivent être remplis');
+            return;
+        }
+        
+        if (motivation.length < 50) {
+            showFormAlert('error', 'Votre motivation doit contenir au moins 50 caractères');
             return;
         }
         
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
         
         try {
             const candidatData = {
-                nom, postnom, prenom,
+                nom, 
+                postnom, 
+                prenom,
                 nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
-                universite, promotion, faculte, telephone, email,
-                dateInscription: new Date().toISOString(),
-                selected: false
+                universite, 
+                promotion, 
+                faculte, 
+                telephone, 
+                email,
+                motivation,
+                dateInscription: new Date()
             };
             
-            await addCandidat(candidatData);
+            await addCandidatToFirestore(candidatData);
             
-            showFormAlert('success', '🎉 Inscription réussie ! Vous serez informé des résultats de la présélection.');
+            showFlashMessage('✅ Inscription réussie ! Vos informations ont été enregistrées dans le cloud. Rejoignez le groupe WhatsApp.', false);
+            showFormAlert('success', 'Félicitations ! Vous êtes inscrit(e). Votre motivation a bien été enregistrée.');
             
-            document.getElementById('inscriptionForm').reset();
+            // Réinitialiser le formulaire
+            setTimeout(() => {
+                document.getElementById('inscriptionForm').reset();
+                charCountSpan.textContent = '0';
+            }, 2000);
             
             if (isAdminPanelOpen) chargerListeAdmin();
             
         } catch(error) {
             console.error(error);
-            showFormAlert('error', 'Erreur, réessayez');
+            let errorMessage = 'Erreur technique. Vérifiez votre connexion ou réessayez.';
+            if (error.message === 'Cet email est déjà inscrit') {
+                errorMessage = 'Cette adresse email est déjà inscrite.';
+            }
+            showFormAlert('error', errorMessage);
+            showFlashMessage('❌ ' + errorMessage, true);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-pen-fancy"></i> S\'INSCRIRE GRATUITEMENT';
+            submitBtn.innerHTML = originalBtnText;
         }
     });
     
@@ -561,55 +730,90 @@
         isAdminPanelOpen = false;
     });
     
-    let searchTimeout = null;
-    document.getElementById('searchCandidat')?.addEventListener('input', () => {
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            if (isAdminPanelOpen) afficherCandidatsFiltres();
-        }, 300);
+    document.getElementById('refreshAdminBtn').addEventListener('click', () => {
+        if (isAdminPanelOpen) chargerListeAdmin();
     });
+    
+    let searchTimeout = null;
+    const searchInput = document.getElementById('searchCandidat');
+    if(searchInput) {
+        searchInput.addEventListener('input', () => {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (isAdminPanelOpen) afficherCandidatsFiltres();
+            }, 300);
+        });
+    }
     
     async function afficherCandidatsFiltres() {
         const searchTerm = document.getElementById('searchCandidat')?.value.toLowerCase() || '';
         const filtered = allCandidats.filter(c => 
             (c.nomComplet?.toLowerCase().includes(searchTerm) ||
              c.email?.toLowerCase().includes(searchTerm) ||
-             c.universite?.toLowerCase().includes(searchTerm))
+             c.universite?.toLowerCase().includes(searchTerm) ||
+             (c.motivation && c.motivation.toLowerCase().includes(searchTerm)) ||
+             (c.telephone && c.telephone.includes(searchTerm)))
         );
         renderAdminCards(filtered);
     }
     
     async function handleSelection(id, currentSelected) {
-        const selectedCount = await getSelectedCount();
-        if (!currentSelected && selectedCount >= 50) {
-            alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
-            return;
+        try {
+            const selectedCount = await getSelectedCount();
+            if (!currentSelected && selectedCount >= 50) {
+                alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
+                return;
+            }
+            await updateCandidatSelection(id, !currentSelected);
+            await chargerListeAdmin();
+            showFlashMessage(currentSelected ? 'Candidat retiré de la sélection' : 'Candidat sélectionné avec succès', false);
+        } catch (error) {
+            alert('Erreur: ' + error.message);
         }
-        await updateCandidatSelection(id, !currentSelected);
-        await chargerListeAdmin();
+    }
+    
+    async function handleDelete(id, nomComplet) {
+        if (confirm(`Êtes-vous sûr de vouloir supprimer ${nomComplet} ? Cette action est irréversible.`)) {
+            try {
+                await deleteCandidat(id);
+                await chargerListeAdmin();
+                showFlashMessage('Candidat supprimé avec succès', false);
+            } catch (error) {
+                alert('Erreur lors de la suppression');
+            }
+        }
     }
     
     function renderAdminCards(candidats) {
         const container = document.getElementById('adminCandidatesContainer');
         if(!candidats.length) {
-            container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat</div>';
+            container.innerHTML = '<div style="text-align:center; padding:50px;">Aucun candidat trouvé</div>';
             return;
         }
         
         let html = '';
         candidats.forEach(c => {
             const isSelected = c.selected === true;
+            const motivationPreview = c.motivation ? (c.motivation.length > 150 ? c.motivation.substring(0, 150) + '...' : c.motivation) : 'Non renseignée';
+            
             html += `<div class="candidate-admin-card">
                 <h3 style="color:#e11d48;">${c.nomComplet || c.prenom + ' ' + c.nom} ${isSelected ? '<span class="selected-badge"><i class="fas fa-check-circle"></i> SÉLECTIONNÉ</span>' : ''}</h3>
                 <p><i class="fas fa-envelope"></i> ${c.email || '-'}</p>
                 <p><i class="fas fa-university"></i> ${c.universite || '-'} | ${c.faculte || '-'}</p>
                 <p><i class="fas fa-graduation-cap"></i> Promotion: ${c.promotion || '-'}</p>
                 <p><i class="fas fa-phone"></i> ${c.telephone || '-'}</p>
-                <div class="badge">Inscrit le ${c.dateInscription ? new Date(c.dateInscription).toLocaleDateString() : 'N/A'}</div>
-                <div style="margin-top: 15px;">
-                    <button onclick="handleSelection(${c.id}, ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}">
+                <div style="margin-top: 12px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 16px;">
+                    <i class="fas fa-heart" style="color: #e11d48;"></i> <strong>Motivation:</strong><br>
+                    <div style="margin-top: 8px; font-size: 0.85rem; line-height: 1.4;">"${motivationPreview}"</div>
+                </div>
+                <div class="badge">Inscrit le ${c.dateInscription ? new Date(c.dateInscription).toLocaleDateString('fr-FR') : 'N/A'}</div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button onclick="window.handleSelection('${c.id}', ${isSelected})" class="select-btn" style="background: ${isSelected ? '#10b981' : '#3b82f6'}; flex: 1;">
                         <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i> 
-                        ${isSelected ? 'Retirer de la sélection' : 'Sélectionner pour la finale'}
+                        ${isSelected ? 'Retirer' : 'Sélectionner'}
+                    </button>
+                    <button onclick="window.handleDelete('${c.id}', '${c.nomComplet}')" class="select-btn" style="background: #e11d48; flex: 0.5;">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>`;
@@ -618,33 +822,32 @@
     }
     
     async function chargerListeAdmin() {
-        if (!dbReady || !isAdminPanelOpen) return;
-        
+        if (!isAdminPanelOpen) return;
         try {
-            allCandidats = await getAllCandidats();
+            allCandidats = await getAllCandidatsFromFirestore();
             const selectedCount = await getSelectedCount();
-            
-            document.getElementById('totalCandidats').textContent = allCandidats.length;
+            const totalCount = await getTotalCount();
+            document.getElementById('totalCandidats').textContent = totalCount;
             document.getElementById('selectedCount').textContent = `${selectedCount} / 50`;
-            
             afficherCandidatsFiltres();
         } catch(err) {
             console.error(err);
+            document.getElementById('adminCandidatesContainer').innerHTML = '<div style="text-align:center; padding:50px; color: #e11d48;">Erreur de chargement des données</div>';
         }
     }
     
-    // EXPORT COMPLET
+    // EXPORTS
     document.getElementById('exportAllBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidats();
+        const candidats = await getAllCandidatsFromFirestore();
         const exportData = candidats.map(c => ({
             id: c.id,
             nom: c.nom, postnom: c.postnom, prenom: c.prenom,
             nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
             universite: c.universite, promotion: c.promotion, faculte: c.faculte,
+            motivation: c.motivation,
             dateInscription: c.dateInscription,
             selected: c.selected || false
         }));
-        
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
@@ -652,28 +855,24 @@
         link.download = `candidats_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        
-        showFormAlert('success', 'Export JSON réussi !');
+        showFlashMessage('Export JSON complet réussi', false);
     });
     
-    // EXPORT SÉLECTIONNÉS
     document.getElementById('exportSelectedBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidats();
+        const candidats = await getAllCandidatsFromFirestore();
         const selectedCandidats = candidats.filter(c => c.selected === true);
-        
         if(selectedCandidats.length === 0) {
             alert('Aucun candidat sélectionné pour le moment.');
             return;
         }
-        
         const exportData = selectedCandidats.map(c => ({
             id: c.id,
             nom: c.nom, postnom: c.postnom, prenom: c.prenom,
             nomComplet: c.nomComplet, email: c.email, telephone: c.telephone,
             universite: c.universite, promotion: c.promotion, faculte: c.faculte,
+            motivation: c.motivation,
             dateInscription: c.dateInscription
         }));
-        
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const link = document.createElement('a');
@@ -681,20 +880,18 @@
         link.download = `candidats_selectionnes_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(link.href);
-        
-        showFormAlert('success', `Export des ${selectedCandidats.length} candidats sélectionnés !`);
+        showFlashMessage(`Export des ${selectedCandidats.length} candidats sélectionnés`, false);
     });
     
-    // Rendre handleSelection accessible globalement
     window.handleSelection = handleSelection;
+    window.handleDelete = handleDelete;
     
-    // Animation inputs
-    document.querySelectorAll('.input-group input').forEach(el => {
+    document.querySelectorAll('.input-group input, .input-group textarea').forEach(el => {
         el.addEventListener('focus', () => { el.parentElement.style.transform = 'translateX(5px)'; });
         el.addEventListener('blur', () => { el.parentElement.style.transform = 'translateX(0)'; });
     });
     
-    console.log('✅ Système prêt - Inscriptions sans vidéo');
+    console.log('✅ Système prêt avec Firebase Cloud - Section Motivation ajoutée');
 </script>
 </body>
 </html>
