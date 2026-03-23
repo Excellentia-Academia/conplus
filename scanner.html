@@ -1,228 +1,56 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Scanner - Contrôle d'accès | Éloquence en Scène</title>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #002B5C 0%, #CE1126 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .scanner-container {
-            max-width: 550px;
-            width: 100%;
-            background: rgba(10,10,18,0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 30px;
-            box-shadow: 0 40px 60px -20px rgba(0,0,0,0.8);
-            border: 1px solid rgba(212,175,55,0.3);
-            animation: fadeIn 0.6s ease;
-        }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
-        .logo { width: 80px; height: 80px; background: linear-gradient(135deg,#d4af37,#b8941e); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .logo i { font-size: 40px; color: #0a0a0a; }
-        h1 { text-align: center; color: #d4af37; font-size: 1.6rem; margin-bottom: 8px; }
-        .subtitle { text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 25px; }
-        .scanner-box { background: #000; border-radius: 24px; overflow: hidden; border: 2px solid rgba(212,175,55,0.5); margin-bottom: 20px; }
-        #qr-reader { width: 100%; }
-        #qr-reader video { width: 100%; height: auto; }
-        .result-box { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; text-align: center; margin-top: 20px; display: none; border: 1px solid rgba(212,175,55,0.2); }
-        .success { border-color: #10b981; background: rgba(16,185,129,0.1); }
-        .error { border-color: #ef4444; background: rgba(239,68,68,0.1); }
-        .warning { border-color: #f59e0b; background: rgba(245,158,11,0.1); }
-        .result-icon { font-size: 3rem; margin-bottom: 10px; }
-        .result-message { font-size: 1.1rem; font-weight: 500; margin-bottom: 8px; }
-        .result-details { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
-        .scanner-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-        .btn-reset { background: rgba(212,175,55,0.2); border: 1px solid rgba(212,175,55,0.5); color: #d4af37; padding: 8px 16px; border-radius: 40px; cursor: pointer; }
-        .recent-scans { margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 15px; }
-        .recent-scans h3 { font-size: 0.9rem; color: #d4af37; margin-bottom: 10px; }
-        .scan-list { max-height: 200px; overflow-y: auto; }
-        .scan-item { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-        .back-link { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 40px; color: #d4af37; text-decoration: none; font-size: 0.8rem; }
-    </style>
-</head>
-<body>
-    <div class="scanner-container">
-        <div class="logo"><i class="fas fa-qrcode"></i></div>
-        <h1>Contrôle d'accès</h1>
-        <p class="subtitle">Scannez le QR Code d'invitation</p>
-        
-        <div class="scanner-status">
-            <div class="status-indicator" style="display:flex; align-items:center; gap:8px"><div class="status-dot"></div><span>Scanner actif</span></div>
-            <button class="btn-reset" onclick="restartScanner()"><i class="fas fa-sync-alt"></i> Redémarrer</button>
-        </div>
-        
-        <div class="scanner-box"><div id="qr-reader"></div></div>
-        
-        <div class="result-box" id="resultBox">
-            <div class="result-icon" id="resultIcon"></div>
-            <div class="result-message" id="resultMessage"></div>
-            <div class="result-details" id="resultDetails"></div>
-        </div>
-        
-        <div class="recent-scans">
-            <h3><i class="fas fa-history"></i> Derniers scans</h3>
-            <div class="scan-list" id="scanList"><div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px">Aucun scan</div></div>
-        </div>
-    </div>
-    
-    <a href="invitation.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour</a>
+<!-- Bouton d'export Excel simplifié -->
+<button id="exportExcelSimpleBtn" style="position: fixed; bottom: 110px; right: 30px; width: 65px; height: 65px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; border: none; cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(16,185,129,0.4);">
+    <i class="fas fa-file-excel" style="font-size: 1.8rem; color: white;"></i>
+</button>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
-            authDomain: "pitch-c6e9a.firebaseapp.com",
-            projectId: "pitch-c6e9a",
-            storageBucket: "pitch-c6e9a.firebasestorage.app",
-            messagingSenderId: "37902068065",
-            appId: "1:37902068065:web:7f597cbb003fb6c5c07d20"
-        };
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+document.getElementById('exportExcelSimpleBtn').addEventListener('click', async () => {
+    try {
+        // Récupérer tous les candidats depuis Firestore
+        const snapshot = await db.collection('candidats').get();
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        let html5QrCode;
-        let isScanning = true;
-        let scannedCodes = new Set();
-        
-        function speakMessage(message, isWarning = false) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(message);
-                utterance.lang = 'fr-FR';
-                utterance.rate = 0.9;
-                utterance.pitch = isWarning ? 0.8 : 1.1;
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utterance);
-            }
+        if (snapshot.empty) {
+            alert('Aucun candidat inscrit pour le moment.');
+            return;
         }
         
-        function showResult(type, message, details = '') {
-            const box = document.getElementById('resultBox');
-            const icon = document.getElementById('resultIcon');
-            const msg = document.getElementById('resultMessage');
-            const det = document.getElementById('resultDetails');
-            
-            box.style.display = 'block';
-            box.className = 'result-box ' + type;
-            
-            if(type === 'success') icon.innerHTML = '<i class="fas fa-check-circle" style="color:#10b981"></i>';
-            else if(type === 'error') icon.innerHTML = '<i class="fas fa-times-circle" style="color:#ef4444"></i>';
-            else icon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#f59e0b"></i>';
-            
-            msg.innerHTML = message;
-            det.innerHTML = details;
-            
-            gsap.fromTo(box, { scale:0.9, opacity:0 }, { scale:1, opacity:1, duration:0.3 });
-            setTimeout(() => { gsap.to(box, { opacity:0, duration:0.5, onComplete:()=>{ box.style.display='none'; box.style.opacity=1 } }); }, 5000);
-        }
+        // Construire les données pour Excel (uniquement nom, prénom, université)
+        const donneesExcel = [];
         
-        async function addToRecentScans(guestName, status) {
-            const list = document.getElementById('scanList');
-            const time = new Date().toLocaleTimeString('fr-FR');
-            if(list.children[0]?.innerText.includes('Aucun scan')) list.innerHTML = '';
-            const item = document.createElement('div');
-            item.className = 'scan-item';
-            item.innerHTML = `<div><i class="fas fa-user"></i> ${guestName}</div><div><span style="color:${status==='success'?'#10b981':'#f59e0b'}">${status==='success'?'✓ Entrée':'⚠ Refus'}</span> ${time}</div>`;
-            list.insertBefore(item, list.firstChild);
-            while(list.children.length > 10) list.removeChild(list.lastChild);
-        }
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            donneesExcel.push({
+                'NOM': data.nom || '',
+                'PRÉNOM': data.prenom || '',
+                'UNIVERSITÉ': data.universite || ''
+            });
+        });
         
-        async function onScanSuccess(decodedText) {
-            if(!isScanning) return;
-            if(scannedCodes.has(decodedText)) return;
-            scannedCodes.add(decodedText);
-            
-            let guestId = null;
-            try { const url = new URL(decodedText); guestId = url.searchParams.get('id'); } catch(e) { guestId = decodedText; }
-            
-            if(!guestId) {
-                showResult('error', 'QR Code invalide', 'Ce code n\'est pas une invitation valide');
-                speakMessage("QR Code invalide");
-                setTimeout(() => scannedCodes.delete(decodedText), 1500);
-                return;
-            }
-            
-            try {
-                const guestDoc = await db.collection("guests").doc(guestId).get();
-                if(!guestDoc.exists) {
-                    showResult('error', 'Invitation non trouvée', 'Ce QR Code n\'existe pas dans notre base');
-                    speakMessage("Invitation non trouvée");
-                    setTimeout(() => scannedCodes.delete(decodedText), 1500);
-                    return;
-                }
-                
-                const guest = guestDoc.data();
-                const scanRef = db.collection("scans").doc(guestId);
-                const scanDoc = await scanRef.get();
-                
-                // Vérifier si déjà scanné
-                if(scanDoc.exists && scanDoc.data().scanned === true) {
-                    const scanCount = (scanDoc.data().scanCount || 1) + 1;
-                    await scanRef.update({ scanCount: scanCount, lastAttemptAt: new Date() });
-                    await db.collection("fraudAttempts").add({ guestId, guestName: guest.name, attemptTime: new Date() });
-                    
-                    showResult('warning', '⚠️ Code déjà scanné !', `${guest.name}, ce QR Code a déjà été utilisé. Veuillez montrer une pièce d'identité.`);
-                    speakMessage(`Désolé, le code a déjà été scanné. Veuillez montrer une pièce d'identité pour valider votre invitation.`, true);
-                    addToRecentScans(guest.name, 'warning');
-                    gsap.to(".scanner-container", { x:5, duration:0.05, repeat:5, yoyo:true });
-                } 
-                else {
-                    // PREMIER SCAN - ENTRÉE VALIDÉE
-                    await scanRef.set({
-                        guestId: guestId,
-                        guestName: guest.name,
-                        scanned: true,
-                        scanCount: 1,
-                        firstScanAt: new Date()
-                    });
-                    
-                    await db.collection("guests").doc(guestId).update({
-                        entryScanned: true,
-                        entryTime: new Date()
-                    });
-                    
-                    showResult('success', '✅ Bienvenue !', `${guest.name}, votre entrée est validée. Profitez de l'événement !`);
-                    speakMessage(`Bienvenue ${guest.name} ! Votre entrée est validée. Profitez de l'événement !`);
-                    addToRecentScans(guest.name, 'success');
-                    gsap.to(".scanner-container", { scale:1.02, duration:0.2, yoyo:true, repeat:1 });
-                }
-            } catch(error) {
-                console.error(error);
-                showResult('error', 'Erreur technique', 'Veuillez réessayer');
-                speakMessage("Erreur technique");
-            }
-            
-            setTimeout(() => scannedCodes.delete(decodedText), 2000);
-        }
+        // Créer une feuille de calcul
+        const feuille = XLSX.utils.json_to_sheet(donneesExcel);
         
-        function initScanner() {
-            html5QrCode = new Html5Qrcode("qr-reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess, (err) => {})
-                .catch(err => { document.getElementById('qr-reader').innerHTML = '<div style="padding:50px;text-align:center;color:#ef4444"><i class="fas fa-camera"></i> Caméra inaccessible</div>'; });
-        }
+        // Ajuster la largeur des colonnes
+        feuille['!cols'] = [
+            { wch: 25 },  // NOM
+            { wch: 25 },  // PRÉNOM
+            { wch: 40 }   // UNIVERSITÉ
+        ];
         
-        function restartScanner() {
-            if(html5QrCode?.isScanning) html5QrCode.stop().then(() => initScanner());
-            else initScanner();
-        }
+        // Créer le classeur
+        const classeur = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(classeur, feuille, 'Candidats');
         
-        window.addEventListener('load', () => { setTimeout(() => { initScanner(); speakMessage("Scanner activé. Présentez votre QR Code."); }, 1000); });
-    </script>
-</body>
-</html>
+        // Générer le fichier et le télécharger
+        const date = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        XLSX.writeFile(classeur, `candidats_noms_universites_${date}.xlsx`);
+        
+        // Message de confirmation
+        showFlashMessage(`✅ Export Excel : ${donneesExcel.length} candidats`, false);
+        
+    } catch (error) {
+        console.error('Erreur export Excel:', error);
+        showFlashMessage('❌ Erreur lors de l\'export', true);
+    }
+});
+</script>
