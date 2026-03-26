@@ -2,1078 +2,615 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Excellentia Academia | Éloquence en Scène</title>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Éloquence en Scène — Tous les candidats & finalistes</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(145deg, #0a0c12 0%, #0f1117 100%);
+            background: linear-gradient(135deg, #0b0c1a 0%, #12162c 100%);
+            font-family: 'Inter', sans-serif;
+            color: #f0ede8;
+            padding: 2rem 1.5rem;
             min-height: 100vh;
-            color: #eef2ff;
-            overflow-x: hidden;
         }
-        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, rgba(225, 29, 72, 0.4) 0%, rgba(37, 99, 235, 0.2) 100%);
-            border-radius: 50%;
-            animation: floatParticle 15s infinite ease-in-out;
-            filter: blur(2px);
-        }
-        @keyframes floatParticle {
-            0% { transform: translateY(0); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.5; }
-            100% { transform: translateY(-100vh); opacity: 0; }
-        }
-        .glow {
+
+        .bg-glow {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(225,29,72,0.15) 0%, rgba(37,99,235,0.05) 50%, transparent 70%);
-            transform: translate(-50%, -50%);
-            animation: pulseGlow 8s infinite alternate;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, rgba(0,0,0,0) 60%);
         }
-        @keyframes pulseGlow {
-            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
-        }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
-        .hero-section {
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
             position: relative;
-            margin-bottom: 40px;
-            border-radius: 48px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            transition: all 0.5s;
+            z-index: 2;
         }
-        .hero-section:hover { transform: translateY(-8px); box-shadow: 0 35px 60px -15px rgba(225,29,72,0.3); }
-        .hero-image { width: 100%; height: 320px; object-fit: cover; display: block; filter: brightness(0.85); transition: all 0.7s; }
-        .hero-section:hover .hero-image { transform: scale(1.02); filter: brightness(0.95); }
-        .hero-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(0deg, rgba(10,12,18,0.95) 0%, rgba(10,12,18,0.4) 100%);
-            padding: 40px 30px;
+
+        /* HEADER */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
         }
-        .hero-title {
+
+        .badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            font-weight: 500;
+            color: #e9c468;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #e11d48, #3b82f6);
+            font-size: 3.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #FFFFFF 0%, #E9C468 80%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: titleGlow 3s infinite alternate;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
         }
-        @keyframes titleGlow {
-            0% { filter: drop-shadow(0 0 5px rgba(225,29,72,0.3)); }
-            100% { filter: drop-shadow(0 0 20px rgba(225,29,72,0.6)); }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #b9b9d4;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
         }
-        .hero-subtitle { font-size: 1.1rem; color: #cbd5e6; margin-top: 10px; }
-        .form-card {
-            background: rgba(20, 24, 35, 0.75);
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 40px;
-            border: 1px solid rgba(225, 29, 72, 0.25);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
-            transition: all 0.4s;
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0 1.5rem;
+            flex-wrap: wrap;
         }
-        .form-card:hover { border-color: rgba(225, 29, 72, 0.5); box-shadow: 0 25px 45px -12px rgba(225,29,72,0.2); }
-        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
-        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .hero-title { font-size: 2.5rem; } .hero-image { height: 220px; } .form-card { padding: 25px; } }
-        .input-group { position: relative; margin-bottom: 5px; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #e11d48; }
-        .input-group input, .input-group textarea {
+
+        .stat-card {
+            background: rgba(20, 25, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 0.8rem 1.8rem;
+            border: 1px solid rgba(233, 196, 104, 0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #e9c468;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Filtres */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(20, 25, 55, 0.6);
+            border: 1px solid rgba(233, 196, 104, 0.3);
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: #e9c468;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: #e9c468;
+            color: #0b0c1a;
+            border-color: #e9c468;
+        }
+
+        .filter-btn:hover {
+            background: rgba(233, 196, 104, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Barre de recherche */
+        .search-wrapper {
+            margin: 2rem auto 2rem;
+            max-width: 550px;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e9c468;
+            font-size: 1.2rem;
+        }
+
+        #searchInput {
             width: 100%;
-            padding: 16px 18px;
-            background: rgba(10, 12, 18, 0.8);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 28px;
+            padding: 1rem 1rem 1rem 3rem;
             font-size: 1rem;
+            background: rgba(12, 15, 35, 0.8);
+            border: 1.5px solid rgba(233, 196, 104, 0.5);
+            border-radius: 60px;
             color: white;
-            transition: all 0.3s;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
-        .input-group textarea { min-height: 120px; resize: vertical; }
-        .input-group input:focus, .input-group textarea:focus {
+
+        #searchInput:focus {
             outline: none;
-            border-color: #e11d48;
-            box-shadow: 0 0 0 4px rgba(225,29,72,0.2);
-            transform: scale(1.01);
+            border-color: #e9c468;
+            box-shadow: 0 0 12px rgba(233, 196, 104, 0.4);
         }
-        .info-note {
-            background: rgba(225, 29, 72, 0.15);
-            border-left: 4px solid #e11d48;
-            border-radius: 16px;
-            padding: 20px 25px;
-            margin: 0 0 25px 0;
-            font-size: 0.95rem;
-            color: #f1f5f9;
+
+        #searchInput::placeholder {
+            color: #9aa0b5;
         }
-        .info-note i { color: #e11d48; margin-right: 12px; font-size: 1.2rem; }
-        .info-note strong { color: #e11d48; font-size: 1rem; }
-        .info-note a { color: #e11d48; text-decoration: underline; font-weight: bold; transition: all 0.3s; }
-        .info-note a:hover { color: #f43f5e; text-shadow: 0 0 5px rgba(225,29,72,0.5); }
-        .info-note .highlight { 
-            background: rgba(225, 29, 72, 0.3); 
-            padding: 2px 8px; 
-            border-radius: 20px; 
-            font-weight: bold;
-            color: #fff;
-        }
-        .submit-btn {
-            background: linear-gradient(135deg, #e11d48, #9f1239);
+
+        .reset-search {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            padding: 18px 35px;
-            border-radius: 50px;
+            color: #b9b9d4;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .reset-search:hover {
+            color: #e9c468;
+        }
+
+        /* Grille */
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Carte standard */
+        .candidate-card {
+            background: linear-gradient(145deg, rgba(25, 30, 55, 0.8) 0%, rgba(18, 22, 45, 0.9) 100%);
+            backdrop-filter: blur(4px);
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid rgba(233, 196, 104, 0.2);
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s forwards;
+            animation-delay: calc(var(--order, 0) * 0.01s);
+            position: relative;
+        }
+
+        /* Carte sélectionnée (finaliste) */
+        .candidate-card.selected {
+            background: linear-gradient(145deg, rgba(45, 40, 70, 0.95) 0%, rgba(30, 28, 55, 0.98) 100%);
+            border: 2px solid #e9c468;
+            box-shadow: 0 0 20px rgba(233, 196, 104, 0.3);
+        }
+
+        .candidate-card.selected::before {
+            content: "★";
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #e9c468;
+            background: #0b0c1a;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid #e9c468;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: rgba(233, 196, 104, 0.6);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5);
+        }
+
+        .card-name {
             font-size: 1.2rem;
             font-weight: 700;
-            color: white;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            padding-right: 25px;
         }
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .submit-btn:hover::before { width: 300px; height: 300px; }
-        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px #e11d48; }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .admin-lock {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 65px;
-            height: 65px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            border: 2px solid #e11d48;
-            box-shadow: 0 0 20px rgba(225,29,72,0.4);
-            transition: all 0.3s;
-        }
-        .admin-lock:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 0 30px rgba(225,29,72,0.8); }
-        .admin-lock i { font-size: 1.8rem; color: #e11d48; }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-content {
-            background: linear-gradient(145deg, #14181f, #0f1117);
-            border-radius: 48px;
-            max-width: 500px;
-            width: 100%;
-            padding: 35px;
-            border: 1px solid rgba(225,29,72,0.5);
-            animation: modalSlide 0.4s;
-        }
-        @keyframes modalSlide { from { opacity: 0; transform: translateY(-40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .modal-content h2 { font-family: 'Playfair Display', serif; margin-bottom: 20px; color: #e11d48; }
-        
-        /* ========== ADMIN PANEL AMÉLIORÉ - HEADER RÉDUIT ========== */
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0c12;
-            z-index: 3000;
-            overflow-y: auto;
-            display: none;
-        }
-        .admin-header {
-            background: linear-gradient(135deg, #0f1117, #1a1f2c);
-            padding: 15px 25px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 2px solid #e11d48;
-        }
-        .admin-header h1 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-        }
-        .admin-header p {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-        .admin-stats { 
-            display: flex; 
-            gap: 12px; 
-            margin-top: 10px; 
-            flex-wrap: wrap; 
-        }
-        .stat-card { 
-            background: rgba(225,29,72,0.15); 
-            border-radius: 12px; 
-            padding: 8px 15px; 
-            border: 1px solid rgba(225,29,72,0.4);
-        }
-        .stat-card i { font-size: 1.2rem; margin-right: 8px; color: #e11d48; }
-        .stat-card .stat-number { font-size: 1.3rem; font-weight: bold; color: #e11d48; }
-        .stat-card div { font-size: 0.8rem; }
-        
-        /* Filtres */
-        .admin-filters {
-            padding: 12px 25px;
-            background: #0f1117;
-            border-bottom: 1px solid rgba(225,29,72,0.2);
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-            position: sticky;
-            top: 85px;
-            z-index: 9;
-        }
-        .search-bar {
-            flex: 2;
-            min-width: 200px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 8px 15px;
-            border-radius: 30px;
-            background: #1e293b;
-            border: 1px solid #e11d48;
-            color: white;
-            font-size: 0.9rem;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 6px 15px;
-            border-radius: 25px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .filter-btn.active {
-            background: #e11d48;
-            border-color: #e11d48;
-        }
-        
-        /* Grille admin */
-        .admin-cards { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); 
-            gap: 20px; 
-            padding: 20px 25px;
-        }
-        .candidate-admin-card {
-            background: linear-gradient(135deg, #14181f, #0f1117);
-            border-radius: 20px;
-            padding: 0;
-            border: 1px solid rgba(225,29,72,0.3);
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-        .candidate-admin-card:hover { 
-            transform: translateY(-3px); 
-            border-color: #e11d48;
-        }
-        .candidate-header {
-            background: linear-gradient(135deg, #1e293b, #0f1117);
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(225,29,72,0.3);
-        }
-        .candidate-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #e11d48;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .selected-badge-large {
-            background: linear-gradient(135deg, #10b981, #059669);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: bold;
-            color: white;
-        }
-        .candidate-info {
-            padding: 12px 15px;
-        }
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-        .info-row i {
-            width: 20px;
-            color: #e11d48;
-            font-size: 0.9rem;
-        }
-        .info-row .label {
-            font-weight: 600;
-            color: #94a3b8;
-            min-width: 75px;
-        }
-        .info-row .value {
-            color: #f1f5f9;
-            flex: 1;
-        }
-        .motivation-box {
-            background: rgba(0,0,0,0.4);
-            border-radius: 12px;
-            padding: 10px;
-            margin: 10px 0;
-            border-left: 2px solid #e11d48;
-        }
-        .motivation-box p {
-            margin-top: 5px;
-            font-size: 0.8rem;
-            line-height: 1.4;
-            color: #cbd5e6;
-        }
-        .candidate-actions {
-            padding: 12px 15px;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
-        }
-        .select-btn-admin {
-            flex: 1;
-            padding: 8px;
-            border-radius: 25px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        .select-btn-admin.selected {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-        .select-btn-admin:not(.selected) {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-        }
-        .delete-btn-admin {
-            padding: 8px 15px;
-            border-radius: 25px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        /* Onglets */
-        .admin-tabs {
-            padding: 0 25px;
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            border-bottom: 1px solid rgba(225,29,72,0.2);
-        }
-        .admin-tab {
-            padding: 8px 18px;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border-bottom: 2px solid transparent;
-        }
-        .admin-tab.active {
-            color: #e11d48;
-            border-bottom-color: #e11d48;
-        }
-        
-        .btn-download { 
-            background: #10b981; 
-            border: none; 
-            padding: 6px 15px; 
-            border-radius: 25px; 
-            color: white; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 0.75rem;
-            margin: 2px;
+
+        .university {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #b9c2e6;
+            background: rgba(0,0,0,0.35);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            margin-top: 8px;
+            width: fit-content;
         }
-        .btn-warning { background: #f59e0b; }
-        .btn-danger { background: #e11d48; }
-        
-        .alert { padding: 12px 18px; border-radius: 28px; margin: 15px 0; display: none; }
-        .alert.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; }
-        .alert.error { background: #ef444420; border: 1px solid #ef4444; color: #ef4444; }
-        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; float: right; }
-        
-        .whatsapp-link {
+
+        .university i {
+            font-size: 0.7rem;
+            color: #e9c468;
+        }
+
+        .medal-icon {
+            font-size: 0.8rem;
+            margin-left: 6px;
+            color: #e9c468;
+        }
+
+        .selected-badge {
             display: inline-block;
-            background: #25D366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin-top: 15px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
+            background: #e9c468;
+            color: #0b0c1a;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            margin-left: 10px;
+            font-weight: 600;
         }
-        .whatsapp-link:hover {
-            background: #128C7E;
-            transform: scale(1.02);
+
+        .no-result {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 2rem;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: #d4c2a0;
         }
-        .info-note ul {
-            margin-left: 25px;
-            margin-top: 10px;
-            list-style: none;
+
+        .footer-note {
+            text-align: center;
+            margin-top: 4rem;
+            font-size: 0.8rem;
+            color: #6b7299;
+            border-top: 1px solid rgba(233, 196, 104, 0.2);
+            padding-top: 2rem;
         }
-        .info-note li {
-            margin: 10px 0;
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .flash-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10b981;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: bold;
-            z-index: 9999;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-            animation: fadeInOut 3s ease forwards;
-            pointer-events: none;
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
-        }
-        
-        @media (max-width: 768px) {
-            .admin-cards { grid-template-columns: 1fr; padding: 15px; }
-            .admin-header { padding: 10px 15px; }
-            .admin-filters { padding: 10px 15px; top: 70px; flex-direction: column; }
-            .candidate-name { font-size: 1rem; }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .stats {
+                gap: 0.8rem;
+            }
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="particles" id="particles"></div>
-<div class="glow"></div>
-
+<div class="bg-glow"></div>
 <div class="container">
-    <div class="hero-section">
-        <img src="IMG_1812.jpeg" alt="Structure Organisation Centre" class="hero-image" onerror="this.src='https://placehold.co/1200x400/1e293b/e11d48?text=Excellentia+Academia'">
-        <div class="hero-overlay">
-            <h1 class="hero-title">Éloquence en Scène</h1>
-            <p class="hero-subtitle">Révélez votre talent oratoire - Inscrivez-vous</p>
+    <div class="hero">
+        <div class="badge"><i class="fas fa-microphone-alt"></i> CONCOURS OFFICIEL</div>
+        <h1>Éloquence en Scène</h1>
+        <div class="subtitle">
+            146 candidats · 26 universités · 50 finalistes sélectionnés
+        </div>
+        <div class="stats">
+            <div class="stat-card"><span class="stat-number">146</span><br><span class="stat-label">candidats inscrits</span></div>
+            <div class="stat-card"><span class="stat-number">26</span><br><span class="stat-label">universités</span></div>
+            <div class="stat-card"><span class="stat-number" id="visibleCount">146</span><br><span class="stat-label">affichés</span></div>
         </div>
     </div>
 
-    <div class="form-card">
-        <div class="info-note">
-            <i class="fas fa-info-circle"></i> 
-            <strong>📢 INFORMATION IMPORTANTE</strong>
-            <ul>
-                <li>✅ Les <strong class="highlight">frais de participation</strong> ne concernent <strong>UNIQUEMENT</strong> les candidats qui seront sélectionnés lors de la présélection.</li>
-                <li>✅ Pour cette phase d'enregistrement, <strong class="highlight">il n'y a AUCUN frais à payer</strong>.</li>
-                <li>✅ <strong>Rejoignez notre groupe WhatsApp</strong> pour ne rater aucune information :<br>
-                    <a href="https://chat.whatsapp.com/IQBgEAbmDe7AQCNxTG0u04?mode=gi_t" target="_blank" class="whatsapp-link">
-                        <i class="fab fa-whatsapp"></i> Rejoindre le groupe WhatsApp
-                    </a>
-                </li>
-            </ul>
-            <div style="margin-top: 12px; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 12px;">
-                <i class="fas fa-check-circle" style="color: #10b981;"></i> 
-                <strong>Pour rappel :</strong> Merci d'intégrer le groupe WhatsApp du concours si ce n'est pas déjà fait.
-            </div>
-        </div>
-        
-        <form id="inscriptionForm">
-            <div class="form-grid">
-                <div class="input-group"><label><i class="fas fa-user"></i> Nom *</label><input type="text" id="nom" placeholder="Votre nom" required></div>
-                <div class="input-group"><label><i class="fas fa-user"></i> Postnom</label><input type="text" id="postnom" placeholder="Postnom"></div>
-                <div class="input-group"><label><i class="fas fa-user"></i> Prénom *</label><input type="text" id="prenom" placeholder="Votre prénom" required></div>
-                <div class="input-group"><label><i class="fas fa-university"></i> Université / Institut *</label><input type="text" id="universite" placeholder="Université" required></div>
-                <div class="input-group"><label><i class="fas fa-calendar"></i> Promotion *</label><input type="text" id="promotion" placeholder="promotion" required></div>
-                <div class="input-group"><label><i class="fas fa-book"></i> Faculté / Filière *</label><input type="text" id="faculte" placeholder="Faculté" required></div>
-                <div class="input-group"><label><i class="fas fa-phone"></i> Téléphone *</label><input type="tel" id="telephone" placeholder="+243 XX XXX XXXX" required></div>
-                <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="email" placeholder="exemple@email.com" required></div>
-            </div>
-            
-            <div class="input-group" style="margin-top: 15px;">
-                <label><i class="fas fa-heart"></i> Pourquoi souhaitez-vous participer ? (Motivation) *</label>
-                <textarea id="motivation" placeholder="Décrivez votre motivation à participer à ce concours d'éloquence. Qu'est-ce qui vous anime ? Pourquoi devriez-vous être sélectionné(e) ?" required></textarea>
-            </div>
-            
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <i class="fas fa-pen-fancy"></i> S'INSCRIRE GRATUITEMENT
-            </button>
-            <div id="formAlert" class="alert"></div>
-        </form>
-        
-        <div class="storage-info" style="background: #1e293b; border-radius: 20px; padding: 12px; margin-top: 20px; text-align: center; font-size: 0.7rem; color: #64748b; border: 1px solid #334155;">
-            <i class="fas fa-users"></i> Inscriptions ouvertes à tous les étudiant(e)s
-        </div>
+    <div class="filter-wrapper">
+        <button class="filter-btn active" data-filter="all">🎭 Tous les candidats</button>
+        <button class="filter-btn" data-filter="selected">⭐ Finalistes (50)</button>
     </div>
-</div>
 
-<!-- Admin Lock -->
-<div class="admin-lock" id="adminLockBtn"><i class="fas fa-lock"></i></div>
+    <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Rechercher un candidat par nom, prénom ou université...">
+        <button class="reset-search" id="resetSearchBtn"><i class="fas fa-times-circle"></i></button>
+    </div>
 
-<!-- Admin Password Modal -->
-<div class="modal" id="adminPasswordModal">
-    <div class="modal-content">
-        <button class="close-btn" id="closeAdminModal">&times;</button>
-        <h2><i class="fas fa-shield-alt"></i> Accès Organisateur</h2>
-        <input type="password" id="adminPassInput" placeholder="Mot de passe" style="width:100%; padding:15px; border-radius:30px; background:#1e293b; border:none; color:white; margin:20px 0;">
-        <button id="submitAdminPass" class="submit-btn" style="background:#e11d48;">ACCÉDER</button>
-        <div id="adminPassAlert" class="alert"></div>
-    </div>
-</div>
-
-<!-- Admin Panel -->
-<div class="admin-panel" id="adminPanel">
-    <div class="admin-header">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <h1 style="color:#e11d48;"><i class="fas fa-crown"></i> Gestion des inscriptions</h1>
-                <p>Gérez les candidats et la sélection des 50 finalistes</p>
-            </div>
-            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                <button id="exportAllBtn" class="btn-download"><i class="fas fa-database"></i> Exporter</button>
-                <button id="exportSelectedBtn" class="btn-download btn-warning"><i class="fas fa-star"></i> Sélectionnés</button>
-                <button id="refreshAdminBtn" class="btn-download"><i class="fas fa-sync-alt"></i></button>
-                <button id="closeAdminPanelBtn" class="btn-download btn-danger"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
-        <div class="admin-stats">
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <div><span class="stat-number" id="totalCandidats">0</span> inscrits</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-star" style="color: #f59e0b;"></i>
-                <div><span class="stat-number" id="selectedCount">0</span> / 50</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-heart" style="color: #e11d48;"></i>
-                <div><span class="stat-number" id="pendingCount">0</span> en attente</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Onglets -->
-    <div class="admin-tabs">
-        <button class="admin-tab active" data-filter="all">📋 Tous</button>
-        <button class="admin-tab" data-filter="selected">⭐ Sélectionnés (<span id="selectedTabCount">0</span>)</button>
-        <button class="admin-tab" data-filter="pending">⏳ En attente (<span id="pendingTabCount">0</span>)</button>
-    </div>
-    
-    <!-- Filtres -->
-    <div class="admin-filters">
-        <div class="search-bar">
-            <input type="text" id="searchCandidat" placeholder="🔍 Rechercher...">
-        </div>
-        <div class="filter-buttons">
-            <button class="filter-btn" data-sort="date">📅 Date</button>
-            <button class="filter-btn" data-sort="name">👤 Nom</button>
-            <button class="filter-btn" data-sort="univ">🏛 Université</button>
-        </div>
-    </div>
-    
-    <div id="adminCandidatesContainer" class="admin-cards">
-        <div style="text-align:center; padding:50px;"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+    <div id="candidatesGrid" class="candidates-grid"></div>
+    <div class="footer-note">
+        <i class="fas fa-star-of-life"></i> Les finalistes sont identifiés par une étoile dorée et un liseré précieux · Félicitations aux 50 sélectionnés ! <i class="fas fa-star-of-life"></i>
     </div>
 </div>
 
 <script>
-    // ========== CONFIGURATION FIREBASE ==========
-    const firebaseConfig = {
-        apiKey: "AIzaSyBAH1ykxic8hH2xrxeNwHg_cVQFEkHyIAo",
-        authDomain: "pitch-c6e9a.firebaseapp.com",
-        projectId: "pitch-c6e9a",
-        storageBucket: "pitch-c6e9a.firebasestorage.app",
-        messagingSenderId: "37902068065",
-        appId: "1:37902068065:web:7f597cbb003fb6c5c07d20",
-        measurementId: "G-H7T7BEW22T"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
-    let allCandidats = [];
-    let isAdminPanelOpen = false;
-    let currentFilter = 'all';
-    let currentSort = 'date';
-    
-    function showFlashMessage(message, isError = false) {
-        const existingFlash = document.querySelector('.flash-message');
-        if(existingFlash) existingFlash.remove();
-        const flashDiv = document.createElement('div');
-        flashDiv.className = 'flash-message';
-        flashDiv.style.background = isError ? '#e11d48' : '#10b981';
-        flashDiv.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
-        document.body.appendChild(flashDiv);
-        setTimeout(() => { if(flashDiv) flashDiv.remove(); }, 3000);
-    }
-    
-    async function checkEmailExists(email) {
-        try {
-            const snapshot = await db.collection('candidats').where('email', '==', email).get();
-            return !snapshot.empty;
-        } catch (error) {
-            console.error('Erreur vérification email:', error);
-            return false;
-        }
-    }
-    
-    async function addCandidatToFirestore(candidat) {
-        try {
-            const emailExists = await checkEmailExists(candidat.email);
-            if (emailExists) throw new Error('Cet email est déjà inscrit');
-            const docRef = await db.collection('candidats').add({
-                ...candidat,
-                dateInscription: firebase.firestore.FieldValue.serverTimestamp(),
-                selected: false
-            });
-            return { success: true, id: docRef.id };
-        } catch (error) {
-            throw error;
-        }
-    }
-    
-    async function getAllCandidatsFromFirestore() {
-        try {
-            const snapshot = await db.collection('candidats').orderBy('dateInscription', 'desc').get();
-            const candidats = [];
-            snapshot.forEach(doc => {
-                candidats.push({
-                    id: doc.id,
-                    ...doc.data(),
-                    dateInscription: doc.data().dateInscription?.toDate() || new Date()
-                });
-            });
-            return candidats;
-        } catch (error) {
-            console.error('Erreur récupération:', error);
-            return [];
-        }
-    }
-    
-    async function updateCandidatSelection(id, selected) {
-        try {
-            if (selected) {
-                const selectedCount = await getSelectedCount();
-                if (selectedCount >= 50) throw new Error('Limite de 50 sélectionnés atteinte');
-            }
-            await db.collection('candidats').doc(id).update({ selected: selected });
-            return true;
-        } catch (error) {
-            throw error;
-        }
-    }
-    
-    async function deleteCandidat(id) {
-        try {
-            await db.collection('candidats').doc(id).delete();
-            return true;
-        } catch (error) {
-            throw error;
-        }
-    }
-    
-    async function getSelectedCount() {
-        try {
-            const snapshot = await db.collection('candidats').where('selected', '==', true).get();
-            return snapshot.size;
-        } catch (error) {
-            return 0;
-        }
-    }
-    
-    async function getTotalCount() {
-        try {
-            const snapshot = await db.collection('candidats').get();
-            return snapshot.size;
-        } catch (error) {
-            return 0;
-        }
-    }
-    
-    const ADMIN_PASSWORD = "oncommence5";
-    
-    function createParticles() {
-        const container = document.getElementById('particles');
-        for(let i=0; i<50; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 6 + 2;
-            particle.style.width = size + 'px';
-            particle.style.height = size + 'px';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.bottom = '-20px';
-            particle.style.animationDuration = Math.random() * 12 + 6 + 's';
-            particle.style.animationDelay = Math.random() * 15 + 's';
-            container.appendChild(particle);
-        }
-    }
-    createParticles();
-    
-    function showFormAlert(type, message) {
-        const alertDiv = document.getElementById('formAlert');
-        alertDiv.textContent = message;
-        alertDiv.className = `alert ${type}`;
-        alertDiv.style.display = 'block';
-        setTimeout(() => alertDiv.style.display = 'none', 5000);
-    }
-    
-    document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const nom = document.getElementById('nom').value.trim();
-        const postnom = document.getElementById('postnom').value.trim();
-        const prenom = document.getElementById('prenom').value.trim();
-        const universite = document.getElementById('universite').value.trim();
-        const promotion = document.getElementById('promotion').value.trim();
-        const faculte = document.getElementById('faculte').value.trim();
-        const telephone = document.getElementById('telephone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const motivation = document.getElementById('motivation').value.trim();
-        
-        if(!nom || !prenom || !universite || !promotion || !faculte || !telephone || !email || !motivation) {
-            showFormAlert('error', 'Tous les champs obligatoires (*) doivent être remplis');
-            return;
-        }
-        if (motivation.length < 50) {
-            showFormAlert('error', 'Votre motivation doit contenir au moins 50 caractères');
-            return;
-        }
-        
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        const originalBtnText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-        
-        try {
-            const candidatData = {
-                nom, postnom, prenom,
-                nomComplet: `${prenom} ${nom} ${postnom}`.trim(),
-                universite, promotion, faculte, telephone, email, motivation
-            };
-            await addCandidatToFirestore(candidatData);
-            showFlashMessage('✅ Inscription réussie !', false);
-            showFormAlert('success', 'Félicitations ! Vous êtes inscrit(e).');
-            setTimeout(() => {
-                document.getElementById('inscriptionForm').reset();
-            }, 2000);
-            if (isAdminPanelOpen) chargerListeAdmin();
-        } catch(error) {
-            let errorMessage = error.message === 'Cet email est déjà inscrit' ? 'Cette adresse email est déjà inscrite.' : 'Erreur technique.';
-            showFormAlert('error', errorMessage);
-            showFlashMessage('❌ ' + errorMessage, true);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
-        }
-    });
-    
-    // Admin Panel
-    const adminLockBtn = document.getElementById('adminLockBtn');
-    const adminModal = document.getElementById('adminPasswordModal');
-    const adminPanelDiv = document.getElementById('adminPanel');
-    
-    adminLockBtn.addEventListener('click', () => { adminModal.style.display = 'flex'; });
-    document.getElementById('closeAdminModal').addEventListener('click', () => { adminModal.style.display = 'none'; document.getElementById('adminPassInput').value = ''; });
-    
-    document.getElementById('submitAdminPass').addEventListener('click', () => {
-        if(document.getElementById('adminPassInput').value === ADMIN_PASSWORD) {
-            adminModal.style.display = 'none';
-            adminPanelDiv.style.display = 'block';
-            isAdminPanelOpen = true;
-            chargerListeAdmin();
-        } else {
-            const alertDiv = document.getElementById('adminPassAlert');
-            alertDiv.textContent = 'Mot de passe incorrect';
-            alertDiv.className = 'alert error';
-            alertDiv.style.display = 'block';
-            setTimeout(() => alertDiv.style.display = 'none', 2000);
-        }
-    });
-    
-    document.getElementById('closeAdminPanelBtn').addEventListener('click', () => {
-        adminPanelDiv.style.display = 'none';
-        isAdminPanelOpen = false;
-    });
-    document.getElementById('refreshAdminBtn').addEventListener('click', () => { if (isAdminPanelOpen) chargerListeAdmin(); });
-    
-    // Onglets
-    document.querySelectorAll('.admin-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentFilter = tab.dataset.filter;
-            afficherCandidatsFiltres();
+    // LISTE COMPLÈTE DES 146 CANDIDATS (tous les inscrits)
+    const allCandidates = [
+        { name: "Caleb Mbinza Mpialu", uni: "Institut supérieur à pédagogie", selected: true },
+        { name: "Benie Kasongo", uni: "Université pédagogique nationale", selected: true },
+        { name: "Chantal Andjelani Assani", uni: "HEC", selected: true },
+        { name: "Claudine Lulu Mposhi", uni: "Université pédagogique nationale", selected: true },
+        { name: "Nathan Dinkala Basaula", uni: "Leadership academia university", selected: true },
+        { name: "Beni Ikami", uni: "Saint Augustin de Kinshasa", selected: true },
+        { name: "Amisi Keti Kabeya", uni: "ISP/Gombe", selected: true },
+        { name: "Enes DISASHI KUBAKI", uni: "Université protestante du Congo (UPC)", selected: true },
+        { name: "Gilbert liyonga Besange", uni: "HEC Kinshasa ex isc Gombe", selected: true },
+        { name: "Isidor Losangalanyama Lofunguso", uni: "Université chrétienne catholique Don akam", selected: true },
+        { name: "Godelive Lusamba Mwamba", uni: "UPN", selected: true },
+        { name: "Daniella Kanku Tshishimbi", uni: "Université de kinshasa", selected: true },
+        { name: "Françoise BOBINDO IPALAKA", uni: "Université Révérend kim", selected: true },
+        { name: "Obed Mafuta Kadjinda", uni: "Université cardinal malula", selected: true },
+        { name: "Brineige Massamba Bateka", uni: "Ucc", selected: true },
+        { name: "JÉRÉMIE IYENZAI IYEMVIEM", uni: "UPN", selected: true },
+        { name: "Divine Nlandu Nsakanunu", uni: "Ucc", selected: true },
+        { name: "Perside Manunga Maga", uni: "Unikin", selected: true },
+        { name: "Mersei Kanemeka Wa nzambi", uni: "Unisic", selected: true },
+        { name: "Charme NGOMA VANGU", uni: "Université de Kinshasa", selected: true },
+        { name: "Grâce Nyalaba Bokango", uni: "Unikin", selected: true },
+        { name: "Daniella Djoli Eyayala", uni: "Reverend Kim Lingwala", selected: true },
+        { name: "Christenvie LUZOLO Kwanzambi", uni: "Université de Kinshasa", selected: true },
+        { name: "Hope NGOYI Tabora", uni: "Uscitech", selected: true },
+        { name: "Emmanuel Bondo Nankumu", uni: "Université des sciences de l’information et de la communication", selected: true },
+        { name: "Junior Asibu Betu", uni: "Haute école de commerce", selected: true },
+        { name: "David Nakweti Musikwela", uni: "Université de Kinshasa", selected: true },
+        { name: "RAISSA JUAKALI RAISSA", uni: "USCITECH", selected: true },
+        { name: "Grace TSHILANDA KALAMBAYI", uni: "Unikin", selected: true },
+        { name: "Isaac Mbuta Mufuka", uni: "Académie des beaux-arts", selected: true },
+        { name: "Kendra Babadi Kadiebwe", uni: "Université des sciences et technologies", selected: true },
+        { name: "Jenovick KADIMA TSHIKAYA", uni: "Upn", selected: true },
+        { name: "Daniel Kapaya Kabasele", uni: "Unikin", selected: true },
+        { name: "Billiana Bilonda Luse", uni: "Université de kinshasa", selected: true },
+        { name: "Rodrick Banza MUKALAY", uni: "Université Pédagogique National", selected: true },
+        { name: "Miradi Mengi Ndingambote", uni: "Leadership Academia university", selected: true },
+        { name: "Liza Mayela BALEkA", uni: "Université pédagogique nationale", selected: true },
+        { name: "Manassé Muzembe Kasanji", uni: "Université de Kinshasa", selected: true },
+        { name: "YVERSON MISENGA BADIBANGA", uni: "ULK", selected: true },
+        { name: "Abondance Kitoko Ange", uni: "Révérend kim /n’djili", selected: true },
+        { name: "Jimmy Kunga Kamenga", uni: "UCC Don Akam", selected: true },
+        { name: "Henry Lukonga Butumbi", uni: "Université catholique du Congo", selected: true },
+        { name: "Divine Mugoli Kashemwa", uni: "ISAM", selected: true },
+        { name: "Manassé Bolakongo Engo", uni: "Institut supérieur pédagogique de la gombe (isp gombe)", selected: true },
+        { name: "L’or Besala Ilambe", uni: "UPN", selected: true },
+        { name: "Elysé Otshudi Lupaya", uni: "Université Pédagogique Nationale", selected: true },
+        { name: "SAEL MUAKANA KONI", uni: "UCC", selected: true },
+        { name: "Raïssa Issalongo luyina", uni: "Haute École de Commerce", selected: true },
+        { name: "Franck Oyasase Alomba", uni: "Unisic", selected: true },
+        { name: "Josias Mosengo Mpia", uni: "UCC", selected: true },
+        // Candidats suivants (non sélectionnés - les 96 restants)
+        { name: "THOMAS KASHAVU MUHIGIRWA", uni: "UPN", selected: false },
+        { name: "Gemima Vele Bombongo", uni: "Université de Kinshasa", selected: false },
+        { name: "ABRAHAM MUNDANDA LUBUKU", uni: "Université libre de Kinshasa", selected: false },
+        { name: "BLESSING ELONGA WINNER", uni: "UNIVERSITÉ DES SCIENCES ET TECHNOLOGIES", selected: false },
+        { name: "Pernilla Tshiam Bey", uni: "Université protestante au Congo", selected: false },
+        { name: "Abigail Tshitampu Ngandu", uni: "Institut Supérieur des sciences de santé de la croix rouge", selected: false },
+        { name: "Noé Bukasa Dianda", uni: "Université de Kinshasa", selected: false },
+        { name: "Ruth Mpiana Falanga", uni: "Université de Kinshasa", selected: false },
+        { name: "Victoria Butshimunyi Tshinyangu", uni: "Unikin", selected: false },
+        { name: "Barthélémy Ndjadianguwa Longe", uni: "Université libre de Kinshasa", selected: false },
+        { name: "Joyce Aziza Azama", uni: "Université pédagogique nationale", selected: false },
+        { name: "Blandine Mbuyi Buadia", uni: "Université catholique du Congo", selected: false },
+        { name: "Nicole Musadi Bitota", uni: "Université protestante au Congo (upc)", selected: false },
+        { name: "Divine Awezayi Philomène", uni: "Unikin", selected: false },
+        { name: "Thérèse MUAKA Mabiala", uni: "Saint Augustin de Kinshasa", selected: false },
+        { name: "Christiane BONGO MATONDO", uni: "Université Catholique du Congo", selected: false },
+        { name: "Glody Loleke Elembe", uni: "Unisic", selected: false },
+        { name: "GASPARD Mwima Mupila", uni: "ISIPA", selected: false },
+        { name: "Merdi Bilongolola Kabedi", uni: "UPN", selected: false },
+        { name: "Junior Muteba Biayi", uni: "Université de Kinshasa", selected: false },
+        { name: "Emeraude Kanene Samba", uni: "Université de Kinshasa", selected: false },
+        { name: "CHRISTVIE NDJOLI BEKOPE SAPI", uni: "INSTITUT SUPÉRIEUR DE GESTION", selected: false },
+        { name: "Siméon DEDIKA Omba", uni: "HEC-KIN", selected: false },
+        { name: "ELIEL SHAMANGOMA MABOSHI", uni: "UCC", selected: false },
+        { name: "Michael Michael Lodi", uni: "Upn", selected: false },
+        { name: "MANASSÉ MWAMBA KABASELE", uni: "INBTP", selected: false },
+        { name: "Charlène Buanga Mabonzo", uni: "Université de Kinshasa", selected: false },
+        { name: "Alexis Bonganga Kamango", uni: "INBTP", selected: false },
+        { name: "Arsène SANGWA BINANGA", uni: "Université Catholique du Congo", selected: false },
+        { name: "Lisa Elisabeth Mulegwa", uni: "UPC", selected: false },
+        { name: "Héritier Kapata Kalombo", uni: "Université de Kinshasa", selected: false },
+        { name: "Johnny Mayi Kayembe", uni: "Université Révérend Kim", selected: false },
+        { name: "KALONGA Séraphin LUSAMBA", uni: "Université Protestante au Congo", selected: false },
+        { name: "CLOVIS MWANGALA OSCAR", uni: "UNIVERSITÉ DE KOLWEZI", selected: false },
+        { name: "La joie Furaha Sambuza", uni: "ISTM_kinshasa", selected: false },
+        { name: "Rockcel KABEYA KATUMBA", uni: "Université pédagogique nationale", selected: false },
+        { name: "Jessé Puna Mutombo", uni: "IPG", selected: false },
+        { name: "Roshen De buck Heradi", uni: "Upc", selected: false },
+        { name: "Benjamin Ngandawonya Lokadi", uni: "Unikin", selected: false },
+        { name: "Jennifer Meya Gonzalez", uni: "Université chrétienne cardinal malula", selected: false },
+        { name: "CHRIST TSHIFUAKA MAKESA", uni: "UNIVERSITÉ DE KINSHASA", selected: false },
+        { name: "Grâce Etshoko Longonya", uni: "ISAU", selected: false },
+        { name: "Dieudonné Mundala KIOMBA", uni: "Université de Kinshasa", selected: false },
+        { name: "Siméon Dihoka Yema", uni: "Unikin", selected: false },
+        { name: "PERCONI MUBOTI MUNZIA", uni: "UNIVERSITE DE KINSHASA", selected: false },
+        { name: "Blessing Mwanza Ntumba", uni: "Université de Kinshasa", selected: false },
+        { name: "Jenovic Tshimpe Kayila", uni: "Issi/ monkole", selected: false },
+        { name: "Merveille Malenge Dameka", uni: "Université de Kinshasa", selected: false },
+        { name: "THÉOVIE GABRIEL IBAMBU MBAU", uni: "UNIVERSITÉ DE KINSHASA", selected: false },
+        { name: "Béni Fungamali Ramazani", uni: "Leadership academia university", selected: false },
+        { name: "Christian MBO NTALI", uni: "UNIKIN", selected: false },
+        { name: "Jenovie Diakanama Tieti", uni: "Université de Kinshasa", selected: false },
+        { name: "Basile ISUKU MBAYA", uni: "Université de Kinshasa", selected: false },
+        { name: "Beni MUSITEKI MPUNGA", uni: "Université de Kinshasa", selected: false },
+        { name: "Marthe Masanka Banza", uni: "Unikin", selected: false },
+        { name: "Eunice Omokoko Baby", uni: "Unikin", selected: false },
+        { name: "Henock Bolefo Wetshi", uni: "Université libre de kinshada", selected: false },
+        { name: "Enoch Bilha Kalonda", uni: "UNIKIN", selected: false },
+        { name: "Claudel Elongama Belongo", uni: "Institut supérieur d’architecture et d’urbanisme", selected: false },
+        { name: "Blaise Kanyinda Ndaye", uni: "Université de Kinshasa", selected: false },
+        { name: "MAGELLAN LOYOKO MANZILA", uni: "UNISIC", selected: false },
+        { name: "Daniella MAKULU BEBELA", uni: "Université catholique du Congo", selected: false },
+        { name: "Rose Matunda Witanene", uni: "Université catholique du Congo", selected: false },
+        { name: "Eric Bulembi Mafuku", uni: "Institut supérieur d’architecture et d’urbanisme", selected: false },
+        { name: "JEMIMA KATENDI BUNGUDI", uni: "UPC", selected: false },
+        { name: "Ruth Kalonga Ndaya", uni: "ISAU", selected: false },
+        { name: "Amerack MAVINGA NTALI", uni: "UNIKIN", selected: false },
+        { name: "Jacques MOKAMBA BAPELI", uni: "UNIKIN", selected: false },
+        { name: "Deward KASHALA Tshamanga", uni: "Unikin", selected: false },
+        { name: "Winner Bushake Mishondo", uni: "Ucc", selected: false },
+        { name: "DIVIN TSHIMBOMBU WA TSHIMBOMBU", uni: "Unikin", selected: false },
+        { name: "Gremis Flevia Fungafunga", uni: "Université catholique du Congo", selected: false },
+        { name: "Adju Abdallah Djuna", uni: "Unikin", selected: false },
+        { name: "Stéphane AGANZE BIRHAKWA", uni: "Université Catholique de Bukavu", selected: false },
+        { name: "Bijou BELANZA Kasi", uni: "Leadership academia", selected: false },
+        { name: "Divine Bipendu Mwamba", uni: "ISAU", selected: false },
+        { name: "Ange Mafuta Kinko", uni: "HEC", selected: false },
+        { name: "Aïcha EBUMBU MBENGA", uni: "Institut supérieur d architecture et D urbanisme", selected: false },
+        { name: "RICHARD MWAMBA MUKENDI", uni: "USCITECH", selected: false },
+        { name: "Kerene Pelenge Mbo", uni: "Unikin", selected: false },
+        { name: "Mario Osako Lokanga", uni: "Université de Kinshasa", selected: false },
+        { name: "Remy Kingambo Kingambo", uni: "UNISIC", selected: false },
+        { name: "Exauce Mikila Waney", uni: "Unikin", selected: false },
+        { name: "Benjamin Kabeya Kapongo", uni: "Unikin", selected: false },
+        { name: "Pax Fungamal Salama", uni: "Université protestante au Congo", selected: false },
+        { name: "Wilhelmine SAFi BAGABO", uni: "Université de Kinshasa", selected: false },
+        { name: "Jenovic Sumaili Letashi", uni: "Université protestante au congo", selected: false },
+        { name: "DARLENE YOWA NGANDU", uni: "UNIVERSITÉ CATHOLIQUE DU CONGO", selected: false },
+        { name: "David Kitengie Malangu", uni: "Université Protestante au Congo", selected: false },
+        { name: "Espérance KIKADI NZUZI", uni: "Université de Kinshasa", selected: false },
+        { name: "Adeline Luvta Grâce", uni: "Université de Kinshasa", selected: false },
+        { name: "Daniel grâce Suwa Matshozi", uni: "HEC", selected: false },
+        { name: "Emmanuel Konga Anyda", uni: "Université Protestante au Congo", selected: false },
+        { name: "GUSTAVE NYAMANGOMBE OMANGONDO", uni: "UNIVERSITÉ DE KINSHASA", selected: false },
+        { name: "Furah FURAH KIPATA", uni: "UPC", selected: false }
+    ];
+
+    let currentFilter = "all"; // 'all' ou 'selected'
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
         });
-    });
-    
-    // Boutons de tri
-    document.querySelectorAll('[data-sort]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentSort = btn.dataset.sort;
-            afficherCandidatsFiltres();
-        });
-    });
-    
-    let searchTimeout = null;
-    document.getElementById('searchCandidat').addEventListener('input', () => {
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => { if (isAdminPanelOpen) afficherCandidatsFiltres(); }, 300);
-    });
-    
-    function getFilteredCandidats() {
-        let filtered = [...allCandidats];
-        const searchTerm = document.getElementById('searchCandidat')?.value.toLowerCase() || '';
+    }
+
+    function renderCandidates() {
+        const searchTerm = document.getElementById("searchInput").value.toLowerCase().trim();
+        let filtered = [...allCandidates];
         
-        if (searchTerm) {
+        // Appliquer le filtre (tous ou sélectionnés)
+        if (currentFilter === "selected") {
+            filtered = filtered.filter(c => c.selected === true);
+        }
+        
+        // Appliquer la recherche
+        if (searchTerm !== "") {
             filtered = filtered.filter(c => 
-                (c.nomComplet?.toLowerCase().includes(searchTerm)) ||
-                (c.email?.toLowerCase().includes(searchTerm)) ||
-                (c.universite?.toLowerCase().includes(searchTerm)) ||
-                (c.motivation?.toLowerCase().includes(searchTerm)) ||
-                (c.telephone?.includes(searchTerm))
+                c.name.toLowerCase().includes(searchTerm) || 
+                c.uni.toLowerCase().includes(searchTerm)
             );
         }
         
-        if (currentFilter === 'selected') filtered = filtered.filter(c => c.selected === true);
-        if (currentFilter === 'pending') filtered = filtered.filter(c => c.selected !== true);
+        const grid = document.getElementById("candidatesGrid");
+        document.getElementById("visibleCount").innerText = filtered.length;
         
-        if (currentSort === 'name') filtered.sort((a, b) => (a.nomComplet || '').localeCompare(b.nomComplet || ''));
-        if (currentSort === 'univ') filtered.sort((a, b) => (a.universite || '').localeCompare(b.universite || ''));
-        if (currentSort === 'date') filtered.sort((a, b) => new Date(b.dateInscription) - new Date(a.dateInscription));
-        
-        return filtered;
-    }
-    
-    function renderAdminCards(candidats) {
-        const container = document.getElementById('adminCandidatesContainer');
-        if(!candidats.length) {
-            container.innerHTML = '<div style="text-align:center; padding:50px; color:#94a3b8;"><i class="fas fa-inbox"></i><br>Aucun candidat trouvé</div>';
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="no-result"><i class="fas fa-feather-alt"></i> Aucun candidat ne correspond à votre recherche.<br>Essayez un autre nom, prénom ou université.</div>`;
             return;
         }
         
-        let html = '';
-        candidats.forEach(c => {
-            const isSelected = c.selected === true;
-            const motivationText = c.motivation || 'Non renseignée';
-            
+        let html = "";
+        filtered.forEach((c, idx) => {
+            const selectedClass = c.selected ? "selected" : "";
+            const selectedBadgeHtml = c.selected ? '<span class="selected-badge"><i class="fas fa-star"></i> Finaliste</span>' : '';
             html += `
-                <div class="candidate-admin-card">
-                    <div class="candidate-header">
-                        <div class="candidate-name">
-                            <i class="fas fa-user-circle"></i> ${c.nomComplet || c.prenom + ' ' + c.nom}
-                            ${isSelected ? '<span class="selected-badge-large"><i class="fas fa-check-circle"></i> SÉLECTIONNÉ</span>' : ''}
-                        </div>
+                <div class="candidate-card ${selectedClass}" style="--order: ${idx}">
+                    <div class="card-name">
+                        ${escapeHtml(c.name)}
+                        ${selectedBadgeHtml}
                     </div>
-                    <div class="candidate-info">
-                        <div class="info-row">
-                            <i class="fas fa-envelope"></i>
-                            <span class="label">Email :</span>
-                            <span class="value">${c.email || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <i class="fas fa-phone"></i>
-                            <span class="label">Tél :</span>
-                            <span class="value">${c.telephone || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <i class="fas fa-university"></i>
-                            <span class="label">Université :</span>
-                            <span class="value">${c.universite || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <i class="fas fa-book"></i>
-                            <span class="label">Faculté :</span>
-                            <span class="value">${c.faculte || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span class="label">Promotion :</span>
-                            <span class="value">${c.promotion || '-'}</span>
-                        </div>
-                        <div class="motivation-box">
-                            <i class="fas fa-quote-left" style="color:#e11d48; margin-right:5px;"></i>
-                            <strong>Motivation</strong>
-                            <p>"${motivationText}"</p>
-                        </div>
-                    </div>
-                    <div class="candidate-actions">
-                        <button onclick="window.handleSelection('${c.id}', ${isSelected})" class="select-btn-admin ${isSelected ? 'selected' : ''}">
-                            <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-star'}"></i>
-                            ${isSelected ? 'Retirer' : 'Sélectionner'}
-                        </button>
-                        <button onclick="window.handleDelete('${c.id}', '${c.nomComplet}')" class="delete-btn-admin">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                    <div class="university">
+                        <i class="fas fa-university"></i> ${escapeHtml(c.uni)}
                     </div>
                 </div>
             `;
         });
-        container.innerHTML = html;
+        grid.innerHTML = html;
     }
     
-    async function afficherCandidatsFiltres() {
-        const filtered = getFilteredCandidats();
-        renderAdminCards(filtered);
-    }
-    
-    async function chargerListeAdmin() {
-        if (!isAdminPanelOpen) return;
-        try {
-            allCandidats = await getAllCandidatsFromFirestore();
-            const selectedCount = await getSelectedCount();
-            const totalCount = allCandidats.length;
-            const pendingCount = totalCount - selectedCount;
-            
-            document.getElementById('totalCandidats').textContent = totalCount;
-            document.getElementById('selectedCount').textContent = selectedCount;
-            document.getElementById('pendingCount').textContent = pendingCount;
-            document.getElementById('selectedTabCount').textContent = selectedCount;
-            document.getElementById('pendingTabCount').textContent = pendingCount;
-            
-            afficherCandidatsFiltres();
-        } catch(err) {
-            console.error(err);
-            document.getElementById('adminCandidatesContainer').innerHTML = '<div style="text-align:center; padding:50px; color:#e11d48;">Erreur de chargement</div>';
-        }
-    }
-    
-    async function handleSelection(id, currentSelected) {
-        try {
-            const selectedCount = await getSelectedCount();
-            if (!currentSelected && selectedCount >= 50) {
-                alert('⚠️ Limite atteinte : vous ne pouvez sélectionner que 50 candidats maximum.');
-                return;
-            }
-            await updateCandidatSelection(id, !currentSelected);
-            await chargerListeAdmin();
-            showFlashMessage(currentSelected ? 'Candidat retiré de la sélection' : 'Candidat sélectionné', false);
-        } catch (error) {
-            alert('Erreur: ' + error.message);
-        }
-    }
-    
-    async function handleDelete(id, nomComplet) {
-        if (confirm(`Supprimer ${nomComplet} ?`)) {
-            try {
-                await deleteCandidat(id);
-                await chargerListeAdmin();
-                showFlashMessage('Candidat supprimé', false);
-            } catch (error) {
-                alert('Erreur lors de la suppression');
-            }
-        }
-    }
-    
-    // Exports
-    document.getElementById('exportAllBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidatsFromFirestore();
-        const blob = new Blob([JSON.stringify(candidats, null, 2)], { type: 'application/json' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `candidats_${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-        URL.revokeObjectURL(link.href);
-        showFlashMessage('Export réussi', false);
+    // Écouteurs d'événements
+    document.getElementById("searchInput").addEventListener("input", renderCandidates);
+    document.getElementById("resetSearchBtn").addEventListener("click", () => {
+        document.getElementById("searchInput").value = "";
+        renderCandidates();
     });
     
-    document.getElementById('exportSelectedBtn').addEventListener('click', async () => {
-        const candidats = await getAllCandidatsFromFirestore();
-        const selectedCandidats = candidats.filter(c => c.selected === true);
-        if(selectedCandidats.length === 0) {
-            alert('Aucun candidat sélectionné.');
-            return;
-        }
-        const blob = new Blob([JSON.stringify(selectedCandidats, null, 2)], { type: 'application/json' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `selectionnes_${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-        URL.revokeObjectURL(link.href);
-        showFlashMessage(`Export des ${selectedCandidats.length} sélectionnés`, false);
+    // Filtres
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.dataset.filter;
+            renderCandidates();
+        });
     });
     
-    window.handleSelection = handleSelection;
-    window.handleDelete = handleDelete;
+    // Rendu initial
+    renderCandidates();
 </script>
 </body>
 </html>
