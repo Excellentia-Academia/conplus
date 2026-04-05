@@ -2,838 +2,523 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magazine Pro Generator | Créez votre magazine professionnel</title>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- html2pdf + jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Excellentia Academia | Structure & Excellence</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4fa 0%, #e9eef5 100%);
+            color: #1e2a3e;
+            line-height: 1.5;
+            scroll-behavior: smooth;
         }
-        
+
         /* Container principal */
-        .app-container {
-            max-width: 1400px;
+        .container {
+            max-width: 1300px;
             margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
         }
-        
-        /* Header */
-        .header {
+
+        /* ========== EN-TÊTE ========== */
+        .hero {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 20px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 3.5rem;
+            animation: fadeSlideUp 0.9s ease-out;
         }
-        
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
+
+        .hero h1 {
+            font-size: 2.7rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0A2F5A 0%, #1E4A76 100%);
             background-clip: text;
+            -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.75rem;
         }
-        
-        .header p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-        
-        /* Layout principal */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        @media (max-width: 968px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Panneau de contrôle */
-        .control-panel {
-            background: rgba(255,255,255,0.95);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            border-left: 4px solid #667eea;
-            padding-left: 15px;
-        }
-        
-        /* Formulaire d'ajout d'article */
-        .article-form {
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        
-        .image-upload {
-            border: 2px dashed #ccc;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .image-upload:hover {
-            border-color: #667eea;
-            background: rgba(102,126,234,0.05);
-        }
-        
-        .image-upload i {
-            font-size: 2rem;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .image-preview {
-            margin-top: 15px;
-            text-align: center;
-        }
-        
-        .image-preview img {
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            width: 100%;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        /* Liste des articles */
-        .articles-list {
-            max-height: 500px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-        
-        .article-item {
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-        
-        .article-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .article-item-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
-        
-        .article-item-content {
-            flex: 1;
-        }
-        
-        .article-item-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .article-item-category {
-            font-size: 0.75rem;
-            color: #667eea;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .article-item-desc {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .article-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .icon-btn {
+
+        .hero h1 i {
             background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
-            transition: all 0.3s;
+            color: #c0392b;
+            margin-right: 10px;
         }
-        
-        .icon-btn.delete:hover {
-            color: #dc3545;
-            transform: scale(1.1);
-        }
-        
-        /* Aperçu du magazine */
-        .preview-panel {
-            background: rgba(255,255,255,0.95);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        
-        .magazine-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .magazine-preview {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            max-height: 70vh;
-            overflow-y: auto;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        /* Styles du magazine pour l'aperçu et le PDF */
-        .magazine {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .magazine-cover {
-            text-align: center;
-            padding: 60px 40px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .magazine-cover h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        .magazine-date {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-top: 20px;
-        }
-        
-        .magazine-article {
-            margin-bottom: 40px;
-            page-break-inside: avoid;
-            break-inside: avoid;
-        }
-        
-        .magazine-article h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .magazine-category {
+
+        .hero .badge {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            background: #ffffffcc;
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
             font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 15px;
+            color: #0a2f5a;
+            border: 1px solid rgba(25, 80, 130, 0.2);
+            margin-bottom: 1rem;
         }
-        
-        .magazine-image {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 15px;
-            margin: 20px 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 750px;
+            margin: 0.8rem auto 0;
+            color: #2c3e50;
+            font-weight: 400;
         }
-        
-        .magazine-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #555;
-            margin: 15px 0;
+
+        /* cartes et sections */
+        .section {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            margin-bottom: 2.8rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.6);
+            overflow: hidden;
         }
-        
-        .magazine-footer {
-            text-align: center;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 20px;
-            margin-top: 40px;
-            color: #666;
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1.5rem 2rem 0.5rem 2rem;
+            border-bottom: 2px solid #eef2f8;
         }
-        
-        .empty-magazine {
-            text-align: center;
-            padding: 60px;
-            color: #999;
+
+        .section-header i {
+            font-size: 2rem;
+            color: #1e4a76;
         }
-        
-        /* Modal pour configuration du magazine */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0b2b44;
+            letter-spacing: -0.3px;
+        }
+
+        .section-content {
+            padding: 1.8rem 2rem 2.2rem;
+        }
+
+        /* Grille coordination */
+        .coordination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .card-member {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            transition: all 0.25s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            border: 1px solid #eef2fa;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-member:hover {
+            transform: translateY(-4px);
+            border-color: #bfd9ff;
+            box-shadow: 0 14px 24px -8px rgba(26, 67, 113, 0.12);
+        }
+
+        .avatar-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(145deg, #eef3fc, #dfe8f2);
+            border-radius: 60%;
+            display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.4rem;
+            color: #1e4a76;
         }
-        
-        .modal-content {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+
+        .member-info h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #0f2f4f;
         }
-        
-        .storage-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 12px;
-            font-size: 0.85rem;
+
+        .member-info p {
+            font-size: 0.8rem;
+            color: #5d6f83;
+            font-weight: 500;
+        }
+
+        /* ambassadeurs : zone interactive */
+        .ambassadeurs-wrapper {
             text-align: center;
         }
-        
-        .github-badge {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
+
+        .reveal-btn {
+            background: linear-gradient(95deg, #1e4a76, #0f3b5e);
+            border: none;
+            padding: 0.9rem 2.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
             color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2rem;
         }
-        
-        .github-badge a {
-            color: white;
-            text-decoration: none;
+
+        .reveal-btn i {
+            font-size: 1.2rem;
         }
-        
-        .github-badge i {
+
+        .reveal-btn:hover {
+            background: linear-gradient(95deg, #0f3b5e, #0a2f4a);
+            transform: scale(1.02);
+            box-shadow: 0 12px 18px -6px rgba(0,0,0,0.2);
+        }
+
+        .ambassadeurs-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 0.5s ease;
+        }
+
+        .ambassadeurs-list.show {
+            max-height: 600px;
+            opacity: 1;
+            overflow-y: visible;
+        }
+
+        .amb-badge {
+            background: white;
+            border-radius: 100px;
+            padding: 0.5rem 1.3rem;
+            font-weight: 600;
+            color: #1e4668;
+            border: 1px solid #cdddee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .amb-badge i {
             margin-right: 8px;
+            color: #c0392b;
+            font-size: 0.8rem;
+        }
+
+        .amb-badge:hover {
+            background: #f0f6ff;
+            border-color: #8bb3da;
+            transform: translateY(-2px);
+        }
+
+        /* membres effectifs (tags) */
+        .membres-taglist {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .membre-tag {
+            background: #eef2fa;
+            border-radius: 40px;
+            padding: 0.45rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1f4970;
+        }
+
+        /* domaines / activités (grille) */
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+        .domain-card {
+            background: #ffffffd9;
+            border-radius: 1.4rem;
+            padding: 1.2rem 1.5rem;
+            border-left: 5px solid #c0392b;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+        }
+        .domain-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #0b2b44;
+        }
+        .domain-card ul {
+            list-style: none;
+            padding-left: 0.2rem;
+        }
+        .domain-card li {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .domain-card li i {
+            color: #1e4a76;
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+        }
+
+        .vision-box {
+            background: linear-gradient(115deg, #0a2f5a 0%, #123e64 100%);
+            border-radius: 1.6rem;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+        .vision-box h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .vision-box p {
+            font-size: 1.05rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.92;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #4a627a;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 2rem;
+        }
+
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(20px);}
+            100% { opacity: 1; transform: translateY(0);}
+        }
+
+        .animate-on-scroll {
+            animation: fadeSlideUp 0.7s ease forwards;
+            opacity: 0;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 1rem 1rem 2rem; }
+            .section-header h2 { font-size: 1.5rem; }
+            .hero h1 { font-size: 1.9rem; }
+            .coordination-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <h1><i class="fas fa-magazine"></i> Magazine Pro Generator</h1>
-            <p>Créez votre magazine professionnel en quelques clics - Téléchargez en PDF</p>
+<div class="container">
+    <!-- HERO -->
+    <div class="hero">
+        <div class="badge"><i class="fas fa-award"></i> Excellence & Leadership</div>
+        <h1><i class="fas fa-graduation-cap"></i> EXCELLENTIA ACADEMIA</h1>
+        <p>Structure académique dédiée à l’excellence, à l’éloquence et à l’engagement intellectuel de la jeunesse congolaise.</p>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem; color:#2c5a7a;"><i class="fas fa-flag-checkered"></i> Valoriser les compétences · Former une élite transformatrice</p>
+    </div>
+
+    <!-- ORGANISATION : COORDINATION -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-users"></i>
+            <h2>1. Coordination Générale</h2>
         </div>
-        
-        <div class="main-layout">
-            <!-- Panneau de contrôle -->
-            <div class="control-panel">
-                <h2 class="section-title"><i class="fas fa-plus-circle"></i> Ajouter un article</h2>
-                
-                <div class="article-form">
-                    <div class="form-group">
-                        <label><i class="fas fa-heading"></i> Titre de l'article *</label>
-                        <input type="text" id="articleTitle" placeholder="Titre accrocheur...">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-tag"></i> Catégorie</label>
-                        <select id="articleCategory">
-                            <option value="Actualités">Actualités</option>
-                            <option value="Interview">Interview</option>
-                            <option value="Reportage">Reportage</option>
-                            <option value="Opinion">Opinion</option>
-                            <option value="Culture">Culture</option>
-                            <option value="Technologie">Technologie</option>
-                            <option value="Mode">Mode</option>
-                            <option value="Sport">Sport</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-image"></i> Photo de l'article *</label>
-                        <div class="image-upload" onclick="document.getElementById('imageInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Cliquez pour télécharger une image</p>
-                            <input type="file" id="imageInput" accept="image/*" style="display: none;">
-                        </div>
-                        <div id="imagePreview" class="image-preview"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-align-left"></i> Description / Contenu *</label>
-                        <textarea id="articleDesc" placeholder="Décrivez votre article, l'histoire, les détails importants..."></textarea>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="addArticle()">
-                        <i class="fas fa-plus"></i> Ajouter l'article
-                    </button>
-                </div>
-                
-                <h2 class="section-title"><i class="fas fa-list"></i> Articles ajoutés (<span id="articleCount">0</span>)</h2>
-                <div id="articlesList" class="articles-list">
-                    <div style="text-align: center; padding: 40px; color: #999;">
-                        <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
-                        <p>Ajoutez votre premier article</p>
-                    </div>
-                </div>
+        <div class="section-content">
+            <p style="margin-bottom: 1.5rem; font-weight: 500;">Organe central de pilotage — conçoit, supervise et impulse les initiatives d’Excellentia Academia.</p>
+            <div class="coordination-grid">
+                <!-- liste complète selon le brief -->
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-user-tie"></i></div><div class="member-info"><h4>Malale Musao Credo</h4><p>Fondateur & Coordinateur Général</p><p style="font-size:0.7rem;">Étudiant en droit</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-chalkboard-user"></i></div><div class="member-info"><h4>Chris Bulubulu</h4><p>Directeur de projet</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-user-friends"></i></div><div class="member-info"><h4>Aristote Mbo</h4><p>Directeur de projet adjoint</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-file-alt"></i></div><div class="member-info"><h4>Arni Djonga</h4><p>Secrétaire général</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-edit"></i></div><div class="member-info"><h4>Paul Kasongo</h4><p>Secrétaire général adjoint</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-bullhorn"></i></div><div class="member-info"><h4>Sephora Kapalata</h4><p>Chargée de la communication</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-comment-dots"></i></div><div class="member-info"><h4>Princilia</h4><p>Chargée de communication adjointe</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-boxes"></i></div><div class="member-info"><h4>Mima Tshienda</h4><p>Chargée de logistique</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-truck"></i></div><div class="member-info"><h4>Francia</h4><p>Chargée de logistique adjointe</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-coins"></i></div><div class="member-info"><h4>Jemima Bembide</h4><p>Chargée des finances</p></div></div>
+                <div class="card-member"><div class="avatar-icon"><i class="fas fa-lightbulb"></i></div><div class="member-info"><h4>Dea Ngoyi</h4><p>Conseiller stratégique</p></div></div>
             </div>
-            
-            <!-- Aperçu du magazine -->
-            <div class="preview-panel">
-                <h2 class="section-title"><i class="fas fa-eye"></i> Aperçu du magazine</h2>
-                
-                <div class="magazine-actions">
-                    <button class="btn btn-success" onclick="configureAndGeneratePDF()">
-                        <i class="fas fa-download"></i> Télécharger PDF
-                    </button>
-                    <button class="btn btn-primary" onclick="clearAllArticles()">
-                        <i class="fas fa-trash-alt"></i> Tout supprimer
-                    </button>
+        </div>
+    </div>
+
+    <!-- 2. AMBASSADEURS avec animation au clic -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-handshake"></i>
+            <h2>2. Ambassadeurs</h2>
+        </div>
+        <div class="section-content ambassadeurs-wrapper">
+            <p style="margin-bottom: 1rem;">Représentants officiels au sein des facultés, promotions et universités. Ils mobilisent, promeuvent et incarnent l’esprit d’excellence.</p>
+            <button id="revealAmbBtn" class="reveal-btn"><i class="fas fa-eye"></i> Découvrir les ambassadeurs <i class="fas fa-chevron-down"></i></button>
+            <div id="ambassadeursList" class="ambassadeurs-list">
+                <!-- Liste dynamique qui n'apparaît qu'après clic -->
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Élie Mbumba</span>
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Beni Nzenga</span>
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Adoption MWAMUKASA</span>
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Maurice Fefe</span>
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Gédéon Mulowanyi</span>
+                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Daniella Lisunde</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MEMBRES EFFECTIFS -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-users-between"></i>
+            <h2>3. Membres Effectifs</h2>
+        </div>
+        <div class="section-content">
+            <p>Le cœur vivant d’Excellentia Academia. Ils participent activement aux formations, conférences, ateliers, concours et programmes de développement. Bénéficient d’un encadrement académique et pratique pour une progression continue.</p>
+            <div class="membres-taglist">
+                <span class="membre-tag"><i class="fas fa-check-circle"></i> Étudiants engagés</span>
+                <span class="membre-tag"><i class="fas fa-check-circle"></i> Cercle d'éloquence</span>
+                <span class="membre-tag"><i class="fas fa-check-circle"></i> Leaders en devenir</span>
+                <span class="membre-tag"><i class="fas fa-check-circle"></i> +80 adhérents actifs</span>
+                <span class="membre-tag"><i class="fas fa-check-circle"></i> Représentation interuniversitaire</span>
+            </div>
+            <p style="margin-top: 1.2rem; font-style: italic; font-size:0.9rem;">— Toute personne motivée par l'excellence académique peut rejoindre le mouvement —</p>
+        </div>
+    </div>
+
+    <!-- DOMAINES D'INTERVENTION ET ACTIVITÉS -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-chalkboard"></i>
+            <h2>Domaines & Activités</h2>
+        </div>
+        <div class="section-content">
+            <div class="domains-grid">
+                <div class="domain-card">
+                    <h3><i class="fas fa-microphone-alt" style="color:#c0392b;"></i> Formations</h3>
+                    <ul>
+                        <li><i class="fas fa-angle-right"></i> Art oratoire & prise de parole</li>
+                        <li><i class="fas fa-angle-right"></i> Leadership & développement personnel</li>
+                        <li><i class="fas fa-angle-right"></i> Entrepreneuriat & innovation</li>
+                        <li><i class="fas fa-angle-right"></i> Communication professionnelle</li>
+                        <li><i class="fas fa-angle-right"></i> Pensée critique & argumentation</li>
+                        <li><i class="fas fa-angle-right"></i> Écriture académique & rédaction</li>
+                    </ul>
                 </div>
-                
-                <div id="magazinePreview" class="magazine-preview">
-                    <div class="empty-magazine">
-                        <i class="fas fa-magazine" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;"></i>
-                        <p>Ajoutez des articles pour voir l'aperçu</p>
-                    </div>
+                <div class="domain-card">
+                    <h3><i class="fas fa-trophy" style="color:#c0392b;"></i> Concours</h3>
+                    <ul>
+                        <li><i class="fas fa-angle-right"></i> Concours d’éloquence</li>
+                        <li><i class="fas fa-angle-right"></i> Concours de plaidoirie</li>
+                        <li><i class="fas fa-angle-right"></i> Débats contradictoires</li>
+                        <li><i class="fas fa-angle-right"></i> Débats politiques</li>
+                        <li><i class="fas fa-angle-right"></i> Concours d’entrepreneuriat</li>
+                        <li><i class="fas fa-angle-right"></i> Compétitions intellectuelles interuniversitaires</li>
+                    </ul>
+                </div>
+                <div class="domain-card">
+                    <h3><i class="fas fa-chalkboard-user" style="color:#c0392b;"></i> Conférences & Ateliers</h3>
+                    <ul>
+                        <li><i class="fas fa-angle-right"></i> Conférences thématiques</li>
+                        <li><i class="fas fa-angle-right"></i> Ateliers pratiques</li>
+                        <li><i class="fas fa-angle-right"></i> Rencontres inspirantes</li>
+                        <li><i class="fas fa-angle-right"></i> Séminaires de formation</li>
+                        <li><i class="fas fa-angle-right"></i> Panels de discussion</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Modal configuration magazine -->
-    <div id="configModal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-cog"></i> Configuration du magazine</h2>
-            <div class="form-group">
-                <label><i class="fas fa-heading"></i> Titre du magazine</label>
-                <input type="text" id="magazineTitle" value="Magazine Pro Édition">
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-calendar"></i> Date d'édition</label>
-                <input type="text" id="magazineDate" value="Édition du " + new Date().toLocaleDateString('fr-FR')>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-palette"></i> Thème de la couverture</label>
-                <select id="coverTheme">
-                    <option value="default">Défaut (Violet)</option>
-                    <option value="blue">Bleu Océan</option>
-                    <option value="red">Rouge Passion</option>
-                    <option value="green">Vert Nature</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="generatePDF()" style="margin-top: 20px;">
-                <i class="fas fa-file-pdf"></i> Générer le PDF
-            </button>
-            <button class="btn" onclick="closeModal()" style="margin-top: 10px; background: #6c757d; color: white;">
-                Annuler
-            </button>
-        </div>
+
+    <!-- VISION -->
+    <div class="vision-box">
+        <h3><i class="fas fa-eye"></i> Notre Vision</h3>
+        <p>Excellentia Academia aspire à devenir une référence incontournable dans la formation intellectuelle et l’accompagnement des étudiants en République Démocratique du Congo, en créant une élite académique capable de transformer la société par la parole, les idées et l’action.</p>
+        <div style="margin-top: 1.2rem;"><i class="fas fa-flag-checkered" style="font-size: 2rem; opacity: 0.8;"></i></div>
     </div>
-    
-    <div class="github-badge">
-        <i class="fab fa-github"></i> Magazine Pro Generator | Professionnel | Export PDF
-    </div>
-    
-    <script>
-        // Stockage des articles
-        let articles = [];
-        
-        // Image temporaire pour l'ajout
-        let currentImageData = null;
-        
-        // Chargement depuis localStorage
-        function loadFromStorage() {
-            const saved = localStorage.getItem('magazine_articles');
-            if(saved) {
-                articles = JSON.parse(saved);
-                refreshDisplay();
-            }
+
+    <footer>
+        <p><i class="fas fa-copyright"></i> Excellentia Academia — Engagement, Éloquence, Excellence — Tous droits réservés</p>
+        <p style="margin-top: 0.3rem;">Bleu · Rouge · Blanc : les couleurs du mérite et de la patrie</p>
+    </footer>
+</div>
+
+<script>
+    // Animation pour les ambassadeurs : apparition au clic (exactement ce qui est demandé)
+    const revealBtn = document.getElementById('revealAmbBtn');
+    const ambList = document.getElementById('ambassadeursList');
+
+    revealBtn.addEventListener('click', () => {
+        ambList.classList.toggle('show');
+        // Optionnel : changer le texte du bouton
+        if (ambList.classList.contains('show')) {
+            revealBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Masquer les ambassadeurs <i class="fas fa-chevron-up"></i>';
+        } else {
+            revealBtn.innerHTML = '<i class="fas fa-eye"></i> Découvrir les ambassadeurs <i class="fas fa-chevron-down"></i>';
         }
-        
-        // Sauvegarde dans localStorage
-        function saveToStorage() {
-            localStorage.setItem('magazine_articles', JSON.stringify(articles));
-        }
-        
-        // Gestion de l'upload d'image
-        document.getElementById('imageInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    currentImageData = event.target.result;
-                    document.getElementById('imagePreview').innerHTML = `<img src="${currentImageData}" alt="Aperçu">`;
-                };
-                reader.readAsDataURL(file);
+    });
+
+    // Initialisation : la liste est cachée (conforme à la demande "que la liste n'apparaisse qu'une fois que appuye là-bas")
+    ambList.classList.remove('show'); // bien caché par défaut
+
+    // Ajout d'une animation subtile au scroll pour les sections (amélioration design)
+    const animatedElements = document.querySelectorAll('.section, .vision-box');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0px)';
+                observer.unobserve(entry.target);
             }
         });
-        
-        // Ajouter un article
-        function addArticle() {
-            const title = document.getElementById('articleTitle').value.trim();
-            const category = document.getElementById('articleCategory').value;
-            const description = document.getElementById('articleDesc').value.trim();
-            
-            if(!title) {
-                alert('Veuillez ajouter un titre');
-                return;
-            }
-            if(!description) {
-                alert('Veuillez ajouter une description');
-                return;
-            }
-            if(!currentImageData) {
-                alert('Veuillez ajouter une image');
-                return;
-            }
-            
-            const newArticle = {
-                id: Date.now(),
-                title: title,
-                category: category,
-                description: description,
-                image: currentImageData,
-                date: new Date().toISOString()
-            };
-            
-            articles.unshift(newArticle);
-            saveToStorage();
-            refreshDisplay();
-            
-            // Réinitialiser le formulaire
-            document.getElementById('articleTitle').value = '';
-            document.getElementById('articleDesc').value = '';
-            document.getElementById('imagePreview').innerHTML = '';
-            currentImageData = null;
-            document.getElementById('imageInput').value = '';
-            
-            // Message de succès
-            showTemporaryMessage('Article ajouté avec succès !');
-        }
-        
-        // Supprimer un article
-        function deleteArticle(id) {
-            articles = articles.filter(article => article.id !== id);
-            saveToStorage();
-            refreshDisplay();
-            showTemporaryMessage('Article supprimé');
-        }
-        
-        // Supprimer tous les articles
-        function clearAllArticles() {
-            if(articles.length > 0 && confirm('Voulez-vous vraiment supprimer tous les articles ?')) {
-                articles = [];
-                saveToStorage();
-                refreshDisplay();
-                showTemporaryMessage('Tous les articles ont été supprimés');
-            }
-        }
-        
-        // Rafraîchir l'affichage
-        function refreshDisplay() {
-            updateArticlesList();
-            updateMagazinePreview();
-            document.getElementById('articleCount').textContent = articles.length;
-        }
-        
-        // Mettre à jour la liste des articles
-        function updateArticlesList() {
-            const container = document.getElementById('articlesList');
-            if(articles.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: #999;">
-                    <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
-                    <p>Ajoutez votre premier article</p>
-                </div>`;
-                return;
-            }
-            
-            container.innerHTML = articles.map(article => `
-                <div class="article-item">
-                    <img src="${article.image}" class="article-item-img" alt="${article.title}">
-                    <div class="article-item-content">
-                        <div class="article-item-category">${article.category}</div>
-                        <div class="article-item-title">${escapeHtml(article.title)}</div>
-                        <div class="article-item-desc">${escapeHtml(article.description.substring(0, 80))}${article.description.length > 80 ? '...' : ''}</div>
-                    </div>
-                    <div class="article-actions">
-                        <button class="icon-btn delete" onclick="deleteArticle(${article.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Générer l'aperçu du magazine
-        function updateMagazinePreview() {
-            const container = document.getElementById('magazinePreview');
-            if(articles.length === 0) {
-                container.innerHTML = `<div class="empty-magazine">
-                    <i class="fas fa-magazine" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;"></i>
-                    <p>Ajoutez des articles pour voir l'aperçu</p>
-                </div>`;
-                return;
-            }
-            
-            const magazineHTML = generateMagazineHTML('Aperçu Magazine', new Date().toLocaleDateString('fr-FR'));
-            container.innerHTML = magazineHTML;
-        }
-        
-        // Générer le HTML du magazine
-        function generateMagazineHTML(title, date, theme = 'default') {
-            let gradientClass = '';
-            if(theme === 'blue') gradientClass = 'linear-gradient(135deg, #1e3c72, #2a5298)';
-            else if(theme === 'red') gradientClass = 'linear-gradient(135deg, #c31432, #240b36)';
-            else if(theme === 'green') gradientClass = 'linear-gradient(135deg, #134e5e, #71b280)';
-            else gradientClass = 'linear-gradient(135deg, #667eea, #764ba2)';
-            
-            let articlesHTML = '';
-            articles.forEach(article => {
-                articlesHTML += `
-                    <div class="magazine-article">
-                        <span class="magazine-category">${escapeHtml(article.category)}</span>
-                        <h2>${escapeHtml(article.title)}</h2>
-                        <img src="${article.image}" class="magazine-image" alt="${escapeHtml(article.title)}">
-                        <div class="magazine-description">${escapeHtml(article.description).replace(/\n/g, '<br>')}</div>
-                    </div>
-                `;
-            });
-            
-            return `
-                <div class="magazine">
-                    <div class="magazine-cover" style="background: ${gradientClass};">
-                        <h1>${escapeHtml(title)}</h1>
-                        <p>${escapeHtml(date)}</p>
-                        <div class="magazine-date">${articles.length} articles • ${new Date().toLocaleDateString('fr-FR')}</div>
-                    </div>
-                    ${articlesHTML}
-                    <div class="magazine-footer">
-                        <p>Magazine Pro Generator - Créé avec passion</p>
-                        <p style="font-size: 0.8rem; margin-top: 10px;">© ${new Date().getFullYear()} Tous droits réservés</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Configurer et générer le PDF
-        function configureAndGeneratePDF() {
-            document.getElementById('configModal').style.display = 'flex';
-        }
-        
-        function closeModal() {
-            document.getElementById('configModal').style.display = 'none';
-        }
-        
-        // Générer le PDF
-        function generatePDF() {
-            const magazineTitle = document.getElementById('magazineTitle').value || 'Magazine Pro';
-            const magazineDate = document.getElementById('magazineDate').value || new Date().toLocaleDateString('fr-FR');
-            const coverTheme = document.getElementById('coverTheme').value;
-            
-            if(articles.length === 0) {
-                alert('Ajoutez au moins un article avant de générer le PDF');
-                closeModal();
-                return;
-            }
-            
-            const magazineHTML = generateMagazineHTML(magazineTitle, magazineDate, coverTheme);
-            
-            // Créer un conteneur temporaire pour le PDF
-            const pdfContainer = document.createElement('div');
-            pdfContainer.style.position = 'absolute';
-            pdfContainer.style.left = '-9999px';
-            pdfContainer.style.top = '-9999px';
-            pdfContainer.style.width = '800px';
-            pdfContainer.style.background = 'white';
-            pdfContainer.innerHTML = magazineHTML;
-            document.body.appendChild(pdfContainer);
-            
-            // Options pour html2pdf
-            const opt = {
-                margin: [0.5, 0.5, 0.5, 0.5],
-                filename: `${magazineTitle.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            
-            // Générer le PDF
-            html2pdf().set(opt).from(pdfContainer).save()
-                .then(() => {
-                    document.body.removeChild(pdfContainer);
-                    closeModal();
-                    showTemporaryMessage('PDF généré avec succès !');
-                })
-                .catch(err => {
-                    console.error('Erreur PDF:', err);
-                    document.body.removeChild(pdfContainer);
-                    alert('Erreur lors de la génération du PDF');
-                });
-        }
-        
-        // Afficher un message temporaire
-        function showTemporaryMessage(message) {
-            const msgDiv = document.createElement('div');
-            msgDiv.style.position = 'fixed';
-            msgDiv.style.bottom = '100px';
-            msgDiv.style.right = '20px';
-            msgDiv.style.background = '#28a745';
-            msgDiv.style.color = 'white';
-            msgDiv.style.padding = '12px 24px';
-            msgDiv.style.borderRadius = '12px';
-            msgDiv.style.zIndex = '1000';
-            msgDiv.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
-            msgDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-            document.body.appendChild(msgDiv);
-            setTimeout(() => msgDiv.remove(), 3000);
-        }
-        
-        // Échapper les caractères HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Initialisation
-        loadFromStorage();
-        
-        // Fermer la modal en cliquant en dehors
-        window.onclick = function(event) {
-            const modal = document.getElementById('configModal');
-            if(event.target === modal) {
-                closeModal();
-            }
-        };
-    </script>
+    }, { threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
+    
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(18px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+    // Forcer les cartes coordination déjà visibles : 
+    document.querySelectorAll('.card-member').forEach((card, idx) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(12px)';
+        card.style.transition = `opacity 0.4s ease ${idx * 0.02}s, transform 0.4s ease`;
+        setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 100);
+    });
+    document.querySelectorAll('.domain-card, .membre-tag, .amb-badge').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        setTimeout(() => { if(el.parentElement) { el.style.opacity = '1'; el.style.transform = 'translateY(0)';} }, 150);
+    });
+    // Pour que la liste des ambassadeurs au moment de l'affichage reste stylée, mais elle est gérée par le bouton
+    // Bonus: garder le bleu/blanc/rouge : touches rouges sur certains icônes, bleu marine, blanc.
+</script>
 </body>
 </html>
