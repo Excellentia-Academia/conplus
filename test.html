@@ -2,549 +2,1022 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Excellentia Academia | Prestige & Excellence</title>
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts: Poppins + Playfair Display -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- EmailJS & Firebase -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excellentia Academia - Au-delà de l'excellence académique</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <style>
+        :root {
+            --primary: #1a237e;
+            --primary-light: #534bae;
+            --primary-lighter: #e8eaf6;
+            --primary-dark: #000051;
+            --secondary: #d32f2f;
+            --secondary-light: #ff6659;
+            --secondary-lighter: #ffebee;
+            --secondary-dark: #9a0007;
+            --accent: #ffab00;
+            --accent-light: #ffdd4b;
+            --accent-dark: #c67c00;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --info: #2196f3;
+            --light: #f8f9fa;
+            --light-gray: #f5f5f7;
+            --dark: #121212;
+            --gray: #5f6368;
+            --gray-light: #dadce0;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        body {
-            background-color: #fefefe;
-            font-family: 'Poppins', sans-serif;
-            color: #1e2a3e;
+        
+        html {
             scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background-color: var(--light);
             overflow-x: hidden;
         }
-
-        /* Palette royale : Bleu profond, Blanc pur, Rouge intense */
-        :root {
-            --bleu-nuit: #0B2B40;
-            --bleu-empire: #1A4A6F;
-            --rouge-prestige: #B22234;
-            --or-legere: #CFAF5E;
-            --blanc-casse: #F8F9FA;
-            --gris-luxe: #E9ECEF;
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
         }
-
-        /* animations */
-        @keyframes fadeGlow {
-            0% { opacity: 0; transform: translateY(35px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-8px); }
-        }
-
-        .fade-up {
-            animation: fadeGlow 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-        }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s ease;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Navbar chic */
-        .navbar {
-            position: fixed;
-            top: 0;
+        
+        .container {
             width: 100%;
-            background: rgba(11, 43, 64, 0.92);
-            backdrop-filter: blur(16px);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-padding {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .title-decoration {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title-decoration:after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 15%;
+            border-radius: 2px;
+        }
+        
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover:before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+        
+        .btn-accent:hover {
+            background-color: var(--accent-dark);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #388e3c;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            width: 100%;
             z-index: 1000;
-            padding: 0.8rem 5%;
+            padding: 18px 0;
+            transition: var(--transition);
+        }
+        
+        header.scrolled {
+            padding: 12px 0;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--rouge-prestige);
-            transition: 0.3s;
         }
+        
         .logo {
             display: flex;
             align-items: center;
+            text-decoration: none;
+            transition: var(--transition);
             gap: 12px;
         }
-        .logo img {
-            height: 48px;
-            border-radius: 12px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+        
+        .logo:hover {
+            transform: scale(1.02);
         }
-        .logo span {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
+        
+        .logo-image {
+            height: 50px;
+            width: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-main {
+            font-family: 'Montserrat', sans-serif;
             font-weight: 800;
-            background: linear-gradient(135deg, #FFF, var(--or-legere));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-size: 1.8rem;
+            color: var(--primary);
+            line-height: 1;
         }
+        
+        .logo-sub {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .logo-slogan {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        
+        /* Boutons d'action header */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-right: 30px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .action-btn.formation {
+            background-color: var(--secondary);
+        }
+        
+        .action-btn.concours {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+        
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        
         .nav-links {
             display: flex;
-            gap: 2rem;
             list-style: none;
         }
+        
+        .nav-links li {
+            margin-left: 35px;
+        }
+        
         .nav-links a {
             text-decoration: none;
-            font-weight: 500;
-            color: white;
-            transition: 0.3s;
-            font-size: 0.95rem;
-        }
-        .nav-links a:hover {
-            color: var(--or-legere);
-        }
-        .menu-toggle {
-            display: none;
-            font-size: 1.8rem;
-            color: var(--or-legere);
-            cursor: pointer;
-        }
-        @media (max-width: 1000px) {
-            .nav-links {
-                position: fixed;
-                top: 75px;
-                left: -100%;
-                background: #0B2B40ee;
-                backdrop-filter: blur(20px);
-                width: 100%;
-                flex-direction: column;
-                align-items: center;
-                padding: 2rem;
-                gap: 1.5rem;
-                transition: 0.3s;
-            }
-            .nav-links.active { left: 0; }
-            .menu-toggle { display: block; }
-        }
-
-        /* Hero section avec image de dignité */
-        .hero {
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
             position: relative;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0B2B40 0%, #1A4A6F 100%);
+            padding: 5px 0;
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: 0;
+            left: 0;
+            transition: var(--transition);
+            border-radius: 3px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.6rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding-top: 180px;
+            padding-bottom: 120px;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.03) 0%, rgba(255, 171, 0, 0.03) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-text {
+            flex: 1;
+            padding-right: 60px;
+            animation: slideInLeft 1s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .hero-text h1 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            line-height: 1.1;
+            font-weight: 800;
+        }
+        
+        .hero-text h1 span {
+            color: var(--secondary);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero-intro {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            background: linear-gradient(135deg, var(--primary-lighter), white);
+            padding: 20px;
+            border-radius: var(--radius);
+            border-left: 5px solid var(--accent);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--gray);
+            margin-bottom: 35px;
+            max-width: 600px;
+        }
+        
+        .fondateur-details {
+            background: linear-gradient(135deg, white, var(--light-gray));
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-top: 30px;
+            box-shadow: var(--shadow-sm);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .fondateur-details h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .fondateur-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            padding: 12px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        
+        .comite-directeur {
+            background: linear-gradient(135deg, var(--primary-lighter), white);
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-top: 30px;
+            box-shadow: var(--shadow-sm);
+            border-left: 5px solid var(--accent);
+        }
+        
+        .comite-membres {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .membre {
+            padding: 12px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .hero-visual {
+            flex: 1;
+            position: relative;
+            animation: slideInRight 1s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .floating-elements {
+            position: relative;
+            height: 450px;
+            width: 100%;
+        }
+        
+        .floating-element {
+            position: absolute;
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 6rem 2rem;
-        }
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('IMG_1812.jpeg');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.12;
-            pointer-events: none;
-        }
-        .hero-content {
-            position: relative;
+            transition: var(--transition);
             z-index: 2;
-            max-width: 950px;
         }
-        .hero-logo {
-            width: 130px;
-            margin-bottom: 1.5rem;
-            border-radius: 28px;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
-            border: 2px solid var(--or-legere);
+        
+        .element-1 { top: 20px; left: 0; width: 200px; height: 200px; animation: float 6s ease-in-out infinite; }
+        .element-2 { top: 80px; right: 0; width: 240px; height: 170px; animation: float 7s ease-in-out infinite 0.5s; }
+        .element-3 { bottom: 20px; left: 60px; width: 180px; height: 180px; animation: float 8s ease-in-out infinite 1s; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
-        .hero-content h1 {
-            font-size: 4rem;
-            font-family: 'Playfair Display', serif;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        .hero-content p {
-            font-size: 1.2rem;
-            margin: 1.5rem 0;
-            color: #F0E6D0;
-        }
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .btn {
-            padding: 12px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary {
-            background: var(--rouge-prestige);
-            color: white;
-            box-shadow: 0 5px 15px rgba(178,34,52,0.4);
-        }
-        .btn-primary:hover {
-            background: #9e2a2f;
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-        }
-        .btn-outline {
-            border: 2px solid var(--or-legere);
-            color: var(--or-legere);
-            background: transparent;
-        }
-        .btn-outline:hover {
-            background: var(--or-legere);
-            color: #0B2B40;
-            transform: translateY(-4px);
-        }
-
-        section {
-            padding: 90px 5%;
-        }
-        .section-title {
-            font-size: 2.8rem;
-            font-family: 'Playfair Display', serif;
-            text-align: center;
-            margin-bottom: 3rem;
-            font-weight: 700;
-            color: var(--bleu-nuit);
-            position: relative;
-        }
-        .section-title span {
-            border-bottom: 4px solid var(--rouge-prestige);
-            padding-bottom: 8px;
-        }
-        .cards-grid {
+        
+        .floating-icon { font-size: 3rem; color: var(--primary); margin-bottom: 20px; }
+        .floating-text { font-weight: 700; color: var(--primary); font-size: 1.2rem; margin-bottom: 5px; }
+        
+        /* Cartes */
+        .avantages-grid, .faculties-grid, .activite-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 35px;
         }
-        .card {
-            background: white;
-            border-radius: 32px;
-            padding: 2rem;
-            transition: all 0.4s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border: 1px solid rgba(178,34,52,0.2);
-        }
-        .card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 35px rgba(0,0,0,0.1);
-            border-color: var(--rouge-prestige);
-        }
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            background: var(--bleu-nuit);
-            padding: 2rem;
-            border-radius: 48px;
-            color: white;
-        }
-        .stat-item h3 {
-            font-size: 2.5rem;
-            color: var(--or-legere);
-        }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.8rem;
-        }
-        .gallery-item {
-            border-radius: 28px;
+        
+        .avantage-card, .faculty-card, .activite-card {
+            background-color: white;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.1);
-            transition: 0.3s;
-            background: #f4f4f4;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
-        .gallery-item img, .gallery-item video {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            transition: 0.5s;
+        
+        .avantage-card:hover, .faculty-card:hover, .activite-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
         }
-        .gallery-item:hover img, .gallery-item:hover video {
-            transform: scale(1.05);
-        }
-        .form-container {
-            background: white;
-            border-radius: 40px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.1);
-            border-top: 6px solid var(--rouge-prestige);
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 12px 0;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 48px;
-            font-family: inherit;
-        }
-        input:focus, select:focus {
-            border-color: var(--rouge-prestige);
-            outline: none;
-        }
-        button {
-            background: var(--rouge-prestige);
+        
+        .avantage-header, .activite-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .ambassador-list {
-            background: var(--gris-luxe);
-            border-radius: 28px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            display: none;
-        }
-        .ambassador-list.show {
-            display: block;
-            animation: fadeGlow 0.5s;
-        }
-        footer {
-            background: var(--bleu-nuit);
-            color: white;
+            padding: 25px;
             text-align: center;
-            padding: 2.5rem;
         }
-        .social-icons i {
-            font-size: 1.8rem;
-            margin: 0 12px;
-            color: var(--or-legere);
-            transition: 0.2s;
-        }
-        .social-icons i:hover {
+        
+        .faculty-icon {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            transform: scale(1.1);
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         }
-        @media (max-width: 760px) {
-            .hero-content h1 { font-size: 2.5rem; }
-            .section-title { font-size: 2rem; }
+        
+        .avantage-body, .faculty-content, .activite-body {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .avantage-features {
+            list-style: none;
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+        
+        .avantage-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .avantage-features li i {
+            color: var(--success);
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .ambassador-info {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .ambassador-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-lighter), white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        /* Formulaire */
+        .inscription {
+            background-color: var(--light-gray);
+        }
+        
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .form-body {
+            padding: 50px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        
+        .form-group {
+            flex: 1 0 300px;
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a237e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 50px;
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 80px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+        
+        .footer-logo-image {
+            height: 60px;
+            width: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            color: white;
+            line-height: 1;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 992px) {
+            .hero-content { flex-direction: column; }
+            .hero-text { padding-right: 0; margin-bottom: 60px; text-align: center; }
+            .action-buttons { display: none; }
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .nav-links.active { display: flex; flex-direction: column; position: absolute; top: 80px; left: 0; width: 100%; background: white; padding: 20px; box-shadow: var(--shadow-md); }
+            .nav-links.active li { margin: 10px 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text h1 { font-size: 2.5rem; }
+            .hero-intro { font-size: 1.2rem; }
+            .form-body { padding: 30px 20px; }
+            .avantages-grid, .faculties-grid, .activite-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="logo">
-        <img src="IMG_1812.jpeg" alt="Excellentia Academia Logo" onerror="this.src='https://via.placeholder.com/60?text=EA'">
-        <span>EXCELLENTIA ACADEMIA</span>
-    </div>
-    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
-    <ul class="nav-links" id="navLinks">
-        <li><a href="#accueil">Accueil</a></li>
-        <li><a href="#a-propos">À propos</a></li>
-        <li><a href="#organisation">Organisation</a></li>
-        <li><a href="#activites">Activités</a></li>
-        <li><a href="#inscription">Inscription</a></li>
-        <li><a href="#galerie">Galerie</a></li>
-        <li><a href="#evenements">Événements</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-</nav>
-
-<!-- Hero avec l'image emblématique -->
-<section id="accueil" class="hero">
-    <div class="hero-content">
-        <img src="IMG_1812.jpeg" alt="Emblème Excellentia" class="hero-logo" onerror="this.src='https://via.placeholder.com/130'">
-        <h1>Excellentia Academia</h1>
-        <p>L'excellence académique, le leadership et l'engagement intellectuel au service de la jeunesse congolaise.</p>
-        <div class="btn-group">
-            <a href="#inscription" class="btn btn-primary">Rejoindre la communauté</a>
-            <a href="#inscription" class="btn btn-outline">Devenir Ambassadeur</a>
-            <a href="#organisation" class="btn btn-outline">Découvrir la structure</a>
-            <a href="#activites" class="btn btn-outline">Nos activités</a>
-            <a href="#galerie" class="btn btn-outline">Galerie</a>
-            <a href="#contact" class="btn btn-outline">Nous contacter</a>
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" class="logo-image" onerror="this.src='https://via.placeholder.com/50/1a237e/ffffff?text=EA'">
+                <div class="logo-text">
+                    <div class="logo-main">Excellentia</div>
+                    <div class="logo-sub">ACADEMIA</div>
+                    <div class="logo-slogan">Au-delà de l'excellence académique</div>
+                </div>
+            </a>
+            <div class="nav-wrapper">
+                <div class="action-buttons">
+                    <a href="#formations" class="action-btn formation"><i class="fas fa-chalkboard-teacher"></i> Formation</a>
+                    <a href="#concours" class="action-btn concours"><i class="fas fa-trophy"></i> Concours</a>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#avantages">Avantages</a></li>
+                    <li><a href="#facultes">Facultés</a></li>
+                    <li><a href="#activites">Activités</a></li>
+                    <li><a href="#inscription">Inscription</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</section>
+    </header>
 
-<!-- À propos -->
-<section id="a-propos" class="reveal">
-    <div class="section-title"><span>À propos</span> d'Excellentia Academia</div>
-    <div style="max-width: 1000px; margin:auto; text-align:center; line-height:1.7">
-        <p style="font-size:1.1rem">Excellentia Academia est une structure académique engagée dans la promotion de l’excellence académique, du leadership et de l’engagement intellectuel. Elle valorise les compétences des étudiants à travers des activités innovantes, éducatives et compétitives, favorisant l’émergence d’une génération éloquente, compétente et prête à impacter positivement la société.</p>
-        <div class="stats" style="margin-top: 2.5rem;">
-            <div class="stat-item"><h3>450+</h3><p>Membres actifs</p></div>
-            <div class="stat-item"><h3>15+</h3><p>Universités partenaires</p></div>
-            <div class="stat-item"><h3>30+</h3><p>Événements réalisés</p></div>
+    <section class="hero" id="accueil">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Élever l'intelligence, <span>inspirer l'excellence.</span></h1>
+                    <div class="hero-intro">Excellentia Academia transcende l'excellence académique pour former des leaders complets, engagés et visionnaires.</div>
+                    <p>Notre structure accompagne les étudiants de l'Université de Kinshasa à travers 13 facultés.</p>
+                    <div class="fondateur-details">
+                        <h4><i class="fas fa-user-tie"></i> Fondateur & Coordonnateur Général</h4>
+                        <div class="fondateur-info">
+                            <div class="info-item"><h5>Nom</h5><p>Malale Musao Credo</p></div>
+                            <div class="info-item"><h5>Niveau</h5><p>Master 1 en Droit</p></div>
+                            <div class="info-item"><h5>Département</h5><p>Droit International Public</p></div>
+                            <div class="info-item"><h5>Université</h5><p>UNIKIN</p></div>
+                        </div>
+                    </div>
+                    <div class="comite-directeur">
+                        <h4><i class="fas fa-users"></i> Comité Directeur</h4>
+                        <div class="comite-membres">
+                            <div class="membre"><h5>Arni Djonga</h5><p>Secrétaire Général</p></div>
+                            <div class="membre"><h5>Paul Kasongo</h5><p>SG Adjoint</p></div>
+                            <div class="membre"><h5>Chris Bulubulu</h5><p>Directeur de projet</p></div>
+                            <div class="membre"><h5>Jemima Bembide</h5><p>Chargée des finances</p></div>
+                            <div class="membre"><h5>Sephora Kapalata</h5><p>Chargée de communication</p></div>
+                            <div class="membre"><h5>Mima Tshienda</h5><p>Chargée de logistique</p></div>
+                        </div>
+                    </div>
+                    <div class="hero-btns">
+                        <a href="#inscription" class="btn btn-primary">Devenir Membre</a>
+                        <a href="#inscription" class="btn btn-accent">Postuler Ambassadeur</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-elements">
+                        <div class="floating-element element-1"><i class="fas fa-brain floating-icon"></i><div class="floating-text">13 Facultés</div><small>UNIKIN</small></div>
+                        <div class="floating-element element-2"><i class="fas fa-trophy floating-icon"></i><div class="floating-text">Concours</div><small>Éloquence</small></div>
+                        <div class="floating-element element-3"><i class="fas fa-users floating-icon"></i><div class="floating-text">Ambassadeurs</div><small>Par faculté</small></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Organisation -->
-<section id="organisation" class="reveal" style="background: #F4F7FC;">
-    <div class="section-title"><span>Notre</span> Organisation</div>
-    <div class="cards-grid">
-        <div class="card"><i class="fas fa-crown" style="color:var(--rouge-prestige); font-size:2rem"></i><h3>Coordination</h3><p><strong>Fondateur & Coord. Général :</strong> Malale Musao Credo<br><strong>Directeur projet :</strong> Chris Bulubulu<br><strong>Dir. adjoint :</strong> Aristote Mbo<br><strong>SG :</strong> Arni Djonga<br><strong>SG adjoint :</strong> Paul Kasongo<br><strong>Communication :</strong> Sephora Kapalata, Princilia<br><strong>Logistique :</strong> Mima Tshienda, Francia<br><strong>Finances :</strong> Jemima Bembide<br><strong>Conseiller :</strong> Dea Ngoyi</p></div>
-        <div class="card"><i class="fas fa-handshake" style="color:var(--rouge-prestige); font-size:2rem"></i><h3>Ambassadeurs</h3><p>Représentants officiels dans les facultés.</p><button id="toggleAmbBtn" style="background: var(--bleu-nuit);">Afficher la liste</button><div id="ambassadorListDiv" class="ambassador-list"><strong>✨ Élie Mbumba, Beni Nzenga, Adoption MWAMUKASA, Maurice Fefe, Gédéon Mulowanyi, Daniella Lisunde</strong></div></div>
-        <div class="card"><i class="fas fa-users" style="color:var(--rouge-prestige); font-size:2rem"></i><h3>Membres Effectifs</h3><p>Cœur vivant de la structure, participant activement aux formations, concours et conférences.</p></div>
-    </div>
-</section>
-
-<!-- Activités -->
-<section id="activites" class="reveal">
-    <div class="section-title"><span>Nos</span> Activités</div>
-    <div class="cards-grid">
-        <div class="card"><i class="fas fa-chalkboard-user"></i><h3>Formations</h3><p>Art oratoire, Leadership, Entrepreneuriat, Communication, Pensée critique, Rédaction académique</p></div>
-        <div class="card"><i class="fas fa-trophy"></i><h3>Concours</h3><p>Éloquence, Plaidoirie, Débats contradictoires, politiques, Entrepreneuriat, interuniversitaires</p></div>
-        <div class="card"><i class="fas fa-microphone-alt"></i><h3>Conférences</h3><p>Conférences thématiques, panels, séminaires, rencontres inspirantes.</p></div>
-    </div>
-</section>
-
-<!-- Inscription Firebase + EmailJS -->
-<section id="inscription" class="reveal">
-    <div class="section-title"><span>Postulez</span> maintenant</div>
-    <div class="form-container">
-        <form id="candidatureForm">
-            <input type="text" id="nom" placeholder="Nom complet" required>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="tel" id="telephone" placeholder="Téléphone" required>
-            <input type="text" id="universite" placeholder="Université" required>
-            <select id="typeCandidature" required>
-                <option value="Membre">Membre</option>
-                <option value="Ambassadeur">Ambassadeur</option>
-            </select>
-            <textarea id="motivation" rows="3" placeholder="Pourquoi nous rejoindre ? (Motivation)"></textarea>
-            <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Envoyer ma candidature</button>
-            <div id="formMessage" style="margin-top:15px;"></div>
-        </form>
-    </div>
-</section>
-
-<!-- Galerie photo & video -->
-<section id="galerie" class="reveal" style="background: #F4F7FC;">
-    <div class="section-title"><span>Galerie</span> Média</div>
-    <div class="gallery-grid" id="galleryGrid"></div>
-</section>
-
-<!-- Événements -->
-<section id="evenements" class="reveal">
-    <div class="section-title"><span>Événements</span> à venir</div>
-    <div class="cards-grid">
-        <div class="card"><h3>🏆 Grand Concours d'Éloquence</h3><p>15 Décembre 2025 | Université de Kinshasa</p></div>
-        <div class="card"><h3>🎤 Atelier Leadership & Impact</h3><p>22 Janvier 2026 - En ligne & Présentiel</p></div>
-        <div class="card"><h3>🗣️ Débat Interuniversitaire</h3><p>10 Février 2026 - Inscriptions ouvertes</p></div>
-    </div>
-</section>
-
-<!-- Contact -->
-<section id="contact" class="reveal">
-    <div class="section-title"><span>Contactez</span> nous</div>
-    <div style="text-align:center; max-width:650px; margin:auto;">
-        <p><i class="fas fa-envelope"></i> excellentiaacademia@gmail.com</p>
-        <p><i class="fab fa-whatsapp"></i> +243 123 456 789 (WhatsApp officiel)</p>
-        <div class="social-icons">
-            <i class="fab fa-instagram"></i> <i class="fab fa-twitter"></i> <i class="fab fa-facebook"></i> <i class="fab fa-youtube"></i>
+    <section class="avantages section-padding" id="avantages">
+        <div class="container">
+            <div class="section-title"><h2><span class="title-decoration">Avantages d'être Membre</span></h2><p>Rejoignez-nous et bénéficiez de privilèges exclusifs.</p></div>
+            <div class="avantages-grid">
+                <div class="avantage-card"><div class="avantage-header"><h3>Formations Exclusives</h3></div><div class="avantage-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Art oratoire & éloquence</li><li><i class="fas fa-check"></i> Leadership & entrepreneuriat</li><li><i class="fas fa-check"></i> Rédaction académique (TFC/Mémoire)</li><li><i class="fas fa-check"></i> Pensée critique</li></ul></div></div>
+                <div class="avantage-card"><div class="avantage-header" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));"><h3>Activités Privilégiées</h3></div><div class="avantage-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Concours d'éloquence</li><li><i class="fas fa-check"></i> Conférences & panels</li><li><i class="fas fa-check"></i> Débats contradictoires</li><li><i class="fas fa-check"></i> Rencontres inspirantes</li></ul></div></div>
+                <div class="avantage-card"><div class="avantage-header" style="background: linear-gradient(135deg, var(--success), #388e3c);"><h3>Opportunités Uniques</h3></div><div class="avantage-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Devenir Ambassadeur</li><li><i class="fas fa-check"></i> Intégrer la Coordination</li><li><i class="fas fa-check"></i> Mentorat personnalisé</li><li><i class="fas fa-check"></i> Certificats officiels</li></ul></div></div>
+            </div>
         </div>
-        <form id="simpleContact" style="margin-top:30px;"><input type="text" placeholder="Nom"><input type="email" placeholder="Email"><textarea placeholder="Message"></textarea><button type="button" onclick="alert('✅ Message reçu ! Nous reviendrons rapidement.')">Envoyer</button></form>
-    </div>
-</section>
+    </section>
 
-<footer>
-    <p>© 2025 Excellentia Academia — L'excellence pour héritage</p>
-    <div class="social-icons" style="margin-top: 12px;"><i class="fab fa-instagram"></i> <i class="fab fa-whatsapp"></i> <i class="fab fa-twitter"></i> <i class="fab fa-facebook"></i> <i class="fab fa-youtube"></i></div>
-</footer>
+    <section class="faculties section-padding" id="facultes">
+        <div class="container">
+            <div class="section-title"><h2><span class="title-decoration">13 Facultés - Nos Ambassadeurs</span></h2><p>Excellentia Academia est présent dans toutes les facultés de l'UNIKIN.</p></div>
+            <div class="faculties-grid" id="facultiesContainer"></div>
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="#inscription" class="btn btn-success" style="font-size: 1.1rem;"><i class="fas fa-user-plus"></i> Postuler comme Ambassadeur</a>
+            </div>
+        </div>
+    </section>
 
-<script>
-    // Firebase + EmailJS setup
-    const firebaseConfig = {
-        apiKey: "AIzaSyB68tv_pxmOxblO_qnHoF1cSWAMXTjhung",
-        authDomain: "membre-955c6.firebaseapp.com",
-        projectId: "membre-955c6",
-        storageBucket: "membre-955c6.firebasestorage.app",
-        messagingSenderId: "397628408442",
-        appId: "1:397628408442:web:c14bab03891ab5111931c3"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    emailjs.init("aPNNQ4mKPEi85io_Q");
+    <section class="avantages section-padding" id="activites" style="background-color: var(--light-gray);">
+        <div class="container">
+            <div class="section-title"><h2><span class="title-decoration">Nos Activités Principales</span></h2><p>Découvrez nos programmes récurrents.</p></div>
+            <div class="activite-grid">
+                <div class="activite-card"><div class="activite-header"><h3><i class="fas fa-trophy"></i> Concours d'Éloquence</h3></div><div class="activite-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Inter-facultés</li><li><i class="fas fa-check"></i> Prix attractifs</li><li><i class="fas fa-check"></i> Jury d'exception</li></ul></div></div>
+                <div class="activite-card"><div class="activite-header" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));"><h3><i class="fas fa-chalkboard-user"></i> Formations</h3></div><div class="activite-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Art oratoire</li><li><i class="fas fa-check"></i> Leadership</li><li><i class="fas fa-check"></i> Entrepreneuriat</li><li><i class="fas fa-check"></i> Communication pro</li></ul></div></div>
+                <div class="activite-card"><div class="activite-header" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark));"><h3><i class="fas fa-microphone-alt"></i> Conférences</h3></div><div class="activite-body"><ul class="avantage-features"><li><i class="fas fa-check"></i> Panels thématiques</li><li><i class="fas fa-check"></i> Séminaires</li><li><i class="fas fa-check"></i> Rencontres inspirantes</li></ul></div></div>
+            </div>
+        </div>
+    </section>
 
-    const formCand = document.getElementById('candidatureForm');
-    const msgDiv = document.getElementById('formMessage');
-    formCand.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = 'Envoi...';
-        const data = {
-            nom: document.getElementById('nom').value,
-            email: document.getElementById('email').value,
-            telephone: document.getElementById('telephone').value,
-            universite: document.getElementById('universite').value,
-            type: document.getElementById('typeCandidature').value,
-            motivation: document.getElementById('motivation').value,
-            statut: 'En attente',
-            date: new Date()
+    <section class="inscription section-padding" id="inscription">
+        <div class="container">
+            <div class="section-title"><h2><span class="title-decoration">Formulaire d'Adhésion</span></h2><p>Devenez membre ou ambassadeur d'Excellentia Academia.</p></div>
+            <div class="form-container">
+                <div class="form-header"><h2>Rejoignez la communauté</h2><p>Privilège : formations, concours, ateliers, événements</p></div>
+                <form class="form-body" id="registrationForm">
+                    <div class="form-row">
+                        <div class="form-group"><label>Prénom *</label><input type="text" id="firstName" class="form-control" required></div>
+                        <div class="form-group"><label>Nom *</label><input type="text" id="lastName" class="form-control" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Email *</label><input type="email" id="email" class="form-control" required></div>
+                        <div class="form-group"><label>Téléphone</label><input type="tel" id="phone" class="form-control"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Faculté *</label><select id="faculty" class="form-control" required></select></div>
+                        <div class="form-group"><label>Niveau *</label><select id="niveau" class="form-control" required><option value="">Sélectionnez</option><option>Licence 1</option><option>Licence 2</option><option>Licence 3</option><option>Master 1</option><option>Master 2</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Type d'Adhésion *</label><select id="typeAdhesion" class="form-control" required><option value="">Choisissez</option><option value="Membre">Membre régulier</option><option value="Ambassadeur">Postuler comme Ambassadeur</option></select></div>
+                    </div>
+                    <div class="form-group"><label>Motivation *</label><textarea id="motivation" class="form-control" rows="4" required></textarea></div>
+                    <div style="text-align: center;"><button type="submit" class="btn btn-primary" style="padding: 16px 50px;"><i class="fas fa-paper-plane"></i> Soumettre ma candidature</button></div>
+                    <div id="formMessage" style="text-align:center; margin-top:20px;"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div><img src="IMG_1812.jpeg" alt="Logo" class="footer-logo-image" onerror="this.src='https://via.placeholder.com/60'"><div class="footer-logo-text">Excellentia</div><div class="logo-sub" style="color:var(--accent)">ACADEMIA</div><p style="margin-top:15px;">Au-delà de l'excellence académique</p></div>
+                <div><h3>Liens</h3><ul style="list-style:none"><li><a href="#accueil" style="color:white">Accueil</a></li><li><a href="#avantages" style="color:white">Avantages</a></li><li><a href="#facultes" style="color:white">Facultés</a></li><li><a href="#inscription" style="color:white">Inscription</a></li></ul></div>
+                <div><h3>Contact</h3><p><i class="fas fa-envelope"></i> excellentiaacademia@gmail.com</p><p><i class="fab fa-whatsapp"></i> +243 123 456 789</p><div class="social-icons"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div>
+            </div>
+            <div class="copyright"><p>&copy; 2025 Excellentia Academia - Tous droits réservés</p></div>
+        </div>
+    </footer>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB68tv_pxmOxblO_qnHoF1cSWAMXTjhung",
+            authDomain: "membre-955c6.firebaseapp.com",
+            projectId: "membre-955c6",
+            storageBucket: "membre-955c6.firebasestorage.app",
+            messagingSenderId: "397628408442",
+            appId: "1:397628408442:web:c14bab03891ab5111931c3"
         };
-        try {
-            await db.collection('inscriptions').add(data);
-            await emailjs.send("service_4u3n87h", "template_ed65khj", {
-                to_name: data.nom,
-                to_email: data.email,
-                type_candidature: data.type,
-                message: `Félicitations ${data.nom}, votre candidature a bien été reçue chez Excellentia Academia. Nous vous contacterons sous peu.`
-            });
-            msgDiv.innerHTML = "<span style='color:#1A4A6F; font-weight:bold'>✨ Candidature enregistrée ! Email de confirmation envoyé.</span>";
-            formCand.reset();
-        } catch(err) { msgDiv.innerHTML = "<span style='color:#B22234'>Erreur, réessayez.</span>"; console.error(err); }
-        finally { btn.disabled = false; btn.innerText = 'Envoyer ma candidature'; }
-    });
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        emailjs.init("aPNNQ4mKPEi85io_Q");
 
-    document.getElementById('toggleAmbBtn')?.addEventListener('click', () => {
-        document.getElementById('ambassadorListDiv').classList.toggle('show');
-        document.getElementById('toggleAmbBtn').innerText = document.getElementById('ambassadorListDiv').classList.contains('show') ? 'Masquer' : 'Afficher la liste';
-    });
+        // Facultés avec ambassadeurs
+        const facultiesData = [
+            { name: "Faculté de Droit", ambassador: "Aristote MBO" },
+            { name: "Faculté de Lettres", ambassador: "Adoption MWAMUKASA" },
+            { name: "Sciences Économiques", ambassador: "Grâce Eloko" },
+            { name: "Sciences Sociales", ambassador: "Keren TUAVUKIDI" },
+            { name: "Sciences et Technologies", ambassador: "Jonathan MATONDON" },
+            { name: "Sciences Pharmaceutiques", ambassador: "Précieux KUZAMBA" },
+            { name: "Psychologie", ambassador: "Jeff NGANDU" },
+            { name: "Polytechnique", ambassador: "À désigner" },
+            { name: "Médecine Dentaire", ambassador: "À désigner" },
+            { name: "Médecine Vétérinaire", ambassador: "À désigner" },
+            { name: "Pétrole et Énergies", ambassador: "À désigner" },
+            { name: "Sciences Agronomiques", ambassador: "À désigner" },
+            { name: "Médecine", ambassador: "À désigner" }
+        ];
 
-    const menuToggle = document.getElementById('menuToggle'), navLinks = document.getElementById('navLinks');
-    menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
-    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('active')));
-
-    const reveals = document.querySelectorAll('.reveal');
-    const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
-    reveals.forEach(el => obs.observe(el));
-
-    const gallery = document.getElementById('galleryGrid');
-    const imgSet = ["https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=500", "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=500", "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500"];
-    let galHtml = '';
-    imgSet.forEach(url => { galHtml += `<div class="gallery-item"><img src="${url}" alt="Événement EA"></div>`; });
-    galHtml += `<div class="gallery-item video-container"><video controls src="https://cdn.pixabay.com/video/2023/06/26/169313-833968432_tiny.mp4"></video></div>`;
-    gallery.innerHTML = galHtml;
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            if(targetId === "#" || targetId === "") return;
-            const target = document.querySelector(targetId);
-            if(target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+        // Génération facultés
+        const container = document.getElementById('facultiesContainer');
+        facultiesData.forEach(f => {
+            const card = document.createElement('div');
+            card.className = 'faculty-card';
+            card.innerHTML = `<div class="faculty-icon"><i class="fas fa-university"></i></div><div class="faculty-content"><h3>${f.name}</h3><div class="ambassador-info"><div class="ambassador-icon"><i class="fas fa-user-graduate"></i></div><div><h5>Ambassadeur</h5><p>${f.ambassador}</p></div></div></div>`;
+            container.appendChild(card);
         });
-    });
-</script>
+
+        // Remplir select facultés
+        const facultySelect = document.getElementById('faculty');
+        facultiesData.forEach(f => { const opt = document.createElement('option'); opt.value = f.name; opt.textContent = f.name; facultySelect.appendChild(opt); });
+
+        // Formulaire
+        const form = document.getElementById('registrationForm');
+        const msgDiv = document.getElementById('formMessage');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = 'Envoi...';
+            
+            const data = {
+                nom: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                telephone: document.getElementById('phone').value,
+                universite: 'UNIKIN',
+                type: document.getElementById('typeAdhesion').value,
+                motivation: document.getElementById('motivation').value,
+                statut: 'En attente',
+                date: new Date()
+            };
+            
+            try {
+                await db.collection('inscriptions').add(data);
+                await emailjs.send("service_4u3n87h", "template_ed65khj", {
+                    to_name: data.nom,
+                    to_email: data.email,
+                    type_candidature: data.type,
+                    message: `Bonjour ${data.nom}, votre candidature chez Excellentia Academia a bien été reçue. Nous vous répondrons sous peu.`
+                });
+                msgDiv.innerHTML = '<span style="color:green">✅ Candidature enregistrée ! Un email de confirmation vous a été envoyé.</span>';
+                form.reset();
+            } catch(err) {
+                msgDiv.innerHTML = '<span style="color:red">❌ Erreur, veuillez réessayer.</span>';
+                console.error(err);
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Soumettre ma candidature';
+        });
+
+        // Menu mobile
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        mobileBtn.addEventListener('click', () => navLinks.classList.toggle('active'));
+        
+        // Header scroll
+        window.addEventListener('scroll', () => {
+            document.querySelector('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if(target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
