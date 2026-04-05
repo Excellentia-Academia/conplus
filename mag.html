@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Excellentia Academia | Excellence · Éloquence · Engagement</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,w500;ght@14..32,300;14..32,400;14..32,14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -20,25 +20,42 @@
             overflow-x: hidden;
         }
 
-        /* ANIMATIONS */
+        /* ========== ANIMATIONS GLOBALES ========== */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(40px); }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
             to { opacity: 1; transform: translateX(0); }
         }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes floatSlow {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(30,74,118,0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(30,74,118,0); }
+            100% { box-shadow: 0 0 0 0 rgba(30,74,118,0); }
+        }
 
-        /* HERO SECTION */
+        /* ========== HERO AVEC IMAGE DE FOND ========== */
         .hero {
             position: relative;
-            min-height: 85vh;
-            background: linear-gradient(115deg, #0A2F5A 0%, #1B4A7A 45%, #C0392B 100%);
+            min-height: 90vh;
+            background: linear-gradient(rgba(10, 47, 90, 0.75), rgba(192, 57, 43, 0.7)), url('IMG_1812.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -52,8 +69,9 @@
             height: 200%;
             top: -50%;
             left: -50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             animation: rotateSlow 25s linear infinite;
+            pointer-events: none;
         }
         @keyframes rotateSlow {
             from { transform: rotate(0deg); }
@@ -62,7 +80,7 @@
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 100%);
+            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
         }
         .hero-content {
             position: relative;
@@ -73,7 +91,7 @@
         }
         .hero-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.2);
             backdrop-filter: blur(12px);
             padding: 0.5rem 1.8rem;
             border-radius: 60px;
@@ -88,7 +106,7 @@
             font-size: 3.8rem;
             font-weight: 800;
             color: white;
-            text-shadow: 0 5px 25px rgba(0,0,0,0.25);
+            text-shadow: 0 5px 25px rgba(0,0,0,0.3);
             letter-spacing: -1px;
         }
         .hero h1 i {
@@ -97,7 +115,7 @@
         }
         .hero p {
             font-size: 1.2rem;
-            color: rgba(255,255,255,0.92);
+            color: rgba(255,255,255,0.95);
             max-width: 750px;
             margin: 1.2rem auto;
             font-weight: 500;
@@ -110,36 +128,34 @@
             flex-wrap: wrap;
         }
         .stat-card {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             padding: 0.8rem 1.8rem;
             border-radius: 50px;
             font-weight: 700;
             color: white;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
-        .stat-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.2); }
-        .stat-number { font-size: 1.8rem; font-weight: 800; margin-right: 6px; }
+        .stat-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.25); }
 
-        /* CONTAINER */
+        /* ========== CONTAINER ========== */
         .container {
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 2rem 4rem;
         }
 
-        /* SECTIONS */
+        /* ========== SECTIONS AVEC ANIMATIONS ========== */
         .section {
             margin-bottom: 4rem;
             opacity: 0;
-            animation: fadeUp 0.7s forwards;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .section:nth-child(1) { animation-delay: 0.1s; }
-        .section:nth-child(2) { animation-delay: 0.15s; }
-        .section:nth-child(3) { animation-delay: 0.2s; }
-        .section:nth-child(4) { animation-delay: 0.25s; }
-        .section:nth-child(5) { animation-delay: 0.3s; }
-
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
         .section-header {
             display: flex;
             align-items: baseline;
@@ -154,12 +170,8 @@
             font-weight: 700;
             color: #0A2F5A;
         }
-        .section-header p {
-            color: #5a6e82;
-            font-weight: 500;
-        }
 
-        /* GRILLES ET CARTES */
+        /* GRILLES */
         .grid-3cols {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -167,14 +179,14 @@
         }
         .grid-2cols {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
         .card {
             background: #ffffff;
             border-radius: 1.5rem;
             padding: 1.5rem;
-            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             border: 1px solid #eef2f8;
             box-shadow: 0 5px 15px rgba(0,0,0,0.02);
         }
@@ -197,18 +209,16 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.5rem;
-            margin-top: 1rem;
         }
         .gallery-item {
             background: #f8fafd;
             border-radius: 1.2rem;
             overflow: hidden;
-            transition: all 0.3s;
+            transition: all 0.4s;
             cursor: pointer;
-            border: 1px solid #eef2f8;
         }
         .gallery-item:hover {
-            transform: scale(1.02);
+            transform: scale(1.03);
             box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
         }
         .gallery-img {
@@ -220,30 +230,17 @@
             font-size: 3rem;
             color: #1e4a76;
         }
-        .gallery-caption {
-            padding: 1rem;
-            font-weight: 600;
-            text-align: center;
-            color: #0A2F5A;
-        }
 
         /* Carte RDC */
         .world-map-section {
             background: linear-gradient(145deg, #f0f4fc, #ffffff);
             border-radius: 2rem;
             padding: 2rem;
-            margin: 2rem 0 3rem;
+            margin: 2rem 0;
             text-align: center;
-            border: 1px solid #e0e8f0;
             transition: transform 0.3s;
         }
-        .world-map-section:hover {
-            transform: scale(1.01);
-        }
-        .svg-world {
-            max-width: 100%;
-            height: auto;
-        }
+        .world-map-section:hover { transform: scale(1.01); }
 
         /* Bouton ambassadeurs */
         .reveal-btn {
@@ -254,11 +251,10 @@
             font-weight: 600;
             color: white;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            margin: 1rem 0;
         }
         .reveal-btn:hover {
             background: #C0392B;
@@ -288,6 +284,64 @@
         }
         .amb-tag i { color: #C0392B; margin-right: 6px; }
 
+        /* Bouton contact flottant */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .contact-btn {
+            background: #C0392B;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: pulseGlow 2s infinite;
+        }
+        .contact-btn:hover {
+            transform: scale(1.1);
+            background: #1e4a76;
+        }
+        .contact-panel {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+            max-width: 280px;
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.3s ease;
+            transform-origin: bottom right;
+        }
+        .contact-panel.open {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 0.8rem;
+        }
+        .social-icons a {
+            color: #1e4a76;
+            font-size: 1.3rem;
+            transition: 0.2s;
+        }
+        .social-icons a:hover { color: #C0392B; transform: translateY(-3px); }
+
         .vision-block {
             background: linear-gradient(125deg, #0A2F5A, #1B4A7A);
             border-radius: 2rem;
@@ -310,6 +364,7 @@
 </head>
 <body>
 
+<!-- HERO AVEC IMAGE DE FOND IMG_1812.jpeg -->
 <div class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -317,42 +372,37 @@
         <h1><i class="fas fa-graduation-cap"></i> EXCELLENTIA ACADEMIA</h1>
         <p>Nous développons la puissance de la parole à travers l'organisation de concours d'éloquence, des formations oratoires structurées, le renforcement des capacités d'argumentation et la consolidation de la confiance en public.</p>
         <div class="hero-stats">
-            <div class="stat-card"><span class="stat-number">11</span> Coordinateurs</div>
-            <div class="stat-card"><span class="stat-number">6</span> Ambassadeurs</div>
-            <div class="stat-card"><span class="stat-number">+150</span> Membres</div>
+            <div class="stat-card"><span style="font-size:1.8rem; font-weight:800;">11</span> Coordinateurs</div>
+            <div class="stat-card"><span style="font-size:1.8rem; font-weight:800;">6</span> Ambassadeurs</div>
+            <div class="stat-card"><span style="font-size:1.8rem; font-weight:800;">+150</span> Membres</div>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <!-- Photo de la structure + identité -->
+    <!-- Carte RDC + identité -->
     <div class="world-map-section">
         <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; justify-content: center;">
             <div style="flex: 1; min-width: 200px;">
-                <div style="background: #eef2f8; border-radius: 1.5rem; height: 220px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem;">
+                <div style="background: #eef2f8; border-radius: 1.5rem; height: 200px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
                     <i class="fas fa-building" style="font-size: 4rem; color: #1e4a76;"></i>
-                    <p style="font-weight: 600;">📸 IMG_1812.jpeg</p>
-                    <p style="font-size: 0.8rem;">Siège d'Excellentia Academia</p>
+                    <p style="font-weight: 600; margin-top: 0.5rem;">📸 IMG_1812.jpeg</p>
                 </div>
             </div>
             <div style="flex: 2;">
                 <h3 style="color: #0A2F5A;"><i class="fas fa-map-marker-alt"></i> République Démocratique du Congo</h3>
-                <svg class="svg-world" viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="0" y="0" width="500" height="180" fill="#EFF3F8" rx="15" />
-                    <path d="M200,60 Q240,45 280,55 Q310,65 320,90 Q330,115 300,135 Q270,150 240,140 Q210,130 200,100 Q190,80 200,60Z" fill="#1e4a76" stroke="#C0392B" stroke-width="2.5" fill-opacity="0.85" />
-                    <text x="245" y="100" font-size="12" fill="white" font-weight="bold">RDC</text>
-                    <circle cx="250" cy="95" r="3" fill="#FFD966" />
+                <svg viewBox="0 0 500 160" style="width:100%; max-width:400px;">
+                    <rect width="500" height="160" fill="#EFF3F8" rx="15" />
+                    <path d="M200,50 Q240,35 280,45 Q310,55 320,80 Q330,105 300,125 Q270,140 240,130 Q210,120 200,90 Q190,70 200,50Z" fill="#1e4a76" stroke="#C0392B" stroke-width="2.5" fill-opacity="0.85" />
+                    <text x="245" y="90" font-size="12" fill="white" font-weight="bold">RDC</text>
                 </svg>
             </div>
         </div>
     </div>
 
-    <!-- Nos Missions (inspiré du fichier) -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-bullseye"></i> Nos Missions</h2>
-            <p>Former · Inspirer · Élever</p>
-        </div>
+    <!-- Nos Missions -->
+    <div class="section" id="missions">
+        <div class="section-header"><h2><i class="fas fa-bullseye"></i> Nos Missions</h2></div>
         <div class="grid-2cols">
             <div class="card"><div class="card-icon"><i class="fas fa-graduation-cap"></i></div><h3>Excellence Académique</h3><p>Promouvoir un haut niveau de connaissance et de rigueur intellectuelle.</p></div>
             <div class="card"><div class="card-icon"><i class="fas fa-chart-line"></i></div><h3>Leadership</h3><p>Former des leaders capables d'influencer positivement leur environnement.</p></div>
@@ -361,21 +411,15 @@
         </div>
     </div>
 
-    <!-- Coordination Générale -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-users-cog"></i> Coordination Générale</h2>
-            <p>Organe central de pilotage</p>
-        </div>
+    <!-- Coordination -->
+    <div class="section" id="coordination">
+        <div class="section-header"><h2><i class="fas fa-users-cog"></i> Coordination Générale</h2></div>
         <div class="grid-3cols" id="coordinationGrid"></div>
     </div>
 
     <!-- Ambassadeurs -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-handshake"></i> Ambassadeurs</h2>
-            <p>Représentants officiels</p>
-        </div>
+    <div class="section" id="ambassadeurs">
+        <div class="section-header"><h2><i class="fas fa-handshake"></i> Ambassadeurs</h2></div>
         <div style="text-align: center;">
             <button id="revealAmbBtn" class="reveal-btn"><i class="fas fa-eye"></i> Révéler les ambassadeurs <i class="fas fa-chevron-down"></i></button>
             <div id="ambListContainer" class="amb-list"></div>
@@ -383,29 +427,22 @@
     </div>
 
     <!-- Membres Effectifs -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-users"></i> Membres Effectifs</h2>
-            <p>Cœur vivant de la structure</p>
-        </div>
+    <div class="section" id="membres">
+        <div class="section-header"><h2><i class="fas fa-users"></i> Membres Effectifs</h2></div>
         <div class="card" style="background: #F9FBFE;">
             <div style="display: flex; flex-wrap: wrap; gap: 0.8rem;">
                 <span class="amb-tag"><i class="fas fa-check-circle"></i> Art oratoire</span>
                 <span class="amb-tag"><i class="fas fa-check-circle"></i> Leadership</span>
                 <span class="amb-tag"><i class="fas fa-check-circle"></i> Entrepreneuriat</span>
-                <span class="amb-tag"><i class="fas fa-check-circle"></i> Éloquence</span>
                 <span class="amb-tag"><i class="fas fa-check-circle"></i> +150 adhérents</span>
             </div>
-            <p style="margin-top: 1rem;">Participation active aux formations, conférences, ateliers et concours. Bénéficient d'un accompagnement académique et pratique.</p>
+            <p style="margin-top: 1rem;">Participation active aux formations, conférences, ateliers et concours.</p>
         </div>
     </div>
 
-    <!-- Galerie d'Activités -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-images"></i> Galerie d'Activités</h2>
-            <p>Nos moments forts</p>
-        </div>
+    <!-- Galerie -->
+    <div class="section" id="galerie">
+        <div class="section-header"><h2><i class="fas fa-images"></i> Galerie d'Activités</h2></div>
         <div class="gallery">
             <div class="gallery-item"><div class="gallery-img"><i class="fas fa-microphone-alt"></i></div><div class="gallery-caption">Concours d'éloquence</div></div>
             <div class="gallery-item"><div class="gallery-img"><i class="fas fa-chalkboard-user"></i></div><div class="gallery-caption">Formation leadership</div></div>
@@ -414,36 +451,50 @@
         </div>
     </div>
 
-    <!-- Domaines d'intervention -->
-    <div class="section">
-        <div class="section-header">
-            <h2><i class="fas fa-chalkboard"></i> Domaines & Activités</h2>
-            <p>Formation · Concours · Conférences</p>
-        </div>
+    <!-- Domaines -->
+    <div class="section" id="domaines">
+        <div class="section-header"><h2><i class="fas fa-chalkboard"></i> Domaines & Activités</h2></div>
         <div class="grid-3cols">
-            <div class="card"><div class="card-icon"><i class="fas fa-microphone-alt"></i></div><h3>Formations</h3><ul style="list-style: none;"><li>✓ Art oratoire & prise de parole</li><li>✓ Leadership & développement perso</li><li>✓ Entrepreneuriat & innovation</li><li>✓ Pensée critique & argumentation</li></ul></div>
-            <div class="card"><div class="card-icon"><i class="fas fa-trophy"></i></div><h3>Concours</h3><ul style="list-style: none;"><li>✓ Concours d’éloquence</li><li>✓ Concours de plaidoirie</li><li>✓ Débats contradictoires</li><li>✓ Compétitions interuniversitaires</li></ul></div>
-            <div class="card"><div class="card-icon"><i class="fas fa-calendar-alt"></i></div><h3>Conférences & Ateliers</h3><ul style="list-style: none;"><li>✓ Conférences thématiques</li><li>✓ Ateliers pratiques & panels</li><li>✓ Rencontres inspirantes</li><li>✓ Séminaires de formation</li></ul></div>
+            <div class="card"><div class="card-icon"><i class="fas fa-microphone-alt"></i></div><h3>Formations</h3><ul style="list-style: none;"><li>✓ Art oratoire</li><li>✓ Leadership</li><li>✓ Entrepreneuriat</li><li>✓ Pensée critique</li></ul></div>
+            <div class="card"><div class="card-icon"><i class="fas fa-trophy"></i></div><h3>Concours</h3><ul style="list-style: none;"><li>✓ Éloquence</li><li>✓ Plaidoirie</li><li>✓ Débats contradictoires</li><li>✓ Compétitions interuniversitaires</li></ul></div>
+            <div class="card"><div class="card-icon"><i class="fas fa-calendar-alt"></i></div><h3>Conférences & Ateliers</h3><ul style="list-style: none;"><li>✓ Conférences thématiques</li><li>✓ Ateliers pratiques</li><li>✓ Panels de discussion</li></ul></div>
         </div>
     </div>
 
-    <!-- Engagement pour la société + Vision -->
+    <!-- Engagement + Vision -->
     <div class="grid-2cols" style="margin-bottom: 2rem;">
         <div class="card" style="background: linear-gradient(145deg, #fef7e0, #fff6e6);">
             <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
             <h3>Engagement pour la société</h3>
-            <p>Nous contribuons activement au développement national par la mise en œuvre de projets citoyens, la mobilisation responsable des étudiants et la promotion d’une vision ambitieuse pour la RDC et l’Afrique, orientée vers un impact durable.</p>
+            <p>Nous contribuons activement au développement national par la mise en œuvre de projets citoyens, la mobilisation responsable des étudiants et la promotion d’une vision ambitieuse pour la RDC et l’Afrique.</p>
         </div>
-        <div class="vision-block" style="background: linear-gradient(125deg, #0A2F5A, #1B4A7A);">
+        <div class="vision-block">
             <h2 style="font-weight: 800;"><i class="fas fa-eye"></i> Notre Vision</h2>
             <p style="margin-top: 1rem;">Bâtir une élite intellectuelle capable de penser, diriger et transformer l'avenir.</p>
-            <div style="margin-top: 1rem;"><i class="fas fa-flag-checkered"></i> <i class="fas fa-heart" style="color: #FFD966;"></i></div>
         </div>
     </div>
 
     <footer>
         <i class="fas fa-copyright"></i> Excellentia Academia — Bleu, Rouge & Blanc : l'excellence au service de la nation congolaise.
     </footer>
+</div>
+
+<!-- Bouton Contact Flottant -->
+<div class="floating-contact">
+    <div id="contactPanel" class="contact-panel">
+        <p style="font-weight: 700; margin-bottom: 0.5rem;"><i class="fas fa-envelope"></i> excellentiaacademia@gmail.com</p>
+        <p><i class="fab fa-whatsapp"></i> +243 835 913 472</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+    <div id="contactBtn" class="contact-btn">
+        <i class="fas fa-comment-dots"></i>
+    </div>
 </div>
 
 <script>
@@ -499,13 +550,32 @@
     const revealBtn = document.getElementById('revealAmbBtn');
     revealBtn.addEventListener('click', () => {
         ambContainer.classList.toggle('show');
-        if(ambContainer.classList.contains('show')) {
-            revealBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Masquer les ambassadeurs <i class="fas fa-chevron-up"></i>';
-        } else {
-            revealBtn.innerHTML = '<i class="fas fa-eye"></i> Révéler les ambassadeurs <i class="fas fa-chevron-down"></i>';
+        revealBtn.innerHTML = ambContainer.classList.contains('show') ? '<i class="fas fa-eye-slash"></i> Masquer les ambassadeurs <i class="fas fa-chevron-up"></i>' : '<i class="fas fa-eye"></i> Révéler les ambassadeurs <i class="fas fa-chevron-down"></i>';
+    });
+
+    // Animation au scroll
+    const sections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    sections.forEach(section => observer.observe(section));
+
+    // Contact panel
+    const contactBtn = document.getElementById('contactBtn');
+    const contactPanel = document.getElementById('contactPanel');
+    contactBtn.addEventListener('click', () => {
+        contactPanel.classList.toggle('open');
+    });
+    // Fermer si clic ailleurs (optionnel)
+    document.addEventListener('click', (e) => {
+        if (!contactBtn.contains(e.target) && !contactPanel.contains(e.target)) {
+            contactPanel.classList.remove('open');
         }
     });
-    ambContainer.classList.remove('show');
 </script>
 </body>
 </html>
