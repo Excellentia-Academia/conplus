@@ -35,7 +35,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 2rem;
@@ -73,7 +72,6 @@
             font-size: 1.1rem;
         }
 
-        /* Formulaire */
         .form-card {
             background: white;
             border-radius: 32px;
@@ -192,6 +190,16 @@
             border-left: 4px solid var(--red);
         }
 
+        /* Champ Autre faculté (caché par défaut) */
+        .other-faculty-field {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .other-faculty-field.show {
+            display: block;
+        }
+
         @media (max-width: 700px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -272,7 +280,11 @@
                             <option>Pétrole, Gaz et Énergies Renouvelables</option>
                             <option>Sciences Agronomiques</option>
                             <option>Médecine Dentaire</option>
+                            <option value="autre">📝 Autre (précisez ci-dessous)</option>
                         </select>
+                        <div class="other-faculty-field" id="otherFacultyDiv">
+                            <input type="text" id="otherFaculty" placeholder="Précisez le nom de votre faculté" style="margin-top: 8px;">
+                        </div>
                     </div>
                 </div>
 
@@ -317,6 +329,22 @@
 </div>
 
 <script>
+    // ========== GESTION DU CHAMP "AUTRE" POUR FACULTÉ ==========
+    const facultySelect = document.getElementById('faculty');
+    const otherFacultyDiv = document.getElementById('otherFacultyDiv');
+    const otherFacultyInput = document.getElementById('otherFaculty');
+
+    facultySelect.addEventListener('change', function() {
+        if (this.value === 'autre') {
+            otherFacultyDiv.classList.add('show');
+            otherFacultyInput.setAttribute('required', 'required');
+        } else {
+            otherFacultyDiv.classList.remove('show');
+            otherFacultyInput.removeAttribute('required');
+            otherFacultyInput.value = '';
+        }
+    });
+
     // ========== FIREBASE ==========
     const firebaseConfig = {
         apiKey: "AIzaSyB68tv_pxmOxblO_qnHoF1cSWAMXTjhung",
@@ -328,7 +356,6 @@
         measurementId: "G-2ZRYLN3NMK"
     };
 
-    // Initialisation Firebase
     let db;
     try {
         firebase.initializeApp(firebaseConfig);
@@ -338,51 +365,78 @@
         console.error("❌ Firebase erreur:", err);
     }
 
-    // ========== EMAILJS avec TES identifiants ==========
+    // ========== EMAILJS ==========
     emailjs.init("aPNNQ4mKPEi85io_Q");
     const EMAILJS_SERVICE_ID = "service_gqclxov";
     const EMAILJS_TEMPLATE_ID = "template_sgnn50l";
 
-    // ========== GESTION FORMULAIRE ==========
+    // LIEN WHATSAPP GROUPE MEMBRE
+    const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/HfKRmuvqkhUI2tk6tKlwiV?mode=gi_t";
+
+    // ========== FONCTION POUR GÉNÉRER LE MESSAGE EMAIL ==========
+    function generateEmailMessage(data, typeInscription) {
+        const fullName = `${data.prenom} ${data.nom}`;
+        const facultéValue = data.faculte === 'autre' ? data.otherFaculty : data.faculte;
+        
+        if (typeInscription === "Membre") {
+            return `
+Bonjour ${fullName},
+
+🎉 Félicitations ! Votre inscription en tant que MEMBRE d'Excellentia Academia a bien été enregistrée.
+
+📋 Récapitulatif de votre candidature :
+- Université : ${data.universite}
+- Faculté : ${facultéValue}
+- Promotion : ${data.promotion}
+
+✅ Prochaine étape :
+Rejoignez dès maintenant notre communauté WhatsApp officielle pour ne rien manquer de nos activités, formations et événements :
+
+🔗 LIEN D'INVITATION : ${WHATSAPP_GROUP_LINK}
+
+Au plaisir de vous compter parmi nous !
+
+Cordialement,
+L'équipe Excellentia Academia
+📧 excellentiaacademia@gmail.com
+🌍 Au-delà de l'excellence académique
+            `;
+        } 
+        else { // Ambassadeur
+            return `
+Bonjour ${fullName},
+
+🙏 Merci pour votre candidature au poste d'AMBASSADEUR d'Excellentia Academia.
+
+📋 Récapitulatif de votre candidature :
+- Université : ${data.universite}
+- Faculté : ${facultéValue}
+- Promotion : ${data.promotion}
+
+📌 Votre motivation :
+"${data.motivation.substring(0, 200)}..."
+
+🔍 Étude de votre profil :
+Notre équipe de coordination va étudier attentivement votre profil ainsi que votre lettre de motivation. Nous reviendrons vers vous dans les meilleurs délais pour vous informer de la suite du processus de sélection.
+
+💡 Ce que nous recherchons chez un Ambassadeur :
+- Engagement et leadership
+- Capacité à mobiliser
+- Représenter dignement la structure dans votre faculté
+
+Nous vous remercions pour votre intérêt et votre engagement envers l'excellence académique.
+
+Cordialement,
+La Coordination d'Excellentia Academia
+📧 excellentiaacademia@gmail.com
+            `;
+        }
+    }
+
+    // ========== ENVOI DU FORMULAIRE ==========
     const form = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
     const messageDiv = document.getElementById('formMessage');
-
-    async function sendToFirebase(data) {
-        if (!db) throw new Error("Firebase non disponible");
-        const docRef = await db.collection("inscriptions").add(data);
-        console.log("Firebase ID:", docRef.id);
-        return docRef;
-    }
-
-    async function sendToEmailJS(data) {
-        const emailParams = {
-            to_name: `${data.prenom} ${data.nom}`,
-            to_email: data.email,
-            type_candidature: data.typeInscription,
-            message: `
-Bonjour ${data.prenom} ${data.nom},
-
-Nous avons bien reçu votre candidature en tant que ${data.typeInscription} d'Excellentia Academia.
-
-📋 Récapitulatif :
-- Université : ${data.universite}
-- Faculté : ${data.faculte}
-- Promotion : ${data.promotion}
-- Motivation : ${data.motivation}
-
-Notre équipe vous contactera sous peu pour la suite du processus.
-
-Bienvenue dans la communauté !
-
-Excellentia Academia - Au-delà de l'excellence académique
-            `
-        };
-        
-        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
-        console.log("EmailJS réponse:", response);
-        return response;
-    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -394,18 +448,29 @@ Excellentia Academia - Au-delà de l'excellence académique
         const phone = document.getElementById('phone').value.trim();
         const university = document.getElementById('university').value.trim();
         const faculty = document.getElementById('faculty').value;
+        const otherFaculty = document.getElementById('otherFaculty').value.trim();
         const promotion = document.getElementById('promotion').value;
         const typeInscription = document.getElementById('typeInscription').value;
         const motivation = document.getElementById('motivation').value.trim();
 
-        // Validation
+        // Validation faculté "autre"
+        let finalFaculty = faculty;
+        if (faculty === 'autre') {
+            if (!otherFaculty) {
+                messageDiv.className = "message error";
+                messageDiv.innerHTML = "❌ Veuillez préciser le nom de votre faculté";
+                return;
+            }
+            finalFaculty = otherFaculty;
+        }
+
+        // Validation générale
         if (!lastName || !firstName || !email || !university || !faculty || !promotion || !typeInscription || !motivation) {
             messageDiv.className = "message error";
             messageDiv.innerHTML = "❌ Veuillez remplir tous les champs obligatoires (*)";
             return;
         }
 
-        // Validation email simple
         if (!email.includes('@') || !email.includes('.')) {
             messageDiv.className = "message error";
             messageDiv.innerHTML = "❌ Veuillez entrer un email valide";
@@ -416,13 +481,24 @@ Excellentia Academia - Au-delà de l'excellence académique
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Envoi en cours...';
 
+        // Générer le message email personnalisé
+        const emailMessage = generateEmailMessage({
+            prenom: firstName,
+            nom: lastName,
+            universite: university,
+            faculte: faculty,
+            otherFaculty: otherFaculty,
+            promotion: promotion,
+            motivation: motivation
+        }, typeInscription);
+
         const candidat = {
             nom: lastName,
             prenom: firstName,
             email: email,
             telephone: phone,
             universite: university,
-            faculte: faculty,
+            faculte: finalFaculty,
             promotion: promotion,
             typeInscription: typeInscription,
             motivation: motivation,
@@ -433,22 +509,39 @@ Excellentia Academia - Au-delà de l'excellence académique
 
         try {
             // 1. Envoi à Firebase
-            await sendToFirebase(candidat);
-            console.log("✅ Firebase OK");
+            if (db) {
+                await db.collection("inscriptions").add(candidat);
+                console.log("✅ Firebase OK");
+            } else {
+                console.warn("Firebase non disponible");
+            }
             
-            // 2. Envoi d'email
-            await sendToEmailJS(candidat);
+            // 2. Envoi d'email personnalisé
+            const emailParams = {
+                to_name: `${firstName} ${lastName}`,
+                to_email: email,
+                type_candidature: typeInscription,
+                message: emailMessage
+            };
+            
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
             console.log("✅ EmailJS OK");
 
+            // Message de succès différent selon le type
+            let successMsg = "";
+            if (typeInscription === "Membre") {
+                successMsg = `✅ Félicitations ${firstName} ! Votre inscription a été enregistrée. Vérifiez vos emails (y compris les spams) pour rejoindre notre groupe WhatsApp.`;
+            } else {
+                successMsg = `✅ Merci ${firstName} pour votre candidature ! Un email de confirmation vous a été envoyé. Notre équipe étudiera votre profil et vous recontactera sous peu.`;
+            }
+            
             messageDiv.className = "message success";
-            messageDiv.innerHTML = `
-                <i class="fas fa-check-circle"></i> 
-                ✅ Félicitations ${firstName} ! Votre candidature a été enregistrée.<br>
-                Un email de confirmation vous a été envoyé à ${email}.
-            `;
+            messageDiv.innerHTML = successMsg;
             
             // Réinitialiser le formulaire
             form.reset();
+            otherFacultyDiv.classList.remove('show');
+            otherFacultyInput.value = '';
 
         } catch (error) {
             console.error("ERREUR DÉTAILLÉE:", error);
