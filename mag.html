@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Excellentia Academia | Structure & Excellence</title>
-    <!-- Google Fonts & Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <title>Excellentia Academia | Élite & Excellence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -15,95 +14,136 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f0f4fa 0%, #e9eef5 100%);
-            color: #1e2a3e;
-            line-height: 1.5;
-            scroll-behavior: smooth;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #f8fafd, #eef2f9);
+            color: #0a2540;
+            overflow-x: hidden;
         }
 
-        /* Container principal */
+        /* Animation particules flottantes */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(30, 74, 118, 0.15);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+
         .container {
             max-width: 1300px;
             margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
+            padding: 2rem 2rem 4rem;
+            position: relative;
+            z-index: 2;
         }
 
-        /* ========== EN-TÊTE ========== */
+        /* Hero avec animation glow */
         .hero {
             text-align: center;
-            margin-bottom: 3.5rem;
-            animation: fadeSlideUp 0.9s ease-out;
+            margin-bottom: 4rem;
+            animation: heroGlow 1.2s ease-out, floatUp 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-
+        @keyframes heroGlow {
+            0% { opacity: 0; filter: blur(8px); transform: scale(0.96);}
+            100% { opacity: 1; filter: blur(0); transform: scale(1);}
+        }
+        @keyframes floatUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffffff, #f0f4fc);
+            padding: 0.4rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: #1e4a76;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid rgba(30,74,118,0.2);
+            margin-bottom: 1.2rem;
+            backdrop-filter: blur(4px);
+        }
         .hero h1 {
-            font-size: 2.7rem;
+            font-size: 3.2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #0A2F5A 0%, #1E4A76 100%);
+            background: linear-gradient(125deg, #0A2F5A 0%, #1F6392 50%, #C0392B 100%);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.75rem;
+            letter-spacing: -1px;
         }
-
         .hero h1 i {
             background: none;
             color: #c0392b;
-            margin-right: 10px;
+            margin-right: 12px;
+            filter: drop-shadow(0 2px 6px rgba(192,57,43,0.3));
         }
-
-        .hero .badge {
-            display: inline-block;
-            background: #ffffffcc;
-            backdrop-filter: blur(4px);
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #0a2f5a;
-            border: 1px solid rgba(25, 80, 130, 0.2);
-            margin-bottom: 1rem;
-        }
-
         .hero p {
             font-size: 1.2rem;
-            max-width: 750px;
-            margin: 0.8rem auto 0;
-            color: #2c3e50;
-            font-weight: 400;
+            max-width: 700px;
+            margin: 1rem auto 0;
+            color: #2c3e66;
+            font-weight: 500;
         }
 
-        /* cartes et sections */
+        /* Cartes sections avec glassmorphisme */
         .section {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(2px);
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(12px);
             border-radius: 2rem;
             margin-bottom: 2.8rem;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.6);
-            overflow: hidden;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.15), 0 1px 1px rgba(255,255,255,0.5);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.7);
+            transform: translateY(0);
+            opacity: 0;
+            animation: slideUpCard 0.7s forwards;
+            animation-delay: calc(var(--order, 0) * 0.1s);
+        }
+        @keyframes slideUpCard {
+            to { opacity: 1; transform: translateY(0);}
+            from { opacity: 0; transform: translateY(40px);}
+        }
+        .section:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 50px -15px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.85);
         }
 
         .section-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 1.5rem 2rem 0.5rem 2rem;
-            border-bottom: 2px solid #eef2f8;
+            padding: 1.6rem 2rem 0.6rem 2rem;
+            border-bottom: 2px solid rgba(30,74,118,0.2);
         }
-
         .section-header i {
-            font-size: 2rem;
-            color: #1e4a76;
+            font-size: 2.2rem;
+            background: linear-gradient(145deg, #1e4a76, #c0392b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
-
         .section-header h2 {
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             font-weight: 700;
             color: #0b2b44;
-            letter-spacing: -0.3px;
         }
 
         .section-content {
@@ -114,82 +154,91 @@
         .coordination-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.2rem;
+            gap: 1.3rem;
         }
-
         .card-member {
             background: white;
-            border-radius: 1.2rem;
+            border-radius: 1.4rem;
             padding: 1rem 1.2rem;
-            transition: all 0.25s;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
             border: 1px solid #eef2fa;
             display: flex;
             align-items: center;
             gap: 1rem;
+            cursor: default;
+            animation: cardPop 0.5s backwards;
+            animation-delay: calc(var(--i,0) * 0.03s);
         }
-
+        @keyframes cardPop {
+            from { opacity: 0; transform: scale(0.92);}
+            to { opacity: 1; transform: scale(1);}
+        }
         .card-member:hover {
-            transform: translateY(-4px);
-            border-color: #bfd9ff;
-            box-shadow: 0 14px 24px -8px rgba(26, 67, 113, 0.12);
+            transform: translateY(-8px) scale(1.01);
+            border-color: #c0392b60;
+            box-shadow: 0 20px 28px -12px rgba(192,57,43,0.2);
         }
-
         .avatar-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(145deg, #eef3fc, #dfe8f2);
-            border-radius: 60%;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #eef3fc, #e2eaf5);
+            border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: #1e4a76;
+            transition: 0.2s;
         }
-
+        .card-member:hover .avatar-icon {
+            background: linear-gradient(135deg, #c0392b10, #1e4a7610);
+            color: #c0392b;
+        }
         .member-info h4 {
             font-size: 1.05rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: #0f2f4f;
+            font-weight: 800;
+            color: #0a2f4a;
         }
 
-        .member-info p {
-            font-size: 0.8rem;
-            color: #5d6f83;
-            font-weight: 500;
-        }
-
-        /* ambassadeurs : zone interactive */
-        .ambassadeurs-wrapper {
-            text-align: center;
-        }
-
+        /* bouton ambassadeur avec ripple */
         .reveal-btn {
-            background: linear-gradient(95deg, #1e4a76, #0f3b5e);
+            background: linear-gradient(115deg, #1e4a76, #0e3a5e);
             border: none;
-            padding: 0.9rem 2.2rem;
+            padding: 1rem 2.5rem;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             color: white;
             border-radius: 60px;
             cursor: pointer;
-            transition: all 0.25s;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
         }
-
-        .reveal-btn i {
-            font-size: 1.2rem;
+        .reveal-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
         }
-
+        .reveal-btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
         .reveal-btn:hover {
-            background: linear-gradient(95deg, #0f3b5e, #0a2f4a);
-            transform: scale(1.02);
-            box-shadow: 0 12px 18px -6px rgba(0,0,0,0.2);
+            transform: scale(1.03);
+            background: linear-gradient(115deg, #c0392b, #a52f22);
+            box-shadow: 0 12px 28px rgba(192,57,43,0.4);
         }
 
         .ambassadeurs-list {
@@ -197,328 +246,305 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 1rem;
-            margin-top: 1rem;
+            margin-top: 1.8rem;
             max-height: 0;
             opacity: 0;
             overflow: hidden;
-            transition: max-height 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 0.5s ease;
+            transition: max-height 0.8s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.6s ease;
         }
-
         .ambassadeurs-list.show {
             max-height: 600px;
             opacity: 1;
-            overflow-y: visible;
         }
-
         .amb-badge {
             background: white;
             border-radius: 100px;
-            padding: 0.5rem 1.3rem;
+            padding: 0.6rem 1.5rem;
             font-weight: 600;
             color: #1e4668;
             border: 1px solid #cdddee;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             font-size: 0.95rem;
+            animation: badgeGlow 0.4s ease;
         }
-
         .amb-badge i {
             margin-right: 8px;
             color: #c0392b;
-            font-size: 0.8rem;
         }
-
         .amb-badge:hover {
-            background: #f0f6ff;
-            border-color: #8bb3da;
-            transform: translateY(-2px);
+            background: #c0392b10;
+            transform: translateY(-4px) rotate(2deg);
+            border-color: #c0392b80;
         }
 
-        /* membres effectifs (tags) */
         .membres-taglist {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
+            gap: 0.9rem;
             margin-top: 1rem;
         }
         .membre-tag {
-            background: #eef2fa;
-            border-radius: 40px;
-            padding: 0.45rem 1.2rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #1f4970;
+            background: linear-gradient(115deg, #eef2fa, #ffffff);
+            border-radius: 50px;
+            padding: 0.5rem 1.4rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border-left: 3px solid #c0392b;
+        }
+        .membre-tag:hover {
+            transform: translateX(6px);
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
 
-        /* domaines / activités (grille) */
+        /* domaines */
         .domains-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 2rem;
         }
         .domain-card {
-            background: #ffffffd9;
-            border-radius: 1.4rem;
-            padding: 1.2rem 1.5rem;
-            border-left: 5px solid #c0392b;
-            transition: 0.2s;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+            background: #ffffffdd;
+            border-radius: 1.8rem;
+            padding: 1.4rem 1.6rem;
+            transition: all 0.4s;
+            border-bottom: 3px solid #1e4a76;
+            transform: translateY(0);
         }
-        .domain-card h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #0b2b44;
+        .domain-card:hover {
+            transform: translateY(-12px);
+            border-bottom-color: #c0392b;
+            background: white;
+            box-shadow: 0 25px 35px -12px rgba(0,0,0,0.2);
         }
-        .domain-card ul {
-            list-style: none;
-            padding-left: 0.2rem;
-        }
-        .domain-card li {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
-        .domain-card li i {
-            color: #1e4a76;
-            font-size: 0.7rem;
-            margin-top: 0.2rem;
+        .domain-card h3 i {
+            color: #c0392b;
         }
 
         .vision-box {
-            background: linear-gradient(115deg, #0a2f5a 0%, #123e64 100%);
-            border-radius: 1.6rem;
-            padding: 2rem;
-            color: white;
+            background: linear-gradient(125deg, #0a2f5a, #1e4a76);
+            border-radius: 2rem;
+            padding: 2.5rem;
             text-align: center;
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
         }
-        .vision-box h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+        .vision-box::before {
+            content: "✨";
+            font-size: 120px;
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            opacity: 0.1;
+            pointer-events: none;
         }
-        .vision-box p {
-            font-size: 1.05rem;
-            max-width: 800px;
-            margin: 0 auto;
-            opacity: 0.92;
+        .vision-box:hover {
+            transform: scale(1.01);
+            box-shadow: 0 30px 40px -15px #0a2f5a80;
         }
 
         footer {
             text-align: center;
             margin-top: 3rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #4a627a;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            padding-top: 2rem;
-        }
-
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(20px);}
-            100% { opacity: 1; transform: translateY(0);}
-        }
-
-        .animate-on-scroll {
-            animation: fadeSlideUp 0.7s ease forwards;
-            opacity: 0;
         }
 
         @media (max-width: 700px) {
-            .container { padding: 1rem 1rem 2rem; }
-            .section-header h2 { font-size: 1.5rem; }
-            .hero h1 { font-size: 1.9rem; }
-            .coordination-grid { grid-template-columns: 1fr; }
+            .container { padding: 1rem; }
+            .hero h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
+<div class="bg-particles" id="particles"></div>
 <div class="container">
-    <!-- HERO -->
     <div class="hero">
-        <div class="badge"><i class="fas fa-award"></i> Excellence & Leadership</div>
+        <div class="hero-badge"><i class="fas fa-medal"></i> Excellence & Leadership · RDC</div>
         <h1><i class="fas fa-graduation-cap"></i> EXCELLENTIA ACADEMIA</h1>
-        <p>Structure académique dédiée à l’excellence, à l’éloquence et à l’engagement intellectuel de la jeunesse congolaise.</p>
-        <p style="font-size: 0.95rem; margin-top: 0.5rem; color:#2c5a7a;"><i class="fas fa-flag-checkered"></i> Valoriser les compétences · Former une élite transformatrice</p>
+        <p>Promotion de l'excellence académique, du leadership et de l'engagement intellectuel.<br>Une élite qui transforme par la parole, les idées et l'action.</p>
     </div>
 
-    <!-- ORGANISATION : COORDINATION -->
-    <div class="section">
+    <!-- 1. Coordination -->
+    <div class="section" style="--order:1">
         <div class="section-header">
-            <i class="fas fa-users"></i>
-            <h2>1. Coordination Générale</h2>
+            <i class="fas fa-users-cog"></i>
+            <h2>⚡ Coordination Générale</h2>
         </div>
         <div class="section-content">
-            <p style="margin-bottom: 1.5rem; font-weight: 500;">Organe central de pilotage — conçoit, supervise et impulse les initiatives d’Excellentia Academia.</p>
-            <div class="coordination-grid">
-                <!-- liste complète selon le brief -->
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-user-tie"></i></div><div class="member-info"><h4>Malale Musao Credo</h4><p>Fondateur & Coordinateur Général</p><p style="font-size:0.7rem;">Étudiant en droit</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-chalkboard-user"></i></div><div class="member-info"><h4>Chris Bulubulu</h4><p>Directeur de projet</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-user-friends"></i></div><div class="member-info"><h4>Aristote Mbo</h4><p>Directeur de projet adjoint</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-file-alt"></i></div><div class="member-info"><h4>Arni Djonga</h4><p>Secrétaire général</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-edit"></i></div><div class="member-info"><h4>Paul Kasongo</h4><p>Secrétaire général adjoint</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-bullhorn"></i></div><div class="member-info"><h4>Sephora Kapalata</h4><p>Chargée de la communication</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-comment-dots"></i></div><div class="member-info"><h4>Princilia</h4><p>Chargée de communication adjointe</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-boxes"></i></div><div class="member-info"><h4>Mima Tshienda</h4><p>Chargée de logistique</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-truck"></i></div><div class="member-info"><h4>Francia</h4><p>Chargée de logistique adjointe</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-coins"></i></div><div class="member-info"><h4>Jemima Bembide</h4><p>Chargée des finances</p></div></div>
-                <div class="card-member"><div class="avatar-icon"><i class="fas fa-lightbulb"></i></div><div class="member-info"><h4>Dea Ngoyi</h4><p>Conseiller stratégique</p></div></div>
+            <p style="margin-bottom: 1.5rem; font-weight: 500;"><i class="fas fa-arrow-right" style="color:#c0392b;"></i> Organe central de pilotage — conçoit, organise et supervise les initiatives.</p>
+            <div class="coordination-grid" id="coordinationGrid">
+                <!-- data générée dynamiquement -->
             </div>
         </div>
     </div>
 
-    <!-- 2. AMBASSADEURS avec animation au clic -->
-    <div class="section">
+    <!-- 2. Ambassadeurs -->
+    <div class="section" style="--order:2">
         <div class="section-header">
             <i class="fas fa-handshake"></i>
-            <h2>2. Ambassadeurs</h2>
+            <h2>🤝 Ambassadeurs</h2>
         </div>
         <div class="section-content ambassadeurs-wrapper">
-            <p style="margin-bottom: 1rem;">Représentants officiels au sein des facultés, promotions et universités. Ils mobilisent, promeuvent et incarnent l’esprit d’excellence.</p>
-            <button id="revealAmbBtn" class="reveal-btn"><i class="fas fa-eye"></i> Découvrir les ambassadeurs <i class="fas fa-chevron-down"></i></button>
-            <div id="ambassadeursList" class="ambassadeurs-list">
-                <!-- Liste dynamique qui n'apparaît qu'après clic -->
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Élie Mbumba</span>
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Beni Nzenga</span>
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Adoption MWAMUKASA</span>
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Maurice Fefe</span>
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Gédéon Mulowanyi</span>
-                <span class="amb-badge"><i class="fas fa-star-of-life"></i> Daniella Lisunde</span>
+            <p>Représentants officiels au sein des facultés, promotions et universités. Mobilisation, promotion, accompagnement.</p>
+            <div style="text-align: center; margin: 1.5rem 0 0.5rem;">
+                <button id="revealAmbBtn" class="reveal-btn"><i class="fas fa-user-graduate"></i> Dévoiler les ambassadeurs <i class="fas fa-chevron-down"></i></button>
             </div>
+            <div id="ambassadeursList" class="ambassadeurs-list"></div>
         </div>
     </div>
 
-    <!-- 3. MEMBRES EFFECTIFS -->
-    <div class="section">
+    <!-- 3. Membres Effectifs -->
+    <div class="section" style="--order:3">
         <div class="section-header">
-            <i class="fas fa-users-between"></i>
-            <h2>3. Membres Effectifs</h2>
+            <i class="fas fa-users"></i>
+            <h2>🌟 Membres Effectifs</h2>
         </div>
         <div class="section-content">
-            <p>Le cœur vivant d’Excellentia Academia. Ils participent activement aux formations, conférences, ateliers, concours et programmes de développement. Bénéficient d’un encadrement académique et pratique pour une progression continue.</p>
+            <p>Cœur vivant de la structure : adhérents actifs bénéficiant de formations, conférences, ateliers, concours et programmes de développement personnel.</p>
             <div class="membres-taglist">
-                <span class="membre-tag"><i class="fas fa-check-circle"></i> Étudiants engagés</span>
-                <span class="membre-tag"><i class="fas fa-check-circle"></i> Cercle d'éloquence</span>
-                <span class="membre-tag"><i class="fas fa-check-circle"></i> Leaders en devenir</span>
-                <span class="membre-tag"><i class="fas fa-check-circle"></i> +80 adhérents actifs</span>
-                <span class="membre-tag"><i class="fas fa-check-circle"></i> Représentation interuniversitaire</span>
+                <span class="membre-tag"><i class="fas fa-chalkboard-user"></i> Art oratoire</span>
+                <span class="membre-tag"><i class="fas fa-brain"></i> Pensée critique</span>
+                <span class="membre-tag"><i class="fas fa-chart-line"></i> Leadership</span>
+                <span class="membre-tag"><i class="fas fa-microphone"></i> Débats & éloquence</span>
+                <span class="membre-tag"><i class="fas fa-hand-sparkles"></i> Accompagnement sur mesure</span>
+                <span class="membre-tag"><i class="fas fa-gem"></i> +120 membres actifs</span>
             </div>
-            <p style="margin-top: 1.2rem; font-style: italic; font-size:0.9rem;">— Toute personne motivée par l'excellence académique peut rejoindre le mouvement —</p>
         </div>
     </div>
 
-    <!-- DOMAINES D'INTERVENTION ET ACTIVITÉS -->
-    <div class="section">
+    <!-- Domaines d'activités -->
+    <div class="section" style="--order:4">
         <div class="section-header">
             <i class="fas fa-chalkboard"></i>
-            <h2>Domaines & Activités</h2>
+            <h2>📚 Domaines & Activités</h2>
         </div>
         <div class="section-content">
             <div class="domains-grid">
-                <div class="domain-card">
-                    <h3><i class="fas fa-microphone-alt" style="color:#c0392b;"></i> Formations</h3>
-                    <ul>
-                        <li><i class="fas fa-angle-right"></i> Art oratoire & prise de parole</li>
-                        <li><i class="fas fa-angle-right"></i> Leadership & développement personnel</li>
-                        <li><i class="fas fa-angle-right"></i> Entrepreneuriat & innovation</li>
-                        <li><i class="fas fa-angle-right"></i> Communication professionnelle</li>
-                        <li><i class="fas fa-angle-right"></i> Pensée critique & argumentation</li>
-                        <li><i class="fas fa-angle-right"></i> Écriture académique & rédaction</li>
-                    </ul>
-                </div>
-                <div class="domain-card">
-                    <h3><i class="fas fa-trophy" style="color:#c0392b;"></i> Concours</h3>
-                    <ul>
-                        <li><i class="fas fa-angle-right"></i> Concours d’éloquence</li>
-                        <li><i class="fas fa-angle-right"></i> Concours de plaidoirie</li>
-                        <li><i class="fas fa-angle-right"></i> Débats contradictoires</li>
-                        <li><i class="fas fa-angle-right"></i> Débats politiques</li>
-                        <li><i class="fas fa-angle-right"></i> Concours d’entrepreneuriat</li>
-                        <li><i class="fas fa-angle-right"></i> Compétitions intellectuelles interuniversitaires</li>
-                    </ul>
-                </div>
-                <div class="domain-card">
-                    <h3><i class="fas fa-chalkboard-user" style="color:#c0392b;"></i> Conférences & Ateliers</h3>
-                    <ul>
-                        <li><i class="fas fa-angle-right"></i> Conférences thématiques</li>
-                        <li><i class="fas fa-angle-right"></i> Ateliers pratiques</li>
-                        <li><i class="fas fa-angle-right"></i> Rencontres inspirantes</li>
-                        <li><i class="fas fa-angle-right"></i> Séminaires de formation</li>
-                        <li><i class="fas fa-angle-right"></i> Panels de discussion</li>
-                    </ul>
-                </div>
+                <div class="domain-card"><h3><i class="fas fa-microphone-alt"></i> Formations</h3><ul><li><i class="fas fa-check-circle"></i> Art oratoire & prise de parole</li><li><i class="fas fa-check-circle"></i> Leadership & développement perso</li><li><i class="fas fa-check-circle"></i> Entrepreneuriat & innovation</li><li><i class="fas fa-check-circle"></i> Communication pro & argumentation</li><li><i class="fas fa-check-circle"></i> Écriture académique</li></ul></div>
+                <div class="domain-card"><h3><i class="fas fa-trophy"></i> Concours</h3><ul><li><i class="fas fa-check-circle"></i> Concours d’éloquence</li><li><i class="fas fa-check-circle"></i> Plaidoirie & débats contradictoires</li><li><i class="fas fa-check-circle"></i> Débats politiques</li><li><i class="fas fa-check-circle"></i> Entrepreneuriat & compétitions interuniversitaires</li></ul></div>
+                <div class="domain-card"><h3><i class="fas fa-chalkboard-user"></i> Conférences & Ateliers</h3><ul><li><i class="fas fa-check-circle"></i> Conférences thématiques</li><li><i class="fas fa-check-circle"></i> Ateliers pratiques & panels</li><li><i class="fas fa-check-circle"></i> Rencontres inspirantes</li><li><i class="fas fa-check-circle"></i> Séminaires de haut niveau</li></ul></div>
             </div>
         </div>
     </div>
 
-    <!-- VISION -->
+    <!-- Vision -->
     <div class="vision-box">
-        <h3><i class="fas fa-eye"></i> Notre Vision</h3>
+        <h3><i class="fas fa-eye"></i> Vision stratégique</h3>
         <p>Excellentia Academia aspire à devenir une référence incontournable dans la formation intellectuelle et l’accompagnement des étudiants en République Démocratique du Congo, en créant une élite académique capable de transformer la société par la parole, les idées et l’action.</p>
-        <div style="margin-top: 1.2rem;"><i class="fas fa-flag-checkered" style="font-size: 2rem; opacity: 0.8;"></i></div>
+        <div style="margin-top: 1rem;"><i class="fas fa-flag-checkered" style="font-size: 2.2rem;"></i> <i class="fas fa-heart" style="color:#c0392b; margin-left: 0.5rem;"></i></div>
     </div>
-
-    <footer>
-        <p><i class="fas fa-copyright"></i> Excellentia Academia — Engagement, Éloquence, Excellence — Tous droits réservés</p>
-        <p style="margin-top: 0.3rem;">Bleu · Rouge · Blanc : les couleurs du mérite et de la patrie</p>
-    </footer>
+    <footer><i class="fas fa-copyright"></i> Excellentia Academia — Bleu, Rouge & Blanc : les couleurs de l'excellence patriotique</footer>
 </div>
 
 <script>
-    // Animation pour les ambassadeurs : apparition au clic (exactement ce qui est demandé)
-    const revealBtn = document.getElementById('revealAmbBtn');
-    const ambList = document.getElementById('ambassadeursList');
+    // Données coordination
+    const coordinationMembers = [
+        { name: "Malale Musao Credo", role: "Fondateur & Coordinateur Général", detail: "Étudiant en droit" },
+        { name: "Chris Bulubulu", role: "Directeur de projet", detail: "" },
+        { name: "Aristote Mbo", role: "Directeur de projet adjoint", detail: "" },
+        { name: "Arni Djonga", role: "Secrétaire général", detail: "" },
+        { name: "Paul Kasongo", role: "Secrétaire général adjoint", detail: "" },
+        { name: "Sephora Kapalata", role: "Chargée de la communication", detail: "" },
+        { name: "Princilia", role: "Chargée de communication adjointe", detail: "" },
+        { name: "Mima Tshienda", role: "Chargée de logistique", detail: "" },
+        { name: "Francia", role: "Chargée de logistique adjointe", detail: "" },
+        { name: "Jemima Bembide", role: "Chargée des finances", detail: "" },
+        { name: "Dea Ngoyi", role: "Conseiller stratégique", detail: "" }
+    ];
 
+    const ambassadorsList = [
+        "Élie Mbumba", "Beni Nzenga", "Adoption MWAMUKASA", "Maurice Fefe", "Gédéon Mulowanyi", "Daniella Lisunde"
+    ];
+
+    const gridContainer = document.getElementById('coordinationGrid');
+    coordinationMembers.forEach((member, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card-member';
+        card.style.setProperty('--i', idx);
+        card.innerHTML = `
+            <div class="avatar-icon"><i class="fas ${getIconForRole(member.role)}"></i></div>
+            <div class="member-info">
+                <h4>${member.name}</h4>
+                <p>${member.role}</p>
+                ${member.detail ? `<p style="font-size:0.7rem; color:#6c86a3;">${member.detail}</p>` : ''}
+            </div>
+        `;
+        gridContainer.appendChild(card);
+    });
+
+    function getIconForRole(role) {
+        if(role.includes('Coordinateur') || role.includes('Fondateur')) return 'fa-user-tie';
+        if(role.includes('Directeur')) return 'fa-chalkboard-user';
+        if(role.includes('Secrétaire')) return 'fa-file-alt';
+        if(role.includes('Communication')) return 'fa-bullhorn';
+        if(role.includes('Logistique')) return 'fa-boxes';
+        if(role.includes('Finances')) return 'fa-coins';
+        if(role.includes('Conseiller')) return 'fa-lightbulb';
+        return 'fa-user';
+    }
+
+    // Remplir la liste des ambassadeurs (cachée par défaut)
+    const ambListContainer = document.getElementById('ambassadeursList');
+    ambassadorsList.forEach(amb => {
+        const span = document.createElement('span');
+        span.className = 'amb-badge';
+        span.innerHTML = `<i class="fas fa-star-of-life"></i> ${amb}`;
+        ambListContainer.appendChild(span);
+    });
+
+    // Bouton révélation animation
+    const revealBtn = document.getElementById('revealAmbBtn');
     revealBtn.addEventListener('click', () => {
-        ambList.classList.toggle('show');
-        // Optionnel : changer le texte du bouton
-        if (ambList.classList.contains('show')) {
+        ambListContainer.classList.toggle('show');
+        if(ambListContainer.classList.contains('show')) {
             revealBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Masquer les ambassadeurs <i class="fas fa-chevron-up"></i>';
+            // petite animation supplémentaire : faire vibrer légèrement
+            revealBtn.style.transform = 'scale(1)';
+            setTimeout(() => revealBtn.style.transform = '', 200);
         } else {
-            revealBtn.innerHTML = '<i class="fas fa-eye"></i> Découvrir les ambassadeurs <i class="fas fa-chevron-down"></i>';
+            revealBtn.innerHTML = '<i class="fas fa-user-graduate"></i> Dévoiler les ambassadeurs <i class="fas fa-chevron-down"></i>';
         }
     });
+    ambListContainer.classList.remove('show'); // bien caché
 
-    // Initialisation : la liste est cachée (conforme à la demande "que la liste n'apparaisse qu'une fois que appuye là-bas")
-    ambList.classList.remove('show'); // bien caché par défaut
+    // Génération de particules flottantes (décor animé)
+    function createParticles() {
+        const particlesDiv = document.getElementById('particles');
+        const particleCount = 45;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 35 + 8;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = Math.random() * 12 + 8 + 's';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.opacity = Math.random() * 0.3 + 0.1;
+            particle.style.background = `radial-gradient(circle, rgba(30,74,118,0.3), rgba(192,57,43,0.1))`;
+            particlesDiv.appendChild(particle);
+        }
+    }
+    createParticles();
 
-    // Ajout d'une animation subtile au scroll pour les sections (amélioration design)
-    const animatedElements = document.querySelectorAll('.section, .vision-box');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0px)';
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
-    
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(18px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+    // Animation d'entrée différée pour toutes les sections (déjà avec keyframes, mais on force)
+    const sections = document.querySelectorAll('.section');
+    sections.forEach((sec, idx) => {
+        sec.style.animationDelay = `${idx * 0.12}s`;
     });
-    // Forcer les cartes coordination déjà visibles : 
-    document.querySelectorAll('.card-member').forEach((card, idx) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(12px)';
-        card.style.transition = `opacity 0.4s ease ${idx * 0.02}s, transform 0.4s ease`;
-        setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 100);
+
+    // Effet parallaxe ou hover sur les cartes de coordination (déjà présent)
+    // Bonus: Animer le header Hero au scroll minimaliste
+    window.addEventListener('scroll', () => {
+        const hero = document.querySelector('.hero');
+        if(hero) {
+            const scrolled = window.scrollY;
+            hero.style.transform = `translateY(${scrolled * 0.2}px)`;
+            hero.style.opacity = 1 - scrolled * 0.002;
+        }
     });
-    document.querySelectorAll('.domain-card, .membre-tag, .amb-badge').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(10px)';
-        el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        setTimeout(() => { if(el.parentElement) { el.style.opacity = '1'; el.style.transform = 'translateY(0)';} }, 150);
-    });
-    // Pour que la liste des ambassadeurs au moment de l'affichage reste stylée, mais elle est gérée par le bouton
-    // Bonus: garder le bleu/blanc/rouge : touches rouges sur certains icônes, bleu marine, blanc.
 </script>
 </body>
 </html>
