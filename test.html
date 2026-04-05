@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excellentia Academia | Inscription complète</title>
+    <title>Excellentia Academia | Inscription</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -18,8 +18,9 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f7fc;
-            color: #1e293b;
+            background: linear-gradient(135deg, #f5f7fc 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
         :root {
@@ -30,53 +31,54 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
-            padding: 2rem;
         }
 
-        /* Header simplifié */
-        .navbar {
-            background: white;
-            padding: 1rem 5%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            max-width: 1200px;
-            margin: 0 auto;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
         }
 
         .logo img {
-            height: 50px;
-            width: 50px;
-            border-radius: 12px;
-            border: 2px solid var(--red);
+            height: 65px;
+            width: 65px;
+            border-radius: 16px;
+            border: 3px solid var(--red);
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .logo h1 {
-            font-size: 1.6rem;
-            color: var(--blue);
             font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--blue);
         }
 
         .logo span {
             color: var(--red);
         }
 
+        .header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
         /* Formulaire */
         .form-card {
             background: white;
             border-radius: 32px;
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             overflow: hidden;
-            margin-top: 2rem;
         }
 
         .form-header {
@@ -88,7 +90,12 @@
 
         .form-header h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            opacity: 0.9;
         }
 
         .form-body {
@@ -111,6 +118,7 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--blue);
+            font-size: 0.9rem;
         }
 
         .form-group label .required {
@@ -124,6 +132,7 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
             transition: 0.2s;
+            background: white;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -146,12 +155,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            margin-top: 1rem;
         }
 
         .btn-submit:hover {
             background: #9a162e;
             transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(196,30,58,0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .message {
@@ -166,12 +182,14 @@
             background: #dcfce7;
             color: #166534;
             display: block;
+            border-left: 4px solid #22c55e;
         }
 
         .message.error {
             background: #fee2e2;
             color: #991b1b;
             display: block;
+            border-left: 4px solid var(--red);
         }
 
         @media (max-width: 700px) {
@@ -179,14 +197,14 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            .container {
-                padding: 1rem;
+            .form-body {
+                padding: 1.5rem;
             }
         }
 
         footer {
             text-align: center;
-            padding: 2rem;
+            margin-top: 2rem;
             color: var(--gray);
             font-size: 0.85rem;
         }
@@ -194,18 +212,19 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="logo">
-        <img src="IMG_1812.jpeg" alt="Logo" onerror="this.src='https://via.placeholder.com/50'">
-        <h1>Excellentia <span>Academia</span></h1>
-    </div>
-</nav>
-
 <div class="container">
+    <div class="header">
+        <div class="logo">
+            <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" onerror="this.src='https://via.placeholder.com/65?text=EA'">
+            <h1>Excellentia <span>Academia</span></h1>
+        </div>
+        <p>Au-delà de l'excellence académique</p>
+    </div>
+
     <div class="form-card">
         <div class="form-header">
-            <h2>Formulaire d'adhésion</h2>
-            <p>Devenez membre ou ambassadeur d'Excellentia Academia</p>
+            <h2><i class="fas fa-user-graduate"></i> Formulaire d'adhésion</h2>
+            <p>Devenez membre ou ambassadeur de notre communauté d'excellence</p>
         </div>
         <div class="form-body">
             <form id="registrationForm">
@@ -239,20 +258,20 @@
                     <div class="form-group">
                         <label>Faculté <span class="required">*</span></label>
                         <select id="faculty" required>
-                            <option value="">Sélectionnez votre faculté</option>
+                            <option value="">-- Sélectionnez votre faculté --</option>
                             <option>Droit</option>
                             <option>Lettres et Sciences Humaines</option>
-                            <option>Sciences Économiques</option>
-                            <option>Sciences Sociales</option>
+                            <option>Sciences Économiques et de Gestion</option>
+                            <option>Sciences Sociales, Administratives et Politiques</option>
                             <option>Sciences et Technologies</option>
                             <option>Médecine</option>
                             <option>Polytechnique</option>
-                            <option>Psychologie</option>
+                            <option>Psychologie et Sciences de l'Éducation</option>
                             <option>Sciences Pharmaceutiques</option>
                             <option>Médecine Vétérinaire</option>
-                            <option>Pétrole et Énergies</option>
+                            <option>Pétrole, Gaz et Énergies Renouvelables</option>
                             <option>Sciences Agronomiques</option>
-                            <option>Autre</option>
+                            <option>Médecine Dentaire</option>
                         </select>
                     </div>
                 </div>
@@ -261,7 +280,7 @@
                     <div class="form-group">
                         <label>Promotion / Niveau <span class="required">*</span></label>
                         <select id="promotion" required>
-                            <option value="">Sélectionnez votre niveau</option>
+                            <option value="">-- Sélectionnez votre niveau --</option>
                             <option>Licence 1</option>
                             <option>Licence 2</option>
                             <option>Licence 3</option>
@@ -273,16 +292,16 @@
                     <div class="form-group">
                         <label>Type d'inscription <span class="required">*</span></label>
                         <select id="typeInscription" required>
-                            <option value="">Choisissez</option>
-                            <option value="Membre">Membre</option>
-                            <option value="Ambassadeur">Ambassadeur</option>
+                            <option value="">-- Choisissez --</option>
+                            <option value="Membre">📘 Membre</option>
+                            <option value="Ambassadeur">⭐ Ambassadeur</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Motivation <span class="required">*</span></label>
-                    <textarea id="motivation" rows="5" required placeholder="Pourquoi souhaitez-vous rejoindre Excellentia Academia ? Parlez-nous de vos objectifs, de votre engagement..."></textarea>
+                    <textarea id="motivation" rows="5" required placeholder="Pourquoi souhaitez-vous rejoindre Excellentia Academia ? Quels sont vos objectifs, vos passions, votre engagement..."></textarea>
                 </div>
 
                 <button type="submit" class="btn-submit" id="submitBtn">
@@ -292,14 +311,13 @@
             </form>
         </div>
     </div>
+    <footer>
+        <p>© 2025 Excellentia Academia — L'excellence au service de la jeunesse congolaise</p>
+    </footer>
 </div>
 
-<footer>
-    <p>&copy; 2025 Excellentia Academia — L'excellence au service de la jeunesse</p>
-</footer>
-
 <script>
-    // ========== FIREBASE CONFIG ==========
+    // ========== FIREBASE ==========
     const firebaseConfig = {
         apiKey: "AIzaSyB68tv_pxmOxblO_qnHoF1cSWAMXTjhung",
         authDomain: "membre-955c6.firebaseapp.com",
@@ -315,21 +333,56 @@
     try {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
-        console.log("✅ Firebase initialisé avec succès");
+        console.log("✅ Firebase initialisé");
     } catch (err) {
-        console.error("❌ Erreur Firebase:", err);
+        console.error("❌ Firebase erreur:", err);
     }
 
-    // ========== EMAILJS ==========
-    // Ta clé publique
+    // ========== EMAILJS avec TES identifiants ==========
     emailjs.init("aPNNQ4mKPEi85io_Q");
     const EMAILJS_SERVICE_ID = "service_gqclxov";
-    const EMAILJS_TEMPLATE_ID = "template_ed65khj"; // Tu dois avoir ce template dans ton compte EmailJS
+    const EMAILJS_TEMPLATE_ID = "template_sgnn50l";
 
-    // ========== GESTION DU FORMULAIRE ==========
+    // ========== GESTION FORMULAIRE ==========
     const form = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
     const messageDiv = document.getElementById('formMessage');
+
+    async function sendToFirebase(data) {
+        if (!db) throw new Error("Firebase non disponible");
+        const docRef = await db.collection("inscriptions").add(data);
+        console.log("Firebase ID:", docRef.id);
+        return docRef;
+    }
+
+    async function sendToEmailJS(data) {
+        const emailParams = {
+            to_name: `${data.prenom} ${data.nom}`,
+            to_email: data.email,
+            type_candidature: data.typeInscription,
+            message: `
+Bonjour ${data.prenom} ${data.nom},
+
+Nous avons bien reçu votre candidature en tant que ${data.typeInscription} d'Excellentia Academia.
+
+📋 Récapitulatif :
+- Université : ${data.universite}
+- Faculté : ${data.faculte}
+- Promotion : ${data.promotion}
+- Motivation : ${data.motivation}
+
+Notre équipe vous contactera sous peu pour la suite du processus.
+
+Bienvenue dans la communauté !
+
+Excellentia Academia - Au-delà de l'excellence académique
+            `
+        };
+        
+        const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
+        console.log("EmailJS réponse:", response);
+        return response;
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -347,7 +400,15 @@
 
         // Validation
         if (!lastName || !firstName || !email || !university || !faculty || !promotion || !typeInscription || !motivation) {
-            showMessage("Veuillez remplir tous les champs obligatoires (*)", "error");
+            messageDiv.className = "message error";
+            messageDiv.innerHTML = "❌ Veuillez remplir tous les champs obligatoires (*)";
+            return;
+        }
+
+        // Validation email simple
+        if (!email.includes('@') || !email.includes('.')) {
+            messageDiv.className = "message error";
+            messageDiv.innerHTML = "❌ Veuillez entrer un email valide";
             return;
         }
 
@@ -355,7 +416,6 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Envoi en cours...';
 
-        // Préparer l'objet pour Firebase
         const candidat = {
             nom: lastName,
             prenom: firstName,
@@ -367,54 +427,52 @@
             typeInscription: typeInscription,
             motivation: motivation,
             statut: "En attente",
-            date: new Date(),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            date: new Date().toLocaleString('fr-FR'),
+            timestamp: new Date()
         };
 
         try {
-            // 1. Enregistrement dans Firebase Firestore
-            if (!db) throw new Error("Firebase non initialisé");
-            const docRef = await db.collection("inscriptions").add(candidat);
-            console.log("✅ Firebase: Document ajouté avec ID:", docRef.id);
+            // 1. Envoi à Firebase
+            await sendToFirebase(candidat);
+            console.log("✅ Firebase OK");
+            
+            // 2. Envoi d'email
+            await sendToEmailJS(candidat);
+            console.log("✅ EmailJS OK");
 
-            // 2. Envoi d'email avec EmailJS
-            const emailParams = {
-                to_name: `${firstName} ${lastName}`,
-                to_email: email,
-                type_candidature: typeInscription,
-                message: `Bonjour ${firstName} ${lastName},\n\nNous avons bien reçu votre candidature en tant que ${typeInscription} d'Excellentia Academia.\n\nFaculté: ${faculty}\nPromotion: ${promotion}\nMotivation: ${motivation}\n\nNotre équipe vous contactera sous peu.\n\nExcellentia Academia - Au-delà de l'excellence académique.`
-            };
-
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
-            console.log("✅ EmailJS: Email envoyé avec succès");
-
-            showMessage("✅ Félicitations ! Votre candidature a été enregistrée. Un email de confirmation vous a été envoyé.", "success");
+            messageDiv.className = "message success";
+            messageDiv.innerHTML = `
+                <i class="fas fa-check-circle"></i> 
+                ✅ Félicitations ${firstName} ! Votre candidature a été enregistrée.<br>
+                Un email de confirmation vous a été envoyé à ${email}.
+            `;
+            
+            // Réinitialiser le formulaire
             form.reset();
 
         } catch (error) {
-            console.error("❌ ERREUR DÉTAILLÉE:", error);
-            let errorMsg = "Une erreur est survenue. ";
+            console.error("ERREUR DÉTAILLÉE:", error);
+            
+            let errorMsg = "❌ Une erreur est survenue. ";
+            
             if (error.code === "permission-denied") {
-                errorMsg += "Firebase: Vérifiez les règles de Firestore (mode test requis).";
+                errorMsg += "Firebase: Activez le mode test dans Firestore (Règles → allow read, write: if true)";
             } else if (error.text) {
-                errorMsg += "EmailJS: " + error.text;
+                errorMsg += `EmailJS: ${error.text}`;
+            } else if (error.message) {
+                errorMsg += error.message;
             } else {
-                errorMsg += error.message || "Vérifiez votre connexion et réessayez.";
+                errorMsg += "Vérifiez votre connexion internet et réessayez.";
             }
-            showMessage("❌ " + errorMsg, "error");
+            
+            messageDiv.className = "message error";
+            messageDiv.innerHTML = errorMsg;
+            
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer ma candidature';
         }
     });
-
-    function showMessage(msg, type) {
-        messageDiv.textContent = msg;
-        messageDiv.className = `message ${type}`;
-        setTimeout(() => {
-            messageDiv.className = 'message';
-        }, 6000);
-    }
 </script>
 </body>
 </html>
