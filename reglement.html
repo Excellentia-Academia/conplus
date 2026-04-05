@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration - Excellentia Academia</title>
+    <title>Tableau de bord - Secrétariat Excellentia Academia</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <style>
@@ -17,52 +17,107 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f1f5f9;
+            background: #eef2f7;
             min-height: 100vh;
         }
 
         :root {
             --blue: #0a2b5e;
+            --blue-light: #1e3a6f;
             --red: #c41e3a;
+            --red-light: #d9534f;
+            --gold: #d4af37;
             --green: #10b981;
+            --green-dark: #059669;
             --orange: #f59e0b;
             --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --dark: #1e293b;
         }
 
         /* Page de connexion */
         .login-container {
-            max-width: 450px;
-            margin: 100px auto;
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            text-align: center;
-        }
-
-        .login-container h1 {
-            color: var(--blue);
-            margin-bottom: 0.5rem;
-        }
-
-        .login-container input {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 14px;
-            margin: 1rem 0;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
+            z-index: 1000;
         }
 
-        .login-container button {
-            background: var(--blue);
+        .login-card {
+            background: white;
+            border-radius: 32px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            border: 3px solid var(--red);
+        }
+
+        .login-card h2 {
+            color: var(--blue);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+        }
+
+        .login-card p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 40px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--red);
+        }
+
+        .login-card button {
+            background: var(--red);
             color: white;
             border: none;
             padding: 14px;
             border-radius: 40px;
             width: 100%;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-card button:hover {
+            background: var(--blue);
+        }
+
+        .error-msg {
+            color: var(--red);
+            margin-top: 1rem;
+            display: none;
         }
 
         /* Dashboard */
@@ -70,88 +125,183 @@
             display: none;
         }
 
-        .navbar {
-            background: var(--blue);
-            color: white;
-            padding: 1rem 2rem;
+        /* Header */
+        .admin-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .navbar h2 {
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area img {
+            height: 45px;
+            width: 45px;
+            border-radius: 12px;
+            border: 2px solid var(--red);
+        }
+
+        .logo-area h1 {
             font-size: 1.3rem;
+            color: var(--blue);
+            font-family: 'Playfair Display', serif;
         }
 
-        .navbar .stats {
+        .logo-area span {
+            color: var(--red);
+        }
+
+        .stats-badge {
             display: flex;
             gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .navbar .stat {
-            background: rgba(255,255,255,0.15);
+        .stat-badge {
+            background: var(--blue);
+            color: white;
             padding: 0.3rem 1rem;
             border-radius: 40px;
+            font-size: 0.85rem;
         }
 
         .logout-btn {
-            background: var(--red);
+            background: var(--gray-light);
             border: none;
             padding: 8px 20px;
             border-radius: 40px;
-            color: white;
             cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
         }
 
-        .container {
+        .logout-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        /* Container */
+        .admin-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
 
+        /* Cartes statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(196,30,58,0.1);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--red);
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: var(--blue);
+        }
+
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
         /* Filtres */
-        .filters {
+        .filters-bar {
             background: white;
             border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .filter-group {
+        .filters-group {
             display: flex;
             gap: 1rem;
-            align-items: center;
             flex-wrap: wrap;
         }
 
-        .filter-group select, .filter-group input {
+        .filters-group select, .filters-group input {
             padding: 8px 16px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--gray-light);
             border-radius: 40px;
+            font-family: 'Inter', sans-serif;
             background: white;
         }
 
-        .export-btn {
+        .action-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-refresh, .btn-export {
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-export {
             background: var(--green);
             color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            cursor: pointer;
         }
 
         /* Tableau */
         .table-wrapper {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             overflow-x: auto;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
@@ -159,13 +309,13 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1100px;
         }
 
         th, td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--gray-light);
         }
 
         th {
@@ -173,73 +323,119 @@
             color: var(--blue);
             font-weight: 600;
             cursor: pointer;
+            user-select: none;
         }
 
         th:hover {
-            background: #e2e8f0;
+            background: #eef2ff;
         }
 
         tr:hover {
-            background: #f8fafc;
+            background: #faf5ff;
         }
 
         .badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 40px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
         }
 
-        .badge.membre { background: #dbeafe; color: #1e40af; }
-        .badge.ambassadeur { background: #fef3c7; color: #92400e; }
-        .badge.attente { background: #e2e8f0; color: #475569; }
-        .badge.accepte { background: #dcfce7; color: #166534; }
-        .badge.refuse { background: #fee2e2; color: #991b1b; }
+        .badge-membre { background: #dbeafe; color: #1e40af; }
+        .badge-ambassadeur { background: #fef3c7; color: #92400e; }
+        .badge-attente { background: #e2e8f0; color: #475569; }
+        .badge-accepte { background: #dcfce7; color: #166534; }
+        .badge-refuse { background: #fee2e2; color: #991b1b; }
 
         .status-select {
-            padding: 4px 8px;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 40px;
+            border: 1px solid var(--gray-light);
+            font-size: 0.75rem;
+            background: white;
         }
 
         .action-icons i {
             margin: 0 5px;
             cursor: pointer;
             color: var(--gray);
+            transition: 0.2s;
         }
 
         .action-icons i:hover {
             color: var(--red);
         }
 
+        .fa-eye:hover { color: var(--blue); }
+        .fa-trash-alt:hover { color: var(--red); }
+
         .loading {
             text-align: center;
             padding: 3rem;
+            color: var(--gray);
         }
 
-        .refresh-btn {
-            background: var(--blue);
+        /* Modal détails */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal-content h3 {
+            color: var(--blue);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--red);
+            padding-left: 15px;
+        }
+
+        .detail-item {
+            margin-bottom: 0.8rem;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--blue);
+            width: 120px;
+            display: inline-block;
+        }
+
+        .close-modal {
+            background: var(--red);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 40px;
             cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
         }
 
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--gray);
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -247,80 +443,122 @@
 
 <!-- Page de connexion -->
 <div id="loginPage" class="login-container">
-    <i class="fas fa-lock" style="font-size: 3rem; color: var(--red); margin-bottom: 1rem;"></i>
-    <h1>Administration</h1>
-    <p>Excellentia Academia</p>
-    <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
-    <button onclick="checkLogin()">Se connecter</button>
-    <p id="loginError" style="color: var(--red); margin-top: 1rem; display: none;">Mot de passe incorrect</p>
+    <div class="login-card">
+        <img src="IMG_1812.jpeg" alt="Logo" onerror="this.src='https://via.placeholder.com/80'">
+        <h2>Secrétariat</h2>
+        <p>Excellentia Academia</p>
+        <input type="password" id="adminPassword" placeholder="Mot de passe" autocomplete="off">
+        <button onclick="checkLogin()">Accéder au tableau de bord</button>
+        <div id="loginError" class="error-msg">❌ Mot de passe incorrect</div>
+    </div>
 </div>
 
-<!-- Dashboard (caché par défaut) -->
+<!-- Dashboard -->
 <div id="dashboard" class="dashboard">
-    <div class="navbar">
-        <h2><i class="fas fa-users"></i> Gestion des inscriptions - Excellentia Academia</h2>
-        <div class="stats">
-            <div class="stat" id="totalCount">Total: 0</div>
-            <div class="stat" id="membreCount">Membres: 0</div>
-            <div class="stat" id="ambassadeurCount">Ambassadeurs: 0</div>
+    <div class="admin-header">
+        <div class="logo-area">
+            <img src="IMG_1812.jpeg" alt="Logo" onerror="this.src='https://via.placeholder.com/45'">
+            <h1>Excellentia <span>Academia</span></h1>
+        </div>
+        <div class="stats-badge">
+            <div class="stat-badge" id="totalBadge">📊 Total: 0</div>
+            <div class="stat-badge" id="membreBadge">👥 Membres: 0</div>
+            <div class="stat-badge" id="ambassadeurBadge">⭐ Ambassadeurs: 0</div>
         </div>
         <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
     </div>
 
-    <div class="container">
-        <div class="filters">
-            <div class="filter-group">
-                <label>Filtrer par type :</label>
-                <select id="typeFilter">
-                    <option value="all">Tous</option>
-                    <option value="Membre">Membres</option>
-                    <option value="Ambassadeur">Ambassadeurs</option>
-                </select>
+    <div class="admin-container">
+        <!-- Cartes statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalCount">0</h3>
+                    <p>Total inscriptions</p>
+                </div>
             </div>
-            <div class="filter-group">
-                <label>Filtrer par statut :</label>
-                <select id="statusFilter">
-                    <option value="all">Tous</option>
-                    <option value="En attente">En attente</option>
-                    <option value="Accepté">Accepté</option>
-                    <option value="Refusé">Refusé</option>
-                </select>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <h3 id="membreCount">0</h3>
+                    <p>Membres actifs</p>
+                </div>
             </div>
-            <div class="filter-group">
-                <label>Rechercher :</label>
-                <input type="text" id="searchInput" placeholder="Nom, prénom, email..." style="width: 200px;">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-info">
+                    <h3 id="ambassadeurCount">0</h3>
+                    <p>Ambassadeurs</p>
+                </div>
             </div>
-            <div class="filter-group">
-                <button class="refresh-btn" onclick="loadData()"><i class="fas fa-sync-alt"></i> Actualiser</button>
-                <button class="export-btn" onclick="exportToCSV()"><i class="fas fa-download"></i> Exporter CSV</button>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <h3 id="pendingCount">0</h3>
+                    <p>En attente</p>
+                </div>
             </div>
         </div>
 
+        <!-- Filtres -->
+        <div class="filters-bar">
+            <div class="filters-group">
+                <select id="typeFilter">
+                    <option value="all">📋 Tous les types</option>
+                    <option value="Membre">👥 Membres</option>
+                    <option value="Ambassadeur">⭐ Ambassadeurs</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="all">🔄 Tous les statuts</option>
+                    <option value="En attente">⏳ En attente</option>
+                    <option value="Accepté">✅ Accepté</option>
+                    <option value="Refusé">❌ Refusé</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher...">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-file-excel"></i> Exporter</button>
+            </div>
+        </div>
+
+        <!-- Tableau -->
         <div class="table-wrapper">
-            <div id="loadingIndicator" class="loading">Chargement des données...</div>
+            <div id="loadingIndicator" class="loading"><i class="fas fa-spinner fa-pulse"></i> Chargement des données...</div>
             <div id="tableContainer" style="display: none;">
                 <table id="dataTable">
                     <thead>
                         <tr>
-                            <th onclick="sortBy('date')">Date <i class="fas fa-sort"></i></th>
-                            <th onclick="sortBy('nom')">Nom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortBy('prenom')">Prénom <i class="fas fa-sort"></i></th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Université</th>
-                            <th>Faculté</th>
-                            <th>Promotion</th>
-                            <th>Type</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
+                            <th onclick="sortBy('date')">📅 Date <i class="fas fa-sort"></i></th>
+                            <th onclick="sortBy('nom')">👤 Nom <i class="fas fa-sort"></i></th>
+                            <th onclick="sortBy('prenom')">📝 Prénom <i class="fas fa-sort"></i></th>
+                            <th>📧 Email</th>
+                            <th>📞 Téléphone</th>
+                            <th>🏛️ Université</th>
+                            <th>🎓 Faculté</th>
+                            <th>📚 Promotion</th>
+                            <th>⭐ Type</th>
+                            <th>🔄 Statut</th>
+                            <th>⚙️ Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Les données seront injectées ici -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
+    </div>
+    <footer>
+        <p>© 2025 Excellentia Academia — Bureau du Secrétariat Général</p>
+    </footer>
+</div>
+
+<!-- Modal détails -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <h3><i class="fas fa-id-card"></i> Détails de la candidature</h3>
+        <div id="modalDetails"></div>
+        <button class="close-modal" onclick="closeModal()">Fermer</button>
     </div>
 </div>
 
@@ -342,12 +580,12 @@
     let allData = [];
     let currentSort = { field: 'date', direction: 'desc' };
 
-    // MOT DE PASSE (à changer selon votre souhait)
+    // MOT DE PASSE (à changer selon ton souhait)
     const ADMIN_PASSWORD = "excellentia2025";
 
-    // ========== GESTION DE CONNEXION ==========
+    // ========== CONNEXION ==========
     function checkLogin() {
-        const password = document.getElementById('passwordInput').value;
+        const password = document.getElementById('adminPassword').value;
         if (password === ADMIN_PASSWORD) {
             localStorage.setItem('admin_logged_in', 'true');
             document.getElementById('loginPage').style.display = 'none';
@@ -360,12 +598,11 @@
 
     function logout() {
         localStorage.removeItem('admin_logged_in');
-        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('loginPage').style.display = 'flex';
         document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('passwordInput').value = '';
+        document.getElementById('adminPassword').value = '';
     }
 
-    // Vérifier si déjà connecté
     if (localStorage.getItem('admin_logged_in') === 'true') {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
@@ -389,7 +626,7 @@
                 allData.push({
                     id: doc.id,
                     ...data,
-                    date: data.date || new Date(data.timestamp?.toDate()).toLocaleString('fr-FR') || 'N/A'
+                    date: data.date || (data.timestamp?.toDate() ? data.timestamp.toDate().toLocaleString('fr-FR') : 'N/A')
                 });
             });
 
@@ -399,8 +636,8 @@
             tableContainer.style.display = 'block';
 
         } catch (error) {
-            console.error("Erreur chargement:", error);
-            loadingDiv.innerHTML = '<span style="color: red;">❌ Erreur de chargement. Vérifiez les règles Firestore.</span>';
+            console.error("Erreur:", error);
+            loadingDiv.innerHTML = '<span style="color: var(--red);">❌ Erreur de connexion à Firebase. Vérifiez les règles Firestore.</span>';
         }
     }
 
@@ -409,29 +646,32 @@
         const total = allData.length;
         const membres = allData.filter(d => d.typeInscription === 'Membre').length;
         const ambassadeurs = allData.filter(d => d.typeInscription === 'Ambassadeur').length;
+        const pending = allData.filter(d => d.statut === 'En attente' || !d.statut).length;
         
-        document.getElementById('totalCount').innerHTML = `Total: ${total}`;
-        document.getElementById('membreCount').innerHTML = `Membres: ${membres}`;
-        document.getElementById('ambassadeurCount').innerHTML = `Ambassadeurs: ${ambassadeurs}`;
+        document.getElementById('totalCount').innerText = total;
+        document.getElementById('membreCount').innerText = membres;
+        document.getElementById('ambassadeurCount').innerText = ambassadeurs;
+        document.getElementById('pendingCount').innerText = pending;
+        
+        document.getElementById('totalBadge').innerHTML = `📊 Total: ${total}`;
+        document.getElementById('membreBadge').innerHTML = `👥 Membres: ${membres}`;
+        document.getElementById('ambassadeurBadge').innerHTML = `⭐ Ambassadeurs: ${ambassadeurs}`;
     }
 
-    // ========== FILTRES ==========
+    // ========== FILTRES ET TRI ==========
     function applyFiltersAndRender() {
         let filtered = [...allData];
         
-        // Filtre type
         const typeFilter = document.getElementById('typeFilter').value;
         if (typeFilter !== 'all') {
             filtered = filtered.filter(d => d.typeInscription === typeFilter);
         }
         
-        // Filtre statut
         const statusFilter = document.getElementById('statusFilter').value;
         if (statusFilter !== 'all') {
-            filtered = filtered.filter(d => d.statut === statusFilter);
+            filtered = filtered.filter(d => (d.statut || 'En attente') === statusFilter);
         }
         
-        // Filtre recherche
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         if (searchTerm) {
             filtered = filtered.filter(d => 
@@ -442,7 +682,6 @@
             );
         }
         
-        // Tri
         filtered.sort((a, b) => {
             let valA = a[currentSort.field] || '';
             let valB = b[currentSort.field] || '';
@@ -474,7 +713,7 @@
         tbody.innerHTML = '';
         
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center;">Aucune inscription trouvée</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 3rem;">📭 Aucune inscription trouvée</td></tr>';
             return;
         }
         
@@ -484,28 +723,25 @@
             row.insertCell(0).textContent = item.timestamp?.toDate()?.toLocaleString('fr-FR') || item.date || 'N/A';
             row.insertCell(1).textContent = item.nom || '-';
             row.insertCell(2).textContent = item.prenom || '-';
-            row.insertCell(3).innerHTML = `<a href="mailto:${item.email}" style="color: var(--blue);">${item.email}</a>`;
+            row.insertCell(3).innerHTML = `<a href="mailto:${item.email}" style="color: var(--blue); text-decoration: none;">${item.email}</a>`;
             row.insertCell(4).textContent = item.telephone || '-';
             row.insertCell(5).textContent = item.universite || '-';
             row.insertCell(6).textContent = item.faculte || '-';
             row.insertCell(7).textContent = item.promotion || '-';
             
-            // Type
             const typeCell = row.insertCell(8);
-            typeCell.innerHTML = `<span class="badge ${item.typeInscription === 'Membre' ? 'membre' : 'ambassadeur'}">${item.typeInscription}</span>`;
+            typeCell.innerHTML = `<span class="badge ${item.typeInscription === 'Membre' ? 'badge-membre' : 'badge-ambassadeur'}">${item.typeInscription || '-'}</span>`;
             
-            // Statut avec select
-            const statusCell = row.insertCell(9);
             const statusValue = item.statut || 'En attente';
+            const statusCell = row.insertCell(9);
             statusCell.innerHTML = `
-                <select class="status-select" data-id="${item.id}" data-current="${statusValue}" onchange="updateStatus('${item.id}', this.value)">
+                <select class="status-select" data-id="${item.id}" onchange="updateStatus('${item.id}', this.value)">
                     <option value="En attente" ${statusValue === 'En attente' ? 'selected' : ''}>⏳ En attente</option>
                     <option value="Accepté" ${statusValue === 'Accepté' ? 'selected' : ''}>✅ Accepté</option>
                     <option value="Refusé" ${statusValue === 'Refusé' ? 'selected' : ''}>❌ Refusé</option>
                 </select>
             `;
             
-            // Actions
             const actionsCell = row.insertCell(10);
             actionsCell.className = 'action-icons';
             actionsCell.innerHTML = `
@@ -515,67 +751,76 @@
         });
     }
 
-    // ========== METTRE À JOUR LE STATUT ==========
+    // ========== METTRE À JOUR STATUT ==========
     async function updateStatus(id, newStatus) {
         try {
             await db.collection('inscriptions').doc(id).update({
                 statut: newStatus,
                 dateModification: new Date()
             });
-            console.log(`Statut mis à jour pour ${id}: ${newStatus}`);
             
-            // Mettre à jour localement
             const item = allData.find(d => d.id === id);
             if (item) item.statut = newStatus;
             
+            updateStats();
             applyFiltersAndRender();
+            
+            // Animation feedback
+            const btn = document.querySelector(`.status-select[data-id="${id}"]`);
+            if (btn) btn.style.border = '2px solid var(--green)';
+            setTimeout(() => { if(btn) btn.style.border = ''; }, 500);
+            
         } catch (error) {
-            console.error("Erreur mise à jour:", error);
-            alert("Erreur lors de la mise à jour du statut");
+            console.error("Erreur:", error);
+            alert("❌ Erreur lors de la mise à jour");
         }
     }
 
-    // ========== VOIR LES DÉTAILS ==========
+    // ========== VOIR DÉTAILS ==========
     function viewDetails(id) {
         const item = allData.find(d => d.id === id);
         if (!item) return;
         
-        const details = `
-            📋 DÉTAILS DE LA CANDIDATURE
-            ────────────────────────────
-            Nom complet : ${item.prenom || ''} ${item.nom || ''}
-            Email : ${item.email || '-'}
-            Téléphone : ${item.telephone || '-'}
-            Université : ${item.universite || '-'}
-            Faculté : ${item.faculte || '-'}
-            Promotion : ${item.promotion || '-'}
-            Type : ${item.typeInscription || '-'}
-            Statut : ${item.statut || 'En attente'}
-            Date d'inscription : ${item.timestamp?.toDate()?.toLocaleString('fr-FR') || item.date || '-'}
-            
-            Motivation :
-            ${item.motivation || 'Non renseignée'}
+        const modal = document.getElementById('detailModal');
+        const modalDetails = document.getElementById('modalDetails');
+        
+        modalDetails.innerHTML = `
+            <div class="detail-item"><span class="detail-label">Nom :</span> ${item.nom || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Prénom :</span> ${item.prenom || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Email :</span> ${item.email || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Téléphone :</span> ${item.telephone || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Université :</span> ${item.universite || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Faculté :</span> ${item.faculte || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Promotion :</span> ${item.promotion || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Type :</span> ${item.typeInscription || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Statut :</span> ${item.statut || 'En attente'}</div>
+            <div class="detail-item"><span class="detail-label">Date :</span> ${item.timestamp?.toDate()?.toLocaleString('fr-FR') || item.date || '-'}</div>
+            <div class="detail-item"><span class="detail-label">Motivation :</span><br>${item.motivation || 'Non renseignée'}</div>
         `;
-        alert(details);
+        
+        modal.style.display = 'flex';
     }
 
-    // ========== SUPPRIMER UNE INSCRIPTION ==========
+    function closeModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    // ========== SUPPRIMER ==========
     async function deleteEntry(id) {
-        if (confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.')) {
+        if (confirm('⚠️ Supprimer définitivement cette inscription ? Cette action est irréversible.')) {
             try {
                 await db.collection('inscriptions').doc(id).delete();
                 allData = allData.filter(d => d.id !== id);
                 updateStats();
                 applyFiltersAndRender();
-                alert('✅ Inscription supprimée avec succès');
+                alert('✅ Inscription supprimée');
             } catch (error) {
-                console.error("Erreur suppression:", error);
-                alert("❌ Erreur lors de la suppression");
+                alert('❌ Erreur lors de la suppression');
             }
         }
     }
 
-    // ========== EXPORTER EN CSV ==========
+    // ========== EXPORTER CSV ==========
     function exportToCSV() {
         let filtered = [...allData];
         
@@ -605,14 +850,14 @@
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.href = url;
-        link.setAttribute('download', `inscriptions_excellentia_${new Date().toISOString().slice(0,19)}.csv`);
+        link.setAttribute('download', `inscriptions_${new Date().toISOString().slice(0,19)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
 
-    // Écouteurs d'événements pour les filtres
+    // Écouteurs
     document.getElementById('typeFilter').addEventListener('change', () => applyFiltersAndRender());
     document.getElementById('statusFilter').addEventListener('change', () => applyFiltersAndRender());
     document.getElementById('searchInput').addEventListener('input', () => applyFiltersAndRender());
