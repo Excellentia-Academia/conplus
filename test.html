@@ -2,11 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fin des Inscriptions | Studio Événement</title>
-    <!-- Google Fonts + Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Excellentia Academia | L'excellence en héritage</title>
+    <!-- Font Awesome 6 (gratuit) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts : Montserrat + Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,555 +21,566 @@
         }
 
         body {
+            background-color: #050505;
             font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            background: #0a0a0a;
+            color: #f0f0f0;
+            scroll-behavior: smooth;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* ========== SHOOTING / STUDIO BACKGROUND ========== */
-        .studio-bg {
+        /* Luxe palette : noir profond, or élégant, blanc pur */
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F5E18B;
+            --dark-bg: #000000;
+            --card-bg: #0f0f0f;
+            --border-glow: rgba(212, 175, 55, 0.4);
+        }
+
+        /* animations globales */
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomGlow {
+            0% { opacity: 0.6; transform: scale(0.98);}
+            100% { opacity: 1; transform: scale(1);}
+        }
+
+        .fade-up {
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            opacity: 0;
+        }
+
+        /* scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* navbar premium */
+        .navbar {
             position: fixed;
             top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        /* MAIN DARK GRADIENT + SOFT NOISE */
-        .studio-bg::before {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 20%, #1e1a1f, #030101);
-            opacity: 0.95;
-            z-index: 1;
-        }
-
-        /* LIGHTS : SPOTLIGHTS & FLOOD EFFECT (shooting ambiance) */
-        .spotlight {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 40%, rgba(255,220,150,0.08) 0%, rgba(0,0,0,0) 60%);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .spotlight-2 {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 85% 70%, rgba(255,180,100,0.12) 0%, rgba(0,0,0,0) 70%);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* SOFT LENS FLARE + REFLECTION */
-        .lens-flare {
-            position: absolute;
-            top: 15%;
-            left: -10%;
-            width: 40%;
-            height: 40%;
-            background: radial-gradient(ellipse, rgba(255,210,140,0.2) 0%, rgba(255,255,255,0) 70%);
-            filter: blur(45px);
-            border-radius: 50%;
-            z-index: 2;
-            pointer-events: none;
-            animation: floatGlow 12s infinite alternate ease-in-out;
-        }
-
-        .lens-flare-right {
-            top: auto;
-            bottom: 10%;
-            right: -5%;
-            left: auto;
-            width: 35%;
-            height: 35%;
-            background: radial-gradient(ellipse, rgba(210,160,255,0.18) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(55px);
-            animation: floatGlowRight 14s infinite alternate;
-        }
-
-        /* GRID LINES (like backdrop paper texture + studio floor) */
-        .grid-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px),
-                repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px);
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        /* SOFT GRAIN / NOISE (analog shooting texture) */
-        .noise {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMTUiLz48L3N2Zz4=');
-            background-repeat: repeat;
-            opacity: 0.2;
-            pointer-events: none;
-            z-index: 4;
-        }
-
-        /* ANIMATIONS */
-        @keyframes floatGlow {
-            0% { transform: translate(0,0) scale(1); opacity: 0.3; }
-            100% { transform: translate(8%, 6%) scale(1.2); opacity: 0.6; }
-        }
-        @keyframes floatGlowRight {
-            0% { transform: translate(0,0) scale(1); opacity: 0.2; }
-            100% { transform: translate(-6%, -8%) scale(1.3); opacity: 0.5; }
-        }
-
-        /* MAIN CONTENT */
-        .content {
-            position: relative;
-            z-index: 20;
-            min-height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 1rem 5%;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            transition: 0.3s;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFF 30%, var(--gold) 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #eee;
+            font-weight: 500;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        .menu-toggle {
+            display: none;
+            font-size: 1.8rem;
+            color: var(--gold);
+            cursor: pointer;
+        }
+        @media (max-width: 1000px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                background: #000000dd;
+                backdrop-filter: blur(20px);
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem;
+                gap: 1.5rem;
+                transition: 0.3s;
+            }
+            .nav-links.active {
+                left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Hero section vidéo */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #heroVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.45);
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
             padding: 2rem;
         }
-
-        .glass-card {
-            max-width: 800px;
-            width: 100%;
-            background: rgba(12, 10, 15, 0.65);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            border: 1px solid rgba(255, 215, 170, 0.25);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(255,255,200,0.1) inset;
-            padding: 2.5rem 2rem;
-            transition: transform 0.4s ease, box-shadow 0.4s;
-            animation: cardFloat 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            text-align: center;
-        }
-
-        @keyframes cardFloat {
-            0% { opacity: 0; transform: translateY(40px) scale(0.96); backdrop-filter: blur(0px);}
-            100% { opacity: 1; transform: translateY(0) scale(1); backdrop-filter: blur(12px);}
-        }
-
-        .glass-card:hover {
-            box-shadow: 0 30px 55px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 210, 130, 0.3) inset;
-            transform: translateY(-3px);
-        }
-
-        /* ICON CINEMA / CAMERA */
-        .camera-icon {
-            font-size: 4.2rem;
-            background: linear-gradient(135deg, #f5e6d3, #e0bc8c);
+        .hero-content h1 {
+            font-size: 4rem;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #FFFFFF, var(--gold-light));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 1rem;
-            animation: shutterClick 0.6s ease-out 0.6s both;
         }
-
-        @keyframes shutterClick {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(3px);}
-            60% { transform: scale(1.1);}
-            100% { transform: scale(1); opacity: 1; filter: blur(0);}
-        }
-
-        h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            background: linear-gradient(115deg, #FFF6E8, #F7D9A3, #FFE6C7);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .thankyou-tag {
+        .hero-content p {
             font-size: 1.2rem;
-            font-weight: 500;
-            color: #FADFBB;
-            background: rgba(0,0,0,0.45);
-            display: inline-block;
-            padding: 0.3rem 1.2rem;
-            border-radius: 40px;
-            backdrop-filter: blur(4px);
-            margin-bottom: 1.8rem;
-            letter-spacing: 0.3px;
-            border-left: 2px solid #ffc285;
-            border-right: 2px solid #ffc285;
+            margin-bottom: 2rem;
+            color: #ddd;
         }
-
-        .message {
-            font-size: 1.2rem;
-            line-height: 1.5;
-            color: #f0e5d8;
-            font-weight: 400;
-            margin: 1.2rem 0 1rem;
-        }
-
-        .highlight {
-            font-weight: 700;
-            color: #FFDA9E;
-            background: linear-gradient(120deg, rgba(255,200,120,0.2), rgba(0,0,0,0));
-            padding: 0 0.2rem;
-        }
-
-        .divider {
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ecc48b, #f5b86e, #ecc48b, transparent);
-            margin: 1.6rem auto;
-            border-radius: 4px;
-        }
-
-        /* ANIMATION BUTTONS / TRANSFER SECTION */
-        .transfer-section {
-            margin: 2rem 0 1rem;
-            background: rgba(0,0,0,0.35);
-            border-radius: 32px;
-            padding: 1.5rem 1rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,215,150,0.2);
-        }
-
-        .transfer-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #FFE3B3;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .transfer-title i {
-            font-size: 1.4rem;
-            color: #ffcd94;
-        }
-
-        .animation-buttons {
+        .btn-group {
             display: flex;
             flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
         }
-
-        .ani-btn {
-            background: rgba(25, 22, 30, 0.8);
-            border: 1px solid rgba(255, 205, 130, 0.5);
-            padding: 0.9rem 1.8rem;
-            border-radius: 60px;
+        .btn {
+            padding: 12px 28px;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 1rem;
-            color: #FFE4B5;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            letter-spacing: 0.5px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .ani-btn i {
-            font-size: 1.2rem;
-            transition: transform 0.2s;
-        }
-
-        .ani-btn:hover {
-            background: rgba(255, 190, 90, 0.2);
-            border-color: #ffcd94;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
-        }
-
-        .ani-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* animation feedback */
-        .toast-feedback {
-            visibility: hidden;
-            min-width: 260px;
-            background: #1c1b1ee6;
-            backdrop-filter: blur(12px);
-            color: #FFE3B0;
-            text-align: center;
-            border-radius: 50px;
-            padding: 12px 20px;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            font-weight: 500;
-            z-index: 200;
-            border-left: 4px solid #f5bc70;
-            border-right: 4px solid #f5bc70;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-            transition: visibility 0s, opacity 0.3s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .toast-feedback.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* responsive */
-        @media (max-width: 600px) {
-            .glass-card {
-                padding: 1.8rem 1.2rem;
-            }
-            h1 {
-                font-size: 2.4rem;
-            }
-            .message {
-                font-size: 1rem;
-            }
-            .animation-buttons {
-                gap: 12px;
-            }
-            .ani-btn {
-                padding: 0.65rem 1.2rem;
-                font-size: 0.85rem;
-            }
-            .toast-feedback {
-                white-space: normal;
-                width: 80%;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* footer tiny */
-        .studio-credit {
-            position: relative;
-            z-index: 20;
-            text-align: center;
-            margin-top: -20px;
-            padding-bottom: 2rem;
-            font-size: 0.7rem;
-            color: rgba(220,190,150,0.5);
-            letter-spacing: 0.5px;
-        }
-        .studio-credit a {
-            color: rgba(240,200,130,0.7);
+            transition: 0.3s;
             text-decoration: none;
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        .btn-primary {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 12px rgba(212,175,55,0.5);
+        }
+        .btn-primary:hover {
+            background: #e6c453;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(212,175,55,0.8);
+        }
+        .btn-outline {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* sections communes */
+        section {
+            padding: 90px 5%;
+        }
+        .section-title {
+            font-size: 2.8rem;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .section-title span {
+            color: var(--gold);
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s;
+            border: 1px solid rgba(212,175,55,0.2);
+            backdrop-filter: blur(2px);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.7);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--gold);
+        }
+
+        /* galerie dynamique */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            height: 240px;
+            background: #1a1a1a;
+        }
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .gallery-item:hover img, .gallery-item:hover video {
+            transform: scale(1.08);
+        }
+        .video-container video {
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        /* formulaire */
+        .form-container {
+            max-width: 700px;
+            margin: auto;
+            background: rgba(15,15,15,0.7);
+            padding: 2rem;
+            border-radius: 32px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 28px;
+            color: white;
+            font-family: inherit;
+        }
+        input:focus, select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+        button {
+            background: var(--gold);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            color: black;
+        }
+        .ambassador-list {
+            margin-top: 2rem;
+            background: #0a0a0a;
+            border-radius: 28px;
+            padding: 1.5rem;
+            display: none;
+        }
+        .ambassador-list.show {
+            display: block;
+            animation: fadeUp 0.5s;
+        }
+
+        footer {
+            background: #030303;
+            text-align: center;
+            padding: 3rem;
+            border-top: 1px solid var(--gold);
+        }
+        .social-icons i {
+            font-size: 1.8rem;
+            margin: 0 12px;
+            color: #ccc;
+            transition: 0.2s;
+        }
+        .social-icons i:hover { color: var(--gold); transform: translateY(-5px);}
+        @media (max-width: 700px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="studio-bg">
-    <div class="spotlight"></div>
-    <div class="spotlight-2"></div>
-    <div class="lens-flare"></div>
-    <div class="lens-flare-right"></div>
-    <div class="grid-overlay"></div>
-    <div class="noise"></div>
-</div>
+<nav class="navbar">
+    <div class="logo">EXCELLENTIA ACADEMIA</div>
+    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#accueil">Accueil</a></li>
+        <li><a href="#a-propos">À propos</a></li>
+        <li><a href="#organisation">Organisation</a></li>
+        <li><a href="#activites">Activités</a></li>
+        <li><a href="#inscription">Inscription</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+        <li><a href="#evenements">Événements</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
 
-<div class="content">
-    <div class="glass-card">
-        <div class="camera-icon">
-            <i class="fas fa-camera-retro"></i>
-        </div>
-        <div class="thankyou-tag">
-            ✦ INSCRIPTION CLÔTURÉE ✦
-        </div>
-        <h1>
-            Nous vous remercions<br>
-            de vous être inscrits !
-        </h1>
-        <div class="message">
-            ✨ L'aventure commence bientôt. ✨<br>
-            <span class="highlight">Fin des inscriptions</span> — l'équipe prépare le shooting et les moments uniques.
-        </div>
-        <div class="divider"></div>
-
-        <div class="transfer-section">
-            <div class="transfer-title">
-                <i class="fas fa-exchange-alt"></i> 
-                <span>Transfert d’animations & souvenirs</span>
-                <i class="fas fa-magic"></i>
-            </div>
-            <p style="color:#eedbbc; font-size:0.95rem; margin-bottom:0.5rem;">
-                Merci de transférer vos animations, vidéos et créations pour le montage final.
-            </p>
-            <div class="animation-buttons">
-                <button class="ani-btn" id="transferVideoBtn">
-                    <i class="fas fa-video"></i> Transférer une animation
-                </button>
-                <button class="ani-btn" id="transferGifBtn">
-                    <i class="fas fa-images"></i> Transférer un shooting
-                </button>
-                <button class="ani-btn" id="surpriseBtn">
-                    <i class="fas fa-star-of-life"></i> Animation surprise
-                </button>
-            </div>
-            <p style="font-size: 0.75rem; margin-top: 1rem; opacity: 0.7; color:#cfc3aa;">
-                Cliquez pour envoyer vos créations — votre média sera simulé avec élégance.
-            </p>
-        </div>
-        <div class="divider" style="width: 60px;"></div>
-        <div style="font-size: 0.8rem; color:#cfc2aa; margin-top: 10px;">
-            <i class="fas fa-crown"></i> Studio Shooting · Prêt à capturer l'instant
+<!-- Hero section -->
+<section id="accueil" class="hero">
+    <video autoplay muted loop playsinline id="heroVideo">
+        <source src="https://cdn.pixabay.com/video/2021/11/22/97153-648297373_large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+        <h1>Excellentia Academia</h1>
+        <p>L'excellence académique, le leadership et l'engagement intellectuel au service de la jeunesse congolaise.</p>
+        <div class="btn-group">
+            <a href="#inscription" class="btn btn-primary">Rejoindre la communauté</a>
+            <a href="#inscription" class="btn btn-outline">Devenir Ambassadeur</a>
+            <a href="#organisation" class="btn btn-outline">Découvrir la structure</a>
+            <a href="#activites" class="btn btn-outline">Nos activités</a>
+            <a href="#galerie" class="btn btn-outline">Galerie</a>
+            <a href="#contact" class="btn btn-outline">Nous contacter</a>
         </div>
     </div>
-</div>
-<div class="studio-credit">
-    <span>✨ set design — lumière cinéma & vibe analogique ✨</span>
-</div>
+</section>
 
-<!-- Toast Notification -->
-<div id="toastMsg" class="toast-feedback">
-    <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Animation transférée !
-</div>
+<!-- À propos -->
+<section id="a-propos" class="reveal">
+    <div class="section-title"><span>À propos</span> d'Excellentia Academia</div>
+    <div style="max-width: 900px; margin:auto; text-align:center; line-height:1.6">
+        <p>Excellentia Academia est une structure académique engagée dans la promotion de l’excellence académique, du leadership et de l’engagement intellectuel de la jeunesse. Elle valorise les compétences des étudiants à travers des activités innovantes, éducatives et compétitives, favorisant l’émergence d’une génération consciente, éloquente, compétente et prête à impacter positivement la société.</p>
+        <div class="stats" style="margin-top: 3rem;">
+            <div class="stat-item"><h3>300+</h3><p>Membres actifs</p></div>
+            <div class="stat-item"><h3>12+</h3><p>Universités partenaires</p></div>
+            <div class="stat-item"><h3>25+</h3><p>Événements organisés</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- Organisation -->
+<section id="organisation" class="reveal" style="background: #050505;">
+    <div class="section-title"><span>Notre</span> Organisation</div>
+    <div class="cards-grid">
+        <div class="card"><i class="fas fa-crown" style="color:var(--gold); font-size:2rem"></i><h3>Coordination</h3><p><strong>Fondateur & Coord. Général :</strong> Malale Musao Credo<br><strong>Directeur projet :</strong> Chris Bulubulu<br><strong>Dir. adjoint :</strong> Aristote Mbo<br><strong>SG :</strong> Arni Djonga<br><strong>SG adjoint :</strong> Paul Kasongo<br><strong>Communication :</strong> Sephora Kapalata, Princilia<br><strong>Logistique :</strong> Mima Tshienda, Francia<br><strong>Finances :</strong> Jemima Bembide<br><strong>Conseiller strat :</strong> Dea Ngoyi</p></div>
+        <div class="card"><i class="fas fa-handshake" style="color:var(--gold); font-size:2rem"></i><h3>Ambassadeurs</h3><p>Représentants officiels dans les facultés et universités. Cliquez ci-dessous pour afficher la liste.</p><button id="toggleAmbBtn" style="margin-top:15px">Afficher les ambassadeurs</button><div id="ambassadorListDiv" class="ambassador-list"><strong>🌟 Élie Mbumba, Beni Nzenga, Adoption MWAMUKASA, Maurice Fefe, Gédéon Mulowanyi, Daniella Lisunde</strong></div></div>
+        <div class="card"><i class="fas fa-users" style="color:var(--gold); font-size:2rem"></i><h3>Membres Effectifs</h3><p>Cœur vivant de la structure, les adhérents participent aux formations, concours et conférences, bénéficiant d’un encadrement pratique pour leur progression.</p></div>
+    </div>
+</section>
+
+<!-- Activités -->
+<section id="activites" class="reveal">
+    <div class="section-title"><span>Nos</span> Activités</div>
+    <div class="cards-grid">
+        <div class="card"><i class="fas fa-chalkboard-user"></i><h3>Formations</h3><p>Art oratoire, Leadership, Entrepreneuriat, Communication, Pensée critique, Rédaction académique</p></div>
+        <div class="card"><i class="fas fa-trophy"></i><h3>Concours</h3><p>Éloquence, Plaidoirie, Débats contradictoires, politiques, Entrepreneuriat, compétitions interuniversitaires</p></div>
+        <div class="card"><i class="fas fa-microphone-alt"></i><h3>Conférences & Ateliers</h3><p>Conférences thématiques, panels, séminaires, rencontres inspirantes.</p></div>
+    </div>
+</section>
+
+<!-- Inscription + Firebase + EmailJS -->
+<section id="inscription" class="reveal">
+    <div class="section-title"><span>Postulez</span> maintenant</div>
+    <div class="form-container">
+        <form id="candidatureForm">
+            <input type="text" id="nom" placeholder="Nom complet" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="tel" id="telephone" placeholder="Téléphone" required>
+            <input type="text" id="universite" placeholder="Université" required>
+            <select id="typeCandidature" required>
+                <option value="Membre">Membre</option>
+                <option value="Ambassadeur">Ambassadeur</option>
+            </select>
+            <textarea id="motivation" rows="3" placeholder="Motivation (pourquoi nous rejoindre ?)"></textarea>
+            <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Envoyer ma candidature</button>
+            <div id="formMessage" style="margin-top:15px; color:var(--gold-light);"></div>
+        </form>
+    </div>
+</section>
+
+<!-- Galerie Photos & Vidéos -->
+<section id="galerie" class="reveal">
+    <div class="section-title"><span>Galerie</span> média</div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- Événements -->
+<section id="evenements" class="reveal">
+    <div class="section-title"><span>Événements</span> à venir</div>
+    <div class="cards-grid">
+        <div class="card"><h3>🏆 Grand Concours d'Éloquence</h3><p>Date: 15 Décembre 2025 | Université de Kinshasa</p></div>
+        <div class="card"><h3>🎤 Atelier Leadership & Impact</h3><p>22 Janvier 2026 - En ligne & Présentiel</p></div>
+        <div class="card"><h3>🗣️ Débat Interuniversitaire</h3><p>10 Février 2026 - Inscriptions ouvertes</p></div>
+    </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="reveal">
+    <div class="section-title"><span>Contactez</span> nous</div>
+    <div style="text-align:center; max-width:600px; margin:auto;">
+        <p><i class="fas fa-envelope"></i> excellentiaacademia@gmail.com</p>
+        <p><i class="fab fa-whatsapp"></i> +243 123 456 789 (WhatsApp)</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <form id="simpleContact" style="margin-top:30px;">
+            <input type="text" placeholder="Votre nom" id="contactName"><input type="email" placeholder="Email" id="contactEmail"><textarea placeholder="Message"></textarea><button type="button" onclick="alert('Message reçu ! Nous vous répondrons sous 48h.')">Envoyer</button>
+        </form>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 Excellentia Academia — L'excellence pour héritage</p>
+    <div class="social-icons" style="margin-top: 15px;">
+        <i class="fab fa-instagram"></i> <i class="fab fa-whatsapp"></i> <i class="fab fa-x-twitter"></i> <i class="fab fa-facebook"></i> <i class="fab fa-youtube"></i>
+    </div>
+</footer>
 
 <script>
-    (function() {
-        // Éléments DOM
-        const toast = document.getElementById('toastMsg');
-        let toastTimeout = null;
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyB68tv_pxmOxblO_qnHoF1cSWAMXTjhung",
+        authDomain: "membre-955c6.firebaseapp.com",
+        projectId: "membre-955c6",
+        storageBucket: "membre-955c6.firebasestorage.app",
+        messagingSenderId: "397628408442",
+        appId: "1:397628408442:web:c14bab03891ab5111931c3",
+        measurementId: "G-2ZRYLN3NMK"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        function showToast(message, iconType = 'check-circle') {
-            // change le message et l'icône dynamiquement
-            const iconSpan = document.createElement('i');
-            const finalMessage = message;
-            toast.innerHTML = `<i class="fas fa-${iconType}" style="margin-right: 8px;"></i> ${finalMessage}`;
-            toast.classList.add('show');
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2800);
-        }
+    // EmailJS init
+    emailjs.init("aPNNQ4mKPEi85io_Q");
 
-        // Animation de confirmation avec un effet "flash" sur le bouton + simulation d'envoi
-        function simulateTransfer(mediaType, customName) {
-            // petite animation sur le bouton (feedback tactile)
-            // On va également afficher un toast stylé
-            let msg = "";
-            let icon = "cloud-upload-alt";
-            switch(mediaType) {
-                case 'video':
-                    msg = `📹 Animation vidéo transférée avec succès ! Merci.`;
-                    break;
-                case 'shooting':
-                    msg = `📸 Shooting photo ajouté — votre création rejoint la galerie.`;
-                    break;
-                case 'surprise':
-                    msg = `✨ Animation surprise reçue ! ✨ L'équipe adore votre énergie.`;
-                    icon = "magic";
-                    break;
-                default:
-                    msg = `Média transféré — Merci pour votre contribution.`;
-            }
-            if(customName) msg = customName;
-            showToast(msg, icon);
-            
-            // Créer une petite impulsion lumineuse (simulation d'un transfert réussi)
-            const activeBtn = document.activeElement;
-            if(activeBtn && activeBtn.classList && activeBtn.classList.contains('ani-btn')) {
-                activeBtn.style.transform = 'scale(0.97)';
-                setTimeout(() => {
-                    if(activeBtn) activeBtn.style.transform = '';
-                }, 150);
-            }
-            // Ajouter un effet subtil de flash dans la card (comme un déclencheur)
-            const card = document.querySelector('.glass-card');
-            if(card) {
-                card.style.transition = 'box-shadow 0.1s';
-                card.style.boxShadow = '0 0 0 2px rgba(255,200,100,0.6), 0 20px 35px rgba(0,0,0,0.4)';
-                setTimeout(() => {
-                    if(card) card.style.boxShadow = '';
-                }, 300);
-            }
-            console.log(`[TRANSFERT] ${mediaType} → studio backend (simulation réussie)`);
+    // Gestion formulaire inscription
+    const form = document.getElementById('candidatureForm');
+    const msgDiv = document.getElementById('formMessage');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Envoi en cours...';
+
+        const nom = document.getElementById('nom').value;
+        const email = document.getElementById('email').value;
+        const telephone = document.getElementById('telephone').value;
+        const universite = document.getElementById('universite').value;
+        const type = document.getElementById('typeCandidature').value;
+        const motivation = document.getElementById('motivation').value;
+
+        const candidat = { nom, email, telephone, universite, type, motivation, statut: 'En attente', date: new Date() };
+        try {
+            // Sauvegarde Firebase
+            const docRef = await db.collection('inscriptions').add(candidat);
+            // Envoi email confirm
+            await emailjs.send("service_4u3n87h", "template_ed65khj", {
+                to_name: nom,
+                to_email: email,
+                type_candidature: type,
+                message: `Merci ${nom}, votre candidature chez Excellentia Academia a bien été reçue. Nous vous répondrons sous peu.`
+            });
+            msgDiv.innerHTML = "<span style='color:#D4AF37'>✅ Candidature enregistrée ! Un email de confirmation vous a été envoyé.</span>";
+            form.reset();
+        } catch (error) {
+            console.error(error);
+            msgDiv.innerHTML = "<span style='color:#ff8888'>❌ Erreur lors de l'envoi, veuillez réessayer.</span>";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Envoyer ma candidature';
         }
-        
-        // Gestionnaires avec texte personnalisé
-        const transferVideo = document.getElementById('transferVideoBtn');
-        const transferGif = document.getElementById('transferGifBtn');
-        const surpriseAnim = document.getElementById('surpriseBtn');
-        
-        if(transferVideo) {
-            transferVideo.addEventListener('click', (e) => {
+    });
+
+    // Toggle ambassadeurs
+    document.getElementById('toggleAmbBtn')?.addEventListener('click', () => {
+        document.getElementById('ambassadorListDiv').classList.toggle('show');
+        document.getElementById('toggleAmbBtn').innerText = document.getElementById('ambassadorListDiv').classList.contains('show') ? 'Masquer les ambassadeurs' : 'Afficher les ambassadeurs';
+    });
+
+    // Menu mobile
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+    document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Génération galerie photos/vidéos (fausse mais stylée)
+    const gallery = document.getElementById('galleryGrid');
+    const images = [
+        "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500", "https://images.unsplash.com/photo-1517245386807-bb43f82c0c7a?w=500", "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500"
+    ];
+    const videos = [
+        "https://cdn.pixabay.com/video/2023/06/26/169313-833968432_tiny.mp4"
+    ];
+    let galHtml = '';
+    images.forEach(src => { galHtml += `<div class="gallery-item"><img src="${src}" alt="event"></div>`; });
+    videos.forEach(vid => { galHtml += `<div class="gallery-item video-container"><video controls src="${vid}"></video></div>`; });
+    gallery.innerHTML = galHtml;
+
+    // smooth scroll pour tous les ancres
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if(href === "#" || href === "") return;
+            const target = document.querySelector(href);
+            if(target) {
                 e.preventDefault();
-                simulateTransfer('video', '🎬 Animation transférée — merci ! Votre clip fera partie du montage final.');
-            });
-        }
-        
-        if(transferGif) {
-            transferGif.addEventListener('click', (e) => {
-                e.preventDefault();
-                simulateTransfer('shooting', '📷 Votre shooting est bien reçu. Effets lumineux garantis !');
-            });
-        }
-        
-        if(surpriseAnim) {
-            surpriseAnim.addEventListener('click', (e) => {
-                e.preventDefault();
-                simulateTransfer('surprise', '🎁 Animation surprise reçue ! Un shot créatif vient d’arriver au studio.');
-            });
-        }
-        
-        // Ajout d'un petit effet de lumière dynamique au passage de la souris sur les boutons
-        const allBtns = document.querySelectorAll('.ani-btn');
-        allBtns.forEach(btn => {
-            btn.addEventListener('mouseenter', () => {
-                // petit effet sonore visuel (juste style)
-                btn.style.transition = 'all 0.2s';
-            });
-        });
-        
-        // Simuler un message de bienvenue après chargement (merci animation)
-        setTimeout(() => {
-            showToast('🎥 Bienvenue au studio ! Merci de partager vos animations.', 'camera');
-        }, 800);
-        
-        // bonus: gestion de l'ambiance "clap" avec espace ou clic
-        document.body.addEventListener('dblclick', function(e) {
-            if(e.target.closest('.glass-card')) {
-                const fakeFlash = document.createElement('div');
-                fakeFlash.style.position = 'fixed';
-                fakeFlash.style.top = 0;
-                fakeFlash.style.left = 0;
-                fakeFlash.style.width = '100%';
-                fakeFlash.style.height = '100%';
-                fakeFlash.style.backgroundColor = 'rgba(255,240,200,0.15)';
-                fakeFlash.style.pointerEvents = 'none';
-                fakeFlash.style.zIndex = '999';
-                fakeFlash.style.transition = 'opacity 0.2s';
-                document.body.appendChild(fakeFlash);
-                setTimeout(() => {
-                    fakeFlash.style.opacity = '0';
-                    setTimeout(() => fakeFlash.remove(), 250);
-                }, 80);
-                // petit message
-                showToast('✨ Instant magique capturé ✨', 'bolt');
+                target.scrollIntoView({ behavior: 'smooth' });
             }
         });
-        
-    })();
+    });
+
+    // admin panel (page privée simple mais simulation de gestion)
+    // Optionnel: Pour simplifier on ajoute une redirection symbolique mais pas obligatoire, on peut ajouter un lien dans footer ou invisible.
+    console.log("Site WAOUH Excellentia Academia prêt");
 </script>
 </body>
 </html>
