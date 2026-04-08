@@ -329,6 +329,13 @@
 </div>
 
 <script>
+    // Initialisation d'EmailJS avec votre clé publique
+    emailjs.init("aPNNQ4mKPEi85io_Q");
+    
+    // Configuration EmailJS
+    const EMAILJS_SERVICE_ID = "service_gqclxov";
+    const EMAILJS_TEMPLATE_ID = "template_sgnn50l";
+    
     // ========== GESTION DU CHAMP "AUTRE" POUR FACULTÉ ==========
     const facultySelect = document.getElementById('faculty');
     const otherFacultyDiv = document.getElementById('otherFacultyDiv');
@@ -365,9 +372,6 @@
         console.error("❌ Firebase erreur:", err);
     }
 
-emailjs.send("service_gqclxov", "template_sgnn50l", {
-  email: document.querySelector('input[name="email"]').value
-});
     // LIEN WHATSAPP GROUPE MEMBRE
     const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/HfKRmuvqkhUI2tk6tKlwiV?mode=gi_t";
 
@@ -522,8 +526,9 @@ La Coordination d'Excellentia Academia
                 message: emailMessage
             };
             
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
-            console.log("✅ EmailJS OK");
+            // Envoi de l'email
+            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
+            console.log("✅ EmailJS OK", response);
 
             // Message de succès différent selon le type
             let successMsg = "";
