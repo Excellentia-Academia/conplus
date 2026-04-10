@@ -6,7 +6,6 @@
     <title>Excellentia Academia | Inscription</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <style>
@@ -329,13 +328,6 @@
 </div>
 
 <script>
-    // Initialisation d'EmailJS avec votre clé publique
-    emailjs.init("aPNNQ4mKPEi85io_Q");
-    
-    // Configuration EmailJS
-    const EMAILJS_SERVICE_ID = "service_gqclxov";
-    const EMAILJS_TEMPLATE_ID = "template_sgnn50l";
-    
     // ========== GESTION DU CHAMP "AUTRE" POUR FACULTÉ ==========
     const facultySelect = document.getElementById('faculty');
     const otherFacultyDiv = document.getElementById('otherFacultyDiv');
@@ -370,69 +362,6 @@
         console.log("✅ Firebase initialisé");
     } catch (err) {
         console.error("❌ Firebase erreur:", err);
-    }
-
-    // LIEN WHATSAPP GROUPE MEMBRE
-    const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/HfKRmuvqkhUI2tk6tKlwiV?mode=gi_t";
-
-    // ========== FONCTION POUR GÉNÉRER LE MESSAGE EMAIL ==========
-    function generateEmailMessage(data, typeInscription) {
-        const fullName = `${data.prenom} ${data.nom}`;
-        const facultéValue = data.faculte === 'autre' ? data.otherFaculty : data.faculte;
-        
-        if (typeInscription === "Membre") {
-            return `
-Bonjour ${fullName},
-
-🎉 Félicitations ! Votre inscription en tant que MEMBRE d'Excellentia Academia a bien été enregistrée.
-
-📋 Récapitulatif de votre candidature :
-- Université : ${data.universite}
-- Faculté : ${facultéValue}
-- Promotion : ${data.promotion}
-
-✅ Prochaine étape :
-Rejoignez dès maintenant notre communauté WhatsApp officielle pour ne rien manquer de nos activités, formations et événements :
-
-🔗 LIEN D'INVITATION : ${WHATSAPP_GROUP_LINK}
-
-Au plaisir de vous compter parmi nous !
-
-Cordialement,
-L'équipe Excellentia Academia
-📧 excellentiaacademia@gmail.com
-🌍 Au-delà de l'excellence académique
-            `;
-        } 
-        else { // Ambassadeur
-            return `
-Bonjour ${fullName},
-
-🙏 Merci pour votre candidature au poste d'AMBASSADEUR d'Excellentia Academia.
-
-📋 Récapitulatif de votre candidature :
-- Université : ${data.universite}
-- Faculté : ${facultéValue}
-- Promotion : ${data.promotion}
-
-📌 Votre motivation :
-"${data.motivation.substring(0, 200)}..."
-
-🔍 Étude de votre profil :
-Notre équipe de coordination va étudier attentivement votre profil ainsi que votre lettre de motivation. Nous reviendrons vers vous dans les meilleurs délais pour vous informer de la suite du processus de sélection.
-
-💡 Ce que nous recherchons chez un Ambassadeur :
-- Engagement et leadership
-- Capacité à mobiliser
-- Représenter dignement la structure dans votre faculté
-
-Nous vous remercions pour votre intérêt et votre engagement envers l'excellence académique.
-
-Cordialement,
-La Coordination d'Excellentia Academia
-📧 excellentiaacademia@gmail.com
-            `;
-        }
     }
 
     // ========== ENVOI DU FORMULAIRE ==========
@@ -483,17 +412,6 @@ La Coordination d'Excellentia Academia
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Envoi en cours...';
 
-        // Générer le message email personnalisé
-        const emailMessage = generateEmailMessage({
-            prenom: firstName,
-            nom: lastName,
-            universite: university,
-            faculte: faculty,
-            otherFaculty: otherFaculty,
-            promotion: promotion,
-            motivation: motivation
-        }, typeInscription);
-
         const candidat = {
             nom: lastName,
             prenom: firstName,
@@ -510,32 +428,21 @@ La Coordination d'Excellentia Academia
         };
 
         try {
-            // 1. Envoi à Firebase
+            // Envoi à Firebase uniquement
             if (db) {
                 await db.collection("inscriptions").add(candidat);
                 console.log("✅ Firebase OK");
             } else {
                 console.warn("Firebase non disponible");
+                throw new Error("Firebase non disponible");
             }
             
-            // 2. Envoi d'email personnalisé
-            const emailParams = {
-                to_name: `${firstName} ${lastName}`,
-                to_email: email,
-                type_candidature: typeInscription,
-                message: emailMessage
-            };
-            
-            // Envoi de l'email
-            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
-            console.log("✅ EmailJS OK", response);
-
             // Message de succès différent selon le type
             let successMsg = "";
             if (typeInscription === "Membre") {
-                successMsg = `✅ Félicitations ${firstName} ! Votre inscription a été enregistrée. Vérifiez vos emails (y compris les spams) pour rejoindre notre groupe WhatsApp.`;
+                successMsg = `✅ Félicitations ${firstName} ! Votre inscription a été enregistrée avec succès.`;
             } else {
-                successMsg = `✅ Merci ${firstName} pour votre candidature ! Un email de confirmation vous a été envoyé. Notre équipe étudiera votre profil et vous recontactera sous peu.`;
+                successMsg = `✅ Merci ${firstName} pour votre candidature ! Votre dossier a bien été enregistré. Notre équipe étudiera votre profil et vous recontactera sous peu.`;
             }
             
             messageDiv.className = "message success";
@@ -553,8 +460,6 @@ La Coordination d'Excellentia Academia
             
             if (error.code === "permission-denied") {
                 errorMsg += "Firebase: Activez le mode test dans Firestore (Règles → allow read, write: if true)";
-            } else if (error.text) {
-                errorMsg += `EmailJS: ${error.text}`;
             } else if (error.message) {
                 errorMsg += error.message;
             } else {
