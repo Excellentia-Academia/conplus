@@ -2,8 +2,15 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visite - École Excellence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Excellentia Academia - Nomination Ambassadeurs</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,482 +19,718 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-        }
-
-        /* Navbar */
-        .navbar {
-            background-color: #2c3e50;
-            padding: 1rem 2rem;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             position: relative;
-            z-index: 1000;
+            overflow-x: hidden;
         }
 
-        .navbar-brand {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .navbar-brand:hover {
-            opacity: 0.9;
-        }
-
-        /* Hamburger Button */
-        .hamburger {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            width: 30px;
-            height: 30px;
-            z-index: 1001;
-        }
-
-        .hamburger span {
-            width: 100%;
-            height: 3px;
-            background-color: white;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        /* Menu Window */
-        .menu-window {
+        /* Particules animées */
+        .particle {
             position: fixed;
-            top: 0;
-            right: -100%;
-            width: 300px;
-            height: 100vh;
-            background-color: white;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-            transition: right 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(255,215,0,0.6), transparent);
+            border-radius: 50%;
+            animation: floatParticle 8s infinite ease-in-out;
+            z-index: 0;
         }
 
-        .menu-window.active {
-            right: 0;
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-50px) translateX(30px) scale(1.2); opacity: 0.6; }
         }
 
-        .menu-header {
-            background-color: #2c3e50;
-            padding: 1.5rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Conteneur principal */
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            z-index: 2;
+            position: relative;
         }
 
-        .menu-title {
-            font-size: 1.3rem;
-            font-weight: bold;
+        /* Header animation */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255,215,0,0.3);
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        /* Carte principale */
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.2);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Zone admin */
+        .admin-section {
+            background: rgba(0,0,0,0.5);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 40px;
+            transition: all 0.4s;
+        }
+
+        .admin-title {
+            color: #FFD700;
             font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-title i {
+            font-size: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.95);
+            transition: all 0.3s;
+            font-family: 'Inter', monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px #FFD700;
+            transform: scale(1.02);
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            padding: 0.5rem;
-            line-height: 1;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
         }
 
-        .close-btn:hover {
-            opacity: 0.8;
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e;
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
         }
 
-        .menu-content {
-            padding: 2rem 0;
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,215,0,0.5);
         }
 
-        .menu-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.2s ease;
+        /* Grille des ambassadeurs */
+        .ambassadors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
 
-        .menu-item:hover {
-            background-color: #f5f5f5;
+        .ambassador-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border-radius: 25px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s;
+            animation: cardAppear 0.6s ease-out;
+            border: 1px solid rgba(255,215,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .menu-item a {
-            color: #333;
-            text-decoration: none;
-            font-size: 1.1rem;
-            display: block;
+        .ambassador-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #FFD700;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
 
-        .menu-item a:hover {
-            color: #2c3e50;
+        .ambassador-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.6s;
         }
 
-        /* Overlay */
-        .overlay {
+        .ambassador-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+
+        .card-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .card-date {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            background: rgba(255,215,0,0.2);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: #FFD700;
+            display: inline-block;
+        }
+
+        /* Modal de félicitations */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 999;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
         }
 
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .modal-content {
+            background: linear-gradient(135deg, #1e1b4b, #0f0c29);
+            border-radius: 50px;
+            padding: 50px;
+            max-width: 500px;
+            width: 90%;
             text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        /* Section */
-        .section {
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #2c3e50;
+            border: 2px solid #FFD700;
+            animation: bounceIn 0.6s;
             position: relative;
         }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            margin: 1rem auto;
-            border-radius: 2px;
+        .confetti-icon {
+            font-size: 4rem;
+            animation: spin 1s ease;
         }
 
-        /* Gallery Grid */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .photo-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .modal h2 {
+            color: #FFD700;
+            margin: 20px 0;
+            font-size: 2rem;
         }
 
-        .photo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        .modal p {
+            color: white;
+            margin: 15px 0;
+            font-size: 1.1rem;
         }
 
-        .photo-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
+        .code-box {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            word-break: break-all;
+            border: 1px dashed #FFD700;
         }
 
-        .photo-info {
-            padding: 1.5rem;
+        .btn-close {
+            background: #FFD700;
+            color: #1a1a2e;
+            margin-top: 20px;
         }
 
-        .photo-title {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .photo-description {
-            color: #666;
-            line-height: 1.6;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Responsive */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
+            .card { padding: 20px; }
+            .hero h1 { font-size: 2rem; }
+            .input-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="homepage.html" class="navbar-brand">🎓 École Excellence</a>
-        <button class="hamburger" id="hamburgerBtn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </nav>
-
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Menu Window -->
-    <div class="menu-window" id="menuWindow">
-        <div class="menu-header">
-            <div class="menu-title">Menu</div>
-            <button class="close-btn" id="closeBtn">&times;</button>
+    <div class="container">
+        <div class="hero">
+            <h1><i class="fas fa-crown"></i> Excellentia Academia <i class="fas fa-medal"></i></h1>
+            <p>Programme des Ambassadeurs Événementiels d'Excellence</p>
         </div>
-        <div class="menu-content">
-            <div class="menu-item">
-                <a href="homepage.html">Accueil</a>
+
+        <div class="card">
+            <!-- Zone Admin avec code masqué -->
+            <div class="admin-section">
+                <div class="admin-title">
+                    <i class="fas fa-lock"></i>
+                    <span>Espace Administration - Nomination</span>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="adminCode" placeholder="Code d'accès administrateur" autocomplete="off">
+                    <input type="text" id="ambassadorName" placeholder="Nom complet de l'ambassadeur">
+                    <button class="btn btn-primary" id="nominateBtn">
+                        <i class="fas fa-star"></i> Nommer Ambassadeur
+                    </button>
+                </div>
+                <small style="color: rgba(255,255,255,0.5);"><i class="fas fa-shield-alt"></i> Code confidentiel requis</small>
             </div>
-            <div class="menu-item">
-                <a href="visitepage.html">Visite</a>
+
+            <!-- Statistiques -->
+            <div class="stats" id="stats">
+                <div class="stat">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Ambassadeurs</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-label">Excellentia Academia</div>
+                </div>
             </div>
-            <div class="menu-item">
-                <a href="assisatancepage.html">Assistance</a>
-            </div>
-            <div class="menu-item">
-                <a href="formpage.html">Formulaire</a>
+
+            <!-- Liste des ambassadeurs -->
+            <h3 style="color: white; margin-bottom: 20px;">
+                <i class="fas fa-users"></i> Ambassadeurs d'Honneur
+            </h3>
+            <div id="ambassadorsList" class="ambassadors-grid">
+                <div style="text-align: center; color: rgba(255,255,255,0.6); grid-column: 1/-1; padding: 40px;">
+                    <i class="fas fa-spinner fa-pulse"></i> Chargement des ambassadeurs...
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Visite du Campus</h1>
-        <p>Découvrez nos installations et nos salles de classe</p>
-    </section>
-
-    <!-- Campus Photos -->
-    <section class="section">
-        <h2 class="section-title">Le Campus</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600" alt="Vue extérieure du campus" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Vue Extérieure</h3>
-                    <p class="photo-description">Notre campus moderne de 20 hectares avec ses bâtiments architecturaux impressionnants.</p>
-                </div>
+    <!-- Modal félicitations -->
+    <div id="congratsModal" class="modal">
+        <div class="modal-content">
+            <div class="confetti-icon">
+                <i class="fas fa-trophy"></i>
             </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1562774053-701939374585?w=600" alt="Hall principal" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Hall Principal</h3>
-                    <p class="photo-description">Grand hall d'accueil spacieux et lumineux avec réception et espace d'information.</p>
-                </div>
+            <h2>🎉 FÉLICITATIONS ! 🎉</h2>
+            <p><strong id="modalName"></strong></p>
+            <p>Vous venez d'être nommé(e)</p>
+            <h3 style="color: #FFD700;">Ambassadeur Événementiel</h3>
+            <p><strong>Excellentia Academia</strong></p>
+            <div class="code-box">
+                <i class="fas fa-qrcode"></i> Code unique: <span id="modalCode"></span>
             </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600" alt="Jardin du campus" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Espaces Verts</h3>
-                    <p class="photo-description">Campus verdoyant avec jardins, espaces de détente et aires de pique-nique.</p>
-                </div>
-            </div>
+            <button class="btn btn-primary btn-close" onclick="closeModal()">
+                <i class="fas fa-check"></i> Accepter l'honneur
+            </button>
         </div>
-    </section>
-
-    <!-- Classrooms Photos -->
-    <section class="section" style="background: white;">
-        <h2 class="section-title">Salles de Classe</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" alt="Salle de classe moderne" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Salle de Classe Moderne</h3>
-                    <p class="photo-description">Salle équipée de tableau interactif, projecteur et mobilier ergonomique. Capacité: 30 étudiants.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600" alt="Salle avec projecteur" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Salle de Présentation</h3>
-                    <p class="photo-description">Salle spacieuse avec système audio-visuel moderne pour les présentations et conférences.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600" alt="Salle d'étude" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Salle d'Étude</h3>
-                    <p class="photo-description">Espace calme et confortable pour l'étude individuelle et en groupe. 50 places disponibles.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600" alt="Amphithéâtre" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Amphithéâtre</h3>
-                    <p class="photo-description">Grande salle de 500 places avec équipements audiovisuels pour conférences et cérémonies.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Laboratories Photos -->
-    <section class="section">
-        <h2 class="section-title">Laboratoires</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600" alt="Laboratoire de sciences" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Laboratoire de Sciences</h3>
-                    <p class="photo-description">Laboratoire équipé pour la physique et la chimie avec matériel de pointe et mesures de sécurité.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" alt="Laboratoire informatique" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Laboratoire Informatique</h3>
-                    <p class="photo-description">Salle informatique avec 40 ordinateurs modernes et logiciels professionnels pour l'apprentissage.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600" alt="Laboratoire de biologie" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Laboratoire de Biologie</h3>
-                    <p class="photo-description">Laboratoire spécialisé pour les sciences de la vie avec microscopes et équipements modernes.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Library Photos -->
-    <section class="section" style="background: white;">
-        <h2 class="section-title">Bibliothèque</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600" alt="Bibliothèque" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Bibliothèque Centrale</h3>
-                    <p class="photo-description">Espace de 2000m² avec plus de 100 000 ouvrages et ressources numériques accessibles.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600" alt="Salle de lecture" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Salle de Lecture</h3>
-                    <p class="photo-description">Espaces de lecture silencieux et confortables pour l'étude et la recherche.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600" alt="Espace collaboratif" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Espace Collaboratif</h3>
-                    <p class="photo-description">Zones de travail en groupe avec tableaux interactifs et connexion Wi-Fi haut débit.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Facilities Photos -->
-    <section class="section">
-        <h2 class="section-title">Installations</h2>
-        <div class="gallery-grid">
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600" alt="Complexe sportif" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Complexe Sportif</h3>
-                    <p class="photo-description">Gymnase moderne avec équipements sportifs, piscine et terrains extérieurs.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600" alt="Cafétéria" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Cafétéria</h3>
-                    <p class="photo-description">Espace de restauration avec repas équilibrés et espaces de détente conviviaux.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600" alt="Studio créatif" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Studio Créatif</h3>
-                    <p class="photo-description">Ateliers d'art et studios d'enregistrement pour les programmes créatifs et artistiques.</p>
-                </div>
-            </div>
-            <div class="photo-card">
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600" alt="Salle de spectacle" class="photo-image">
-                <div class="photo-info">
-                    <h3 class="photo-title">Salle de Spectacle</h3>
-                    <p class="photo-description">Théâtre de 500 places avec équipements scéniques pour les représentations et événements.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <script>
-        // Menu functionality
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const closeBtn = document.getElementById('closeBtn');
-        const menuWindow = document.getElementById('menuWindow');
-        const overlay = document.getElementById('overlay');
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoqS3iXJVuJoDHOqSBox0Da2puqTcYQss",
+            authDomain: "forma-1ffe6.firebaseapp.com",
+            projectId: "forma-1ffe6",
+            storageBucket: "forma-1ffe6.firebasestorage.app",
+            messagingSenderId: "242144104957",
+            appId: "1:242144104957:web:7639e0d766a067a0b48994",
+            measurementId: "G-9FZ04Q9ETB"
+        };
 
-        hamburgerBtn.addEventListener('click', () => {
-            menuWindow.classList.add('active');
-            overlay.classList.add('active');
-            hamburgerBtn.classList.add('active');
-        });
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        closeBtn.addEventListener('click', () => {
-            menuWindow.classList.remove('active');
-            overlay.classList.remove('active');
-            hamburgerBtn.classList.remove('active');
-        });
+        // Références
+        const adminCodeInput = document.getElementById('adminCode');
+        const ambassadorNameInput = document.getElementById('ambassadorName');
+        const nominateBtn = document.getElementById('nominateBtn');
+        const ambassadorsList = document.getElementById('ambassadorsList');
+        const totalCountSpan = document.getElementById('totalCount');
+        const modal = document.getElementById('congratsModal');
+        const modalNameSpan = document.getElementById('modalName');
+        const modalCodeSpan = document.getElementById('modalCode');
 
-        overlay.addEventListener('click', () => {
-            menuWindow.classList.remove('active');
-            overlay.classList.remove('active');
-            hamburgerBtn.classList.remove('active');
-        });
+        // Code secret administrateur
+        const SECRET_CODE = "2k26@05";
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && menuWindow.classList.contains('active')) {
-                menuWindow.classList.remove('active');
-                overlay.classList.remove('active');
-                hamburgerBtn.classList.remove('active');
+        // Générer un code unique pour l'ambassadeur
+        function generateUniqueCode(name) {
+            const timestamp = Date.now();
+            const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const nameClean = name.replace(/\s/g, '').substring(0, 10).toUpperCase();
+            return `${nameClean}-${randomStr}-${timestamp.toString().slice(-6)}`;
+        }
+
+        // Créer un fichier texte avec les informations
+        function generateAndDownloadFile(ambassador) {
+            const content = `========================================
+EXCELLENTIA ACADEMIA
+CERTIFICAT DE NOMINATION
+========================================
+
+Nom: ${ambassador.name}
+Date de nomination: ${new Date(ambassador.nominatedAt).toLocaleString('fr-FR')}
+Code unique: ${ambassador.uniqueCode}
+
+Félicitations ! Vous êtes officiellement nommé(e)
+AMBASSADEUR ÉVÉNEMENTIEL
+Excellentia Academia
+
+"L'excellence n'est pas un acte, mais une habitude."
+
+Ce document atteste de votre engagement
+en tant qu'ambassadeur d'honneur.
+
+========================================
+Signature numérique: ${ambassador.uniqueCode}
+========================================`;
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Ambassadeur_${ambassador.name.replace(/\s/g, '_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Afficher la modal de félicitations
+        function showCongratulations(ambassador) {
+            modalNameSpan.textContent = ambassador.name;
+            modalCodeSpan.textContent = ambassador.uniqueCode;
+            modal.style.display = 'flex';
+            
+            // Générer et télécharger le fichier automatiquement
+            generateAndDownloadFile(ambassador);
+            
+            // Animation de confettis simplifiée
+            createConfetti();
+        }
+
+        // Confettis maison
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-10px';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '2000';
+                confetti.style.borderRadius = '2px';
+                document.body.appendChild(confetti);
+                
+                const animation = confetti.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: 1500 + Math.random() * 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+                
+                animation.onfinish = () => confetti.remove();
             }
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Sauvegarder l'ambassadeur dans Firestore
+        async function saveAmbassador(name, uniqueCode) {
+            const ambassadorData = {
+                name: name.trim(),
+                uniqueCode: uniqueCode,
+                nominatedAt: new Date().toISOString(),
+                role: "Ambassadeur Événementiel Excellentia Academia"
+            };
+            
+            try {
+                const docRef = await db.collection('ambassadors').add(ambassadorData);
+                return { id: docRef.id, ...ambassadorData };
+            } catch (error) {
+                console.error("Erreur Firestore:", error);
+                throw error;
+            }
+        }
+
+        // Charger tous les ambassadeurs
+        async function loadAmbassadors() {
+            try {
+                const snapshot = await db.collection('ambassadors').orderBy('nominatedAt', 'desc').get();
+                const ambassadors = [];
+                snapshot.forEach(doc => {
+                    ambassadors.push({ id: doc.id, ...doc.data() });
+                });
+                displayAmbassadors(ambassadors);
+                updateStats(ambassadors.length);
+                return ambassadors;
+            } catch (error) {
+                console.error("Erreur chargement:", error);
+                ambassadorsList.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.6);grid-column:1/-1;"><i class="fas fa-exclamation-triangle"></i> Erreur de chargement. Vérifiez Firebase.</div>';
+                return [];
+            }
+        }
+
+        // Afficher les ambassadeurs
+        function displayAmbassadors(ambassadors) {
+            if (!ambassadors.length) {
+                ambassadorsList.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.6);grid-column:1/-1;"><i class="fas fa-star"></i> Aucun ambassadeur pour le moment. Soyez le premier !</div>';
+                return;
+            }
+            
+            ambassadorsList.innerHTML = ambassadors.map((amb, index) => `
+                <div class="ambassador-card" style="animation-delay: ${index * 0.05}s">
+                    <div class="card-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="card-name">${escapeHtml(amb.name)}</div>
+                    <div class="card-date">
+                        <i class="fas fa-calendar-alt"></i> ${new Date(amb.nominatedAt).toLocaleDateString('fr-FR')}
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-code"></i> ${amb.uniqueCode.substring(0, 15)}...
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateStats(count) {
+            totalCountSpan.textContent = count;
+        }
+
+        // Nommer un ambassadeur
+        async function nominateAmbassador() {
+            const code = adminCodeInput.value.trim();
+            const name = ambassadorNameInput.value.trim();
+            
+            if (code !== SECRET_CODE) {
+                alert('❌ Code administrateur incorrect ! Accès refusé.');
+                adminCodeInput.value = '';
+                adminCodeInput.focus();
+                return;
+            }
+            
+            if (!name) {
+                alert('Veuillez entrer le nom de l\'ambassadeur.');
+                ambassadorNameInput.focus();
+                return;
+            }
+            
+            // Désactiver le bouton pendant l'opération
+            nominateBtn.disabled = true;
+            const originalText = nominateBtn.innerHTML;
+            nominateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Nomination...';
+            
+            try {
+                const uniqueCode = generateUniqueCode(name);
+                const savedAmbassador = await saveAmbassador(name, uniqueCode);
+                
+                // Réinitialiser les champs
+                adminCodeInput.value = '';
+                ambassadorNameInput.value = '';
+                
+                // Recharger la liste
+                await loadAmbassadors();
+                
+                // Afficher les félicitations et télécharger le fichier
+                showCongratulations(savedAmbassador);
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la nomination. Vérifiez votre connexion Firebase.');
+            } finally {
+                nominateBtn.disabled = false;
+                nominateBtn.innerHTML = originalText;
+            }
+        }
+
+        // Événements
+        nominateBtn.addEventListener('click', nominateAmbassador);
+        
+        // Entrée clavier pour le nom
+        ambassadorNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') nominateAmbassador();
         });
+        
+        adminCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') ambassadorNameInput.focus();
+        });
+        
+        // Fermer modal en cliquant en dehors
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Créer des particules animées
+        function createParticles() {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 8 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = Math.random() * 6 + 4 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Chargement initial
+        loadAmbassadors();
+        
+        // Ajouter un effet de brillance sur les cartes au chargement
+        console.log('%c✨ Excellentia Academia - Système de Nomination des Ambassadeurs ✨', 'color: #FFD700; font-size: 16px; font-weight: bold;');
+        console.log('%cCode admin sécurisé | Génération automatique de fichiers', 'color: #FFA500; font-size: 12px;');
     </script>
 </body>
 </html>
-
