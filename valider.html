@@ -1,1 +1,771 @@
-r
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Envoi Massif WhatsApp | Éloquence en Scène</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo i {
+            font-size: 40px;
+            color: #0a0a0a;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37 0%, #f5e6a3 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d4af37;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: rgba(0,0,0,0.6);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* Boutons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941e 100%);
+            color: #0a0a0a;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(220, 53, 69, 0.5);
+        }
+
+        .btn-danger:hover {
+            background: rgba(220, 53, 69, 0.4);
+        }
+
+        /* Liste des candidats */
+        .candidates-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .candidate-item {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #d4af37;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .candidate-phone {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .remove-candidate {
+            background: rgba(220,53,69,0.2);
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .remove-candidate:hover {
+            background: rgba(220,53,69,0.5);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f5e6a3);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #d4af37;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .badge-sent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        /* Exemple */
+        .example-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #d4af37;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 1.8rem; }
+            .container { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-microphone-alt"></i>
+            </div>
+            <h1>Éloquence en Scène</h1>
+            <p class="subtitle">Envoi massif de notifications WhatsApp aux candidats sélectionnés</p>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="grid-2">
+            <!-- Panneau de configuration -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuration</span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp"></i> Lien du groupe WhatsApp</label>
+                    <input type="text" id="groupLink" value="https://chat.whatsapp.com/HY2ux9rdBoTIL5qqpmaywB" placeholder="https://chat.whatsapp.com/...">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-pen"></i> Message personnalisé</label>
+                    <textarea id="messageTemplate">🎉 FÉLICITATIONS ! 🎉
+
+Cher/Chère [NOM],
+
+Vous êtes sélectionné(e) pour participer au concours "ÉLOQUENCE EN SCÈNE" organisé par Excellentia Academia.
+
+✅ Rejoignez dès maintenant notre groupe WhatsApp officiel pour :
+- Recevoir toutes les informations
+- Connaître le thème
+- Suivre les consignes
+
+🔗 LIEN DU GROUPE : [LIEN_GROUPE]
+
+Ne manquez aucune étape importante.
+
+Merci et à très bientôt !
+
+--- Excellentia Academia ---</textarea>
+                </div>
+
+                <div class="example-box">
+                    <i class="fas fa-info-circle"></i> Utilisez <strong>[NOM]</strong> pour le nom du candidat et <strong>[LIEN_GROUPE]</strong> pour le lien du groupe
+                </div>
+            </div>
+
+            <!-- Panneau des candidats -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-users"></i>
+                    <span>Candidats sélectionnés</span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-upload"></i> Importer la liste (Nom, Téléphone)</label>
+                    <textarea id="candidatesInput" placeholder="Exemple :&#10;Jean-Claude Mputu,243812345678&#10;Marie Karume,243998765432&#10;Pauline Mboka,243811223344" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ou ajouter manuellement</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="singleName" placeholder="Nom complet" style="flex:2">
+                        <input type="tel" id="singlePhone" placeholder="Téléphone" style="flex:1">
+                        <button class="btn btn-secondary" onclick="addCandidate()" style="width: auto; padding: 0 20px;">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="importCandidates()" style="width: 100%; margin-bottom: 15px;">
+                    <i class="fas fa-file-import"></i> Importer la liste ci-dessus
+                </button>
+
+                <div class="candidates-list" id="candidatesList">
+                    <div style="text-align: center; color: rgba(255,255,255,0.4); padding: 30px;">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                        <p style="margin-top: 10px;">Aucun candidat pour le moment</p>
+                        <p style="font-size: 0.75rem;">Importez une liste ou ajoutez manuellement</p>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="sentCount">0</div>
+                        <div class="stat-label">Envoyés</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="startSending()" id="sendBtn">
+                        <i class="fab fa-whatsapp"></i> Envoyer à tous
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAllCandidates()">
+                        <i class="fas fa-trash"></i> Tout effacer
+                    </button>
+                </div>
+
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Envoi en cours...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stockage des candidats
+        let candidates = [];
+        let sending = false;
+        let currentIndex = 0;
+
+        // Charger depuis localStorage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('eloquence_candidates');
+            if (saved) {
+                candidates = JSON.parse(saved);
+                renderCandidates();
+            }
+        }
+
+        // Sauvegarder dans localStorage
+        function saveToStorage() {
+            localStorage.setItem('eloquence_candidates', JSON.stringify(candidates));
+        }
+
+        // Rendre la liste des candidats
+        function renderCandidates() {
+            const container = document.getElementById('candidatesList');
+            const totalCount = document.getElementById('totalCount');
+            const sentCount = document.getElementById('sentCount');
+            
+            if (candidates.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: rgba(255,255,255,0.4); padding: 30px;">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                        <p style="margin-top: 10px;">Aucun candidat pour le moment</p>
+                        <p style="font-size: 0.75rem;">Importez une liste ou ajoutez manuellement</p>
+                    </div>
+                `;
+                totalCount.innerText = '0';
+                sentCount.innerText = '0';
+                return;
+            }
+
+            let html = '';
+            let sent = 0;
+            candidates.forEach((c, index) => {
+                if (c.sent) sent++;
+                html += `
+                    <div class="candidate-item">
+                        <div class="candidate-info">
+                            <div class="candidate-name">${escapeHtml(c.name)}</div>
+                            <div class="candidate-phone">${c.phone}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="badge ${c.sent ? 'badge-sent' : 'badge-pending'}">
+                                ${c.sent ? '<i class="fas fa-check"></i> Envoyé' : '<i class="fas fa-clock"></i> En attente'}
+                            </span>
+                            <button class="remove-candidate" onclick="removeCandidate(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalCount.innerText = candidates.length;
+            sentCount.innerText = sent;
+        }
+
+        // Ajouter un candidat
+        function addCandidate() {
+            const name = document.getElementById('singleName').value.trim();
+            const phone = document.getElementById('singlePhone').value.trim();
+            
+            if (!name || !phone) {
+                showAlert('Veuillez remplir le nom et le téléphone', 'error');
+                return;
+            }
+            
+            let cleanPhone = phone.replace(/\D/g, '');
+            if (!cleanPhone.startsWith('243')) {
+                cleanPhone = '243' + cleanPhone;
+            }
+            
+            candidates.push({
+                name: name,
+                phone: cleanPhone,
+                sent: false
+            });
+            
+            saveToStorage();
+            renderCandidates();
+            
+            document.getElementById('singleName').value = '';
+            document.getElementById('singlePhone').value = '';
+            showAlert(`Candidat ${name} ajouté`, 'success');
+        }
+
+        // Importer depuis le textarea
+        function importCandidates() {
+            const raw = document.getElementById('candidatesInput').value.trim();
+            if (!raw) {
+                showAlert('Veuillez entrer une liste dans le champ ci-dessus', 'warning');
+                return;
+            }
+            
+            const lines = raw.split('\n');
+            let imported = 0;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                
+                let parts = line.split(',');
+                if (parts.length >= 2) {
+                    let name = parts[0].trim();
+                    let phone = parts[1].trim().replace(/\D/g, '');
+                    
+                    if (!phone.startsWith('243')) phone = '243' + phone;
+                    
+                    // Éviter les doublons
+                    const exists = candidates.some(c => c.phone === phone);
+                    if (!exists && name && phone) {
+                        candidates.push({
+                            name: name,
+                            phone: phone,
+                            sent: false
+                        });
+                        imported++;
+                    }
+                }
+            }
+            
+            saveToStorage();
+            renderCandidates();
+            showAlert(`${imported} candidats importés avec succès`, 'success');
+            document.getElementById('candidatesInput').value = '';
+        }
+
+        // Supprimer un candidat
+        function removeCandidate(index) {
+            candidates.splice(index, 1);
+            saveToStorage();
+            renderCandidates();
+        }
+
+        // Tout effacer
+        function clearAllCandidates() {
+            if (confirm('⚠️ Voulez-vous vraiment supprimer TOUS les candidats ?')) {
+                candidates = [];
+                saveToStorage();
+                renderCandidates();
+                showAlert('Tous les candidats ont été supprimés', 'success');
+            }
+        }
+
+        // Générer le message personnalisé
+        function generateMessage(name, groupLink) {
+            let template = document.getElementById('messageTemplate').value;
+            template = template.replace(/\[NOM\]/g, name);
+            template = template.replace(/\[LIEN_GROUPE\]/g, groupLink);
+            return template;
+        }
+
+        // Afficher une alerte
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+            alertBox.style.display = 'flex';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 4000);
+        }
+
+        // Envoyer un message à un candidat
+        async function sendToCandidate(candidate, index) {
+            const groupLink = document.getElementById('groupLink').value.trim();
+            if (!groupLink) {
+                showAlert('Veuillez entrer le lien du groupe WhatsApp', 'error');
+                return false;
+            }
+            
+            const message = generateMessage(candidate.name, groupLink);
+            const cleanPhone = candidate.phone.replace(/\D/g, '');
+            const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+            
+            // Ouvrir WhatsApp dans un nouvel onglet
+            window.open(waLink, '_blank');
+            
+            // Marquer comme envoyé
+            candidate.sent = true;
+            candidates[index] = candidate;
+            saveToStorage();
+            renderCandidates();
+            
+            // Mettre à jour la progression
+            updateProgress();
+            
+            return true;
+        }
+
+        // Mettre à jour la barre de progression
+        function updateProgress() {
+            const total = candidates.length;
+            const sent = candidates.filter(c => c.sent).length;
+            const percent = total > 0 ? (sent / total) * 100 : 0;
+            
+            document.getElementById('progressFill').style.width = `${percent}%`;
+            document.getElementById('progressText').innerHTML = `Envoi : ${sent}/${total} candidats traités`;
+            
+            if (sent === total && total > 0) {
+                document.getElementById('progressText').innerHTML = '✅ Envoi terminé !';
+                sending = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('sendBtn').innerHTML = '<i class="fab fa-whatsapp"></i> Envoyer à tous';
+            }
+        }
+
+        // Démarrer l'envoi séquentiel
+        async function startSending() {
+            if (sending) {
+                showAlert('Un envoi est déjà en cours', 'warning');
+                return;
+            }
+            
+            const pendingCandidates = candidates.filter(c => !c.sent);
+            
+            if (pendingCandidates.length === 0) {
+                showAlert('Tous les messages ont déjà été envoyés !', 'success');
+                return;
+            }
+            
+            const groupLink = document.getElementById('groupLink').value.trim();
+            if (!groupLink) {
+                showAlert('Veuillez entrer le lien du groupe WhatsApp', 'error');
+                return;
+            }
+            
+            sending = true;
+            document.getElementById('sendBtn').disabled = true;
+            document.getElementById('sendBtn').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Envoi en cours...';
+            document.getElementById('progressContainer').style.display = 'block';
+            
+            for (let i = 0; i < candidates.length; i++) {
+                if (!candidates[i].sent) {
+                    await sendToCandidate(candidates[i], i);
+                    // Attendre 3 secondes entre chaque envoi pour éviter le blocage
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+            }
+            
+            sending = false;
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('sendBtn').innerHTML = '<i class="fab fa-whatsapp"></i> Envoyer à tous';
+            showAlert('Envoi terminé ! Vérifiez que chaque message a bien été envoyé sur WhatsApp', 'success');
+        }
+
+        // Helper pour échapper le HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Chargement initial
+        loadFromStorage();
+        
+        // Afficher la progression si existante
+        function initProgress() {
+            const sent = candidates.filter(c => c.sent).length;
+            if (sent > 0 && sent < candidates.length) {
+                document.getElementById('progressContainer').style.display = 'block';
+                updateProgress();
+            }
+        }
+        initProgress();
+    </script>
+</body>
+</html>
