@@ -791,6 +791,7 @@
 
         let currentCandidate = null;
         let isAdmin = false;
+        let hasPinAccess = false; // Seul celui qui a validé le PIN 0022 peut supprimer
         let dynamicSessions = [];
 
         // Charger les sessions programmées depuis Firestore
@@ -813,8 +814,12 @@
             });
         }
 
-        // Supprimer une semaine programmée
+        // Supprimer une semaine programmée (seulement si hasPinAccess est vrai)
         async function deleteProgrammedWeek(weekNumber) {
+            if (!hasPinAccess) {
+                alert("Vous n'avez pas les droits pour supprimer une formation. Veuillez vous reconnecter avec le code PIN 0022.");
+                return;
+            }
             await db.collection("programmedWeeks").doc(`week${weekNumber}`).delete();
             // Supprimer aussi les réponses associées à cette semaine
             const sessionsToDelete = [`week${weekNumber}_wed`, `week${weekNumber}_thu`];
@@ -832,7 +837,7 @@
             if (currentCandidate && !isAdmin) loadCandidateSessions();
         }
 
-        // Générer les séances à partir des semaines programmées + semaines par défaut
+        // Générer les séances à partir des semaines programmées
         async function getAllSessions() {
             await loadProgrammedSessions();
             const sessions = [];
@@ -1005,6 +1010,7 @@
             document.getElementById('programForm').style.display = 'none';
             document.getElementById('pinError').style.display = 'none';
             document.getElementById('pinCode').value = '';
+            hasPinAccess = false;
             document.getElementById('pinCode').focus();
         }
 
@@ -1013,15 +1019,28 @@
             if (pin === "0022") {
                 document.getElementById('programForm').style.display = 'block';
                 document.getElementById('pinError').style.display = 'none';
+                hasPinAccess = true;
+                // Rafraîchir l'affichage des semaines programmées pour montrer les boutons supprimer
+                if (isAdmin) {
+                    displayProgrammedWeeks();
+                }
             } else {
                 document.getElementById('pinError').style.display = 'block';
                 document.getElementById('programForm').style.display = 'none';
+                hasPinAccess = false;
+                if (isAdmin) {
+                    displayProgrammedWeeks();
+                }
             }
         }
 
         document.getElementById('pinCode')?.addEventListener('input', verifyPinAndShowForm);
 
         async function programFormation() {
+            if (!hasPinAccess) {
+                alert("Code PIN incorrect. Vous ne pouvez pas programmer de formation.");
+                return;
+            }
             const weekNumber = parseInt(document.getElementById('weekNumber').value);
             const date1 = document.getElementById('date1').value;
             const date2 = document.getElementById('date2').value;
@@ -1051,11 +1070,13 @@
             }
             let html = '<div class="session-stats"><h3><i class="fas fa-calendar-check"></i> Formations programmées</h3>';
             for (const week of weeks.sort((a,b) => a.weekNumber - b.weekNumber)) {
+                // Afficher le bouton supprimer uniquement si hasPinAccess est true
+                const deleteButton = hasPinAccess ? `<button class="delete-week-btn" onclick="deleteProgrammedWeek(${week.weekNumber})"><i class="fas fa-trash"></i> Supprimer</button>` : '<span style="color:#6b7280; font-size:0.8rem;"><i class="fas fa-lock"></i> Suppression réservée</span>';
                 html += `<div class="week-program-item">
                     <div><strong>Semaine ${week.weekNumber}</strong><br>
                     <span style="font-size:0.85rem;">Mercredi: ${new Date(week.date1).toLocaleDateString('fr-FR')}<br>
                     Jeudi: ${new Date(week.date2).toLocaleDateString('fr-FR')}</span></div>
-                    <button class="delete-week-btn" onclick="deleteProgrammedWeek(${week.weekNumber})"><i class="fas fa-trash"></i> Supprimer</button>
+                    ${deleteButton}
                 </div>`;
             }
             html += '</div>';
@@ -1066,6 +1087,7 @@
             localStorage.removeItem('candidateCode');
             currentCandidate = null;
             isAdmin = false;
+            hasPinAccess = false;
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('candidateSection').style.display = 'none';
             document.getElementById('adminDashboard').style.display = 'none';
@@ -1088,6 +1110,7 @@
             }
         }
 
+        // Fermer les modals en cliquant à l'extérieur
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
