@@ -584,6 +584,8 @@
             border-radius: 16px;
             padding: 16px;
             margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .day-slot {
@@ -607,6 +609,11 @@
             border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .remove-day:hover {
+            background: rgba(239, 68, 68, 0.4);
         }
         
         .add-day-btn {
@@ -618,6 +625,11 @@
             cursor: pointer;
             margin-top: 8px;
             width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .add-day-btn:hover {
+            background: rgba(16, 185, 129, 0.4);
         }
         
         .btn-danger {
@@ -658,7 +670,37 @@
         
         .sessions-preview {
             font-size: 0.85rem;
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 12px;
+            color: #d4af37;
+        }
+        
+        .sessions-preview ul {
+            margin-left: 20px;
             margin-top: 8px;
+        }
+        
+        .pin-status {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .pin-valid {
+            color: #10b981;
+        }
+        
+        .pin-invalid {
+            color: #ef4444;
+        }
+        
+        .info-badge {
+            background: rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
             color: #d4af37;
         }
 
@@ -766,7 +808,11 @@
     <div id="programModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-calendar-alt"></i> Programmer une formation</h2>
-            <input type="password" id="pinCode" class="code-input" placeholder="Code PIN (0022)" maxlength="4">
+            <div class="form-group">
+                <label>Code PIN sécurisé <span class="info-badge">Requis pour programmer/supprimer</span></label>
+                <input type="password" id="pinCode" class="code-input" placeholder="Entrez le code PIN (0022)" maxlength="4" autocomplete="off">
+                <div id="pinStatus" style="margin-top: 8px; font-size: 0.85rem;"></div>
+            </div>
             <div id="programForm" style="display:none;">
                 <div class="form-group">
                     <label>Semaine n°</label>
@@ -779,7 +825,7 @@
                             <select class="day-select">
                                 <option value="Lundi">Lundi</option>
                                 <option value="Mardi">Mardi</option>
-                                <option value="Mercredi">Mercredi</option>
+                                <option value="Mercredi" selected>Mercredi</option>
                                 <option value="Jeudi">Jeudi</option>
                                 <option value="Vendredi">Vendredi</option>
                                 <option value="Samedi">Samedi</option>
@@ -788,16 +834,16 @@
                             <button type="button" class="remove-day" onclick="removeDaySlot(this)" style="display:none;">🗑️</button>
                         </div>
                     </div>
-                    <button type="button" class="add-day-btn" onclick="addDaySlot()"><i class="fas fa-plus"></i> Ajouter un jour</button>
-                    <div class="sessions-preview" id="sessionsPreview"></div>
+                    <button type="button" class="add-day-btn" onclick="addDaySlot()"><i class="fas fa-plus"></i> Ajouter un jour supplémentaire</button>
+                    <div id="sessionsPreview" class="sessions-preview"></div>
                 </div>
-                <button class="login-btn" onclick="programFormation()">Valider la programmation</button>
+                <button class="login-btn" onclick="programFormation()">✅ Valider la programmation</button>
             </div>
-            <div id="pinError" style="color:#ef4444; margin-top:12px; display:none;">Code PIN incorrect (le code requis est 0022)</div>
         </div>
     </div>
 
     <script>
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
             authDomain: "conf-94615.firebaseapp.com",
@@ -807,9 +853,11 @@
             appId: "1:312554343685:web:b199e33ff4ca050d533b6c",
             measurementId: "G-BLCPS9S0ZJ"
         };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Liste des candidats
         const candidates = {
             "7K2M": "Abraham Mudanda Lubuku", "4R8P": "Adju Abdallah Djuma",
             "1N5T": "Amerack Mavinga Ntali", "9C3V": "Arsène Sangwa Binanga",
@@ -838,16 +886,23 @@
             "9M6K": "Théovie Gabriel Ibambu", "3R0P": "Thomas Kashavu Muhigirwa",
             "5F8H": "Wilhelmine Safi Bagabo", "1A2A": "Ekip"
         };
-        let currentCandidate = null, isAdmin = false, hasPinAccess = false;
+
+        let currentCandidate = null;
+        let isAdmin = false;
+        let hasPinAccess = false;
         let dynamicSessions = [];
 
+        // Charger les sessions programmées depuis Firestore
         async function loadProgrammedSessions() {
             const snapshot = await db.collection("programmedWeeks").orderBy("weekNumber").get();
             dynamicSessions = [];
-            snapshot.forEach(doc => dynamicSessions.push(doc.data()));
+            snapshot.forEach(doc => {
+                dynamicSessions.push(doc.data());
+            });
             return dynamicSessions;
         }
 
+        // Sauvegarder une semaine programmée
         async function saveProgrammedWeek(weekNumber, sessionsData) {
             await db.collection("programmedWeeks").doc(`week${weekNumber}`).set({
                 weekNumber: weekNumber,
@@ -856,49 +911,77 @@
             });
         }
 
+        // Supprimer une semaine programmée (seulement si hasPinAccess est vrai)
         async function deleteProgrammedWeek(weekNumber) {
-            if (!hasPinAccess) { alert("Accès refusé: vous devez saisir le code PIN 0022 pour supprimer."); return; }
-            await db.collection("programmedWeeks").doc(`week${weekNumber}`).delete();
-            const allSessionIds = dynamicSessions.find(w => w.weekNumber === weekNumber)?.sessions.map(s => `${weekNumber}_${s.day}_${s.date}`) || [];
-            for (const sessionId of allSessionIds) {
-                const responsesSnapshot = await db.collection("responses").where("sessionId", "==", sessionId).get();
-                responsesSnapshot.forEach(async (doc) => await doc.ref.delete());
+            if (!hasPinAccess) {
+                alert("⛔ Accès refusé ! Vous devez entrer le code PIN 0022 pour supprimer une formation.");
+                return;
             }
-            await loadProgrammedSessions();
-            if (isAdmin) { loadAdminDashboard(); displayProgrammedWeeks(); }
-            if (currentCandidate && !isAdmin) loadCandidateSessions();
+            if (confirm(`⚠️ Supprimer définitivement la semaine ${weekNumber} ? Les réponses des candidats seront également effacées.`)) {
+                await db.collection("programmedWeeks").doc(`week${weekNumber}`).delete();
+                // Supprimer aussi les réponses associées à cette semaine
+                const weekData = dynamicSessions.find(w => w.weekNumber === weekNumber);
+                if (weekData && weekData.sessions) {
+                    for (const sess of weekData.sessions) {
+                        const sessionId = `${weekNumber}_${sess.day}_${sess.date}`;
+                        const responsesSnapshot = await db.collection("responses").where("sessionId", "==", sessionId).get();
+                        responsesSnapshot.forEach(async (doc) => {
+                            await doc.ref.delete();
+                        });
+                    }
+                }
+                await loadProgrammedSessions();
+                if (isAdmin) {
+                    loadAdminDashboard();
+                    displayProgrammedWeeks();
+                }
+                if (currentCandidate && !isAdmin) loadCandidateSessions();
+                alert(`✅ Semaine ${weekNumber} supprimée avec succès.`);
+            }
         }
 
+        // Générer les séances à partir des semaines programmées
         async function getAllSessions() {
             await loadProgrammedSessions();
             const sessions = [];
             for (const week of dynamicSessions) {
-                for (const sess of week.sessions) {
-                    sessions.push({
-                        id: `${week.weekNumber}_${sess.day}_${sess.date}`,
-                        week: week.weekNumber,
-                        date: sess.date,
-                        day: sess.day,
-                        displayDate: new Date(sess.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-                    });
+                if (week.sessions && Array.isArray(week.sessions)) {
+                    for (const sess of week.sessions) {
+                        sessions.push({
+                            id: `${week.weekNumber}_${sess.day}_${sess.date}`,
+                            week: week.weekNumber,
+                            date: sess.date,
+                            day: sess.day,
+                            displayDate: new Date(sess.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                        });
+                    }
                 }
             }
             return sessions;
         }
 
+        // Obtenir la semaine en cours (basée sur la date actuelle)
         function getCurrentWeekFromSessions(sessions) {
-            const today = new Date(); today.setHours(0,0,0,0);
-            for (const s of sessions) if (new Date(s.date) >= today) return s.week;
-            return sessions.length ? sessions[0].week : null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            for (const session of sessions) {
+                const sessionDate = new Date(session.date);
+                if (sessionDate >= today) {
+                    return session.week;
+                }
+            }
+            return sessions.length > 0 ? sessions[0].week : null;
         }
 
+        // Obtenir les sessions de la semaine en cours
         async function getCurrentWeekSessions() {
-            const all = await getAllSessions();
-            if (!all.length) return [];
-            const currentWeek = getCurrentWeekFromSessions(all);
-            return all.filter(s => s.week === currentWeek);
+            const allSessions = await getAllSessions();
+            if (allSessions.length === 0) return [];
+            const currentWeek = getCurrentWeekFromSessions(allSessions);
+            return allSessions.filter(s => s.week === currentWeek);
         }
 
+        // Connexion candidat
         async function loginCandidate() {
             const code = document.getElementById('candidateCode').value.toUpperCase().trim();
             if (candidates[code]) {
@@ -908,38 +991,61 @@
                 document.getElementById('candidateSection').style.display = 'block';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 document.getElementById('welcomeName').innerHTML = candidates[code];
-                document.getElementById('greetingMessage').innerHTML = `Bonjour ${candidates[code]}`;
+                document.getElementById('greetingMessage').innerHTML = getGreeting(candidates[code]);
+                gsap.fromTo(".welcome-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 });
                 loadCandidateSessions();
-            } else alert("Code invalide.");
+            } else {
+                alert("Code invalide. Veuillez réessayer.");
+            }
+        }
+
+        function getGreeting(name) {
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? "Bonjour" : (hour < 18 ? "Bon après-midi" : "Bonsoir");
+            return `${greeting} ${name}`;
         }
 
         async function loadCandidateSessions() {
             const sessions = await getCurrentWeekSessions();
             const container = document.getElementById('currentWeekContainer');
-            if (!sessions.length) { container.innerHTML = '<div class="week-card"><div class="week-header"><h2>📅 Aucune formation programmée</h2></div></div>'; return; }
-            let html = `<div class="week-card"><div class="week-header"><h2>Semaine ${sessions[0].week}</h2><p>Confirmez votre présence</p></div><div class="session-list">`;
-            for (const s of sessions) {
-                const docRef = db.collection("responses").doc(`${currentCandidate.code}_${s.id}`);
-                const doc = await docRef.get();
-                const status = doc.exists ? doc.data().status : null;
-                html += `<div class="session-item"><div class="session-info"><div class="session-date">${s.day} ${s.displayDate}</div><div class="session-status ${status === 'present' ? 'status-present' : (status === 'absent' ? 'status-absent' : 'status-pending')}">${status === 'present' ? '✓ Présent' : (status === 'absent' ? '✗ Absent' : '⏳ En attente')}</div></div><div class="response-buttons"><button class="btn-present ${status === 'present' ? 'active' : ''}" onclick="setResponse('${s.id}', 'present')"><i class="fas fa-check"></i> Présent</button><button class="btn-absent ${status === 'absent' ? 'active' : ''}" onclick="setResponse('${s.id}', 'absent')"><i class="fas fa-times"></i> Absent</button></div></div>`;
+            if (sessions.length === 0) {
+                container.innerHTML = '<div class="week-card"><div class="week-header"><h2>🎉 Aucune formation programmée</h2><p>Revenez plus tard pour les prochaines dates.</p></div></div>';
+                return;
             }
-            container.innerHTML = html + '</div></div>';
+            let html = `<div class="week-card"><div class="week-header"><h2>📅 Semaine ${sessions[0].week}</h2><p>Merci de confirmer votre présence pour chaque séance</p></div><div class="session-list">`;
+            for (const session of sessions) {
+                const docRef = db.collection("responses").doc(`${currentCandidate.code}_${session.id}`);
+                const doc = await docRef.get();
+                const response = doc.exists ? doc.data().status : null;
+                html += `<div class="session-item"><div class="session-info"><div class="session-date">${session.day} ${session.displayDate}</div><div class="session-status ${response === 'present' ? 'status-present' : (response === 'absent' ? 'status-absent' : 'status-pending')}">${response === 'present' ? '✓ Présent' : (response === 'absent' ? '✗ Absent' : '⏳ En attente de réponse')}</div></div><div class="response-buttons"><button class="btn-present ${response === 'present' ? 'active' : ''}" onclick="setResponse('${session.id}', 'present')"><i class="fas fa-check"></i> Je serai présent</button><button class="btn-absent ${response === 'absent' ? 'active' : ''}" onclick="setResponse('${session.id}', 'absent')"><i class="fas fa-times"></i> Je serai absent</button></div></div>`;
+            }
+            html += `</div></div>`;
+            container.innerHTML = html;
+            gsap.fromTo(".session-item", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.1 });
         }
 
         async function setResponse(sessionId, status) {
             if (!currentCandidate) return;
             await db.collection("responses").doc(`${currentCandidate.code}_${sessionId}`).set({
-                candidateCode: currentCandidate.code, candidateName: currentCandidate.name,
-                sessionId, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                candidateCode: currentCandidate.code,
+                candidateName: currentCandidate.name,
+                sessionId: sessionId,
+                status: status,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             loadCandidateSessions();
             if (isAdmin) loadAdminDashboard();
         }
 
-        function showAdminLogin() { document.getElementById('adminModal').style.display = 'flex'; }
+        // Admin functions
+        function showAdminLogin() {
+            document.getElementById('adminModal').style.display = 'flex';
+            gsap.fromTo(".modal-content", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
+        }
+
         function checkAdminLogin() {
-            if (document.getElementById('adminPassword').value === "Ekipelo") {
+            const password = document.getElementById('adminPassword').value;
+            if (password === "Ekipelo") {
                 isAdmin = true;
                 document.getElementById('adminModal').style.display = 'none';
                 document.getElementById('loginSection').style.display = 'none';
@@ -947,64 +1053,90 @@
                 document.getElementById('adminDashboard').style.display = 'block';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 document.getElementById('programBtn').style.display = 'inline-block';
-                loadAdminDashboard(); displayProgrammedWeeks();
-            } else alert("Mot de passe incorrect");
+                loadAdminDashboard();
+                displayProgrammedWeeks();
+            } else {
+                alert("Mot de passe incorrect");
+            }
         }
 
         async function loadAdminDashboard() {
-            const total = Object.keys(candidates).length;
-            document.getElementById('totalCandidates').innerText = total;
+            const totalCandidates = Object.keys(candidates).length;
+            document.getElementById('totalCandidates').innerText = totalCandidates;
             const sessions = await getCurrentWeekSessions();
             const container = document.getElementById('adminSessionsContainer');
-            if (!sessions.length) { container.innerHTML = '<div class="session-stats"><h3>Aucune session active</h3></div>'; return; }
+            if (sessions.length === 0) {
+                container.innerHTML = '<div class="session-stats"><h3>Aucune session en cours</h3></div>';
+                return;
+            }
             let html = '';
-            for (const s of sessions) {
-                const respSnap = await db.collection("responses").where("sessionId", "==", s.id).get();
-                const respMap = {}; respSnap.forEach(d => respMap[d.data().candidateCode] = d.data().status);
-                let present=0, absent=0, noResp=0;
+            for (const session of sessions) {
+                const responsesSnapshot = await db.collection("responses").where("sessionId", "==", session.id).get();
+                const responses = {};
+                responsesSnapshot.forEach(doc => { responses[doc.data().candidateCode] = doc.data().status; });
+                let present = 0, absent = 0, noResponse = 0;
                 for (const code in candidates) {
-                    if (respMap[code] === 'present') present++;
-                    else if (respMap[code] === 'absent') absent++;
-                    else noResp++;
+                    if (responses[code] === 'present') present++;
+                    else if (responses[code] === 'absent') absent++;
+                    else noResponse++;
                 }
-                html += `<div class="session-stats" id="session-${s.id}"><h3>${s.day} ${s.displayDate}</h3><div class="stat-detail"><strong>👥 Total :</strong> ${total}</div><div class="stat-detail" style="color:#10b981">✓ Présents : ${present}</div><div class="stat-detail" style="color:#ef4444">✗ Absents : ${absent}</div><div class="stat-detail" style="color:#f59e0b">⏳ Sans réponse : ${noResp}</div><button class="expand-btn" onclick="toggleCandidateList('${s.id}')">Détails</button><div id="list-${s.id}" class="candidate-list"></div></div>`;
+                html += `<div class="session-stats" id="session-${session.id}"><h3><i class="fas fa-calendar-alt"></i> ${session.day} ${session.displayDate}</h3><div class="stat-detail"><strong>👥 Total :</strong> ${totalCandidates}</div><div class="stat-detail" style="color:#10b981"><strong>✓ Présents :</strong> ${present}</div><div class="stat-detail" style="color:#ef4444"><strong>✗ Absents :</strong> ${absent}</div><div class="stat-detail" style="color:#f59e0b"><strong>⏳ Sans réponse :</strong> ${noResponse}</div><button class="expand-btn" onclick="toggleCandidateList('${session.id}')"><i class="fas fa-users"></i> Voir les détails</button><div id="list-${session.id}" class="candidate-list"></div></div>`;
             }
             container.innerHTML = html;
         }
 
-        window.toggleCandidateList = async function(sessionId) {
+        async function toggleCandidateList(sessionId) {
             const listDiv = document.getElementById(`list-${sessionId}`);
-            if (listDiv.classList.contains('show')) { listDiv.classList.remove('show'); return; }
-            const respSnap = await db.collection("responses").where("sessionId", "==", sessionId).get();
-            const respMap = {}; respSnap.forEach(d => respMap[d.data().candidateCode] = d.data().status);
-            let present=[], absent=[], noResp=[];
-            for (const [code, name] of Object.entries(candidates)) {
-                const st = respMap[code];
-                if (st === 'present') present.push(name);
-                else if (st === 'absent') absent.push(name);
-                else noResp.push(name);
+            if (listDiv.classList.contains('show')) {
+                listDiv.classList.remove('show');
+                return;
             }
-            listDiv.innerHTML = `<div><strong style="color:#10b981">✓ Présents (${present.length}) :</strong><br>${present.map(n=>`<div class="candidate-item">• ${n}</div>`).join('')||'<div>Aucun</div>'}</div><div><strong style="color:#ef4444">✗ Absents (${absent.length}) :</strong><br>${absent.map(n=>`<div class="candidate-item">• ${n}</div>`).join('')||'<div>Aucun</div>'}</div><div><strong style="color:#f59e0b">⏳ Sans réponse (${noResp.length}) :</strong><br>${noResp.map(n=>`<div class="candidate-item">• ${n}</div>`).join('')||'<div>Aucun</div>'}</div>`;
+            const responsesSnapshot = await db.collection("responses").where("sessionId", "==", sessionId).get();
+            const responses = {};
+            responsesSnapshot.forEach(doc => { responses[doc.data().candidateCode] = doc.data().status; });
+            let presentList = [], absentList = [], noResponseList = [];
+            for (const [code, name] of Object.entries(candidates)) {
+                const status = responses[code];
+                if (status === 'present') presentList.push(name);
+                else if (status === 'absent') absentList.push(name);
+                else noResponseList.push(name);
+            }
+            listDiv.innerHTML = `<div style="margin-bottom:12px;"><strong style="color:#10b981">✓ Présents (${presentList.length}) :</strong><br>${presentList.map(n => `<div class="candidate-item">• ${n}</div>`).join('') || '<div class="candidate-item">Aucun</div>'}</div><div style="margin-bottom:12px;"><strong style="color:#ef4444">✗ Absents (${absentList.length}) :</strong><br>${absentList.map(n => `<div class="candidate-item">• ${n}</div>`).join('') || '<div class="candidate-item">Aucun</div>'}</div><div><strong style="color:#f59e0b">⏳ Sans réponse (${noResponseList.length}) :</strong><br>${noResponseList.map(n => `<div class="candidate-item">• ${n}</div>`).join('') || '<div class="candidate-item">Aucun</div>'}</div>`;
             listDiv.classList.add('show');
-        };
+        }
 
         function showProgramModal() {
             document.getElementById('programModal').style.display = 'flex';
             document.getElementById('programForm').style.display = 'none';
-            document.getElementById('pinError').style.display = 'none';
             document.getElementById('pinCode').value = '';
+            document.getElementById('pinStatus').innerHTML = '';
             hasPinAccess = false;
             resetDaySlots();
+            document.getElementById('pinCode').focus();
         }
-
+        
         function resetDaySlots() {
             const container = document.getElementById('dynamicDaysContainer');
-            container.innerHTML = `<div class="day-slot" data-index="0"><select class="day-select"><option value="Lundi">Lundi</option><option value="Mardi">Mardi</option><option value="Mercredi">Mercredi</option><option value="Jeudi">Jeudi</option><option value="Vendredi">Vendredi</option><option value="Samedi">Samedi</option></select><input type="date" class="date-picker"><button type="button" class="remove-day" onclick="removeDaySlot(this)" style="display:none;">🗑️</button></div>`;
+            container.innerHTML = `<div class="day-slot" data-index="0">
+                <select class="day-select">
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi" selected>Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                    <option value="Samedi">Samedi</option>
+                </select>
+                <input type="date" class="date-picker" placeholder="Date">
+                <button type="button" class="remove-day" onclick="removeDaySlot(this)" style="display:none;">🗑️</button>
+            </div>`;
             attachPreviewEvent();
         }
-
+        
         function attachPreviewEvent() {
-            document.querySelectorAll('.day-select, .date-picker').forEach(el => el.addEventListener('change', updatePreview));
+            document.querySelectorAll('.day-select, .date-picker').forEach(el => {
+                el.removeEventListener('change', updatePreview);
+                el.addEventListener('change', updatePreview);
+            });
             updatePreview();
         }
 
@@ -1014,115 +1146,193 @@
             const newSlot = document.createElement('div');
             newSlot.className = 'day-slot';
             newSlot.setAttribute('data-index', index);
-            newSlot.innerHTML = `<select class="day-select"><option value="Lundi">Lundi</option><option value="Mardi">Mardi</option><option value="Mercredi">Mercredi</option><option value="Jeudi">Jeudi</option><option value="Vendredi">Vendredi</option><option value="Samedi">Samedi</option></select><input type="date" class="date-picker"><button type="button" class="remove-day" onclick="removeDaySlot(this)">🗑️</button>`;
+            newSlot.innerHTML = `<select class="day-select">
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi">Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                    <option value="Samedi">Samedi</option>
+                </select>
+                <input type="date" class="date-picker" placeholder="Date">
+                <button type="button" class="remove-day" onclick="removeDaySlot(this)">🗑️</button>`;
             container.appendChild(newSlot);
             newSlot.querySelectorAll('.day-select, .date-picker').forEach(el => el.addEventListener('change', updatePreview));
             updatePreview();
-            if (container.children.length > 1) document.querySelectorAll('.remove-day').forEach(btn => btn.style.display = 'inline-block');
+            if (container.children.length > 1) {
+                document.querySelectorAll('.remove-day').forEach(btn => btn.style.display = 'inline-block');
+            }
         }
 
         function removeDaySlot(btn) {
             const container = document.getElementById('dynamicDaysContainer');
             if (container.children.length === 1) return;
             btn.closest('.day-slot').remove();
-            if (container.children.length === 1) document.querySelector('.remove-day').style.display = 'none';
+            if (container.children.length === 1) {
+                const firstRemoveBtn = document.querySelector('.remove-day');
+                if (firstRemoveBtn) firstRemoveBtn.style.display = 'none';
+            }
             updatePreview();
         }
 
         function updatePreview() {
             const slots = document.querySelectorAll('#dynamicDaysContainer .day-slot');
-            let previewHtml = '<strong>Aperçu des séances :</strong><ul>';
+            let previewHtml = '<strong>📋 Aperçu des séances à programmer :</strong><ul>';
             let valid = true;
             slots.forEach((slot, idx) => {
                 const day = slot.querySelector('.day-select').value;
                 const date = slot.querySelector('.date-picker').value;
-                if (date) previewHtml += `<li>${day} ${new Date(date).toLocaleDateString('fr-FR')}</li>`;
-                else { previewHtml += `<li style="color:#ef4444">Jour ${idx+1} : sélectionnez une date</li>`; valid = false; }
+                if (date) {
+                    const formattedDate = new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                    previewHtml += `<li><strong>${day}</strong> : ${formattedDate}</li>`;
+                } else {
+                    previewHtml += `<li style="color:#ef4444">⚠️ ${day} : date non sélectionnée</li>`;
+                    valid = false;
+                }
             });
             previewHtml += '</ul>';
+            if (!valid) previewHtml += '<p style="color:#ef4444; font-size:0.8rem;">Veuillez sélectionner toutes les dates</p>';
             document.getElementById('sessionsPreview').innerHTML = previewHtml;
         }
 
         function verifyPinAndShowForm() {
             const pin = document.getElementById('pinCode').value;
+            const pinStatus = document.getElementById('pinStatus');
             if (pin === "0022") {
                 document.getElementById('programForm').style.display = 'block';
-                document.getElementById('pinError').style.display = 'none';
+                pinStatus.innerHTML = '<span style="color:#10b981;">✓ Code PIN valide - Vous pouvez programmer et supprimer</span>';
                 hasPinAccess = true;
                 resetDaySlots();
-                if (isAdmin) displayProgrammedWeeks();
-            } else {
-                document.getElementById('pinError').style.display = 'block';
+                if (isAdmin) {
+                    displayProgrammedWeeks();
+                }
+            } else if (pin.length === 4) {
                 document.getElementById('programForm').style.display = 'none';
+                pinStatus.innerHTML = '<span style="color:#ef4444;">✗ Code PIN incorrect - Accès refusé</span>';
                 hasPinAccess = false;
-                if (isAdmin) displayProgrammedWeeks();
+                if (isAdmin) {
+                    displayProgrammedWeeks();
+                }
+            } else {
+                document.getElementById('programForm').style.display = 'none';
+                pinStatus.innerHTML = '';
+                hasPinAccess = false;
             }
         }
 
         async function programFormation() {
-            if (!hasPinAccess) { alert("Code PIN invalide."); return; }
+            if (!hasPinAccess) {
+                alert("⛔ Code PIN incorrect. Vous ne pouvez pas programmer de formation.");
+                return;
+            }
             const weekNumber = parseInt(document.getElementById('weekNumber').value);
-            if (!weekNumber || weekNumber < 1) { alert("Numéro de semaine valide requis."); return; }
+            if (!weekNumber || weekNumber < 1) {
+                alert("Veuillez entrer un numéro de semaine valide (1, 2, 3...)");
+                return;
+            }
+            
             const slots = document.querySelectorAll('#dynamicDaysContainer .day-slot');
             const sessionsData = [];
             for (let slot of slots) {
                 const day = slot.querySelector('.day-select').value;
                 const date = slot.querySelector('.date-picker').value;
-                if (!date) { alert(`Veuillez choisir une date pour le jour ${day}`); return; }
+                if (!date) {
+                    alert(`Veuillez sélectionner une date pour le jour ${day}`);
+                    return;
+                }
                 sessionsData.push({ day, date });
             }
-            if (sessionsData.length === 0) { alert("Ajoutez au moins un jour de formation."); return; }
-            const existing = await loadProgrammedSessions();
-            if (existing.some(w => w.weekNumber === weekNumber)) { alert(`Semaine ${weekNumber} déjà programmée.`); return; }
+            
+            if (sessionsData.length === 0) {
+                alert("Veuillez ajouter au moins un jour de formation");
+                return;
+            }
+            
+            const existingWeeks = await loadProgrammedSessions();
+            if (existingWeeks.some(w => w.weekNumber === weekNumber)) {
+                alert(`❌ La semaine ${weekNumber} est déjà programmée. Supprimez-la d'abord si vous voulez la modifier.`);
+                return;
+            }
+            
             await saveProgrammedWeek(weekNumber, sessionsData);
             document.getElementById('programModal').style.display = 'none';
             await loadProgrammedSessions();
             displayProgrammedWeeks();
             if (isAdmin) loadAdminDashboard();
-            alert(`Formation semaine ${weekNumber} programmée avec ${sessionsData.length} séance(s).`);
+            alert(`✅ Formation de la semaine ${weekNumber} programmée avec succès !\n📅 ${sessionsData.length} séance(s) ajoutée(s).`);
         }
 
         async function displayProgrammedWeeks() {
             const weeks = await loadProgrammedSessions();
             const container = document.getElementById('programmedWeeksContainer');
-            if (!weeks.length) { container.innerHTML = '<div class="session-stats"><h3>Aucune formation programmée</h3></div>'; return; }
-            let html = '<div class="session-stats"><h3>📅 Formations programmées</h3>';
-            for (const w of weeks.sort((a,b)=>a.weekNumber-b.weekNumber)) {
-                const sessionsHtml = w.sessions.map(s => `<div>${s.day} : ${new Date(s.date).toLocaleDateString('fr-FR')}</div>`).join('');
-                const delBtn = hasPinAccess ? `<button class="delete-week-btn" onclick="deleteProgrammedWeek(${w.weekNumber})"><i class="fas fa-trash"></i> Supprimer tout</button>` : '<span style="color:#6b7280;"><i class="fas fa-lock"></i> Suppression avec code 0022</span>';
-                html += `<div class="week-program-item"><div><strong>Semaine ${w.weekNumber}</strong><div class="sessions-preview" style="margin-top:8px;">${sessionsHtml}</div></div>${delBtn}</div>`;
+            if (weeks.length === 0) {
+                container.innerHTML = '<div class="session-stats"><h3>📅 Aucune formation programmée</h3><p>Utilisez le bouton rouge 🔴 pour programmer les dates (code PIN requis).</p></div>';
+                return;
             }
-            container.innerHTML = html + '</div>';
+            let html = '<div class="session-stats"><h3><i class="fas fa-calendar-check"></i> Formations programmées</h3>';
+            for (const week of weeks.sort((a,b) => a.weekNumber - b.weekNumber)) {
+                let sessionsHtml = '';
+                if (week.sessions && Array.isArray(week.sessions)) {
+                    sessionsHtml = week.sessions.map(s => `<div style="font-size:0.85rem;">• ${s.day} : ${new Date(s.date).toLocaleDateString('fr-FR')}</div>`).join('');
+                }
+                const deleteButton = hasPinAccess ? 
+                    `<button class="delete-week-btn" onclick="deleteProgrammedWeek(${week.weekNumber})"><i class="fas fa-trash"></i> Supprimer</button>` : 
+                    '<span style="color:#6b7280; font-size:0.8rem;"><i class="fas fa-lock"></i> Code PIN requis</span>';
+                html += `<div class="week-program-item">
+                    <div><strong>📌 Semaine ${week.weekNumber}</strong>
+                    <div style="margin-top:8px;">${sessionsHtml}</div></div>
+                    ${deleteButton}
+                </div>`;
+            }
+            html += '</div>';
+            container.innerHTML = html;
         }
 
         function logout() {
             localStorage.removeItem('candidateCode');
-            currentCandidate = null; isAdmin = false; hasPinAccess = false;
+            currentCandidate = null;
+            isAdmin = false;
+            hasPinAccess = false;
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('candidateSection').style.display = 'none';
             document.getElementById('adminDashboard').style.display = 'none';
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('programBtn').style.display = 'none';
             document.getElementById('candidateCode').value = '';
+            gsap.fromTo(".login-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 });
         }
 
         async function checkSavedLogin() {
-            const saved = localStorage.getItem('candidateCode');
-            if (saved && candidates[saved]) {
-                currentCandidate = { code: saved, name: candidates[saved] };
+            const savedCode = localStorage.getItem('candidateCode');
+            if (savedCode && candidates[savedCode]) {
+                currentCandidate = { code: savedCode, name: candidates[savedCode] };
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('candidateSection').style.display = 'block';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
-                document.getElementById('welcomeName').innerHTML = candidates[saved];
-                document.getElementById('greetingMessage').innerHTML = `Bonjour ${candidates[saved]}`;
+                document.getElementById('welcomeName').innerHTML = candidates[savedCode];
+                document.getElementById('greetingMessage').innerHTML = getGreeting(candidates[savedCode]);
                 await loadCandidateSessions();
             }
         }
 
-        window.onclick = function(e) { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; };
+        // Fermer les modals en cliquant à l'extérieur
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Écouter les changements du champ PIN
         document.getElementById('pinCode')?.addEventListener('input', verifyPinAndShowForm);
+
         checkSavedLogin();
-        setInterval(async () => { if (currentCandidate && !isAdmin) loadCandidateSessions(); if (isAdmin) { loadAdminDashboard(); displayProgrammedWeeks(); } }, 60000);
+        gsap.fromTo(".login-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.2 });
+        
+        // Rafraîchissement automatique
+        setInterval(async () => {
+            if (currentCandidate && !isAdmin) await loadCandidateSessions();
+            if (isAdmin) { await loadAdminDashboard(); await displayProgrammedWeeks(); }
+        }, 60000);
     </script>
 </body>
 </html>
