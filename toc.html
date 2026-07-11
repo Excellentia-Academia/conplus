@@ -1,1639 +1,333 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🏆 Éloquence en Scène - Fiche Jury</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-    <style>
-        /* ============================================================
-           STYLES COMPLETS - FICHE JURY
-           BLANC / BLEU / ROUGE
-           ============================================================ */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --blanc: #ffffff;
-            --blanc-casse: #f8f7f4;
-            --bleu-fonce: #0a1628;
-            --bleu-marine: #1a2a4a;
-            --bleu-clair: #2c5f8a;
-            --bleu-ciel: #4a90d9;
-            --rouge: #c0392b;
-            --rouge-clair: #e74c3c;
-            --rouge-dore: #a93226;
-            --or: #d4af37;
-            --gris-clair: #e8e6e1;
-            --gris-moyen: #b0aeaa;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --radius: 20px;
-            --transition: 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--blanc-casse);
-            min-height: 100vh;
-            padding: 20px;
-            background-image: 
-                radial-gradient(ellipse at 0% 0%, rgba(26, 42, 74, 0.03) 0%, transparent 60%),
-                radial-gradient(ellipse at 100% 100%, rgba(192, 57, 43, 0.03) 0%, transparent 60%);
-        }
-
-        /* ---- HEADER ---- */
-        .jury-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 28px;
-            background: var(--blanc);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 24px;
-            border-left: 5px solid var(--rouge);
-            border-right: 5px solid var(--bleu-fonce);
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .jury-header .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .jury-header .logo i {
-            font-size: 1.8rem;
-            color: var(--rouge);
-        }
-
-        .jury-header .logo h1 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--rouge));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .jury-header .header-center {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .jury-header .header-center .jury-code {
-            background: var(--bleu-fonce);
-            color: var(--blanc);
-            padding: 6px 20px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            font-family: 'Poppins', monospace;
-        }
-
-        .jury-header .header-center .timer-display {
-            background: var(--blanc-casse);
-            padding: 6px 20px;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            font-family: 'Poppins', monospace;
-            color: var(--bleu-fonce);
-            border: 2px solid var(--gris-clair);
-            min-width: 100px;
-            text-align: center;
-        }
-
-        .jury-header .header-center .timer-display.warning {
-            border-color: var(--or);
-            color: var(--or);
-        }
-
-        .jury-header .header-center .timer-display.danger {
-            border-color: var(--rouge);
-            color: var(--rouge);
-            animation: pulse-timer 0.5s infinite alternate;
-        }
-
-        @keyframes pulse-timer {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
-
-        .jury-header .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .jury-header .header-right .btn-aide {
-            background: var(--rouge);
-            color: var(--blanc);
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .jury-header .header-right .btn-aide:hover {
-            background: var(--rouge-dore);
-            transform: scale(1.05);
-        }
-
-        .jury-header .header-right .btn-deconnexion {
-            background: transparent;
-            border: 1px solid var(--gris-clair);
-            color: var(--gris-moyen);
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
-            transition: var(--transition);
-        }
-
-        .jury-header .header-right .btn-deconnexion:hover {
-            border-color: var(--rouge);
-            color: var(--rouge);
-        }
-
-        /* ---- MAIN ---- */
-        .jury-main {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 1024px) {
-            .jury-main {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ============================================================
-           COLONNE GAUCHE - CANDIDAT
-           ============================================================ */
-        .candidat-card {
-            background: var(--blanc);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            border: 1px solid rgba(26, 42, 74, 0.06);
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-        }
-
-        .candidat-card .card-header {
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu-marine));
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .candidat-card .card-header .match-badge {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--blanc);
-            padding: 4px 16px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .candidat-card .card-header .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .candidat-card .card-header .status-badge .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .dot.en-attente {
-            background: var(--or);
-            animation: pulse-dot 1.5s infinite;
-        }
-        .dot.en-cours {
-            background: var(--bleu-ciel);
-            animation: pulse-dot 1s infinite;
-        }
-        .dot.termine {
-            background: var(--rouge);
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
-        }
-
-        .candidat-card .candidat-photo {
-            position: relative;
-            padding: 25px 20px 20px;
-            text-align: center;
-            background: linear-gradient(180deg, var(--bleu-fonce) 0%, var(--blanc) 60%);
-        }
-
-        .candidat-card .candidat-photo .photo-frame {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
-            border-radius: 50%;
-            border: 5px solid var(--blanc);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            background: var(--gris-clair);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .candidat-card .candidat-photo .photo-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .candidat-card .candidat-photo .photo-frame .placeholder {
-            font-size: 4rem;
-            color: var(--gris-moyen);
-            opacity: 0.3;
-        }
-
-        .candidat-card .candidat-photo .role-badge {
-            display: inline-block;
-            padding: 6px 24px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 14px;
-        }
-
-        .role-badge.these {
-            background: var(--bleu-fonce);
-            color: var(--blanc);
-        }
-
-        .role-badge.antithese {
-            background: var(--rouge);
-            color: var(--blanc);
-        }
-
-        .candidat-card .candidat-info {
-            padding: 16px 24px 20px;
-        }
-
-        .candidat-card .candidat-info .nom {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--bleu-fonce);
-            text-align: center;
-            margin-bottom: 4px;
-        }
-
-        .candidat-card .candidat-info .theme {
-            font-size: 0.85rem;
-            color: var(--gris-moyen);
-            text-align: center;
-            font-weight: 300;
-            line-height: 1.6;
-            padding: 8px 16px;
-            background: var(--blanc-casse);
-            border-radius: 10px;
-            margin-top: 8px;
-            border-left: 3px solid var(--or);
-        }
-
-        .candidat-card .candidat-info .theme i {
-            color: var(--or);
-            margin-right: 8px;
-        }
-
-        .candidat-card .status-cotation {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 10px 24px;
-            border-top: 1px solid var(--gris-clair);
-            font-size: 0.75rem;
-            color: var(--gris-moyen);
-        }
-
-        /* ============================================================
-           COLONNE DROITE - FICHE DE COTATION
-           ============================================================ */
-        .cotation-card {
-            background: var(--blanc);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(26, 42, 74, 0.06);
-            overflow: hidden;
-        }
-
-        .cotation-card .card-header {
-            background: linear-gradient(135deg, var(--rouge), var(--rouge-dore));
-            padding: 14px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .cotation-card .card-header h2 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--blanc);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cotation-card .card-header .jury-name {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.7);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 16px;
-            border-radius: 30px;
-        }
-
-        .cotation-card .card-body {
-            padding: 22px;
-        }
-
-        /* ---- ÉTAT DU CANDIDAT ---- */
-        .candidat-state {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
-            background: var(--blanc-casse);
-            border-radius: 10px;
-            margin-bottom: 16px;
-            border-left: 4px solid var(--or);
-        }
-
-        .candidat-state .state-icon {
-            font-size: 1.2rem;
-            color: var(--or);
-        }
-
-        .candidat-state .state-text {
-            font-size: 0.8rem;
-            color: var(--gris-moyen);
-        }
-
-        .candidat-state .state-text strong {
-            color: var(--bleu-fonce);
-        }
-
-        /* ---- GRILLE DES CRITÈRES ---- */
-        .criteria-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        @media (max-width: 600px) {
-            .criteria-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .criteria-item {
-            background: var(--blanc-casse);
-            border-radius: 12px;
-            padding: 12px 16px;
-            border: 1px solid var(--gris-clair);
-            transition: var(--transition);
-        }
-
-        .criteria-item:hover {
-            border-color: var(--bleu-ciel);
-        }
-
-        .criteria-item .criteria-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .criteria-item .criteria-header label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--bleu-fonce);
-        }
-
-        .criteria-item .criteria-header .max-points {
-            font-size: 0.6rem;
-            font-weight: 600;
-            color: var(--bleu-ciel);
-            background: rgba(74, 144, 217, 0.08);
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-
-        .criteria-item input {
-            width: 100%;
-            padding: 6px 12px;
-            background: var(--blanc);
-            border: 1px solid var(--gris-clair);
-            border-radius: 8px;
-            color: var(--bleu-fonce);
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            transition: var(--transition);
-        }
-
-        .criteria-item input:focus {
-            outline: none;
-            border-color: var(--bleu-ciel);
-            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
-        }
-
-        .criteria-item input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ---- TOTAL ---- */
-        .total-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu-marine));
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .total-section .total-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.8rem;
-            font-weight: 400;
-        }
-
-        .total-section .total-value {
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-
-        .total-section .total-value #totalScore {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--or);
-            min-width: 50px;
-            text-align: right;
-        }
-
-        .total-section .total-value .sur {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* ---- COMMENTAIRE & CONSEIL ---- */
-        .comment-area {
-            margin-bottom: 12px;
-        }
-
-        .comment-area label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--bleu-fonce);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-
-        .comment-area label i {
-            color: var(--bleu-ciel);
-        }
-
-        .comment-area textarea {
-            width: 100%;
-            padding: 8px 14px;
-            background: var(--blanc-casse);
-            border: 1px solid var(--gris-clair);
-            border-radius: 10px;
-            color: var(--bleu-fonce);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            resize: vertical;
-            min-height: 45px;
-            transition: var(--transition);
-        }
-
-        .comment-area textarea:focus {
-            outline: none;
-            border-color: var(--bleu-ciel);
-        }
-
-        .comment-area textarea:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ---- CONSEIL ---- */
-        .conseil-area {
-            background: rgba(212, 175, 55, 0.04);
-            border-left: 4px solid var(--or);
-            padding: 10px 16px;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 16px;
-        }
-
-        .conseil-area label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--bleu-fonce);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-
-        .conseil-area label i {
-            color: var(--or);
-        }
-
-        .conseil-area textarea {
-            width: 100%;
-            padding: 8px 14px;
-            background: var(--blanc);
-            border: 1px solid var(--gris-clair);
-            border-radius: 10px;
-            color: var(--bleu-fonce);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            resize: vertical;
-            min-height: 38px;
-            transition: var(--transition);
-        }
-
-        .conseil-area textarea:focus {
-            outline: none;
-            border-color: var(--or);
-        }
-
-        .conseil-area textarea:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* ---- ACTIONS ---- */
-        .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .actions button {
-            padding: 10px 22px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            justify-content: center;
-            min-width: 120px;
-        }
-
-        .actions button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .btn-brouillon {
-            background: var(--blanc-casse);
-            color: var(--bleu-fonce);
-            border: 2px solid var(--gris-clair);
-        }
-
-        .btn-brouillon:hover:not(:disabled) {
-            border-color: var(--or);
-            color: var(--or);
-            transform: translateY(-2px);
-        }
-
-        .btn-valider {
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu-marine));
-            color: var(--blanc);
-            border: 2px solid transparent;
-        }
-
-        .btn-valider:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(26, 42, 74, 0.2);
-        }
-
-        .btn-reinitialiser {
-            background: transparent;
-            color: var(--gris-moyen);
-            border: 2px solid var(--gris-clair);
-        }
-
-        .btn-reinitialiser:hover:not(:disabled) {
-            border-color: var(--rouge);
-            color: var(--rouge);
-            transform: translateY(-2px);
-        }
-
-        /* ---- STATUS BAR ---- */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-top: 1px solid var(--gris-clair);
-            margin-top: 14px;
-            font-size: 0.7rem;
-            color: var(--gris-moyen);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .status-bar .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-bar .status-indicator .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .status-dot.non-cote {
-            background: var(--gris-clair);
-        }
-        .status-dot.brouillon {
-            background: var(--or);
-            animation: pulse-dot 1.5s infinite;
-        }
-        .status-dot.valide {
-            background: var(--bleu-ciel);
-        }
-
-        /* ---- RESPONSIVE ---- */
-        @media (max-width: 1024px) {
-            .jury-main {
-                grid-template-columns: 1fr;
-            }
-
-            .candidat-card {
-                position: static;
-            }
-
-            .jury-header {
-                flex-direction: column;
-                text-align: center;
-                padding: 14px 20px;
-            }
-
-            .jury-header .header-center {
-                justify-content: center;
-            }
-
-            .jury-header .header-right {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            .candidat-card .candidat-photo .photo-frame {
-                width: 110px;
-                height: 110px;
-            }
-
-            .candidat-card .candidat-info .nom {
-                font-size: 1rem;
-            }
-
-            .cotation-card .card-body {
-                padding: 14px;
-            }
-
-            .total-section .total-value #totalScore {
-                font-size: 1.4rem;
-            }
-
-            .actions button {
-                padding: 8px 14px;
-                font-size: 0.7rem;
-                min-width: 80px;
-            }
-
-            .jury-header .header-center .timer-display {
-                font-size: 1rem;
-                min-width: 80px;
-            }
-        }
-
-        /* ---- MODAL AIDE ---- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--blanc);
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 100%;
-            padding: 30px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            0% { transform: scale(0.9) translateY(20px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        .modal-content .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .modal-content .modal-header h3 {
-            font-size: 1.1rem;
-            color: var(--bleu-fonce);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-content .modal-header h3 i {
-            color: var(--rouge);
-        }
-
-        .modal-content .modal-header .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--gris-moyen);
-            cursor: pointer;
-        }
-
-        .modal-content .modal-body p {
-            color: var(--gris-moyen);
-            font-size: 0.9rem;
-            line-height: 1.8;
-            margin-bottom: 12px;
-        }
-
-        .modal-content .modal-body .info-contact {
-            background: var(--blanc-casse);
-            padding: 14px 18px;
-            border-radius: 10px;
-            border-left: 4px solid var(--rouge);
-            margin-top: 12px;
-        }
-
-        .modal-content .modal-body .info-contact .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: var(--bleu-fonce);
-            padding: 4px 0;
-        }
-
-        .modal-content .modal-body .info-contact .contact-item i {
-            color: var(--rouge);
-            width: 20px;
-        }
-
-        .modal-content .modal-footer {
-            margin-top: 16px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-content .modal-footer button {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            flex: 1;
-        }
-
-        .modal-content .modal-footer .btn-modal-fermer {
-            background: var(--gris-clair);
-            color: var(--gris-moyen);
-        }
-
-        .modal-content .modal-footer .btn-modal-fermer:hover {
-            background: var(--gris-moyen);
-            color: var(--blanc);
-        }
-
-        .modal-content .modal-footer .btn-modal-contacter {
-            background: var(--rouge);
-            color: var(--blanc);
-        }
-
-        .modal-content .modal-footer .btn-modal-contacter:hover {
-            background: var(--rouge-dore);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Éloquence en Scène — Cotation</title>
+<style>
+/* ===== Design tokens (thème scène / projecteur) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+#eloquence-app {
+  --stage-black: #14110F;
+  --surface: #211C18;
+  --surface-high: #2E2620;
+  --gold: #E7C873;
+  --gold-dim: #B99B4E;
+  --text-light: #F4EEE2;
+  --text-muted: #8C8377;
+  --line: #3A322A;
+  --danger: #C9584F;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Work Sans', -apple-system, sans-serif;
+  --radius: 10px;
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+
+  background: var(--stage-black);
+  color: var(--text-light);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse 900px 500px at 50% -10%, rgba(231,200,115,.10), transparent 60%);
+}
+#eloquence-app * { box-sizing: border-box; }
+#eloquence-app h1, #eloquence-app h2, #eloquence-app h3 { font-family: var(--font-display); font-weight: 600; margin: 0 0 .5em; }
+#eloquence-app a { color: var(--gold); }
+
+#eloquence-app .app-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .9rem 1.5rem; background: var(--surface); border-bottom: 1px solid var(--line);
+}
+#eloquence-app .brand { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; cursor: pointer; }
+#eloquence-app .meta { display: flex; align-items: center; gap: 1.1rem; font-size: .92rem; color: var(--text-muted); flex-wrap: wrap; }
+#eloquence-app .app-main { max-width: 1180px; margin: 0 auto; padding: 1.75rem 1.5rem 3rem; }
+#eloquence-app .app-footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .82rem; border-top: 1px solid var(--line); }
+
+#eloquence-app .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem; margin-bottom: 1.25rem; box-shadow: var(--shadow); }
+#eloquence-app .card h2, #eloquence-app .card h3 { color: var(--gold); font-size: 1.02rem; text-transform: uppercase; letter-spacing: .06em; }
+
+#eloquence-app button, #eloquence-app .btn {
+  font-family: var(--font-body); font-weight: 600; font-size: .92rem; border: 1px solid var(--line);
+  background: var(--surface-high); color: var(--text-light); padding: .6rem 1.1rem; border-radius: 8px;
+  cursor: pointer; transition: transform .08s ease, border-color .15s ease, background .15s ease; text-decoration: none; display: inline-block;
+}
+#eloquence-app button:hover, #eloquence-app .btn:hover { border-color: var(--gold-dim); }
+#eloquence-app button:active { transform: scale(.98); }
+#eloquence-app button:disabled { opacity: .45; cursor: not-allowed; }
+#eloquence-app .btn-primary { background: var(--gold); color: #201808; border-color: var(--gold); }
+#eloquence-app .btn-primary:hover { background: #f0d488; }
+#eloquence-app .btn-danger { border-color: var(--danger); color: var(--danger); background: transparent; }
+#eloquence-app .btn-danger:hover { background: rgba(201,88,79,.12); }
+
+#eloquence-app input, #eloquence-app select, #eloquence-app textarea {
+  font-family: var(--font-body); background: var(--stage-black); border: 1px solid var(--line);
+  color: var(--text-light); border-radius: 7px; padding: .55rem .7rem; font-size: .95rem;
+}
+#eloquence-app input:focus, #eloquence-app select:focus, #eloquence-app textarea:focus, #eloquence-app button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+#eloquence-app label { font-size: .85rem; color: var(--text-muted); display: block; margin-bottom: .3rem; }
+#eloquence-app table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+#eloquence-app th, #eloquence-app td { padding: .55rem .6rem; text-align: left; border-bottom: 1px solid var(--line); }
+#eloquence-app th { color: var(--text-muted); text-transform: uppercase; font-size: .75rem; letter-spacing: .05em; }
+#eloquence-app .rank-1 { color: var(--gold); font-weight: 700; }
+#eloquence-app .rank-2 { color: #C9C2B4; font-weight: 700; }
+#eloquence-app .rank-3 { color: #B5895A; font-weight: 700; }
+#eloquence-app .pill { display: inline-block; padding: .2rem .6rem; border-radius: 999px; background: var(--surface-high); border: 1px solid var(--line); font-size: .8rem; color: var(--text-muted); }
+#eloquence-app .progress-bar { height: 8px; border-radius: 999px; background: var(--surface-high); overflow: hidden; border: 1px solid var(--line); }
+#eloquence-app .progress-bar > div { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); transition: width .4s ease; }
+
+/* Vues (routeur par ancre) */
+#eloquence-app .view { display: none; }
+#eloquence-app .view.active { display: block; }
+
+/* Accueil / connexion */
+#eloquence-app .login-wrap { max-width: 460px; margin: 3rem auto; }
+#eloquence-app .logo-hero { text-align: center; margin-bottom: 2rem; }
+#eloquence-app .logo-hero .emoji { font-size: 2.6rem; }
+#eloquence-app .tabs { display: flex; gap: .5rem; margin-bottom: 1.2rem; }
+#eloquence-app .tab-btn { flex: 1; background: var(--surface-high); border: 1px solid var(--line); padding: .6rem; border-radius: 8px; cursor: pointer; color: var(--text-muted); }
+#eloquence-app .tab-btn.active { color: var(--gold); border-color: var(--gold-dim); }
+#eloquence-app .pane { display: none; }
+#eloquence-app .pane.active { display: block; }
+#eloquence-app .field-group { margin-bottom: .9rem; }
+#eloquence-app .field-group input, #eloquence-app .field-group textarea { width: 100%; }
+#eloquence-app .error-msg { color: var(--danger); font-size: .85rem; margin-top: .6rem; min-height: 1.1em; }
+
+/* Jury */
+#eloquence-app .jury-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; }
+#eloquence-app .candidat-photo { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: var(--radius); background: var(--surface-high); border: 1px solid var(--line); margin-bottom: .9rem; }
+#eloquence-app .candidat-role { display: inline-block; background: var(--gold); color: #201808; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; padding: .2rem .6rem; border-radius: 999px; margin-bottom: .5rem; }
+#eloquence-app .candidat-nom { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: .3rem; }
+#eloquence-app .candidat-theme { color: var(--text-muted); font-style: italic; font-size: .92rem; margin-bottom: .9rem; }
+#eloquence-app .candidat-stats { display: flex; justify-content: space-between; font-size: .85rem; color: var(--text-muted); border-top: 1px solid var(--line); padding-top: .7rem; }
+#eloquence-app #timerDisplay, #eloquence-app #adminTimerDisplay { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gold); }
+#eloquence-app .critere-row { display: grid; grid-template-columns: 1fr 90px 40px; align-items: center; gap: .6rem; margin-bottom: .7rem; }
+#eloquence-app .critere-row input { text-align: center; }
+#eloquence-app .critere-max { color: var(--text-muted); font-size: .85rem; }
+#eloquence-app .total-row { display: flex; justify-content: space-between; align-items: baseline; padding: .9rem 0; margin: .8rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+#eloquence-app .total-row .label { font-family: var(--font-display); font-size: 1.05rem; color: var(--gold); }
+#eloquence-app #totalCotation { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--gold); }
+#eloquence-app .action-row { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+#eloquence-app #statutCotation { display: block; margin-top: .8rem; text-align: center; color: var(--text-muted); font-size: .85rem; }
+
+/* Admin */
+#eloquence-app .timer-block { text-align: center; padding: .5rem 0 1rem; }
+#eloquence-app #adminTimerDisplay { font-family: var(--font-display); font-size: 3.2rem; display: block; margin-bottom: .8rem; }
+#eloquence-app .timer-controls { display: flex; justify-content: center; gap: .6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+#eloquence-app .timer-presets { display: flex; justify-content: center; align-items: center; gap: .5rem; flex-wrap: wrap; }
+#eloquence-app .timer-preset { background: var(--surface-high); font-size: .85rem; padding: .4rem .8rem; }
+#eloquence-app #timerCustomInput { width: 70px; }
+#eloquence-app .status-line { text-align: center; margin-top: .8rem; color: var(--text-muted); }
+#eloquence-app .candidat-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+#eloquence-app .candidat-form .full { grid-column: 1 / -1; }
+#eloquence-app .form-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
+#eloquence-app .progression-bar-wrap { display: flex; align-items: center; gap: 1rem; margin-top: .6rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+#eloquence-app .progression-bar-wrap .progress-bar { flex: 1; }
+
+/* Résultats */
+#eloquence-app .results-hero { text-align: center; padding: 1rem 0 2rem; }
+#eloquence-app .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+#eloquence-app .podium-card { text-align: center; padding: 1.4rem 1rem; }
+#eloquence-app .podium-card .medal { font-size: 1.8rem; }
+#eloquence-app .podium-card .nom { font-family: var(--font-display); font-size: 1.05rem; margin: .4rem 0; }
+#eloquence-app .podium-card .moyenne { color: var(--gold); font-weight: 700; font-size: 1.2rem; }
+
+@media (max-width: 860px) {
+  #eloquence-app .jury-layout { grid-template-columns: 1fr; }
+  #eloquence-app .candidat-form, #eloquence-app .podium { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
 
-    <!-- ============================================================
-    HEADER JURY
-    ============================================================ -->
-    <header class="jury-header">
-        <div class="logo">
-            <i class="fas fa-microphone-alt"></i>
-            <h1>Éloquence en Scène</h1>
+<div id="eloquence-app">
+
+<header class="app-header">
+  <div class="brand" onclick="showView('accueil')">🏆 Éloquence en Scène</div>
+  <div class="meta" id="headerMeta">
+    <a href="#resultats" onclick="showView('resultats')">📊 Résultats</a>
+    <button class="btn-danger" id="btnHeaderLogout" type="button" style="display:none;">🚪 Déconnexion</button>
+  </div>
+</header>
+
+<main class="app-main">
+
+  <!-- ===================== VUE ACCUEIL / CONNEXION ===================== -->
+  <section class="view active" id="view-accueil">
+    <div class="login-wrap">
+      <div class="logo-hero">
+        <div class="emoji">🏆</div>
+        <h1>Éloquence en Scène</h1>
+        <p style="color:var(--text-muted);">Plateforme de cotation du concours</p>
+      </div>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab-btn active" id="tabJury" type="button">🎫 Jury</button>
+          <button class="tab-btn" id="tabAdmin" type="button">👑 Admin</button>
         </div>
-
-        <div class="header-center">
-            <span class="jury-code" id="juryCodeDisplay"><i class="fas fa-id-card"></i> 0001</span>
-            <span class="timer-display" id="timerDisplay">05:00</span>
+        <div class="pane active" id="paneJury">
+          <div class="field-group">
+            <label for="juryCodeInput">Code jury (4 chiffres)</label>
+            <input type="text" id="juryCodeInput" maxlength="4" inputmode="numeric" placeholder="0001" autocomplete="off">
+          </div>
+          <button class="btn-primary" id="btnConnexionJury" type="button" style="width:100%;">Se connecter</button>
+          <div class="error-msg" id="juryError"></div>
         </div>
-
-        <div class="header-right">
-            <button class="btn-aide" id="aideBtn"><i class="fas fa-life-ring"></i> Aide</button>
-            <button class="btn-deconnexion" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+        <div class="pane" id="paneAdmin">
+          <div class="field-group">
+            <label for="adminEmail">Email administrateur</label>
+            <input type="email" id="adminEmail" placeholder="admin@eloquence.scene" autocomplete="username">
+          </div>
+          <div class="field-group">
+            <label for="adminPassword">Mot de passe</label>
+            <input type="password" id="adminPassword" autocomplete="current-password">
+          </div>
+          <button class="btn-primary" id="btnConnexionAdmin" type="button" style="width:100%;">Se connecter</button>
+          <div class="error-msg" id="adminError"></div>
         </div>
-    </header>
+      </div>
+      <div style="text-align:center; margin-top:1.2rem;">
+        <a href="#resultats" onclick="showView('resultats')">Voir le classement public →</a>
+      </div>
+    </div>
+  </section>
 
-    <!-- ============================================================
-    MAIN
-    ============================================================ -->
-    <main class="jury-main">
-
-        <!-- ============================================================
-        COLONNE GAUCHE - CANDIDAT
-        ============================================================ -->
-        <section class="candidat-card">
-            <div class="card-header">
-                <span class="match-badge"><i class="fas fa-trophy"></i> Match #<span id="matchNumber">0</span></span>
-                <span class="status-badge">
-                    <span class="dot en-attente" id="statusDot"></span>
-                    <span id="statusLabel">En attente</span>
-                </span>
-            </div>
-
-            <div class="candidat-photo">
-                <div class="photo-frame" id="photoFrame">
-                    <i class="fas fa-user-circle placeholder" id="candidatPhotoPlaceholder"></i>
-                    <img id="candidatPhoto" style="display:none;" alt="Candidat" />
-                </div>
-                <div class="role-badge these" id="roleBadge">Thèse</div>
-            </div>
-
-            <div class="candidat-info">
-                <div class="nom" id="candidatNom">En attente du candidat...</div>
-                <div class="theme">
-                    <i class="fas fa-quote-left"></i>
-                    <span id="candidatTheme">Le candidat sera affiché ici...</span>
-                </div>
-            </div>
-
-            <div class="status-cotation">
-                <span><i class="fas fa-user-check" style="color:var(--bleu-ciel);"></i> <span id="juryCount">0 jurys</span></span>
-                <span><i class="fas fa-clock" style="color:var(--or);"></i> <span id="tempsRestant">--</span></span>
-            </div>
-        </section>
-
-        <!-- ============================================================
-        COLONNE DROITE - FICHE DE COTATION
-        ============================================================ -->
-        <section class="cotation-card">
-            <div class="card-header">
-                <h2><i class="fas fa-clipboard-list"></i> Fiche de Cotation</h2>
-                <span class="jury-name"><i class="fas fa-user"></i> <span id="juryNameBadge">Jury 1</span></span>
-            </div>
-
-            <div class="card-body">
-
-                <!-- État du candidat -->
-                <div class="candidat-state">
-                    <span class="state-icon"><i class="fas fa-info-circle"></i></span>
-                    <span class="state-text" id="stateText">
-                        En attente du prochain candidat...
-                    </span>
-                </div>
-
-                <!-- Critères -->
-                <div class="criteria-grid">
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-brain" style="color:var(--bleu-ciel);"></i> Maîtrise du sujet</label>
-                            <span class="max-points">/4</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="maitrise" min="0" max="4" step="0.5" value="0" disabled />
-                    </div>
-
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-balance-scale" style="color:var(--rouge);"></i> Pertinence arguments</label>
-                            <span class="max-points">/5</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="pertinence" min="0" max="5" step="0.5" value="0" disabled />
-                    </div>
-
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-sitemap" style="color:var(--bleu-fonce);"></i> Structure discours</label>
-                            <span class="max-points">/3</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="structure" min="0" max="3" step="0.5" value="0" disabled />
-                    </div>
-
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-microphone-alt" style="color:var(--or);"></i> Éloquence / présence</label>
-                            <span class="max-points">/4</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="eloquence" min="0" max="4" step="0.5" value="0" disabled />
-                    </div>
-
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-bullhorn" style="color:var(--rouge-dore);"></i> Force de persuasion</label>
-                            <span class="max-points">/2</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="persuasion" min="0" max="2" step="0.5" value="0" disabled />
-                    </div>
-
-                    <div class="criteria-item">
-                        <div class="criteria-header">
-                            <label><i class="fas fa-clock" style="color:var(--bleu-ciel);"></i> Respect du temps</label>
-                            <span class="max-points">/2</span>
-                        </div>
-                        <input type="number" class="score-input" data-criteria="temps" min="0" max="2" step="0.5" value="0" disabled />
-                    </div>
-                </div>
-
-                <!-- Total -->
-                <div class="total-section">
-                    <span class="total-label"><i class="fas fa-calculator"></i> TOTAL</span>
-                    <div class="total-value">
-                        <span id="totalScore">0</span>
-                        <span class="sur">/ 20</span>
-                    </div>
-                </div>
-
-                <!-- Commentaire -->
-                <div class="comment-area">
-                    <label><i class="fas fa-comment"></i> Commentaire général</label>
-                    <textarea id="comment" placeholder="Vos observations..." disabled></textarea>
-                </div>
-
-                <!-- Conseil -->
-                <div class="conseil-area">
-                    <label><i class="fas fa-lightbulb"></i> Conseil personnalisé</label>
-                    <textarea id="conseil" placeholder="Ex: 'Travaillez votre respiration...'" disabled></textarea>
-                </div>
-
-                <!-- Actions -->
-                <div class="actions">
-                    <button class="btn-brouillon" id="saveBtn" disabled><i class="fas fa-save"></i> Enregistrer</button>
-                    <button class="btn-valider" id="validateBtn" disabled><i class="fas fa-check-circle"></i> Valider</button>
-                    <button class="btn-reinitialiser" id="resetBtn" disabled><i class="fas fa-undo"></i> Réinitialiser</button>
-                </div>
-
-                <!-- Status Bar -->
-                <div class="status-bar">
-                    <span class="status-indicator">
-                        <span class="status-dot non-cote" id="statusDotBar"></span>
-                        <span id="statusTextBar">Non coté</span>
-                    </span>
-                    <span id="lastSaveInfo">--</span>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <!-- ============================================================
-    MODAL AIDE
-    ============================================================ -->
-    <div class="modal-overlay" id="aideModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-life-ring"></i> Contacter le Centre de Contrôle</h3>
-                <button class="close-modal" id="closeAideModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    Vous rencontrez un problème technique ou avez une question ?
-                    Contactez immédiatement le centre de contrôle.
-                </p>
-                <div class="info-contact">
-                    <div class="contact-item">
-                        <i class="fas fa-user-tie"></i>
-                        <span><strong>Responsable technique :</strong> Jean-Pierre</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span><strong>Téléphone :</strong> +243 812 345 678</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span><strong>Email :</strong> support@eloquence-scene.cd</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-comment"></i>
-                        <span><strong>Chat :</strong> Disponible sur l'application</span>
-                    </div>
-                </div>
-                <p style="margin-top:12px;font-size:0.8rem;color:var(--gris-moyen);">
-                    <i class="fas fa-info-circle"></i> Votre code jury est <strong id="modalJuryCode">0001</strong>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-modal-fermer" id="fermerAide"><i class="fas fa-times"></i> Fermer</button>
-                <button class="btn-modal-contacter" id="contacterAide"><i class="fas fa-phone"></i> Contacter</button>
-            </div>
+  <!-- ===================== VUE JURY ===================== -->
+  <section class="view" id="view-jury">
+    <div class="jury-layout">
+      <div class="card">
+        <div class="pill" id="statusLabel">⏳ En attente</div>
+        <p style="margin:.6rem 0 0; color:var(--text-muted); font-size:.85rem;">📌 Match #<span id="matchNumber">—</span></p>
+        <img class="candidat-photo" id="candidatPhoto" src="" alt="Photo du candidat">
+        <span class="candidat-role" id="candidatRole">—</span>
+        <div class="candidat-nom" id="candidatNom">En attente du centre de contrôle…</div>
+        <div class="candidat-theme" id="candidatTheme">—</div>
+        <div class="candidat-stats">
+          <span>👥 <span id="nombreJurys">4</span> jurys</span>
+          <span>⏱️ <span id="timerDisplay">05:00</span></span>
         </div>
+      </div>
+      <div class="card">
+        <h2>📋 Fiche de Cotation</h2>
+        <div id="criteresGrid">
+          <div class="critere-row"><label>Maîtrise sujet</label><input type="number" id="score_maitrise" min="0" max="4" step="0.5" value="0"><span class="critere-max">/4</span></div>
+          <div class="critere-row"><label>Pertinence</label><input type="number" id="score_pertinence" min="0" max="5" step="0.5" value="0"><span class="critere-max">/5</span></div>
+          <div class="critere-row"><label>Structure</label><input type="number" id="score_structure" min="0" max="3" step="0.5" value="0"><span class="critere-max">/3</span></div>
+          <div class="critere-row"><label>Éloquence</label><input type="number" id="score_eloquence" min="0" max="4" step="0.5" value="0"><span class="critere-max">/4</span></div>
+          <div class="critere-row"><label>Persuasion</label><input type="number" id="score_persuasion" min="0" max="2" step="0.5" value="0"><span class="critere-max">/2</span></div>
+          <div class="critere-row"><label>Temps</label><input type="number" id="score_temps" min="0" max="2" step="0.5" value="0"><span class="critere-max">/2</span></div>
+        </div>
+        <div class="total-row"><span class="label">TOTAL</span><span id="totalCotation">0.0 / 20</span></div>
+        <div class="field-group"><label for="commentaire">💬 Commentaire</label><textarea id="commentaire" placeholder="Vos observations…"></textarea></div>
+        <div class="field-group"><label for="conseil">💡 Conseil</label><textarea id="conseil" placeholder="Un conseil pour le candidat…"></textarea></div>
+        <div class="action-row">
+          <button id="btnEnregistrer" type="button">💾 Enregistrer</button>
+          <button class="btn-primary" id="btnValider" type="button">✅ Valider</button>
+          <button class="btn-danger" id="btnReinitialiser" type="button">↺ Réinitialiser</button>
+        </div>
+        <span id="statutCotation">📌 Non coté</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VUE ADMIN ===================== -->
+  <section class="view" id="view-admin">
+    <div class="card timer-block">
+      <h2>⏱️ Chronomètre</h2>
+      <span id="adminTimerDisplay">05:00</span>
+      <div class="timer-controls">
+        <button class="btn-primary" id="btnTimerStart" type="button">▶️ Démarrer</button>
+        <button id="btnTimerPause" type="button">⏸️ Pause</button>
+        <button id="btnTimerReset" type="button">↺ Reset</button>
+      </div>
+      <div class="timer-presets">
+        <span style="color:var(--text-muted); font-size:.85rem;">Préréglages :</span>
+        <button class="timer-preset" data-seconds="180" type="button">3 min</button>
+        <button class="timer-preset" data-seconds="300" type="button">5 min</button>
+        <button class="timer-preset" data-seconds="420" type="button">7 min</button>
+        <button class="timer-preset" data-seconds="600" type="button">10 min</button>
+        <input type="number" id="timerCustomInput" min="1" placeholder="min">
+      </div>
+      <div class="status-line">Statut : <span id="adminStatusLabel">⏳ En attente</span></div>
     </div>
 
-    <!-- ============================================================
-    JAVASCRIPT COMPLET
-    ============================================================ -->
-    <script>
-        // ================================================================
-        // CONFIGURATION
-        // ================================================================
+    <div class="card">
+      <h2>👤 Gestion des Candidats</h2>
+      <div class="candidat-form">
+        <div><label for="matchSelect">Match</label><select id="matchSelect"></select></div>
+        <div><label for="candidatSelect">Candidat</label><select id="candidatSelect"></select></div>
+        <div class="full"><label for="candidatPhotoInput">📤 Choisir une photo</label><input type="file" id="candidatPhotoInput" accept="image/*"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" id="btnEnvoyerJurys" type="button">📤 Envoyer aux jurys</button>
+        <a class="btn" href="#resultats" onclick="showView('resultats')">📊 Voir les résultats</a>
+      </div>
+    </div>
 
-        // Code jury = paramètre URL ou prompt
-        const urlParams = new URLSearchParams(window.location.search);
-        let juryCode = urlParams.get('jury') || prompt('Entrez votre code jury (ex: 0001) :', '0001');
-        juryCode = juryCode.padStart(4, '0');
+    <div class="card">
+      <h2>📊 Cotations en Temps Réel</h2>
+      <div style="overflow-x:auto;">
+        <table><thead><tr><th>#</th><th>Candidat</th><th>Moyenne</th><th>Notes</th></tr></thead><tbody id="resultsBody"></tbody></table>
+      </div>
+      <div class="form-actions" style="margin-top:1rem;"><button id="btnExporter" type="button">⬇️ Exporter (CSV)</button></div>
+    </div>
 
-        // ================================================================
-        // DONNÉES SIMULÉES (remplacées par Firebase en production)
-        // ================================================================
+    <div class="progression-bar-wrap">
+      <span id="progressText" style="white-space:nowrap;">0 / 0 cotés</span>
+      <div class="progress-bar"><div id="progressFill" style="width:0%"></div></div>
+    </div>
+  </section>
 
-        // Simulation des données envoyées par le centre de contrôle
-        let state = {
-            matchId: 0,
-            candidatNom: '',
-            candidatTheme: '',
-            candidatRole: 'Thèse',
-            candidatPhoto: '',
-            timer: 300,
-            timerRunning: false,
-            status: 'en-attente' // en-attente | en-cours | termine
-        };
+  <!-- ===================== VUE RÉSULTATS (publique) ===================== -->
+  <section class="view" id="view-resultats">
+    <div class="results-hero">
+      <h1>📊 Classement</h1>
+      <p style="color:var(--text-muted);">Résultats mis à jour en temps réel</p>
+    </div>
+    <div class="podium" id="podium"></div>
+    <div class="card">
+      <h2>Classement complet</h2>
+      <div style="overflow-x:auto;">
+        <table><thead><tr><th>Rang</th><th>Candidat</th><th>Moyenne</th><th>Notes validées</th></tr></thead><tbody id="publicResultsBody"></tbody></table>
+      </div>
+    </div>
+  </section>
 
-        // Cotations locales (par jury)
-        let maCotation = {
-            scores: { maitrise: 0, pertinence: 0, structure: 0, eloquence: 0, persuasion: 0, temps: 0 },
-            total: 0,
-            commentaire: '',
-            conseil: '',
-            valide: false
-        };
+</main>
 
-        // ================================================================
-        // RÉFÉRENCES DOM
-        // ================================================================
+<footer class="app-footer">© 2026 — Éloquence en Scène</footer>
 
-        const juryCodeDisplay = document.getElementById('juryCodeDisplay');
-        const juryNameBadge = document.getElementById('juryNameBadge');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const matchNumber = document.getElementById('matchNumber');
-        const candidatNom = document.getElementById('candidatNom');
-        const candidatTheme = document.getElementById('candidatTheme');
-        const roleBadge = document.getElementById('roleBadge');
-        const candidatPhoto = document.getElementById('candidatPhoto');
-        const candidatPhotoPlaceholder = document.getElementById('candidatPhotoPlaceholder');
-        const photoFrame = document.getElementById('photoFrame');
-        const statusDot = document.getElementById('statusDot');
-        const statusLabel = document.getElementById('statusLabel');
-        const stateText = document.getElementById('stateText');
-        const totalScore = document.getElementById('totalScore');
-        const comment = document.getElementById('comment');
-        const conseil = document.getElementById('conseil');
-        const statusDotBar = document.getElementById('statusDotBar');
-        const statusTextBar = document.getElementById('statusTextBar');
-        const lastSaveInfo = document.getElementById('lastSaveInfo');
-        const juryCount = document.getElementById('juryCount');
-        const tempsRestant = document.getElementById('tempsRestant');
+</div><!-- /#eloquence-app -->
 
-        const saveBtn = document.getElementById('saveBtn');
-        const validateBtn = document.getElementById('validateBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const aideBtn = document.getElementById('aideBtn');
-        const aideModal = document.getElementById('aideModal');
-        const closeAideModal = document.getElementById('closeAideModal');
-        const fermerAide = document.getElementById('fermerAide');
-        const contacterAide = document.getElementById('contacterAide');
-        const modalJuryCode = document.getElementById('modalJuryCode');
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
-        const scoreInputs = document.querySelectorAll('.score-input');
+<script>
+// ===================================================================
+// ⚠️ CONFIG FIREBASE — à remplacer par les valeurs de VOTRE projet
+// (Console Firebase > Paramètres du projet > Vos applications)
+// ===================================================================
+const firebaseConfig = {
+  apiKey: "REMPLACER_PAR_VOTRE_API_KEY",
+  authDomain: "REMPLACER.firebaseapp.com",
+  databaseURL: "https://REMPLACER-default-rtdb.firebaseio.com",
+  projectId: "REMPLACER_PROJECT_ID",
+  storageBucket: "REMPLACER.appspot.com",
+  messagingSenderId: "REMPLACER_SENDER_ID",
+  appId: "REMPLACER_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+const firestore = firebase.firestore();
+const storage = firebase.storage();
 
-        // ================================================================
-        // AFFICHAGE
-        // ================================================================
-
-        function updateJuryDisplay() {
-            juryCodeDisplay.textContent = `🎫 ${juryCode}`;
-            juryNameBadge.textContent = `Jury ${juryCode}`;
-            modalJuryCode.textContent = juryCode;
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(state.timer / 60);
-            const seconds = state.timer % 60;
-            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            timerDisplay.textContent = display;
-
-            // Changement de couleur
-            timerDisplay.classList.remove('warning', 'danger');
-            if (state.timer <= 30 && state.timerRunning) {
-                timerDisplay.classList.add('danger');
-            } else if (state.timer <= 60 && state.timerRunning) {
-                timerDisplay.classList.add('warning');
-            }
-        }
-
-        function updateCandidatDisplay() {
-            if (state.candidatNom) {
-                matchNumber.textContent = state.matchId;
-                candidatNom.textContent = state.candidatNom;
-                candidatTheme.textContent = state.candidatTheme;
-                roleBadge.textContent = state.candidatRole;
-                roleBadge.className = `role-badge ${state.candidatRole === 'Thèse' ? 'these' : 'antithese'}`;
-
-                // Photo
-                if (state.candidatPhoto) {
-                    candidatPhoto.src = state.candidatPhoto;
-                    candidatPhoto.style.display = 'block';
-                    candidatPhotoPlaceholder.style.display = 'none';
-                } else {
-                    candidatPhoto.style.display = 'none';
-                    candidatPhotoPlaceholder.style.display = 'block';
-                }
-
-                // Activer les champs
-                enableFields(true);
-
-                // Statut
-                const statusMap = {
-                    'en-attente': { label: '⏳ En attente', dot: 'en-attente', text: 'En attente du candidat...' },
-                    'en-cours': { label: '🎤 En cours', dot: 'en-cours', text: `Cotation du candidat en cours...` },
-                    'termine': { label: '✅ Terminé', dot: 'termine', text: 'La prestation est terminée' }
-                };
-                const s = statusMap[state.status] || statusMap['en-attente'];
-                statusLabel.textContent = s.label;
-                statusDot.className = `dot ${s.dot}`;
-                stateText.textContent = s.text;
-
-            } else {
-                matchNumber.textContent = '0';
-                candidatNom.textContent = 'En attente du candidat...';
-                candidatTheme.textContent = 'Le candidat sera affiché ici...';
-                roleBadge.textContent = 'Thèse';
-                roleBadge.className = 'role-badge these';
-                candidatPhoto.style.display = 'none';
-                candidatPhotoPlaceholder.style.display = 'block';
-                enableFields(false);
-                statusLabel.textContent = '⏳ En attente';
-                statusDot.className = 'dot en-attente';
-                stateText.textContent = 'En attente du prochain candidat...';
-            }
-
-            updateTimerDisplay();
-        }
-
-        function enableFields(enabled) {
-            scoreInputs.forEach(input => input.disabled = !enabled);
-            comment.disabled = !enabled;
-            conseil.disabled = !enabled;
-            saveBtn.disabled = !enabled;
-            validateBtn.disabled = !enabled;
-            resetBtn.disabled = !enabled;
-
-            // Si déjà validé, désactiver
-            if (maCotation.valide) {
-                scoreInputs.forEach(input => input.disabled = true);
-                comment.disabled = true;
-                conseil.disabled = true;
-                saveBtn.disabled = true;
-                validateBtn.disabled = true;
-                resetBtn.disabled = true;
-            }
-        }
-
-        function updateTotal() {
-            let total = 0;
-            scoreInputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            totalScore.textContent = total.toFixed(1);
-            maCotation.total = total;
-            return total;
-        }
-
-        function updateStatusBar() {
-            if (maCotation.valide) {
-                statusDotBar.className = 'status-dot valide';
-                statusTextBar.textContent = '✅ Validé';
-            } else if (maCotation.total > 0) {
-                statusDotBar.className = 'status-dot brouillon';
-                statusTextBar.textContent = '📝 Brouillon';
-            } else {
-                statusDotBar.className = 'status-dot non-cote';
-                statusTextBar.textContent = '⏹️ Non coté';
-            }
-        }
-
-        function loadCotation() {
-            // Charger depuis localStorage
-            const key = `cotation_${juryCode}_${state.candidatNom || 'aucun'}`;
-            const saved = localStorage.getItem(key);
-            if (saved) {
-                try {
-                    maCotation = JSON.parse(saved);
-                    // Restaurer les scores
-                    scoreInputs.forEach(input => {
-                        const key = input.dataset.criteria;
-                        if (maCotation.scores && maCotation.scores[key] !== undefined) {
-                            input.value = maCotation.scores[key];
-                        } else {
-                            input.value = 0;
-                        }
-                    });
-                    comment.value = maCotation.commentaire || '';
-                    conseil.value = maCotation.conseil || '';
-                    updateTotal();
-                    updateStatusBar();
-                    lastSaveInfo.textContent = `Dernière sauvegarde : ${new Date(maCotation.dateModification || Date.now()).toLocaleString()}`;
-
-                    if (maCotation.valide) {
-                        enableFields(false);
-                    }
-                } catch (e) {
-                    resetLocalCotation();
-                }
-            } else {
-                resetLocalCotation();
-            }
-        }
-
-        function resetLocalCotation() {
-            maCotation = {
-                scores: { maitrise: 0, pertinence: 0, structure: 0, eloquence: 0, persuasion: 0, temps: 0 },
-                total: 0,
-                commentaire: '',
-                conseil: '',
-                valide: false,
-                dateModification: new Date().toISOString()
-            };
-            scoreInputs.forEach(input => input.value = 0);
-            comment.value = '';
-            conseil.value = '';
-            updateTotal();
-            updateStatusBar();
-            lastSaveInfo.textContent = '--';
-            enableFields(state.candidatNom ? true : false);
-        }
-
-        function saveLocalCotation() {
-            const scores = {};
-            scoreInputs.forEach(input => {
-                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
-            });
-            maCotation.scores = scores;
-            maCotation.total = updateTotal();
-            maCotation.commentaire = comment.value;
-            maCotation.conseil = conseil.value;
-            maCotation.dateModification = new Date().toISOString();
-
-            const key = `cotation_${juryCode}_${state.candidatNom || 'aucun'}`;
-            localStorage.setItem(key, JSON.stringify(maCotation));
-            updateStatusBar();
-            lastSaveInfo.textContent = `Sauvegardé à ${new Date().toLocaleTimeString()}`;
-        }
-
-        // ================================================================
-        // SIMULATION DU CENTRE DE CONTRÔLE (à remplacer par Firebase)
-        // ================================================================
-
-        // Simulation des données reçues du centre
-        function simulateCenterData() {
-            // Exemple de données
-            const candidatsEx = [
-                { matchId: 1, nom: 'Bernadine Mandanda Mbangu', role: 'Thèse',
-                    theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
-                    photo: '' },
-                { matchId: 1, nom: 'Adju Abdallah Djuma', role: 'Antithèse',
-                    theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
-                    photo: '' },
-                { matchId: 2, nom: 'Bijou Belanza', role: 'Thèse',
-                    theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
-                    photo: '' },
-                { matchId: 2, nom: 'Arsène Sangwa Binanga', role: 'Antithèse',
-                    theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
-                    photo: '' },
-            ];
-
-            // Choisir un candidat aléatoire pour la simulation
-            const idx = Math.floor(Math.random() * candidatsEx.length);
-            const c = candidatsEx[idx];
-
-            state.matchId = c.matchId;
-            state.candidatNom = c.nom;
-            state.candidatTheme = c.theme;
-            state.candidatRole = c.role;
-            state.candidatPhoto = c.photo;
-            state.status = 'en-cours';
-            state.timer = 300;
-            state.timerRunning = true;
-
-            updateCandidatDisplay();
-            loadCotation();
-        }
-
-        // ================================================================
-        // ÉVÉNEMENTS
-        // ================================================================
-
-        scoreInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const max = parseFloat(this.max);
-                const val = parseFloat(this.value);
-                if (val > max) this.value = max;
-                if (val < 0) this.value = 0;
-                updateTotal();
-                updateStatusBar();
-                // Auto-save
-                if (state.candidatNom) {
-                    saveLocalCotation();
-                }
-            });
-        });
-
-        comment.addEventListener('input', function() {
-            if (state.candidatNom) {
-                maCotation.commentaire = this.value;
-                saveLocalCotation();
-            }
-        });
-
-        conseil.addEventListener('input', function() {
-            if (state.candidatNom) {
-                maCotation.conseil = this.value;
-                saveLocalCotation();
-            }
-        });
-
-        saveBtn.addEventListener('click', function() {
-            if (!state.candidatNom) {
-                alert('Aucun candidat sélectionné.');
-                return;
-            }
-            if (maCotation.valide) {
-                alert('Cette cotation est déjà validée.');
-                return;
-            }
-            saveLocalCotation();
-            alert('✅ Cotation enregistrée en brouillon !');
-        });
-
-        validateBtn.addEventListener('click', function() {
-            if (!state.candidatNom) {
-                alert('Aucun candidat sélectionné.');
-                return;
-            }
-            if (maCotation.valide) {
-                alert('Cette cotation est déjà validée.');
-                return;
-            }
-            const total = updateTotal();
-            if (total === 0) {
-                alert('Veuillez attribuer des notes avant de valider.');
-                return;
-            }
-            if (!confirm('Valider définitivement cette cotation ? Vous ne pourrez plus la modifier.')) {
-                return;
-            }
-            maCotation.valide = true;
-            saveLocalCotation();
-            enableFields(false);
-            updateStatusBar();
-            alert('✅ Cotation validée définitivement !');
-        });
-
-        resetBtn.addEventListener('click', function() {
-            if (!state.candidatNom) {
-                resetLocalCotation();
-                return;
-            }
-            if (maCotation.valide) {
-                alert('Cette cotation est validée, vous ne pouvez pas la réinitialiser.');
-                return;
-            }
-            if (confirm('Réinitialiser toutes les notes pour ce candidat ?')) {
-                const key = `cotation_${juryCode}_${state.candidatNom}`;
-                localStorage.removeItem(key);
-                resetLocalCotation();
-                alert('Fiche réinitialisée.');
-            }
-        });
-
-        logoutBtn.addEventListener('click', function() {
-            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                window.location.href = '?';
-            }
-        });
-
-        // ---- MODAL AIDE ----
-        aideBtn.addEventListener('click', function() {
-            aideModal.classList.add('active');
-        });
-
-        closeAideModal.addEventListener('click', function() {
-            aideModal.classList.remove('active');
-        });
-
-        fermerAide.addEventListener('click', function() {
-            aideModal.classList.remove('active');
-        });
-
-        contacterAide.addEventListener('click', function() {
-            alert('📞 Appel en cours vers le centre de contrôle...\n\nNuméro : +243 812 345 678');
-        });
-
-        aideModal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('active');
-            }
-        });
-
-        // ================================================================
-        // SIMULATION TIMER (centrale)
-        // ================================================================
-
-        setInterval(() => {
-            if (state.timerRunning && state.timer > 0) {
-                state.timer--;
-                updateTimerDisplay();
-                tempsRestant.textContent = `${Math.floor(state.timer/60)}min ${state.timer%60}s`;
-                if (state.timer === 0) {
-                    state.timerRunning = false;
-                    state.status = 'termine';
-                    updateCandidatDisplay();
-                    alert('⏰ Temps écoulé ! Le candidat a terminé sa prestation.');
-                }
-            }
-        }, 1000);
-
-        // ================================================================
-        // INITIALISATION
-        // ================================================================
-
-        updateJuryDisplay();
-
-        // Simulation du centre de contrôle (déclenché après 2s)
-        setTimeout(() => {
-            simulateCenterData();
-            // Mettre à jour le nombre de jurys (simulé)
-            juryCount.textContent = '4 jurys';
-        }, 500);
-
-        // Simulation du centre qui change de candidat toutes les 15s (pour démo)
-        setInterval(() => {
-            if (state.status === 'termine' || !state.candidatNom) {
-                simulateCenterData();
-                juryCount.textContent = '4 jurys';
-            }
-        }, 15000);
-
-        console.log(`🏆 Éloquence en Scène - Jury ${juryCode}`);
-        console.log('📋 En attente des instructions du centre de contrôle...');
-
-        // ================================================================
-        // CODE POUR FIREBASE (à décommenter)
-        // ================================================================
-
-        /*
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "VOTRE_API_KEY",
-            authDomain: "VOTRE_PROJET.firebaseapp.com",
-            databaseURL: "https://VOTRE_PROJET.firebaseio.com",
-            projectId: "VOTRE_PROJET",
-            storageBucket: "VOTRE_PROJET.appspot.com",
-            messagingSenderId: "VOTRE_SENDER_ID",
-            appId: "VOTRE_APP_ID"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Écouter les changements du centre de contrôle
-        database.ref('etat/').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                state.matchId = data.matchId || 0;
-                state.candidatNom = data.candidatNom || '';
-                state.candidatTheme = data.candidatTheme || '';
-                state.candidatRole = data.candidatRole || 'Thèse';
-                state.candidatPhoto = data.candidatPhoto || '';
-                state.timer = data.timer || 300;
-                state.timerRunning = data.timerRunning || false;
-                state.status = data.status || 'en-attente';
-                updateCandidatDisplay();
-                loadCotation();
-                juryCount.textContent = `${data.nombreJurys || 0} jurys`;
-            }
-        });
-
-        // Envoyer la cotation validée au centre
-        function envoyerCotation() {
-            database.ref(`cotations/${juryCode}/${state.candidatNom}`).set({
-                scores: maCotation.scores,
-                total: maCotation.total,
-                commentaire: maCotation.commentaire,
-                conseil: maCotation.conseil,
-                valide: maCotation.valide,
-                date: new Date().toISOString()
-            });
-        }
-
-        // Appeler envoyerCotation() après validation
-        */
-    </script>
-
-</body>
-</html>
+// ===================================================================
+// Utils (SecurityUtils) — section 7.4 du plan directeur
+// ===================================================================
+class SecurityUtils {
+  static escapeHTML(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+  static validerCodeJury(code) { return /^[0-9]{4}$/.test(code); }
+  static validerNote(valeur, min, max) { const num = parseFlo
