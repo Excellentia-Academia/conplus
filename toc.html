@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏆 Éloquence en Scène - Plateforme de Cotation</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ============================================================
+           STYLES COMPLETS
+           ============================================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f5e6a3;
+            --gold-dark: #a07c1e;
+            --black: #0a0a0a;
+            --dark-grey: #141414;
+            --card-bg: rgba(20, 18, 14, 0.95);
+            --white: #f0ede6;
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            --radius: 16px;
+            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --blue: #3498db;
+            --orange: #f39c12;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%),
+                radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ---- HEADER ---- */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 32px;
+            background: rgba(12, 11, 8, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 80px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.25));
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        .header-info i {
+            color: var(--gold);
+            margin-right: 6px;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user #userDisplay {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .btn-login,
+        .btn-logout,
+        .btn-admin {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-login {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .btn-login:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-admin {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn-admin:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-admin.active {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* ---- SECTIONS ---- */
+        section {
+            background: var(--card-bg);
+            backdrop-filter: blur(6px);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        h2 i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================================
+           CENTRE DE CONTRÔLE - CHRONOMÈTRE
+           ============================================================ */
+
+        .timer-panel {
+            background: rgba(212, 175, 55, 0.04);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .timer-clock {
+            font-size: 4rem;
+            font-weight: 800;
+            font-family: 'Poppins', monospace;
+            color: var(--gold);
+            letter-spacing: 4px;
+            min-width: 200px;
+            text-align: center;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
+        }
+
+        .timer-clock.warning {
+            color: var(--orange);
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        .timer-clock.danger {
+            color: var(--red);
+            animation: pulse 0.3s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .timer-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-start {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-start:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .btn-pause {
+            background: var(--orange);
+            color: #fff;
+        }
+        .btn-pause:hover {
+            background: #e67e22;
+            transform: scale(1.05);
+        }
+
+        .btn-reset-timer {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-reset-timer:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .btn-set-time {
+            background: var(--blue);
+            color: #fff;
+        }
+        .btn-set-time:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .timer-presets {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-presets button {
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #888;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .timer-presets button:hover {
+            border-color: var(--gold);
+            color: var(--white);
+        }
+
+        .timer-presets button.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        /* ---- STATUS TIMER ---- */
+        .timer-status {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .timer-status .status-text {
+            font-weight: 600;
+        }
+        .timer-status .status-text.en-cours {
+            color: var(--green);
+        }
+        .timer-status .status-text.pause {
+            color: var(--orange);
+        }
+        .timer-status .status-text.termine {
+            color: var(--red);
+        }
+
+        /* ============================================================
+           FICHES DE COTATION - THÈSE & ANTITHÈSE
+           ============================================================ */
+
+        .cotation-sheet {
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .sheet-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .sheet-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--white);
+            flex: 1;
+        }
+
+        .sheet-header .match-info {
+            font-size: 0.75rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 16px;
+            border-radius: 30px;
+        }
+
+        .sheet-header .role-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 18px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .role-badge.these {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.12);
+        }
+
+        .role-badge.antithese {
+            background: rgba(70, 130, 255, 0.12);
+            color: #7aa9ff;
+            border: 1px solid rgba(70, 130, 255, 0.08);
+        }
+
+        /* ---- GRILLE DES CRITÈRES ---- */
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .criteria-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+
+        .criteria-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(212, 175, 55, 0.08);
+        }
+
+        .criteria-item label {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #ccc;
+            margin-bottom: 6px;
+        }
+
+        .criteria-item label i {
+            color: var(--gold);
+            width: 20px;
+            opacity: 0.6;
+        }
+
+        .criteria-item .max-points {
+            font-size: 0.65rem;
+            color: #555;
+            margin-left: auto;
+        }
+
+        .criteria-item input {
+            width: 100%;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .criteria-item input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.04);
+        }
+
+        .criteria-item input::-webkit-outer-spin-button,
+        .criteria-item input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        /* ---- TOTAL ---- */
+        .total-score {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 14px 20px;
+            background: rgba(212, 175, 55, 0.06);
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .total-score span:first-child {
+            color: #888;
+            font-weight: 400;
+        }
+
+        .total-score #totalScore {
+            color: var(--gold);
+            font-size: 1.6rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .total-score span:last-child {
+            color: #555;
+            font-weight: 300;
+        }
+
+        /* ---- COMMENTAIRE & CONSEIL ---- */
+        .comment-area {
+            margin-bottom: 14px;
+        }
+
+        .comment-area label {
+            font-size: 0.8rem;
+            color: #888;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .comment-area label i {
+            margin-right: 6px;
+        }
+
+        .comment-area textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 50px;
+            transition: var(--transition);
+        }
+
+        .comment-area textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        /* ---- CONSEILS PERSONNALISÉS ---- */
+        .conseil-area {
+            background: rgba(212, 175, 55, 0.03);
+            border-left: 3px solid var(--gold);
+            padding: 12px 16px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 16px;
+        }
+
+        .conseil-area label {
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .conseil-area label i {
+            margin-right: 6px;
+        }
+
+        .conseil-area textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.08);
+            border-radius: 10px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 40px;
+            transition: var(--transition);
+        }
+
+        .conseil-area textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        /* ---- ACTIONS ---- */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-save {
+            background: var(--gold);
+            color: var(--black);
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-validate {
+            background: var(--green);
+            color: #fff;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-validate:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.2);
+        }
+
+        .btn-reset-sheet {
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
+            padding: 10px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-reset-sheet:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-send-to-all {
+            background: var(--blue);
+            color: #fff;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-send-to-all:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* ---- STATUS DE COTATION ---- */
+        .cotation-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            padding: 4px 14px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+        }
+
+        .cotation-status.non-cote {
+            background: rgba(255, 255, 255, 0.04);
+            color: #666;
+        }
+
+        .cotation-status.brouillon {
+            background: rgba(243, 156, 18, 0.12);
+            color: var(--orange);
+        }
+
+        .cotation-status.valide {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--green);
+        }
+
+        /* ============================================================
+           RÉSULTATS / CLASSEMENT
+           ============================================================ */
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .results-table thead {
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        .results-table th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gold-light);
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+        }
+
+        .results-table td {
+            padding: 8px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: #ccc;
+        }
+
+        .results-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .results-table .rank-1 {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .results-table .rank-2 {
+            color: #c0c0c0;
+            font-weight: 600;
+        }
+        .results-table .rank-3 {
+            color: #cd7f32;
+            font-weight: 600;
+        }
+
+        .badge-status {
+            font-size: 0.65rem;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+
+        .badge-status.valide {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--green);
+        }
+
+        .badge-status.brouillon {
+            background: rgba(243, 156, 18, 0.12);
+            color: var(--orange);
+        }
+
+        .badge-status.non-cote {
+            background: rgba(255, 255, 255, 0.04);
+            color: #666;
+        }
+
+        /* ---- PROGRESSION ---- */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                border-radius: 30px;
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+            .logo i {
+                font-size: 1.5rem;
+            }
+
+            .header-info {
+                font-size: 0.7rem;
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .header-user {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            section {
+                padding: 16px 14px;
+            }
+
+            .criteria-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-clock {
+                font-size: 2.5rem;
+                min-width: 140px;
+            }
+
+            .timer-display {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .timer-controls {
+                justify-content: center;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .actions button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .results-table {
+                font-size: 0.65rem;
+            }
+            .results-table th,
+            .results-table td {
+                padding: 4px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .timer-clock {
+                font-size: 2rem;
+            }
+
+            .sheet-header h3 {
+                font-size: 1rem;
+            }
+
+            .total-score {
+                font-size: 1rem;
+            }
+            .total-score #totalScore {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-microphone-alt"></i>
+            <span>Éloquence en Scène</span>
+        </div>
+        <div class="header-info">
+            <span><i class="fas fa-users"></i> <span id="totalCandidats">52</span> Candidats</span>
+            <span><i class="fas fa-gavel"></i> <span id="totalMatchs">26</span> Duels</span>
+            <span><i class="fas fa-calendar-alt"></i> 2026</span>
+        </div>
+        <div class="header-user">
+            <span id="userDisplay"><i class="fas fa-user"></i> Non connecté</span>
+            <button class="btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Connexion</button>
+            <button class="btn-logout hidden" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+            <button class="btn-admin hidden" id="adminToggle"><i class="fas fa-crown"></i> Admin</button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    MAIN
+    ============================================================ -->
+    <main>
+
+        <!-- ============================================================
+        CENTRE DE CONTRÔLE - CHRONOMÈTRE
+        ============================================================ -->
+        <section id="adminPanel" class="hidden">
+            <h2><i class="fas fa-clock"></i> Centre de Contrôle - Chronomètre</h2>
+
+            <div class="timer-panel">
+                <div class="timer-display">
+                    <div class="timer-clock" id="timerDisplay">05:00</div>
+                    <div class="timer-controls">
+                        <button class="btn-start" id="timerStart"><i class="fas fa-play"></i> Démarrer</button>
+                        <button class="btn-pause" id="timerPause"><i class="fas fa-pause"></i> Pause</button>
+                        <button class="btn-reset-timer" id="timerReset"><i class="fas fa-undo"></i> Réinitialiser</button>
+                    </div>
+                </div>
+
+                <div class="timer-presets">
+                    <span style="font-size:0.7rem;color:#666;margin-right:8px;">Préréglages :</span>
+                    <button data-time="180">3 min</button>
+                    <button data-time="300" class="active">5 min</button>
+                    <button data-time="420">7 min</button>
+                    <button data-time="600">10 min</button>
+                    <button data-time="900">15 min</button>
+                    <span style="font-size:0.7rem;color:#666;margin-left:8px;">ou</span>
+                    <input type="number" id="customTime" value="5" min="1" max="60" style="width:60px;padding:4px 8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;color:white;font-family:'Poppins',sans-serif;font-size:0.8rem;text-align:center;" />
+                    <span style="font-size:0.7rem;color:#666;">min</span>
+                    <button class="btn-set-time" id="setCustomTime"><i class="fas fa-check"></i> Appliquer</button>
+                </div>
+
+                <div class="timer-status">
+                    Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
+                </div>
+            </div>
+
+            <!-- Envoi de la fiche à tous les jurys -->
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding-top:10px;border-top:1px solid rgba(212,175,55,0.06);">
+                <div style="flex:1;min-width:200px;">
+                    <label style="font-size:0.75rem;color:#888;display:block;margin-bottom:4px;">
+                        <i class="fas fa-user"></i> Sélectionner le candidat à envoyer
+                    </label>
+                    <select id="adminCandidateSelect" style="width:100%;padding:8px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:white;font-family:'Poppins',sans-serif;font-size:0.85rem;">
+                        <option value="">-- Chargement des candidats --</option>
+                    </select>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-end;">
+                    <button class="btn-send-to-all" id="sendSheetBtn"><i class="fas fa-paper-plane"></i> Envoyer la fiche à tous les jurys</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        FICHE DE COTATION - JURY
+        ============================================================ -->
+        <section>
+            <h2><i class="fas fa-clipboard-list"></i> Fiche de Cotation</h2>
+
+            <div class="cotation-sheet">
+                <!-- En-tête -->
+                <div class="sheet-header">
+                    <h3 id="candidateName">Sélectionnez un candidat</h3>
+                    <span class="match-info" id="matchInfo">Match #0</span>
+                    <span class="role-badge these" id="roleBadge">Thèse</span>
+                    <span class="cotation-status non-cote" id="cotationStatus"><i class="fas fa-circle"></i> Non coté</span>
+                </div>
+
+                <!-- Sélection candidat -->
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:0.75rem;color:#888;display:block;margin-bottom:4px;">
+                        <i class="fas fa-user"></i> Choisir le candidat
+                    </label>
+                    <select id="candidateSelect" style="width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;color:white;font-family:'Poppins',sans-serif;font-size:0.9rem;">
+                        <option value="">-- Sélectionner un candidat --</option>
+                    </select>
+                </div>
+
+                <!-- Critères -->
+                <div class="criteria-grid">
+                    <div class="criteria-item">
+                        <label><i class="fas fa-brain"></i> Maîtrise du sujet <span class="max-points">/4</span></label>
+                        <input type="number" class="score-input" data-criteria="maitrise" min="0" max="4" step="0.5" value="0" />
+                    </div>
+                    <div class="criteria-item">
+                        <label><i class="fas fa-balance-scale"></i> Pertinence des arguments <span class="max-points">/5</span></label>
+                        <input type="number" class="score-input" data-criteria="pertinence" min="0" max="5" step="0.5" value="0" />
+                    </div>
+                    <div class="criteria-item">
+                        <label><i class="fas fa-sitemap"></i> Structure du discours <span class="max-points">/3</span></label>
+                        <input type="number" class="score-input" data-criteria="structure" min="0" max="3" step="0.5" value="0" />
+                    </div>
+                    <div class="criteria-item">
+                        <label><i class="fas fa-microphone-alt"></i> Éloquence et présence <span class="max-points">/4</span></label>
+                        <input type="number" class="score-input" data-criteria="eloquence" min="0" max="4" step="0.5" value="0" />
+                    </div>
+                    <div class="criteria-item">
+                        <label><i class="fas fa-bullhorn"></i> Force de persuasion <span class="max-points">/2</span></label>
+                        <input type="number" class="score-input" data-criteria="persuasion" min="0" max="2" step="0.5" value="0" />
+                    </div>
+                    <div class="criteria-item">
+                        <label><i class="fas fa-clock"></i> Respect du temps <span class="max-points">/2</span></label>
+                        <input type="number" class="score-input" data-criteria="temps" min="0" max="2" step="0.5" value="0" />
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="total-score">
+                    <span>Total :</span>
+                    <span id="totalScore">0</span>
+                    <span>/ 20</span>
+                </div>
+
+                <!-- Commentaire -->
+                <div class="comment-area">
+                    <label><i class="fas fa-comment"></i> Commentaire général :</label>
+                    <textarea id="comment" placeholder="Observations du jury sur la prestation..."></textarea>
+                </div>
+
+                <!-- Conseil personnalisé -->
+                <div class="conseil-area">
+                    <label><i class="fas fa-lightbulb"></i> Conseil personnalisé pour le candidat :</label>
+                    <textarea id="conseil" placeholder="Ex: 'Travaillez votre respiration pour gagner en aisance scénique'"></textarea>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="btn-save" id="saveBtn"><i class="fas fa-save"></i> Enregistrer (brouillon)</button>
+                    <button class="btn-validate" id="validateBtn"><i class="fas fa-check-circle"></i> Valider définitivement</button>
+                    <button class="btn-reset-sheet" id="resetSheetBtn"><i class="fas fa-undo"></i> Réinitialiser</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        RÉSULTATS / CLASSEMENT
+        ============================================================ -->
+        <section>
+            <h2><i class="fas fa-chart-bar"></i> Classement des Candidats</h2>
+
+            <div class="progress-info">
+                <span>Progression des cotations</span>
+                <span id="progressText">0 / 0 cotés</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+
+            <div style="overflow-x:auto;margin-top:16px;">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Candidat</th>
+                            <th>Rôle</th>
+                            <th>Match</th>
+                            <th>Moyenne</th>
+                            <th>Jury 1</th>
+                            <th>Jury 2</th>
+                            <th>Jury 3</th>
+                            <th>Jury 4</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <tr>
+                            <td colspan="10" style="text-align:center;color:#555;padding:30px;">
+                                <i class="fas fa-spinner fa-spin"></i> Chargement des résultats...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer style="text-align:center;padding:20px 10px;color:#3a3a3a;font-size:0.75rem;letter-spacing:1px;border-top:1px solid rgba(212,175,55,0.05);margin-top:20px;">
+        <p>© 2026 — Éloquence en Scène · Plateforme de Cotation</p>
+    </footer>
+
+    <!-- ============================================================
+    JAVASCRIPT COMPLET
+    ============================================================ -->
+    <script>
+        // ================================================================
+        // DONNÉES : CANDIDATS ET MATCHS
+        // ================================================================
+
+        const matchs = [
+            { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
+            these: "Bernadine Mandanda Mbangu", antithese: "Adju Abdallah Djuma" },
+            { id: 2, theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
+                these: "Bijou Belanza", antithese: "Arsène Sangwa Binanga" },
+            { id: 3, theme: "Le « Bureau » (deuxième bureau) : Pratique normalisée ou destruction silencieuse de la famille ?",
+                these: "Daniella Makululu Bebela", antithese: "Beni Fungamali Ramazani" },
+            { id: 4, theme: "L'entrepreneuriat des jeunes à Kinshasa : Véritable choix de carrière ou solution de désespoir ?",
+                these: "Divine Mwamba Bipendu", antithese: "Enoch Bilha Kalonda" },
+            { id: 5, theme: "Les produits éclaircissants (Tshoko) : Choix esthétique ou complexe d'infériorité ?",
+                these: "Henock Bolefo wetshi", antithese: "Darlène Yowa Ngandu" },
+            { id: 6, theme: "Les vêtements traditionnels (Pagne) face à la mode occidentale : Choix vestimentaire ou conflit d'identité ?",
+                these: "Jean Djemondo Toss", antithese: "Eugenie Nabintu Basirwa" },
+            { id: 7, theme: "La dot à Kinshasa : Célébration de la valeur de la femme ou transaction commerciale ?",
+                these: "Théovie Gabriel Ibambu", antithese: "Mersei Kanemeka Wa Nzambi" },
+            { id: 8, theme: "L'étiquette de « Mwana Ndaku » (enfant de bonne famille) : Une protection ou un fardeau ?",
+                these: "Glody Loleke Elembe", antithese: "Eunice Omokoko Baby" },
+            { id: 9, theme: "Le phénomène « Muana Frite » / « Muana Bonne Vie » : Privilège légitime ou illusion de supériorité ?",
+                these: "Rodrick Banza", antithese: "Gremis Flevia Funga Funga" },
+            { id: 10, theme: "L'émancipation de la femme kinoise est-elle une menace pour le foyer traditionnel ?",
+                these: "Émeraude Kanene Samba", antithese: "Christian Mbo Ntali" },
+            { id: 11, theme: "Facebook et TikTok à Kinshasa : Outils d'émancipation intellectuelle ou de destruction morale ?",
+                these: "Beni Musiteki", antithese: "Divine Nlandu Nsakanunu" },
+            { id: 12, theme: "Les funérailles à Kinshasa (Matanga) : Devoir de mémoire ou théâtralisation de la misère ?",
+                these: "Thomas Kashavu Muhigirwa", antithese: "Divine Mugoli Kashemwa" },
+            { id: 13, theme: "L'argent dans les relations amoureuses : Preuve d'amour ou prostitution déguisée ?",
+                these: "Joyce Eke-Shomba kapinga", antithese: "Gaspard Mwima Mupila" },
+            { id: 14, theme: "Les accusations de sorcellerie sur les enfants : Fait spirituel ou démission parentale ?",
+                these: "Junior Muteba Biayi", antithese: "Jenovic Sumaili Letashi" },
+            { id: 15, theme: "Le phénomène des « Kuluna » : Crise des valeurs ou échec socio-économique ?",
+                these: "Eric Bulembi Mafuku", antithese: "David Nakweti Musikwela" },
+            { id: 16, theme: "L'insalubrité à Kinshasa : Faute de l'État ou incivisme de la population ?",
+                these: "David Mukendi Kajingulu", antithese: "Dieudonné Mundala Kiomba" },
+            { id: 17, theme: "Les inondations à Kinshasa : Fatalité climatique ou négligence humaine ?",
+                these: "Remy Kingambo", antithese: "David Kitengie Malangu" },
+            { id: 18, theme: "Les marchés pirates sur les boulevards : Vitalité économique ou anarchie urbaine ?",
+                these: "Henry Lukonga Butumbi", antithese: "Exauce Mikila Waney" },
+            { id: 19, theme: "Les diplômes universitaires congolais ont-ils encore de la valeur sur le marché mondial ?",
+                these: "Benjamin Kabeya Kapongo", antithese: "Amerack Mavinga Ntali" },
+            { id: 20, theme: "L'enseignement en langues nationales à l'école primaire : Avancée pédagogique ou frein intellectuel ?",
+                these: "Claudel Elongama belongo", antithese: "Abraham Mudanda Lubuku" },
+            { id: 21, theme: "Le recours aux ancêtres et à la spiritualité traditionnelle : Retour aux sources ou régression ?",
+                these: "Brineige Massamba Bateka", antithese: "Christiane Bongo Matondo" },
+            { id: 22, theme: "Les influenceurs kinois sont-ils les nouveaux leaders d'opinion de la jeunesse ?",
+                these: "Nicky Musadi Bitota", antithese: "Furah Kipata" },
+            { id: 23, theme: "Le favoritisme (parachutage/recommandation) : Solidarité incontournable ou destruction de la méritocratie ?",
+                these: "Joyce Aziza Azama", antithese: "Blessing Elonga Winner" },
+            { id: 24, theme: "Les débats politiques sur les plateaux de télévision : Information ou distraction populaire ?",
+                these: "Espérance Kikadi Nzuzi", antithese: "Merveille Tshiala Mwana" },
+            { id: 25, theme: "Le divorce à Kinshasa : Libération nécessaire ou échec de la structure sociale ?",
+                these: "Rose Matunda", antithese: "Ruth Kalonga Ndaya" },
+            { id: 26, theme: "La jeunesse kinoise de 2026 : Génération sacrifiée ou génération du grand changement ?",
+                these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
+        ];
+
+        // Générer la liste des candidats
+        const candidats = [];
+        matchs.forEach(m => {
+            candidats.push({ nom: m.these, matchId: m.id, role: 'Thèse', theme: m.theme });
+            candidats.push({ nom: m.antithese, matchId: m.id, role: 'Antithèse', theme: m.theme });
+        });
+
+        // Tri par match
+        candidats.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
+
+        // ================================================================
+        // RÉFÉRENCES DOM
+        // ================================================================
+
+        const candidateSelect = document.getElementById('candidateSelect');
+        const adminCandidateSelect = document.getElementById('adminCandidateSelect');
+        const candidateName = document.getElementById('candidateName');
+        const matchInfo = document.getElementById('matchInfo');
+        const roleBadge = document.getElementById('roleBadge');
+        const totalScore = document.getElementById('totalScore');
+        const comment = document.getElementById('comment');
+        const conseil = document.getElementById('conseil');
+        const cotationStatus = document.getElementById('cotationStatus');
+
+        const saveBtn = document.getElementById('saveBtn');
+        const validateBtn = document.getElementById('validateBtn');
+        const resetSheetBtn = document.getElementById('resetSheetBtn');
+        const sendSheetBtn = document.getElementById('sendSheetBtn');
+
+        const resultsBody = document.getElementById('resultsBody');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        const scoreInputs = document.querySelectorAll('.score-input');
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerStatus = document.getElementById('timerStatus');
+        const timerStart = document.getElementById('timerStart');
+        const timerPause = document.getElementById('timerPause');
+        const timerReset = document.getElementById('timerReset');
+        const setCustomTime = document.getElementById('setCustomTime');
+        const customTime = document.getElementById('customTime');
+
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminToggle = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+        const userDisplay = document.getElementById('userDisplay');
+
+        // ================================================================
+        // ÉTAT GLOBAL
+        // ================================================================
+
+        let currentUser = null;
+        let isAdmin = false;
+        let currentCandidat = null;
+        let timerInterval = null;
+        let timerSeconds = 300; // 5 minutes par défaut
+        let timerRunning = false;
+        let timerPaused = false;
+        let timerRemaining = 300;
+
+        // Stockage des cotations (simulé en mémoire)
+        let cotations = {};
+
+        // ================================================================
+        // AUTHENTIFICATION (SIMULÉE)
+        // ================================================================
+
+        const JURYS = [
+            { id: 'jury1', nom: 'Jury 1', password: 'jury1' },
+            { id: 'jury2', nom: 'Jury 2', password: 'jury2' },
+            { id: 'jury3', nom: 'Jury 3', password: 'jury3' },
+            { id: 'jury4', nom: 'Jury 4', password: 'jury4' },
+            { id: 'admin', nom: 'Administrateur', password: 'admin', admin: true }
+        ];
+
+        function login(email, password) {
+            const user = JURYS.find(u => u.id === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                isAdmin = user.admin || false;
+                userDisplay.textContent = `👤 ${user.nom}`;
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+
+                if (isAdmin) {
+                    adminToggle.classList.remove('hidden');
+                    adminToggle.classList.add('active');
+                    adminPanel.classList.remove('hidden');
+                } else {
+                    adminToggle.classList.add('hidden');
+                    adminPanel.classList.add('hidden');
+                }
+
+                // Charger les cotations
+                loadCotations();
+                populateCandidateSelects();
+                updateResults();
+
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            currentUser = null;
+            isAdmin = false;
+            userDisplay.textContent = '👤 Non connecté';
+            loginBtn.classList.remove('hidden');
+            logoutBtn.classList.add('hidden');
+            adminToggle.classList.add('hidden');
+            adminPanel.classList.add('hidden');
+            resetScores();
+            candidateSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+            adminCandidateSelect.innerHTML = '<option value="">-- Chargement --</option>';
+            resultsBody.innerHTML =
+            '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Veuillez vous connecter</td></tr>';
+        }
+
+        // ================================================================
+        // GESTION DES COTATIONS
+        // ================================================================
+
+        function getCotationKey(candidatNom, juryId) {
+            return `${candidatNom}_${juryId}`;
+        }
+
+        function loadCotations() {
+            const saved = localStorage.getItem('cotations');
+            if (saved) {
+                cotations = JSON.parse(saved);
+            } else {
+                cotations = {};
+            }
+        }
+
+        function saveCotationToStorage() {
+            localStorage.setItem('cotations', JSON.stringify(cotations));
+            updateResults();
+        }
+
+        function getCotation(candidatNom) {
+            if (!currentUser) return null;
+            const key = getCotationKey(candidatNom, currentUser.id);
+            return cotations[key] || null;
+        }
+
+        function setCotation(candidatNom, data) {
+            if (!currentUser) return;
+            const key = getCotationKey(candidatNom, currentUser.id);
+            cotations[key] = {
+                ...data,
+                candidat: candidatNom,
+                jury: currentUser.id,
+                juryNom: currentUser.nom,
+                dateModification: new Date().toISOString()
+            };
+            saveCotationToStorage();
+        }
+
+        // ================================================================
+        // POPULATE SELECTS
+        // ================================================================
+
+        function populateCandidateSelects() {
+            // Select jury
+            candidateSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+            candidats.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.nom;
+                opt.textContent = `Match #${c.matchId} - ${c.nom} (${c.role})`;
+                opt.dataset.matchId = c.matchId;
+                opt.dataset.role = c.role;
+                opt.dataset.theme = c.theme;
+                candidateSelect.appendChild(opt);
+            });
+
+            // Select admin
+            if (adminCandidateSelect) {
+                adminCandidateSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+                candidats.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.nom;
+                    opt.textContent = `Match #${c.matchId} - ${c.nom} (${c.role})`;
+                    adminCandidateSelect.appendChild(opt);
+                });
+            }
+        }
+
+        // ================================================================
+        // GESTION DES SCORES
+        // ================================================================
+
+        function resetScores() {
+            scoreInputs.forEach(input => input.value = 0);
+            comment.value = '';
+            conseil.value = '';
+            updateTotal();
+            updateStatus('non-cote');
+        }
+
+        function updateTotal() {
+            let total = 0;
+            scoreInputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            totalScore.textContent = total.toFixed(1);
+            return total;
+        }
+
+        function updateStatus(status) {
+            cotationStatus.className = `cotation-status ${status}`;
+            const texts = {
+                'non-cote': '<i class="fas fa-circle"></i> Non coté',
+                'brouillon': '<i class="fas fa-pen"></i> Brouillon',
+                'valide': '<i class="fas fa-check-circle"></i> Validé'
+            };
+            cotationStatus.innerHTML = texts[status] || texts['non-cote'];
+        }
+
+        function loadCotationForCandidate(nom) {
+            const c = candidats.find(c => c.nom === nom);
+            if (!c) return;
+
+            currentCandidat = c;
+            candidateName.textContent = c.nom;
+            matchInfo.textContent = `Match #${c.matchId}`;
+            roleBadge.textContent = c.role;
+            roleBadge.className = `role-badge ${c.role === 'Thèse' ? 'these' : 'antithese'}`;
+
+            // Charger la cotation existante
+            const cotation = getCotation(nom);
+            if (cotation) {
+                // Restaurer les scores
+                const scores = cotation.scores || {};
+                scoreInputs.forEach(input => {
+                    const key = input.dataset.criteria;
+                    if (scores[key] !== undefined) {
+                        input.value = scores[key];
+                    } else {
+                        input.value = 0;
+                    }
+                });
+                comment.value = cotation.commentaire || '';
+                conseil.value = cotation.conseil || '';
+                updateTotal();
+
+                if (cotation.valide) {
+                    updateStatus('valide');
+                    saveBtn.disabled = true;
+                    validateBtn.disabled = true;
+                } else {
+                    updateStatus('brouillon');
+                    saveBtn.disabled = false;
+                    validateBtn.disabled = false;
+                }
+            } else {
+                resetScores();
+                updateStatus('non-cote');
+                saveBtn.disabled = false;
+                validateBtn.disabled = false;
+            }
+        }
+
+        // ================================================================
+        // ÉVÉNEMENTS : COTATION
+        // ================================================================
+
+        candidateSelect.addEventListener('change', function() {
+            if (this.value) {
+                loadCotationForCandidate(this.value);
+            } else {
+                candidateName.textContent = 'Sélectionnez un candidat';
+                matchInfo.textContent = 'Match #0';
+                roleBadge.textContent = 'Thèse';
+                roleBadge.className = 'role-badge these';
+                resetScores();
+                currentCandidat = null;
+            }
+        });
+
+        scoreInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const max = parseFloat(this.max);
+                const val = parseFloat(this.value);
+                if (val > max) this.value = max;
+                if (val < 0) this.value = 0;
+                const total = updateTotal();
+
+                // Mettre à jour le statut en brouillon si des notes sont saisies
+                const cotation = currentCandidat ? getCotation(currentCandidat.nom) : null;
+                if (cotation && cotation.valide) {
+                    // Ne rien faire, déjà validé
+                } else if (total > 0) {
+                    updateStatus('brouillon');
+                } else {
+                    updateStatus('non-cote');
+                }
+            });
+        });
+
+        // Enregistrer (brouillon)
+        saveBtn.addEventListener('click', function() {
+            if (!currentUser) {
+                alert('Veuillez vous connecter');
+                return;
+            }
+            if (!currentCandidat) {
+                alert('Veuillez sélectionner un candidat');
+                return;
+            }
+
+            const cotation = getCotation(currentCandidat.nom);
+            if (cotation && cotation.valide) {
+                alert('Cette cotation est déjà validée et ne peut plus être modifiée.');
+                return;
+            }
+
+            const scores = {};
+            scoreInputs.forEach(input => {
+                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
+            });
+
+            const total = updateTotal();
+
+            setCotation(currentCandidat.nom, {
+                scores: scores,
+                total: total,
+                commentaire: comment.value,
+                conseil: conseil.value,
+                valide: false
+            });
+
+            updateStatus('brouillon');
+            alert('✅ Cotation enregistrée en brouillon !');
+            updateResults();
+        });
+
+        // Valider définitivement
+        validateBtn.addEventListener('click', function() {
+            if (!currentUser) {
+                alert('Veuillez vous connecter');
+                return;
+            }
+            if (!currentCandidat) {
+                alert('Veuillez sélectionner un candidat');
+                return;
+            }
+
+            const cotation = getCotation(currentCandidat.nom);
+            if (cotation && cotation.valide) {
+                alert('Cette cotation est déjà validée.');
+                return;
+            }
+
+            const total = updateTotal();
+            if (total === 0) {
+                alert('Veuillez attribuer des notes avant de valider.');
+                return;
+            }
+
+            if (!confirm('Valider définitivement cette cotation ? Vous ne pourrez plus la modifier.')) {
+                return;
+            }
+
+            const scores = {};
+            scoreInputs.forEach(input => {
+                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
+            });
+
+            setCotation(currentCandidat.nom, {
+                scores: scores,
+                total: total,
+                commentaire: comment.value,
+                conseil: conseil.value,
+                valide: true,
+                dateValidation: new Date().toISOString()
+            });
+
+            updateStatus('valide');
+            saveBtn.disabled = true;
+            validateBtn.disabled = true;
+            alert('✅ Cotation validée définitivement !');
+            updateResults();
+        });
+
+        // Réinitialiser
+        resetSheetBtn.addEventListener('click', function() {
+            if (!currentCandidat) {
+                resetScores();
+                return;
+            }
+
+            const cotation = getCotation(currentCandidat.nom);
+            if (cotation && cotation.valide) {
+                alert('Cette cotation est validée et ne peut pas être réinitialisée.');
+                return;
+            }
+
+            if (confirm('Réinitialiser toutes les notes pour ce candidat ?')) {
+                resetScores();
+                // Supprimer la cotation en brouillon
+                const key = getCotationKey(currentCandidat.nom, currentUser.id);
+                delete cotations[key];
+                saveCotationToStorage();
+                updateStatus('non-cote');
+                saveBtn.disabled = false;
+                validateBtn.disabled = false;
+                alert('Fiche réinitialisée.');
+            }
+        });
+
+        // ================================================================
+        // CHRONOMÈTRE
+        // ================================================================
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerRemaining / 60);
+            const seconds = timerRemaining % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            // Changement de couleur
+            timerDisplay.classList.remove('warning', 'danger');
+            if (timerRemaining <= 30) {
+                timerDisplay.classList.add('danger');
+            } else if (timerRemaining <= 60) {
+                timerDisplay.classList.add('warning');
+            }
+        }
+
+        function setTimer(seconds) {
+            timerRemaining = seconds;
+            timerSeconds = seconds;
+            updateTimerDisplay();
+            timerStatus.textContent = '⏸️ Prêt';
+            timerStatus.className = 'status-text';
+        }
+
+        function startTimer() {
+            if (timerRunning && !timerPaused) return;
+            if (timerRemaining <= 0) {
+                setTimer(timerSeconds);
+            }
+
+            timerRunning = true;
+            timerPaused = false;
+            timerStatus.textContent = '▶️ En cours';
+            timerStatus.className = 'status-text en-cours';
+
+            timerInterval = setInterval(() => {
+                timerRemaining--;
+                updateTimerDisplay();
+
+                if (timerRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerStatus.textContent = '⏰ Temps écoulé !';
+                    timerStatus.className = 'status-text termine';
+                    // Sonnerie (optionnelle)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate([500, 200, 500]);
+                    }
+                    alert('⏰ Temps écoulé !');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!timerRunning) return;
+            clearInterval(timerInterval);
+            timerPaused = true;
+            timerRunning = false;
+            timerStatus.textContent = '⏸️ En pause';
+            timerStatus.className = 'status-text pause';
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerPaused = false;
+            setTimer(timerSeconds);
+            timerStatus.textContent = '⏸️ Réinitialisé';
+            timerStatus.className = 'status-text';
+        }
+
+        // Événements timer
+        timerStart.addEventListener('click', startTimer);
+        timerPause.addEventListener('click', pauseTimer);
+        timerReset.addEventListener('click', resetTimer);
+
+        // Préréglages
+        document.querySelectorAll('.timer-presets button[data-time]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove(
+                'active'));
+                this.classList.add('active');
+                const seconds = parseInt(this.dataset.time);
+                setTimer(seconds);
+                customTime.value = Math.floor(seconds / 60);
+            });
+        });
+
+        setCustomTime.addEventListener('click', function() {
+            const minutes = parseInt(customTime.value) || 5;
+            const seconds = minutes * 60;
+            setTimer(seconds);
+            document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove('active'));
+        });
+
+        // Initialisation
+        setTimer(300);
+
+        // ================================================================
+        // ENVOI DE LA FICHE À TOUS LES JURYS
+        // ================================================================
+
+        sendSheetBtn.addEventListener('click', function() {
+            if (!adminCandidateSelect.value) {
+                alert('Veuillez sélectionner un candidat.');
+                return;
+            }
+
+            const nom = adminCandidateSelect.value;
+            const candidat = candidats.find(c => c.nom === nom);
+            if (!candidat) return;
+
+            // Simuler l'envoi de la fiche (dans Firebase, on mettrait à jour un champ "actif")
+            alert(`📤 Fiche envoyée à tous les jurys pour : ${nom} (Match #${candidat.matchId} - ${candidat.role})`);
+
+            // Dans une vraie implémentation Firebase, on enverrait un signal à tous les jurys
+            // pour qu'ils chargent automatiquement ce candidat.
+        });
+
+        // ================================================================
+        // RÉSULTATS / CLASSEMENT
+        // ================================================================
+
+        function updateResults() {
+            const juryIds = JURYS.filter(j => !j.admin).map(j => j.id);
+            const totalJurys = juryIds.length;
+
+            if (totalJurys === 0) {
+                resultsBody.innerHTML =
+                    '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Aucun jury configuré</td></tr>';
+                return;
+            }
+
+            // Construire les résultats par candidat
+            const results = candidats.map(c => {
+                const cotationData = {};
+                let totalNotes = 0;
+                let countNotes = 0;
+                let status = 'non-cote';
+
+                juryIds.forEach(juryId => {
+                    const key = getCotationKey(c.nom, juryId);
+                    const cote = cotations[key];
+                    if (cote) {
+                        cotationData[juryId] = cote;
+                        if (cote.valide) {
+                            totalNotes += cote.total || 0;
+                            countNotes++;
+                            if (status !== 'valide') status = 'valide';
+                        } else {
+                            if (status === 'non-cote') status = 'brouillon';
+                        }
+                    }
+                });
+
+                const moyenne = countNotes > 0 ? (totalNotes / countNotes) : 0;
+
+                return {
+                    ...c,
+                    cotations: cotationData,
+                    moyenne: moyenne,
+                    countNotes: countNotes,
+                    status: status
+                };
+            });
+
+            // Trier par moyenne décroissante
+            results.sort((a, b) => b.moyenne - a.moyenne);
+
+            // Calculer la progression
+            const totalCandidats = results.length;
+            const cotesValides = results.filter(r => r.status === 'valide').length;
+            const progression = totalCandidats > 0 ? (cotesValides / totalCandidats) * 100 : 0;
+
+            progressFill.style.width = `${progression}%`;
+            progressText.textContent = `${cotesValides} / ${totalCandidats} cotés`;
+
+            // Afficher le tableau
+            if (results.length === 0) {
+                resultsBody.innerHTML =
+                    '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Aucun candidat</td></tr>';
+                return;
+            }
+
+            let html = '';
+            results.forEach((r, index) => {
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+                const statusBadge = r.status === 'valide' ? 'valide' : r.status === 'brouillon' ? 'brouillon' :
+                    'non-cote';
+                const statusText = r.status === 'valide' ? '✅ Validé' : r.status === 'brouillon' ? '⏳ Brouillon' :
+                    '⏹️ Non coté';
+
+                let juryNotes = '';
+                juryIds.forEach(juryId => {
+                    const cote = r.cotations[juryId];
+                    if (cote && cote.valide) {
+                        juryNotes += `<td style="text-align:center;color:var(--green);">${cote.total.toFixed(1)}</td>`;
+                    } else if (cote && !cote.valide) {
+                        juryNotes +=
+                        `<td style="text-align:center;color:var(--orange);">${cote.total.toFixed(1)}</td>`;
+                    } else {
+                        juryNotes += `<td style="text-align:center;color:#333;">-</td>`;
+                    }
+                });
+
+                html += `
+                            <tr>
+                                <td class="${rankClass}">${index + 1}</td>
+                                <td>${r.nom}</td>
+                                <td><span class="role-badge ${r.role === 'Thèse' ? 'these' : 'antithese'}" style="font-size:0.6rem;padding:2px 10px;">${r.role}</span></td>
+                                <td style="color:#666;">#${r.matchId}</td>
+                                <td style="font-weight:700;color:${r.moyenne > 15 ? 'var(--gold)' : r.moyenne > 10 ? 'var(--green)' : '#888'};">
+                                    ${r.moyenne > 0 ? r.moyenne.toFixed(1) : '-'}
+                                </td>
+                                ${juryNotes}
+                                <td><span class="badge-status ${statusBadge}">${statusText}</span></td>
+                            </tr>
+                        `;
+            });
+
+            resultsBody.innerHTML = html;
+        }
+
+        // ================================================================
+        // AUTHENTIFICATION - ÉVÉNEMENTS
+        // ================================================================
+
+        loginBtn.addEventListener('click', function() {
+            const email = prompt('Email (jury1, jury2, jury3, jury4, admin) :');
+            if (!email) return;
+            const password = prompt('Mot de passe :');
+            if (!password) return;
+
+            if (login(email, password)) {
+                alert(`✅ Connecté en tant que ${currentUser.nom}`);
+            } else {
+                alert('❌ Identifiants incorrects');
+            }
+        });
+
+        logoutBtn.addEventListener('click', function() {
+            logout();
+            alert('Déconnecté');
+        });
+
+        // ================================================================
+        // ADMIN TOGGLE
+        // ================================================================
+
+        adminToggle.addEventListener('click', function() {
+            if (isAdmin) {
+                adminPanel.classList.toggle('hidden');
+                this.classList.toggle('active');
+            }
+        });
+
+        // ================================================================
+        // INITIALISATION
+        // ================================================================
+
+        // Charger les cotations
+        loadCotations();
+
+        // Peupler les sélecteurs
+        populateCandidateSelects();
+
+        // Mettre à jour les résultats
+        updateResults();
+
+        // Message de bienvenue
+        console.log('🏆 Éloquence en Scène - Plateforme de Cotation');
+        console.log('📋 Connectez-vous avec : jury1, jury2, jury3, jury4, admin');
+        console.log('🔑 Mot de passe : jury1, jury2, jury3, jury4, admin');
+
+        // ================================================================
+        // SIMULATION FIRESTORE (POUR TESTS)
+        // ================================================================
+
+        // Si tu veux utiliser Firebase, remplace la gestion localStorage
+        // par les appels Firestore.
+
+        console.log('✅ Plateforme prête !');
+        console.log(`📊 ${candidats.length} candidats chargés`);
+        console.log(`⚔️ ${matchs.length} matchs configurés`);
+    </script>
+
+</body>
+</html>
