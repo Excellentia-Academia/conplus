@@ -743,6 +743,12 @@
         .notification.warning {
             background: var(--orange);
         }
+        .timer-sync-status {
+            font-size: 0.65rem;
+            color: #888;
+            margin-top: 4px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -910,7 +916,7 @@
 
     <script>
         // ================================================================
-        // 🔥 CONFIGURATION FIREBASE - À MODIFIER AVEC VOS CLÉS
+        // 🔥 CONFIGURATION FIREBASE
         // ================================================================
 
         const firebaseConfig = {
@@ -1002,6 +1008,8 @@
         let cotations = {};
         let etatActuel = null;
         let timerRemaining = 300;
+        let timerRunning = false;
+        let timerPaused = false;
         let isConnected = false;
 
         const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
@@ -1058,7 +1066,7 @@
         }
 
         // ================================================================
-        // 🔐 AUTHENTIFICATION - CORRIGÉE
+        // 🔐 AUTHENTIFICATION
         // ================================================================
 
         function connecterJury() {
@@ -1125,6 +1133,54 @@
         }
 
         // ================================================================
+        // ⏱️ CHRONOMÈTRE - SYNCHRONISATION TOTALE
+        // ================================================================
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerRemaining / 60);
+            const seconds = timerRemaining % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerDisplay.textContent = display;
+            candidatTimer.textContent = display;
+        }
+
+        function ecouterTimer() {
+            db.collection('etat').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+
+                    // Mettre à jour le timer depuis Firebase
+                    if (data.timer !== undefined && data.timer !== timerRemaining) {
+                        timerRemaining = data.timer;
+                        updateTimerDisplay();
+                    }
+
+                    // Mettre à jour l'état du timer
+                    const newRunning = data.timerRunning || false;
+                    const newPaused = data.timerPaused || false;
+
+                    // Mettre à jour les états
+                    timerRunning = newRunning;
+                    timerPaused = newPaused;
+
+                    // Mettre à jour le statut affiché
+                    if (newRunning) {
+                        // Le timer tourne
+                    } else if (newPaused) {
+                        // Le timer est en pause
+                        showNotification('⏸️ Le timer a été mis en pause', 'info');
+                    } else {
+                        // Le timer est arrêté
+                    }
+
+                    updateTimerDisplay();
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute timer:', error);
+            });
+        }
+
+        // ================================================================
         // 📁 CHARGEMENT DES DONNÉES
         // ================================================================
 
@@ -1138,6 +1194,7 @@
             chargerCotationsLocales();
             ecouterEtat();
             ecouterCotations();
+            ecouterTimer();
             remplirSelectCandidats();
 
             db.collection('etat').doc('current').get()
@@ -1146,6 +1203,10 @@
                         const data = doc.data();
                         etatActuel = data;
                         mettreAJourInterface(data);
+                        if (data.timer !== undefined) {
+                            timerRemaining = data.timer;
+                            updateTimerDisplay();
+                        }
                     }
                 })
                 .catch(err => console.warn('⚠️ Erreur chargement état:', err));
@@ -1454,18 +1515,6 @@
         });
 
         // ================================================================
-        // ⏱️ CHRONOMÈTRE
-        // ================================================================
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timerRemaining / 60);
-            const seconds = timerRemaining % 60;
-            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            timerDisplay.textContent = display;
-            candidatTimer.textContent = display;
-        }
-
-        // ================================================================
         // ☁️ SAUVEGARDE CLOUD
         // ================================================================
 
@@ -1603,13 +1652,6 @@
 
         timerRemaining = 300;
         updateTimerDisplay();
-
-        setInterval(() => {
-            if (timerRemaining > 0) {
-                timerRemaining--;
-                updateTimerDisplay();
-            }
-        }, 1000);
 
         connecterJury();
 
