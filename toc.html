@@ -10,10 +10,15 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
     <style>
         /* ============================================================
            STYLES - FICHE JURY PREMIUM
-           BLANC / BLEU / ROUGE
            ============================================================ */
 
         * {
@@ -38,6 +43,9 @@
             --shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             --radius: 20px;
             --transition: 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --green: #2ecc71;
+            --orange: #f39c12;
+            --red: #e74c3c;
         }
 
         body {
@@ -48,6 +56,20 @@
             background-image: 
                 radial-gradient(ellipse at 0% 0%, rgba(26, 42, 74, 0.03) 0%, transparent 60%),
                 radial-gradient(ellipse at 100% 100%, rgba(192, 57, 43, 0.03) 0%, transparent 60%);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--blanc-casse);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bleu-ciel);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bleu-fonce);
         }
 
         /* ---- HEADER ---- */
@@ -62,6 +84,8 @@
             margin-bottom: 24px;
             border-left: 5px solid var(--rouge);
             border-right: 5px solid var(--bleu-fonce);
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .jury-header .logo {
@@ -95,6 +119,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .jury-header .user-info .badge-jury {
@@ -105,6 +130,10 @@
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 1px;
+        }
+
+        .jury-header .user-info .badge-jury.rouge {
+            background: var(--rouge);
         }
 
         .jury-header .user-info .btn-deconnexion {
@@ -124,7 +153,28 @@
             color: var(--rouge);
         }
 
-        /* ---- MAIN CARD ---- */
+        .status-connection {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .status-connection .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.online {
+            background: var(--green);
+        }
+        .dot.offline {
+            background: var(--red);
+        }
+
+        /* ---- MAIN ---- */
         .jury-main {
             max-width: 1400px;
             margin: 0 auto;
@@ -151,6 +201,7 @@
             position: sticky;
             top: 20px;
             height: fit-content;
+            transition: all 0.3s ease;
         }
 
         .candidat-card .card-header {
@@ -159,6 +210,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .candidat-card .card-header .match-badge {
@@ -281,6 +334,7 @@
             border-top: 1px solid var(--gris-clair);
             font-size: 0.75rem;
             color: var(--gris-moyen);
+            flex-wrap: wrap;
         }
 
         .candidat-card .status-cotation .statut-item {
@@ -305,6 +359,22 @@
         .dot.valide {
             background: var(--bleu-ciel);
         }
+        .dot.en-attente {
+            background: var(--orange);
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
 
         /* ============================================================
            COLONNE DROITE : FICHE DE COTATION
@@ -323,6 +393,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .cotation-card .card-header h2 {
@@ -348,6 +420,42 @@
 
         .cotation-card .card-body {
             padding: 24px;
+        }
+
+        /* ---- CANDIDAT ACTIF ---- */
+        .candidat-actif-info {
+            background: rgba(212, 175, 55, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .candidat-actif-info .label {
+            font-size: 0.7rem;
+            color: var(--gris-moyen);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .candidat-actif-info .value {
+            font-weight: 700;
+            color: var(--bleu-fonce);
+        }
+
+        .candidat-actif-info .badge-en-cours {
+            background: var(--or);
+            color: var(--bleu-fonce);
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         /* ---- GRILLE DES CRITÈRES ---- */
@@ -416,6 +524,11 @@
             outline: none;
             border-color: var(--bleu-ciel);
             box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+        }
+
+        .criteria-item input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .criteria-item input::-webkit-outer-spin-button,
@@ -498,7 +611,11 @@
             box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.08);
         }
 
-        /* ---- CONSEIL ---- */
+        .comment-area textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .conseil-area {
             background: rgba(212, 175, 55, 0.04);
             border-left: 4px solid var(--or);
@@ -541,6 +658,11 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
         }
 
+        .conseil-area textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* ---- ACTIONS ---- */
         .actions {
             display: flex;
@@ -565,13 +687,19 @@
             min-width: 140px;
         }
 
+        .actions button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         .btn-brouillon {
             background: var(--blanc-casse);
             color: var(--bleu-fonce);
             border: 2px solid var(--gris-clair);
         }
 
-        .btn-brouillon:hover {
+        .btn-brouillon:hover:not(:disabled) {
             border-color: var(--or);
             color: var(--or);
             transform: translateY(-2px);
@@ -583,15 +711,9 @@
             border: 2px solid transparent;
         }
 
-        .btn-valider:hover {
+        .btn-valider:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(26, 42, 74, 0.2);
-        }
-
-        .btn-valider:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .btn-reinitialiser {
@@ -600,10 +722,31 @@
             border: 2px solid var(--gris-clair);
         }
 
-        .btn-reinitialiser:hover {
+        .btn-reinitialiser:hover:not(:disabled) {
             border-color: var(--rouge);
             color: var(--rouge);
             transform: translateY(-2px);
+        }
+
+        .btn-sync {
+            background: var(--bleu-ciel);
+            color: var(--blanc);
+            border: 2px solid transparent;
+        }
+
+        .btn-sync:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 144, 217, 0.2);
+        }
+
+        .btn-sync i {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* ---- STATUS BAR ---- */
@@ -616,6 +759,8 @@
             margin-top: 16px;
             font-size: 0.75rem;
             color: var(--gris-moyen);
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .status-bar .status-indicator {
@@ -641,17 +786,14 @@
         .status-dot.valide {
             background: var(--bleu-ciel);
         }
+        .status-dot.en-attente {
+            background: var(--orange);
+            animation: pulse-dot 1.5s infinite;
+        }
 
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(0.8);
-            }
+        .last-sync-info {
+            font-size: 0.65rem;
+            color: var(--gris-moyen);
         }
 
         /* ---- RESPONSIVE ---- */
@@ -672,7 +814,6 @@
             }
 
             .jury-header .user-info {
-                flex-wrap: wrap;
                 justify-content: center;
             }
         }
@@ -704,6 +845,10 @@
                 font-size: 0.75rem;
                 min-width: 100px;
             }
+
+            .jury-header .logo h1 {
+                font-size: 1.1rem;
+            }
         }
 
         @media print {
@@ -727,19 +872,39 @@
             }
         }
 
-        /* ---- SCROLLBAR ---- */
-        ::-webkit-scrollbar {
-            width: 6px;
+        /* ---- NOTIFICATION ---- */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
         }
-        ::-webkit-scrollbar-track {
-            background: var(--blanc-casse);
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
         }
-        ::-webkit-scrollbar-thumb {
+
+        .notification.success {
+            background: var(--green);
+        }
+        .notification.error {
+            background: var(--red);
+        }
+        .notification.info {
             background: var(--bleu-ciel);
-            border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--bleu-fonce);
+        .notification.warning {
+            background: var(--orange);
         }
     </style>
 </head>
@@ -757,8 +922,12 @@
             </div>
         </div>
         <div class="user-info">
+            <span class="status-connection">
+                <span class="dot online" id="connectionDot"></span>
+                <span id="connectionStatus">Connecté</span>
+            </span>
             <span class="badge-jury"><i class="fas fa-user-check"></i> <span id="juryName">Jury 1</span></span>
-            <span class="badge-jury" style="background:var(--rouge);"><i class="fas fa-clock"></i> <span id="timerDisplay">05:00</span></span>
+            <span class="badge-jury rouge"><i class="fas fa-clock"></i> <span id="timerDisplay">05:00</span></span>
             <button class="btn-deconnexion" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
         </div>
     </header>
@@ -771,7 +940,7 @@
         <!-- ============================================================
         COLONNE GAUCHE - CANDIDAT
         ============================================================ -->
-        <section class="candidat-card">
+        <section class="candidat-card" id="candidatCard">
             <div class="card-header">
                 <span class="match-badge"><i class="fas fa-trophy"></i> Match #<span id="matchNumber">0</span></span>
                 <span class="timer-badge"><i class="fas fa-hourglass-half"></i> <span id="candidatTimer">05:00</span></span>
@@ -779,29 +948,32 @@
 
             <div class="candidat-photo">
                 <div class="photo-frame">
-                    <!-- Photo du candidat (placeholder) -->
                     <i class="fas fa-user-circle placeholder" id="candidatPhoto"></i>
-                    <!-- <img src="photo.jpg" alt="Candidat" id="candidatImg" style="display:none;"> -->
+                    <img id="candidatImg" style="display:none;" alt="Photo" />
                 </div>
                 <div class="role-badge these" id="roleBadge">Thèse</div>
             </div>
 
             <div class="candidat-info">
-                <div class="nom" id="candidatNom">Sélectionnez un candidat</div>
+                <div class="nom" id="candidatNom">En attente du candidat...</div>
                 <div class="theme">
                     <i class="fas fa-quote-left"></i>
-                    <span id="candidatTheme">En attente du candidat...</span>
+                    <span id="candidatTheme">Aucun candidat sélectionné</span>
                 </div>
             </div>
 
             <div class="status-cotation">
                 <span class="statut-item">
-                    <span class="dot non-cote" id="statusDot"></span>
-                    <span id="statusText">Non coté</span>
+                    <span class="dot en-attente" id="statusDot"></span>
+                    <span id="statusText">En attente</span>
                 </span>
                 <span class="statut-item">
                     <i class="fas fa-users" style="color:var(--bleu-ciel);"></i>
                     <span id="juryCount">4 jurys</span>
+                </span>
+                <span class="statut-item">
+                    <i class="fas fa-sync-alt" style="color:var(--or);"></i>
+                    <span id="syncStatus">Synchronisé</span>
                 </span>
             </div>
         </section>
@@ -817,8 +989,20 @@
 
             <div class="card-body">
 
-                <!-- Sélection candidat -->
+                <!-- Candidat actif (synchronisé) -->
+                <div class="candidat-actif-info">
+                    <div>
+                        <span class="label"><i class="fas fa-arrow-right"></i> Candidat en cours</span>
+                        <div class="value" id="actifCandidatNom">-</div>
+                    </div>
+                    <span class="badge-en-cours" id="actifStatusBadge">⏳ En attente</span>
+                </div>
+
+                <!-- Sélection manuelle (fallback) -->
                 <div style="margin-bottom:16px;">
+                    <label style="font-size:0.7rem;color:var(--gris-moyen);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">
+                        <i class="fas fa-search"></i> Ou sélectionner manuellement
+                    </label>
                     <select id="candidateSelect" style="width:100%;padding:12px 16px;border:2px solid var(--gris-clair);border-radius:12px;font-family:'Poppins',sans-serif;font-size:0.9rem;color:var(--bleu-fonce);background:var(--blanc);cursor:pointer;transition:var(--transition);">
                         <option value="">-- Sélectionner un candidat --</option>
                     </select>
@@ -901,15 +1085,16 @@
                     <button class="btn-brouillon" id="saveBtn"><i class="fas fa-save"></i> Enregistrer</button>
                     <button class="btn-valider" id="validateBtn"><i class="fas fa-check-circle"></i> Valider</button>
                     <button class="btn-reinitialiser" id="resetBtn"><i class="fas fa-undo"></i> Réinitialiser</button>
+                    <button class="btn-sync" id="syncBtn"><i class="fas fa-sync-alt"></i> Synchro</button>
                 </div>
 
                 <!-- Status Bar -->
                 <div class="status-bar">
                     <span class="status-indicator">
-                        <span class="status-dot non-cote" id="statusDotBar"></span>
-                        <span id="statusTextBar">Non coté</span>
+                        <span class="status-dot en-attente" id="statusDotBar"></span>
+                        <span id="statusTextBar">En attente</span>
                     </span>
-                    <span id="lastSaveInfo">Dernière sauvegarde : -</span>
+                    <span class="last-sync-info" id="lastSaveInfo">Dernière sauvegarde : -</span>
                 </div>
 
             </div>
@@ -918,14 +1103,39 @@
     </main>
 
     <!-- ============================================================
-    JAVASCRIPT COMPLET
+    NOTIFICATION
+    ============================================================ -->
+    <div class="notification" id="notification"></div>
+
+    <!-- ============================================================
+    JAVASCRIPT COMPLET - SYNCHRONISÉ AVEC FIREBASE
     ============================================================ -->
     <script>
         // ================================================================
-        // DONNÉES : CANDIDATS ET MATCHS
+        // CONFIGURATION FIREBASE
         // ================================================================
 
-        const matchs = [
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
+            authDomain: "conf-94615.firebaseapp.com",
+            projectId: "conf-94615",
+            storageBucket: "conf-94615.firebasestorage.app",
+            messagingSenderId: "312554343685",
+            appId: "1:312554343685:web:b199e33ff4ca050d533b6c",
+            measurementId: "G-BLCPS9S0ZJ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // ================================================================
+        // DONNÉES DES MATCHS ET CANDIDATS
+        // ================================================================
+
+        const MATCHS_DATA = [
             { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
                 these: "Bernadine Mandanda Mbangu", antithese: "Adju Abdallah Djuma" },
             { id: 2, theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
@@ -980,24 +1190,25 @@
                 these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
         ];
 
-        const candidats = [];
-        matchs.forEach(m => {
-            candidats.push({ nom: m.these, matchId: m.id, role: 'Thèse', theme: m.theme });
-            candidats.push({ nom: m.antithese, matchId: m.id, role: 'Antithèse', theme: m.theme });
+        let candidatsList = [];
+        MATCHS_DATA.forEach(m => {
+            candidatsList.push({ nom: m.these, matchId: m.id, role: 'Thèse', theme: m.theme });
+            candidatsList.push({ nom: m.antithese, matchId: m.id, role: 'Antithèse', theme: m.theme });
         });
-        candidats.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
+        candidatsList.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
 
         // ================================================================
-        // ÉTAT
+        // ÉTAT LOCAL
         // ================================================================
 
         let currentUser = { id: 'jury1', nom: 'Jury 1' };
-        let currentCandidat = null;
+        let currentCandidatNom = null;
         let cotations = {};
-        let timerSeconds = 300;
-        let timerInterval = null;
-        let timerRunning = false;
+        let etatActuel = null;
         let timerRemaining = 300;
+        let isConnected = false;
+
+        const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
 
         // ================================================================
         // RÉFÉRENCES DOM
@@ -1020,117 +1231,261 @@
         const juryNameBadge = document.getElementById('juryNameBadge');
         const timerDisplay = document.getElementById('timerDisplay');
         const candidatTimer = document.getElementById('candidatTimer');
+        const actifCandidatNom = document.getElementById('actifCandidatNom');
+        const actifStatusBadge = document.getElementById('actifStatusBadge');
+        const syncStatus = document.getElementById('syncStatus');
 
         const saveBtn = document.getElementById('saveBtn');
         const validateBtn = document.getElementById('validateBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const syncBtn = document.getElementById('syncBtn');
         const logoutBtn = document.getElementById('logoutBtn');
 
+        const connectionDot = document.getElementById('connectionDot');
+        const connectionStatus = document.getElementById('connectionStatus');
+
         const scoreInputs = document.querySelectorAll('.score-input');
+        const notification = document.getElementById('notification');
+        const candidatPhoto = document.getElementById('candidatPhoto');
+        const candidatImg = document.getElementById('candidatImg');
+
+        let notificationTimeout = null;
 
         // ================================================================
-        // CHARGEMENT DES COTATIONS
+        // NOTIFICATIONS
         // ================================================================
 
-        function loadCotations() {
-            const saved = localStorage.getItem('cotations_jury');
-            if (saved) {
-                cotations = JSON.parse(saved);
-            } else {
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // ================================================================
+        // AUTHENTIFICATION
+        // ================================================================
+
+        function connecterJury() {
+            connectionStatus.textContent = 'Connexion...';
+            connectionDot.className = 'dot offline';
+
+            auth.signInAnonymously()
+                .then(() => {
+                    isConnected = true;
+                    connectionDot.className = 'dot online';
+                    connectionStatus.textContent = '✅ Connecté';
+                    console.log('✅ Jury connecté');
+                    chargerDonnees();
+                })
+                .catch(error => {
+                    console.error('❌ Erreur connexion:', error);
+                    connectionStatus.textContent = '⚠️ Hors ligne';
+                    connectionDot.className = 'dot offline';
+                    showNotification('⚠️ Erreur de connexion, mode hors ligne', 'error');
+                    chargerDonnees();
+                });
+        }
+
+        // ================================================================
+        // CHARGEMENT DES DONNÉES
+        // ================================================================
+
+        function chargerDonnees() {
+            // Charger les cotations locales
+            chargerCotationsLocales();
+
+            // Écouter l'état en temps réel
+            ecouterEtat();
+
+            // Écouter les cotations en temps réel
+            ecouterCotations();
+
+            // Charger les candidats
+            remplirSelectCandidats();
+
+            // Récupérer l'état initial
+            db.collection('etat').doc('current').get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        etatActuel = data;
+                        mettreAJourInterface(data);
+                    }
+                })
+                .catch(err => console.warn('⚠️ Erreur chargement état:', err));
+
+            // Récupérer les cotations initiales
+            db.collection('cotations').get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const candidat = doc.id;
+                        const juryId = currentUser.id;
+                        if (data[juryId]) {
+                            const key = `${candidat}_${juryId}`;
+                            cotations[key] = data[juryId];
+                        }
+                    });
+                    sauvegarderCotationsLocales();
+                    chargerCotationCourante();
+                })
+                .catch(err => console.warn('⚠️ Erreur chargement cotations:', err));
+        }
+
+        // ================================================================
+        // ÉCOUTES EN TEMPS RÉEL
+        // ================================================================
+
+        function ecouterEtat() {
+            db.collection('etat').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    etatActuel = data;
+                    mettreAJourInterface(data);
+                    showNotification(`📢 Nouveau candidat : ${data.candidatNom || 'Aucun'}`, 'info');
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute état:', error);
+            });
+        }
+
+        function ecouterCotations() {
+            db.collection('cotations').onSnapshot((snapshot) => {
+                let changed = false;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const candidat = doc.id;
+                    const juryId = currentUser.id;
+                    if (data[juryId]) {
+                        const key = `${candidat}_${juryId}`;
+                        const newData = data[juryId];
+                        const oldData = cotations[key];
+                        if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+                            cotations[key] = newData;
+                            changed = true;
+                        }
+                    }
+                });
+                if (changed) {
+                    sauvegarderCotationsLocales();
+                    chargerCotationCourante();
+                    showNotification('🔄 Cotation mise à jour depuis le cloud', 'info');
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute cotations:', error);
+            });
+        }
+
+        // ================================================================
+        // COTATIONS LOCALES (persistance)
+        // ================================================================
+
+        function chargerCotationsLocales() {
+            try {
+                const saved = localStorage.getItem(`cotations_${currentUser.id}`);
+                if (saved) {
+                    cotations = JSON.parse(saved);
+                }
+            } catch (e) {
                 cotations = {};
             }
         }
 
-        function saveCotations() {
-            localStorage.setItem('cotations_jury', JSON.stringify(cotations));
-        }
-
-        function getCotationKey(nom) {
-            return `${nom}_${currentUser.id}`;
-        }
-
-        function getCotation(nom) {
-            const key = getCotationKey(nom);
-            return cotations[key] || null;
-        }
-
-        function setCotation(nom, data) {
-            const key = getCotationKey(nom);
-            cotations[key] = {
-                ...data,
-                candidat: nom,
-                jury: currentUser.id,
-                juryNom: currentUser.nom,
-                dateModification: new Date().toISOString()
-            };
-            saveCotations();
+        function sauvegarderCotationsLocales() {
+            try {
+                localStorage.setItem(`cotations_${currentUser.id}`, JSON.stringify(cotations));
+            } catch (e) {
+                console.warn('⚠️ Erreur sauvegarde locale:', e);
+            }
         }
 
         // ================================================================
-        // POPULATE SELECT
+        // INTERFACE CANDIDAT ACTIF
         // ================================================================
 
-        function populateSelect() {
-            candidateSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
-            candidats.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.nom;
-                opt.textContent = `Match #${c.matchId} - ${c.nom} (${c.role})`;
-                opt.dataset.matchId = c.matchId;
-                opt.dataset.role = c.role;
-                opt.dataset.theme = c.theme;
-                candidateSelect.appendChild(opt);
-            });
-        }
+        function mettreAJourInterface(etat) {
+            if (!etat || !etat.candidatNom) {
+                actifCandidatNom.textContent = 'Aucun candidat';
+                actifStatusBadge.textContent = '⏸️ En attente';
+                actifStatusBadge.style.background = 'var(--gris-moyen)';
+                candidatNom.textContent = 'En attente du candidat...';
+                candidatTheme.textContent = 'Aucun candidat sélectionné';
+                matchNumber.textContent = '0';
+                roleBadge.textContent = 'Thèse';
+                roleBadge.className = 'role-badge these';
+                statusDot.className = 'dot en-attente';
+                statusText.textContent = 'En attente';
+                statusDotBar.className = 'status-dot en-attente';
+                statusTextBar.textContent = 'En attente';
+                syncStatus.textContent = 'En attente';
+                return;
+            }
 
-        // ================================================================
-        // GESTION DES SCORES
-        // ================================================================
+            const nom = etat.candidatNom;
+            const theme = etat.candidatTheme || '';
+            const role = etat.candidatRole || 'Thèse';
+            const matchId = etat.matchId || 0;
+            const photoUrl = etat.candidatPhoto || '';
 
-        function resetScores() {
-            scoreInputs.forEach(input => input.value = 0);
-            comment.value = '';
-            conseil.value = '';
-            updateTotal();
-            updateStatus('non-cote');
-            lastSaveInfo.textContent = 'Dernière sauvegarde : -';
-        }
+            actifCandidatNom.textContent = nom;
+            actifStatusBadge.textContent = '🎯 En cours';
+            actifStatusBadge.style.background = 'var(--or)';
 
-        function updateTotal() {
-            let total = 0;
-            scoreInputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            totalScore.textContent = total.toFixed(1);
-            return total;
-        }
+            candidatNom.textContent = nom;
+            candidatTheme.textContent = theme || 'Thème non disponible';
+            matchNumber.textContent = matchId;
+            roleBadge.textContent = role;
+            roleBadge.className = `role-badge ${role === 'Thèse' ? 'these' : 'antithese'}`;
 
-        function updateStatus(status) {
+            // Photo
+            if (photoUrl) {
+                candidatImg.src = photoUrl;
+                candidatImg.style.display = 'block';
+                candidatPhoto.style.display = 'none';
+            } else {
+                candidatImg.style.display = 'none';
+                candidatPhoto.style.display = 'flex';
+            }
+
+            // Timer
+            if (etat.timer !== undefined) {
+                timerRemaining = etat.timer;
+                updateTimerDisplay();
+            }
+
+            // Status
+            const status = etat.status || 'en-attente';
             const statusMap = {
-                'non-cote': { text: 'Non coté', dot: 'non-cote', bar: 'Non coté' },
-                'brouillon': { text: 'Brouillon', dot: 'brouillon', bar: 'Brouillon' },
-                'valide': { text: 'Validé ✅', dot: 'valide', bar: 'Validé ✅' }
+                'en-attente': { text: 'En attente', dot: 'en-attente' },
+                'en-cours': { text: 'En cours 🎯', dot: 'brouillon' },
+                'termine': { text: 'Terminé', dot: 'valide' }
             };
-            const s = statusMap[status] || statusMap['non-cote'];
-            statusText.textContent = s.text;
+            const s = statusMap[status] || statusMap['en-attente'];
             statusDot.className = `dot ${s.dot}`;
+            statusText.textContent = s.text;
             statusDotBar.className = `status-dot ${s.dot}`;
-            statusTextBar.textContent = s.bar;
+            statusTextBar.textContent = s.text;
+            syncStatus.textContent = '✅ Synchronisé';
+
+            // Charger la cotation pour ce candidat
+            currentCandidatNom = nom;
+            chargerCotationCourante();
         }
 
-        function loadCandidat(nom) {
-            const c = candidats.find(c => c.nom === nom);
-            if (!c) return;
+        // ================================================================
+        // CHARGER COTATION COURANTE
+        // ================================================================
 
-            currentCandidat = c;
-            candidatNom.textContent = c.nom;
-            matchNumber.textContent = c.matchId;
-            candidatTheme.textContent = c.theme;
-            roleBadge.textContent = c.role;
-            roleBadge.className = `role-badge ${c.role === 'Thèse' ? 'these' : 'antithese'}`;
+        function chargerCotationCourante() {
+            const nom = currentCandidatNom;
+            if (!nom) return;
 
-            // Charger la cotation existante
-            const cotation = getCotation(nom);
+            const key = `${nom}_${currentUser.id}`;
+            const cotation = cotations[key];
+
             if (cotation) {
                 const scores = cotation.scores || {};
                 scoreInputs.forEach(input => {
@@ -1146,22 +1501,130 @@
                 updateTotal();
 
                 if (cotation.valide) {
-                    updateStatus('valide');
+                    statusDot.className = 'dot valide';
+                    statusText.textContent = 'Validé ✅';
+                    statusDotBar.className = 'status-dot valide';
+                    statusTextBar.textContent = 'Validé ✅';
                     saveBtn.disabled = true;
                     validateBtn.disabled = true;
-                    lastSaveInfo.textContent = `Validé le ${new Date(cotation.dateModification).toLocaleString()}`;
+                    scoreInputs.forEach(i => i.disabled = true);
+                    comment.disabled = true;
+                    conseil.disabled = true;
+                    lastSaveInfo.textContent = `✅ Validé le ${new Date(cotation.dateModification).toLocaleString()}`;
                 } else {
-                    updateStatus('brouillon');
+                    statusDot.className = 'dot brouillon';
+                    statusText.textContent = 'Brouillon';
+                    statusDotBar.className = 'status-dot brouillon';
+                    statusTextBar.textContent = 'Brouillon';
                     saveBtn.disabled = false;
                     validateBtn.disabled = false;
-                    lastSaveInfo.textContent = `Brouillon - ${new Date(cotation.dateModification).toLocaleString()}`;
+                    scoreInputs.forEach(i => i.disabled = false);
+                    comment.disabled = false;
+                    conseil.disabled = false;
+                    lastSaveInfo.textContent = `📝 Brouillon - ${new Date(cotation.dateModification).toLocaleString()}`;
                 }
             } else {
+                // Pas de cotation
                 resetScores();
+                statusDot.className = 'dot en-attente';
+                statusText.textContent = 'En attente';
+                statusDotBar.className = 'status-dot en-attente';
+                statusTextBar.textContent = 'En attente';
                 saveBtn.disabled = false;
                 validateBtn.disabled = false;
+                scoreInputs.forEach(i => i.disabled = false);
+                comment.disabled = false;
+                conseil.disabled = false;
+                lastSaveInfo.textContent = 'Dernière sauvegarde : -';
             }
         }
+
+        // ================================================================
+        // SÉLECTEUR MANUEL
+        // ================================================================
+
+        function remplirSelectCandidats() {
+            candidateSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+            candidatsList.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.nom;
+                opt.textContent = `Match #${c.matchId} - ${c.nom} (${c.role})`;
+                opt.dataset.matchId = c.matchId;
+                opt.dataset.role = c.role;
+                opt.dataset.theme = c.theme;
+                candidateSelect.appendChild(opt);
+            });
+        }
+
+        candidateSelect.addEventListener('change', function() {
+            if (this.value) {
+                // Trouver le candidat
+                const c = candidatsList.find(c => c.nom === this.value);
+                if (c) {
+                    currentCandidatNom = c.nom;
+                    // Mettre à jour l'interface locale
+                    const etat = {
+                        candidatNom: c.nom,
+                        candidatTheme: c.theme,
+                        candidatRole: c.role,
+                        matchId: c.matchId,
+                        status: 'en-cours'
+                    };
+                    mettreAJourInterface(etat);
+                    chargerCotationCourante();
+                    showNotification(`📋 Candidat sélectionné : ${c.nom}`, 'info');
+                }
+            }
+        });
+
+        // ================================================================
+        // GESTION DES SCORES
+        // ================================================================
+
+        function resetScores() {
+            scoreInputs.forEach(input => {
+                input.value = 0;
+                input.disabled = false;
+            });
+            comment.value = '';
+            conseil.value = '';
+            comment.disabled = false;
+            conseil.disabled = false;
+            updateTotal();
+            saveBtn.disabled = false;
+            validateBtn.disabled = false;
+            lastSaveInfo.textContent = 'Dernière sauvegarde : -';
+        }
+
+        function updateTotal() {
+            let total = 0;
+            scoreInputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            totalScore.textContent = total.toFixed(1);
+            return total;
+        }
+
+        scoreInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const max = parseFloat(this.max);
+                const val = parseFloat(this.value);
+                if (val > max) this.value = max;
+                if (val < 0) this.value = 0;
+                updateTotal();
+                if (updateTotal() > 0) {
+                    statusDot.className = 'dot brouillon';
+                    statusText.textContent = 'Brouillon';
+                    statusDotBar.className = 'status-dot brouillon';
+                    statusTextBar.textContent = 'Brouillon';
+                } else {
+                    statusDot.className = 'dot en-attente';
+                    statusText.textContent = 'En attente';
+                    statusDotBar.className = 'status-dot en-attente';
+                    statusTextBar.textContent = 'En attente';
+                }
+            });
+        });
 
         // ================================================================
         // CHRONOMÈTRE
@@ -1176,155 +1639,140 @@
         }
 
         // ================================================================
+        // SAUVEGARDE CLOUD
+        // ================================================================
+
+        async function sauvegarderCotationCloud(valide = false) {
+            if (!currentCandidatNom) {
+                showNotification('⚠️ Aucun candidat sélectionné', 'error');
+                return false;
+            }
+
+            const scores = {};
+            scoreInputs.forEach(input => {
+                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
+            });
+            const total = updateTotal();
+
+            if (valide && total === 0) {
+                showNotification('⚠️ Veuillez attribuer des notes avant de valider', 'error');
+                return false;
+            }
+
+            const data = {
+                scores: scores,
+                total: total,
+                commentaire: comment.value,
+                conseil: conseil.value,
+                valide: valide,
+                dateModification: new Date().toISOString()
+            };
+
+            try {
+                // Mettre à jour dans Firestore
+                const docRef = db.collection('cotations').doc(currentCandidatNom);
+                const docSnap = await docRef.get();
+
+                let updateData = {};
+                if (docSnap.exists) {
+                    const existing = docSnap.data();
+                    updateData = { ...existing };
+                }
+                updateData[currentUser.id] = data;
+
+                await docRef.set(updateData, { merge: true });
+
+                // Mettre à jour local
+                const key = `${currentCandidatNom}_${currentUser.id}`;
+                cotations[key] = data;
+                sauvegarderCotationsLocales();
+
+                if (valide) {
+                    showNotification(`✅ Cotation validée pour ${currentCandidatNom} !`, 'success');
+                    chargerCotationCourante();
+                } else {
+                    showNotification(`💾 Cotation enregistrée pour ${currentCandidatNom}`, 'success');
+                    lastSaveInfo.textContent = `💾 Sauvegardé à ${new Date().toLocaleTimeString()}`;
+                }
+                return true;
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde:', error);
+                showNotification(`❌ Erreur: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // ================================================================
         // ÉVÉNEMENTS
         // ================================================================
 
-        candidateSelect.addEventListener('change', function() {
-            if (this.value) {
-                loadCandidat(this.value);
-            } else {
-                candidatNom.textContent = 'Sélectionnez un candidat';
-                candidatTheme.textContent = 'En attente du candidat...';
-                matchNumber.textContent = '0';
-                roleBadge.textContent = 'Thèse';
-                roleBadge.className = 'role-badge these';
-                resetScores();
-                currentCandidat = null;
-            }
+        saveBtn.addEventListener('click', async function() {
+            await sauvegarderCotationCloud(false);
         });
 
-        scoreInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                const max = parseFloat(this.max);
-                const val = parseFloat(this.value);
-                if (val > max) this.value = max;
-                if (val < 0) this.value = 0;
-                updateTotal();
-
-                const cotation = currentCandidat ? getCotation(currentCandidat.nom) : null;
-                if (cotation && cotation.valide) {
-                    // Ne rien faire
-                } else if (updateTotal() > 0) {
-                    updateStatus('brouillon');
-                } else {
-                    updateStatus('non-cote');
-                }
-            });
-        });
-
-        saveBtn.addEventListener('click', function() {
-            if (!currentCandidat) {
-                alert('Veuillez sélectionner un candidat');
-                return;
-            }
-
-            const cotation = getCotation(currentCandidat.nom);
-            if (cotation && cotation.valide) {
-                alert('Cette cotation est déjà validée.');
-                return;
-            }
-
-            const scores = {};
-            scoreInputs.forEach(input => {
-                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
-            });
-            const total = updateTotal();
-
-            setCotation(currentCandidat.nom, {
-                scores: scores,
-                total: total,
-                commentaire: comment.value,
-                conseil: conseil.value,
-                valide: false
-            });
-
-            updateStatus('brouillon');
-            lastSaveInfo.textContent = `Sauvegardé à ${new Date().toLocaleTimeString()}`;
-            alert('✅ Cotation enregistrée en brouillon !');
-        });
-
-        validateBtn.addEventListener('click', function() {
-            if (!currentCandidat) {
-                alert('Veuillez sélectionner un candidat');
-                return;
-            }
-
-            const cotation = getCotation(currentCandidat.nom);
-            if (cotation && cotation.valide) {
-                alert('Cette cotation est déjà validée.');
-                return;
-            }
-
-            const total = updateTotal();
-            if (total === 0) {
-                alert('Veuillez attribuer des notes avant de valider.');
-                return;
-            }
-
-            if (!confirm('Valider définitivement cette cotation ? Vous ne pourrez plus la modifier.')) {
-                return;
-            }
-
-            const scores = {};
-            scoreInputs.forEach(input => {
-                scores[input.dataset.criteria] = parseFloat(input.value) || 0;
-            });
-
-            setCotation(currentCandidat.nom, {
-                scores: scores,
-                total: total,
-                commentaire: comment.value,
-                conseil: conseil.value,
-                valide: true,
-                dateValidation: new Date().toISOString()
-            });
-
-            updateStatus('valide');
-            saveBtn.disabled = true;
-            validateBtn.disabled = true;
-            lastSaveInfo.textContent = `✅ Validé à ${new Date().toLocaleTimeString()}`;
-            alert('✅ Cotation validée définitivement !');
+        validateBtn.addEventListener('click', async function() {
+            if (!confirm(`Valider définitivement la cotation pour ${currentCandidatNom} ?`)) return;
+            await sauvegarderCotationCloud(true);
         });
 
         resetBtn.addEventListener('click', function() {
-            if (!currentCandidat) {
+            if (!currentCandidatNom) {
                 resetScores();
                 return;
             }
 
-            const cotation = getCotation(currentCandidat.nom);
+            const key = `${currentCandidatNom}_${currentUser.id}`;
+            const cotation = cotations[key];
             if (cotation && cotation.valide) {
-                alert('Cette cotation est validée et ne peut pas être réinitialisée.');
+                showNotification('⚠️ Cette cotation est validée et ne peut pas être réinitialisée', 'error');
                 return;
             }
 
-            if (confirm('Réinitialiser toutes les notes pour ce candidat ?')) {
+            if (confirm(`Réinitialiser toutes les notes pour ${currentCandidatNom} ?`)) {
                 resetScores();
-                const key = getCotationKey(currentCandidat.nom);
                 delete cotations[key];
-                saveCotations();
-                updateStatus('non-cote');
-                saveBtn.disabled = false;
-                validateBtn.disabled = false;
-                lastSaveInfo.textContent = 'Réinitialisé';
-                alert('Fiche réinitialisée.');
+                sauvegarderCotationsLocales();
+                // Supprimer du cloud
+                db.collection('cotations').doc(currentCandidatNom).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            delete data[currentUser.id];
+                            db.collection('cotations').doc(currentCandidatNom).set(data, { merge: true });
+                        }
+                    })
+                    .catch(err => console.warn('⚠️ Erreur suppression:', err));
+                showNotification('🔄 Fiche réinitialisée', 'info');
+                lastSaveInfo.textContent = '🔄 Réinitialisé';
             }
+        });
+
+        syncBtn.addEventListener('click', function() {
+            showNotification('🔄 Synchronisation...', 'info');
+            chargerCotationCourante();
+            db.collection('etat').doc('current').get()
+                .then(doc => {
+                    if (doc.exists) {
+                        mettreAJourInterface(doc.data());
+                        showNotification('✅ Synchronisé avec le centre de contrôle', 'success');
+                    }
+                })
+                .catch(err => {
+                    showNotification('⚠️ Erreur synchronisation', 'error');
+                });
         });
 
         logoutBtn.addEventListener('click', function() {
             if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                // Redirection vers la page de connexion ou réinitialisation
-                alert('Déconnexion...');
-                location.reload();
+                auth.signOut().then(() => {
+                    window.location.reload();
+                });
             }
         });
 
         // ================================================================
         // INITIALISATION
         // ================================================================
-
-        loadCotations();
-        populateSelect();
 
         // Nom du jury
         juryName.textContent = currentUser.nom;
@@ -1334,7 +1782,7 @@
         timerRemaining = 300;
         updateTimerDisplay();
 
-        // Simuler un timer qui descend (pour l'exemple)
+        // Mise à jour du timer (simulé)
         setInterval(() => {
             if (timerRemaining > 0) {
                 timerRemaining--;
@@ -1342,9 +1790,12 @@
             }
         }, 1000);
 
+        // Connexion
+        connecterJury();
+
         console.log('🏆 Éloquence en Scène - Fiche Jury');
         console.log(`👤 ${currentUser.nom} connecté`);
-        console.log(`📊 ${candidats.length} candidats disponibles`);
+        console.log('📡 Synchronisation en temps réel avec Firebase');
     </script>
 
 </body>
