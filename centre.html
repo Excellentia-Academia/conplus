@@ -1,1 +1,1701 @@
-a
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎛️ Centre de Contrôle - Éloquence en Scène</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
+    </script>
+
+    <style>
+        /* ============================================================
+           STYLES COMPLETS - BLANC, BLEU, ROUGE
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blanc: #ffffff;
+            --blanc-casse: #f5f5f5;
+            --bleu-fonce: #0a1628;
+            --bleu-marine: #1a2a4a;
+            --bleu-clair: #2c5f8a;
+            --bleu-ciel: #4a90d9;
+            --rouge: #c0392b;
+            --rouge-clair: #e74c3c;
+            --rouge-dore: #a93226;
+            --blanc-transparent: rgba(255,255,255,0.9);
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --green: #27ae60;
+            --orange: #f39c12;
+            --gris-clair: #e8e6e1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--blanc-casse);
+            color: var(--bleu-fonce);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(ellipse at 0% 0%, rgba(26, 42, 74, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 100% 100%, rgba(192, 57, 43, 0.03) 0%, transparent 60%);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--blanc-casse);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--rouge);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--rouge-dore);
+        }
+
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 32px;
+            background: var(--blanc);
+            border-radius: 80px;
+            margin-bottom: 28px;
+            border-left: 5px solid var(--rouge);
+            border-right: 5px solid var(--bleu-fonce);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--bleu-fonce);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--rouge);
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--bleu-fonce), var(--rouge));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .admin-badge {
+            background: var(--bleu-fonce);
+            color: var(--blanc);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .status-connection {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .status-connection .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.online {
+            background: var(--green);
+        }
+        .dot.offline {
+            background: var(--rouge);
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--gris-clair);
+            color: #888;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .btn-logout:hover {
+            border-color: var(--rouge);
+            color: var(--rouge);
+        }
+
+        .btn-aide {
+            background: transparent;
+            border: 1px solid var(--bleu-ciel);
+            color: var(--bleu-ciel);
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .btn-aide:hover {
+            background: var(--bleu-ciel);
+            color: var(--blanc);
+        }
+
+        section {
+            background: var(--blanc);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--bleu-fonce);
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+        h2 i {
+            color: var(--rouge);
+            margin-right: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- CHRONOMÈTRE ---- */
+        .timer-section {
+            background: var(--blanc-casse);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(26, 42, 74, 0.06);
+        }
+
+        .timer-display {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .timer-display .timer-clock {
+            font-size: 5rem;
+            font-weight: 800;
+            font-family: 'Poppins', monospace;
+            color: var(--bleu-fonce);
+            letter-spacing: 4px;
+        }
+
+        .timer-display .timer-clock.warning {
+            color: var(--orange);
+            animation: pulse-timer 0.5s infinite alternate;
+        }
+
+        .timer-display .timer-clock.danger {
+            color: var(--rouge);
+            animation: pulse-timer 0.3s infinite alternate;
+        }
+
+        @keyframes pulse-timer {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .timer-controls button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-controls .btn-start {
+            background: var(--green);
+            color: #fff;
+        }
+        .timer-controls .btn-start:hover {
+            background: #219a52;
+            transform: scale(1.05);
+        }
+
+        .timer-controls .btn-pause {
+            background: var(--orange);
+            color: #fff;
+        }
+        .timer-controls .btn-pause:hover {
+            background: #d68910;
+            transform: scale(1.05);
+        }
+
+        .timer-controls .btn-reset {
+            background: var(--rouge);
+            color: #fff;
+        }
+        .timer-controls .btn-reset:hover {
+            background: var(--rouge-dore);
+            transform: scale(1.05);
+        }
+
+        .timer-presets {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timer-presets button {
+            padding: 6px 16px;
+            border: 1px solid var(--gris-clair);
+            border-radius: 20px;
+            background: var(--blanc);
+            color: #888;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .timer-presets button:hover {
+            border-color: var(--bleu-ciel);
+            color: var(--bleu-ciel);
+        }
+        .timer-presets button.active {
+            border-color: var(--bleu-fonce);
+            color: var(--blanc);
+            background: var(--bleu-fonce);
+        }
+
+        .timer-status {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 10px;
+        }
+        .timer-status .status-text.en-cours {
+            color: var(--green);
+        }
+        .timer-status .status-text.pause {
+            color: var(--orange);
+        }
+        .timer-status .status-text.termine {
+            color: var(--rouge);
+        }
+
+        /* ---- GESTION CANDIDATS ---- */
+        .candidat-control {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .candidat-control .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .candidat-control .form-group label {
+            font-size: 0.75rem;
+            color: #888;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .candidat-control .form-group select,
+        .candidat-control .form-group input {
+            padding: 10px 14px;
+            background: var(--blanc-casse);
+            border: 1px solid var(--gris-clair);
+            border-radius: 10px;
+            color: var(--bleu-fonce);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .candidat-control .form-group select:focus,
+        .candidat-control .form-group input:focus {
+            outline: none;
+            border-color: var(--bleu-ciel);
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.08);
+        }
+
+        .candidat-control .form-group select option {
+            background: var(--blanc);
+            color: var(--bleu-fonce);
+        }
+
+        .photo-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px;
+            background: var(--blanc-casse);
+            border-radius: 10px;
+            border: 1px solid var(--gris-clair);
+        }
+
+        .photo-preview img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--gris-clair);
+        }
+
+        .photo-preview .photo-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gris-clair);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 1.5rem;
+        }
+
+        .btn-send {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu-marine));
+            color: var(--blanc);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(26, 42, 74, 0.15);
+        }
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ---- RÉSULTATS ---- */
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .stats .stat-card {
+            background: var(--blanc-casse);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--gris-clair);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .stats .stat-card .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bleu-fonce);
+        }
+        .stats .stat-card .stat-label {
+            font-size: 0.65rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-container .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--gris-clair);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-container .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bleu-fonce), var(--rouge));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-container .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--gris-clair);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        thead {
+            background: var(--bleu-fonce);
+        }
+
+        th {
+            padding: 10px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--blanc);
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--gris-clair);
+            color: #444;
+        }
+
+        tr:hover td {
+            background: rgba(74, 144, 217, 0.04);
+        }
+
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 2px 12px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .status-badge.valide {
+            background: rgba(39, 174, 96, 0.12);
+            color: var(--green);
+        }
+        .status-badge.brouillon {
+            background: rgba(243, 156, 18, 0.12);
+            color: var(--orange);
+        }
+        .status-badge.non-cote {
+            background: var(--gris-clair);
+            color: #888;
+        }
+
+        .btn-export {
+            padding: 8px 20px;
+            background: var(--rouge);
+            color: var(--blanc);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .btn-export:hover {
+            background: var(--rouge-dore);
+            transform: translateY(-2px);
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                border-radius: 30px;
+                padding: 16px 20px;
+            }
+            .logo {
+                font-size: 1.2rem;
+            }
+            .logo i {
+                font-size: 1.5rem;
+            }
+            .header-info {
+                justify-content: center;
+            }
+            section {
+                padding: 16px 14px;
+            }
+            .timer-display .timer-clock {
+                font-size: 3.5rem;
+            }
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .timer-controls button {
+                width: 100%;
+                justify-content: center;
+            }
+            .stats {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .timer-display .timer-clock {
+                font-size: 2.8rem;
+            }
+            th,
+            td {
+                padding: 4px 6px;
+                font-size: 0.65rem;
+            }
+        }
+
+        /* ---- MODAL AIDE ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--blanc);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            border-top: 5px solid var(--rouge);
+            border-bottom: 5px solid var(--bleu-fonce);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            0% {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-content .modal-header h3 {
+            font-size: 1.1rem;
+            color: var(--bleu-fonce);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-content .modal-header h3 i {
+            color: var(--rouge);
+        }
+
+        .modal-content .modal-header .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .modal-content .modal-body {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .modal-content .modal-body .info-contact {
+            background: var(--blanc-casse);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--rouge);
+            margin-top: 12px;
+        }
+
+        .modal-content .modal-body .info-contact .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--bleu-fonce);
+            padding: 4px 0;
+        }
+
+        .modal-content .modal-body .info-contact .contact-item i {
+            color: var(--rouge);
+            width: 20px;
+        }
+
+        .modal-content .modal-footer {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-content .modal-footer button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .modal-content .modal-footer .btn-modal-fermer {
+            background: var(--gris-clair);
+            color: #888;
+        }
+        .modal-content .modal-footer .btn-modal-fermer:hover {
+            background: #ddd;
+        }
+
+        .modal-content .modal-footer .btn-modal-contacter {
+            background: var(--rouge);
+            color: var(--blanc);
+        }
+        .modal-content .modal-footer .btn-modal-contacter:hover {
+            background: var(--rouge-dore);
+            transform: scale(1.02);
+        }
+
+        .rank-1 {
+            color: var(--bleu-fonce) !important;
+            font-weight: 700 !important;
+        }
+        .rank-2 {
+            color: #666 !important;
+            font-weight: 600 !important;
+        }
+        .rank-3 {
+            color: var(--rouge) !important;
+            font-weight: 600 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-crown"></i>
+            <span>Centre de Contrôle</span>
+        </div>
+        <div class="header-info">
+            <span class="admin-badge"><i class="fas fa-user-shield"></i> Admin</span>
+            <span class="status-connection">
+                <span class="dot online" id="connectionDot"></span>
+                <span id="connectionStatus">Connexion...</span>
+            </span>
+            <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+            <button class="btn-aide" id="aideBtn"><i class="fas fa-life-ring"></i> Aide</button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    MAIN
+    ============================================================ -->
+    <main>
+
+        <!-- ============================================================
+        GRILLE ADMIN
+        ============================================================ -->
+        <div class="admin-grid">
+
+            <!-- CHRONOMÈTRE -->
+            <section>
+                <h2><i class="fas fa-clock"></i> Chronomètre</h2>
+                <div class="timer-section">
+                    <div class="timer-display">
+                        <div class="timer-clock" id="timerClock">05:00</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn-start" id="timerStart"><i class="fas fa-play"></i> Démarrer</button>
+                        <button class="btn-pause" id="timerPause"><i class="fas fa-pause"></i> Pause</button>
+                        <button class="btn-reset" id="timerReset"><i class="fas fa-undo"></i> Réinitialiser</button>
+                    </div>
+                    <div class="timer-presets">
+                        <button data-time="180">3 min</button>
+                        <button data-time="300" class="active">5 min</button>
+                        <button data-time="420">7 min</button>
+                        <button data-time="600">10 min</button>
+                        <button data-time="900">15 min</button>
+                    </div>
+                    <div class="timer-status">
+                        Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GESTION CANDIDATS -->
+            <section>
+                <h2><i class="fas fa-user-tie"></i> Gestion des Candidats</h2>
+                <div class="candidat-control">
+
+                    <div class="form-group">
+                        <label><i class="fas fa-gavel"></i> Match</label>
+                        <select id="matchSelect">
+                            <option value="">-- Sélectionner un match --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Candidat</label>
+                        <select id="candidatSelect">
+                            <option value="">-- Sélectionner un candidat --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Photo du candidat</label>
+                        <div class="photo-preview">
+                            <div class="photo-placeholder" id="photoPlaceholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <img id="photoPreview" style="display:none;" alt="Photo candidat" />
+                            <input type="file" id="photoUpload" accept="image/*" style="flex:1;" />
+                        </div>
+                    </div>
+
+                    <button class="btn-send" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
+                    </button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ============================================================
+        RÉSULTATS EN TEMPS RÉEL
+        ============================================================ -->
+        <section>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Cotations en Temps Réel</h2>
+                <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> Exporter CSV</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCandidats">0</div>
+                    <div class="stat-label">Total Candidats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCotes">0</div>
+                    <div class="stat-label">Candidats Cotés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalJurys">0</div>
+                    <div class="stat-label">Jurys Actifs</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText">0 / 0 cotés</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Candidat</th>
+                            <th>Rôle</th>
+                            <th>Match</th>
+                            <th>J1</th>
+                            <th>J2</th>
+                            <th>J3</th>
+                            <th>J4</th>
+                            <th>Moyenne</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <tr>
+                            <td colspan="10" style="text-align:center;color:#999;padding:30px;">
+                                <i class="fas fa-spinner fa-spin"></i> Chargement des données...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+    MODAL AIDE
+    ============================================================ -->
+    <div class="modal-overlay" id="aideModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-life-ring"></i> Centre de Contrôle - Aide</h3>
+                <button class="close-modal" id="closeAideModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Fonctionnalités :</strong></p>
+                <ul style="list-style:none;padding:0;margin:8px 0;">
+                    <li style="padding:4px 0;">⏱️ <strong>Chronomètre</strong> : Contrôlez le temps des prestations</li>
+                    <li style="padding:4px 0;">👤 <strong>Candidats</strong> : Sélectionnez et envoyez aux jurys</li>
+                    <li style="padding:4px 0;">📊 <strong>Résultats</strong> : Visualisez les cotations en direct</li>
+                    <li style="padding:4px 0;">📤 <strong>Export</strong> : Téléchargez les résultats en CSV</li>
+                </ul>
+                <div class="info-contact">
+                    <div class="contact-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span><strong>Responsable :</strong> Jean-Pierre</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span><strong>Téléphone :</strong> +243 812 345 678</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span><strong>Email :</strong> support@eloquence-scene.cd</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-fermer" id="fermerAide"><i class="fas fa-times"></i> Fermer</button>
+                <button class="btn-modal-contacter" id="contacterAide"><i class="fas fa-phone"></i> Contacter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    SCRIPTS COMPLETS
+    ============================================================ -->
+    <script>
+        // ================================================================
+        // CONFIGURATION FIREBASE - TES CLÉS
+        // ================================================================
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
+            authDomain: "conf-94615.firebaseapp.com",
+            projectId: "conf-94615",
+            storageBucket: "conf-94615.firebasestorage.app",
+            messagingSenderId: "312554343685",
+            appId: "1:312554343685:web:b199e33ff4ca050d533b6c",
+            measurementId: "G-BLCPS9S0ZJ"
+        };
+
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // ================================================================
+        // TOUS LES 26 MATCHS
+        // ================================================================
+
+        const MATCHS_DATA = [
+            { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
+                these: "Bernadine Mandanda Mbangu", antithese: "Adju Abdallah Djuma" },
+            { id: 2, theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
+                these: "Bijou Belanza", antithese: "Arsène Sangwa Binanga" },
+            { id: 3, theme: "Le « Bureau » (deuxième bureau) : Pratique normalisée ou destruction silencieuse de la famille ?",
+                these: "Daniella Makululu Bebela", antithese: "Beni Fungamali Ramazani" },
+            { id: 4, theme: "L'entrepreneuriat des jeunes à Kinshasa : Véritable choix de carrière ou solution de désespoir ?",
+                these: "Divine Mwamba Bipendu", antithese: "Enoch Bilha Kalonda" },
+            { id: 5, theme: "Les produits éclaircissants (Tshoko) : Choix esthétique ou complexe d'infériorité ?",
+                these: "Henock Bolefo wetshi", antithese: "Darlène Yowa Ngandu" },
+            { id: 6, theme: "Les vêtements traditionnels (Pagne) face à la mode occidentale : Choix vestimentaire ou conflit d'identité ?",
+                these: "Jean Djemondo Toss", antithese: "Eugenie Nabintu Basirwa" },
+            { id: 7, theme: "La dot à Kinshasa : Célébration de la valeur de la femme ou transaction commerciale ?",
+                these: "Théovie Gabriel Ibambu", antithese: "Mersei Kanemeka Wa Nzambi" },
+            { id: 8, theme: "L'étiquette de « Mwana Ndaku » (enfant de bonne famille) : Une protection ou un fardeau ?",
+                these: "Glody Loleke Elembe", antithese: "Eunice Omokoko Baby" },
+            { id: 9, theme: "Le phénomène « Muana Frite » / « Muana Bonne Vie » : Privilège légitime ou illusion de supériorité ?",
+                these: "Rodrick Banza", antithese: "Gremis Flevia Funga Funga" },
+            { id: 10, theme: "L'émancipation de la femme kinoise est-elle une menace pour le foyer traditionnel ?",
+                these: "Émeraude Kanene Samba", antithese: "Christian Mbo Ntali" },
+            { id: 11, theme: "Facebook et TikTok à Kinshasa : Outils d'émancipation intellectuelle ou de destruction morale ?",
+                these: "Beni Musiteki", antithese: "Divine Nlandu Nsakanunu" },
+            { id: 12, theme: "Les funérailles à Kinshasa (Matanga) : Devoir de mémoire ou théâtralisation de la misère ?",
+                these: "Thomas Kashavu Muhigirwa", antithese: "Divine Mugoli Kashemwa" },
+            { id: 13, theme: "L'argent dans les relations amoureuses : Preuve d'amour ou prostitution déguisée ?",
+                these: "Joyce Eke-Shomba kapinga", antithese: "Gaspard Mwima Mupila" },
+            { id: 14, theme: "Les accusations de sorcellerie sur les enfants : Fait spirituel ou démission parentale ?",
+                these: "Junior Muteba Biayi", antithese: "Jenovic Sumaili Letashi" },
+            { id: 15, theme: "Le phénomène des « Kuluna » : Crise des valeurs ou échec socio-économique ?",
+                these: "Eric Bulembi Mafuku", antithese: "David Nakweti Musikwela" },
+            { id: 16, theme: "L'insalubrité à Kinshasa : Faute de l'État ou incivisme de la population ?",
+                these: "David Mukendi Kajingulu", antithese: "Dieudonné Mundala Kiomba" },
+            { id: 17, theme: "Les inondations à Kinshasa : Fatalité climatique ou négligence humaine ?",
+                these: "Remy Kingambo", antithese: "David Kitengie Malangu" },
+            { id: 18, theme: "Les marchés pirates sur les boulevards : Vitalité économique ou anarchie urbaine ?",
+                these: "Henry Lukonga Butumbi", antithese: "Exauce Mikila Waney" },
+            { id: 19, theme: "Les diplômes universitaires congolais ont-ils encore de la valeur sur le marché mondial ?",
+                these: "Benjamin Kabeya Kapongo", antithese: "Amerack Mavinga Ntali" },
+            { id: 20, theme: "L'enseignement en langues nationales à l'école primaire : Avancée pédagogique ou frein intellectuel ?",
+                these: "Claudel Elongama belongo", antithese: "Abraham Mudanda Lubuku" },
+            { id: 21, theme: "Le recours aux ancêtres et à la spiritualité traditionnelle : Retour aux sources ou régression ?",
+                these: "Brineige Massamba Bateka", antithese: "Christiane Bongo Matondo" },
+            { id: 22, theme: "Les influenceurs kinois sont-ils les nouveaux leaders d'opinion de la jeunesse ?",
+                these: "Nicky Musadi Bitota", antithese: "Furah Kipata" },
+            { id: 23, theme: "Le favoritisme (parachutage/recommandation) : Solidarité incontournable ou destruction de la méritocratie ?",
+                these: "Joyce Aziza Azama", antithese: "Blessing Elonga Winner" },
+            { id: 24, theme: "Les débats politiques sur les plateaux de télévision : Information ou distraction populaire ?",
+                these: "Espérance Kikadi Nzuzi", antithese: "Merveille Tshiala Mwana" },
+            { id: 25, theme: "Le divorce à Kinshasa : Libération nécessaire ou échec de la structure sociale ?",
+                these: "Rose Matunda", antithese: "Ruth Kalonga Ndaya" },
+            { id: 26, theme: "La jeunesse kinoise de 2026 : Génération sacrifiée ou génération du grand changement ?",
+                these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
+        ];
+
+        // ================================================================
+        // ÉTAT GLOBAL
+        // ================================================================
+
+        let timerSeconds = 300;
+        let timerRemaining = 300;
+        let timerInterval = null;
+        let timerRunning = false;
+        let timerPaused = false;
+
+        let matchsData = [];
+        let candidatsData = [];
+        let cotationsData = {};
+        let photoFile = null;
+        let currentUser = null;
+        let isAdmin = false;
+
+        const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
+
+        // ================================================================
+        // RÉFÉRENCES DOM
+        // ================================================================
+
+        const timerClock = document.getElementById('timerClock');
+        const timerStatus = document.getElementById('timerStatus');
+        const timerStart = document.getElementById('timerStart');
+        const timerPause = document.getElementById('timerPause');
+        const timerReset = document.getElementById('timerReset');
+
+        const matchSelect = document.getElementById('matchSelect');
+        const candidatSelect = document.getElementById('candidatSelect');
+        const photoUpload = document.getElementById('photoUpload');
+        const photoPreview = document.getElementById('photoPreview');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        const sendBtn = document.getElementById('sendBtn');
+
+        const resultsBody = document.getElementById('resultsBody');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const progressPercent = document.getElementById('progressPercent');
+        const totalCandidats = document.getElementById('totalCandidats');
+        const totalCotes = document.getElementById('totalCotes');
+        const totalJurys = document.getElementById('totalJurys');
+
+        const exportBtn = document.getElementById('exportBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const aideBtn = document.getElementById('aideBtn');
+
+        const connectionDot = document.getElementById('connectionDot');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        // Modal aide
+        const aideModal = document.getElementById('aideModal');
+        const closeAideModal = document.getElementById('closeAideModal');
+        const fermerAide = document.getElementById('fermerAide');
+        const contacterAide = document.getElementById('contacterAide');
+
+        // ================================================================
+        // AUTHENTIFICATION
+        // ================================================================
+
+        function connecterAdmin() {
+            connectionStatus.textContent = 'Connexion...';
+            connectionDot.className = 'dot offline';
+
+            auth.signInAnonymously()
+                .then(() => {
+                    currentUser = auth.currentUser;
+                    isAdmin = true;
+                    connectionDot.className = 'dot online';
+                    connectionStatus.textContent = '✅ Connecté (Admin)';
+                    console.log('✅ Admin connecté');
+                    chargerDonnees();
+                    importerMatchsSiNecessaire();
+                })
+                .catch(error => {
+                    console.error('❌ Erreur connexion:', error);
+                    connectionStatus.textContent = '❌ Erreur connexion';
+                    connectionDot.className = 'dot offline';
+
+                    auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
+                        .then(() => {
+                            currentUser = auth.currentUser;
+                            isAdmin = true;
+                            connectionDot.className = 'dot online';
+                            connectionStatus.textContent = '✅ Connecté (Admin)';
+                            console.log('✅ Admin connecté (email)');
+                            chargerDonnees();
+                            importerMatchsSiNecessaire();
+                        })
+                        .catch(err => {
+                            console.error('❌ Erreur connexion email:', err);
+                            connectionStatus.textContent = '⚠️ Mode hors ligne';
+                            chargerDonnees();
+                        });
+                });
+        }
+
+        // ================================================================
+        // IMPORT AUTOMATIQUE DES MATCHS
+        // ================================================================
+
+        async function importerMatchsSiNecessaire() {
+            try {
+                const snapshot = await db.collection('matchs').limit(1).get();
+
+                if (snapshot.empty) {
+                    console.log('📥 Importation des 26 matchs...');
+                    let success = 0;
+
+                    for (const match of MATCHS_DATA) {
+                        try {
+                            await db.collection('matchs').doc(match.id.toString()).set(match);
+                            console.log(`✅ Match #${match.id} importé`);
+                            success++;
+                        } catch (e) {
+                            console.error(`❌ Erreur match #${match.id}:`, e);
+                        }
+                    }
+
+                    console.log(`📊 ${success}/${MATCHS_DATA.length} matchs importés`);
+
+                    await db.collection('etat').doc('current').set({
+                        matchId: 0,
+                        candidatNom: '',
+                        candidatTheme: '',
+                        candidatRole: '',
+                        candidatPhoto: '',
+                        timer: 300,
+                        timerRunning: false,
+                        status: 'en-attente',
+                        nombreJurys: 4,
+                        timestamp: Date.now()
+                    }, { merge: true });
+
+                    alert(`✅ ${success} matchs importés avec succès !`);
+                } else {
+                    console.log('✅ Les matchs existent déjà dans la base');
+                }
+            } catch (error) {
+                console.error('❌ Erreur vérification matchs:', error);
+            }
+        }
+
+        // ================================================================
+        // CHARGEMENT DES DONNÉES
+        // ================================================================
+
+        async function chargerDonnees() {
+            try {
+                const matchsSnapshot = await db.collection('matchs').get();
+                matchsData = [];
+                matchsSnapshot.forEach(doc => {
+                    matchsData.push({ id: doc.id, ...doc.data() });
+                });
+                matchsData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+                candidatsData = [];
+                matchsData.forEach(m => {
+                    if (m.these) candidatsData.push({ nom: m.these, matchId: parseInt(m.id), role: 'Thèse',
+                        theme: m.theme });
+                    if (m.antithese) candidatsData.push({ nom: m.antithese, matchId: parseInt(m.id),
+                        role: 'Antithèse', theme: m.theme });
+                });
+                candidatsData.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
+
+                const cotationsSnapshot = await db.collection('cotations').get();
+                cotationsData = {};
+                cotationsSnapshot.forEach(doc => {
+                    cotationsData[doc.id] = doc.data();
+                });
+
+                remplirMatchs();
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+
+                ecouterCotations();
+
+                const etatDoc = await db.collection('etat').doc('current').get();
+                if (etatDoc.exists) {
+                    const data = etatDoc.data();
+                    if (data && data.timer) {
+                        timerRemaining = data.timer;
+                        timerRunning = data.timerRunning || false;
+                        updateTimerDisplay();
+                        if (timerRunning) {
+                            timerStatus.textContent = '▶️ En cours';
+                            timerStatus.className = 'status-text en-cours';
+                        }
+                    }
+                }
+
+                console.log(`📊 ${matchsData.length} matchs, ${candidatsData.length} candidats chargés`);
+
+            } catch (error) {
+                console.error('❌ Erreur chargement:', error);
+                resultsBody.innerHTML =
+                    `<tr><td colspan="10" style="text-align:center;color:var(--rouge);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
+            }
+        }
+
+        // ================================================================
+        // ÉCOUTE EN TEMPS RÉEL
+        // ================================================================
+
+        function ecouterCotations() {
+            db.collection('cotations').onSnapshot((snapshot) => {
+                cotationsData = {};
+                snapshot.forEach(doc => {
+                    cotationsData[doc.id] = doc.data();
+                });
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+            }, (error) => {
+                console.error('❌ Erreur écoute:', error);
+            });
+        }
+
+        // ================================================================
+        // REMPLIR LES SÉLECTEURS
+        // ================================================================
+
+        function remplirMatchs() {
+            matchSelect.innerHTML = '<option value="">-- Sélectionner un match --</option>';
+            matchsData.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.id;
+                option.textContent = `Match #${m.id} : ${m.theme.substring(0, 50)}...`;
+                matchSelect.appendChild(option);
+            });
+        }
+
+        function remplirCandidats(matchId) {
+            candidatSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+            if (!matchId) return;
+
+            const filtered = candidatsData.filter(c => c.matchId === parseInt(matchId));
+            filtered.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.nom;
+                option.textContent = `${c.nom} (${c.role})`;
+                option.dataset.role = c.role;
+                option.dataset.theme = c.theme;
+                candidatSelect.appendChild(option);
+            });
+        }
+
+        matchSelect.addEventListener('change', function() {
+            remplirCandidats(this.value);
+            photoPreview.style.display = 'none';
+            photoPlaceholder.style.display = 'flex';
+            photoFile = null;
+            photoUpload.value = '';
+        });
+
+        // ================================================================
+        // CHRONOMÈTRE
+        // ================================================================
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerRemaining / 60);
+            const seconds = timerRemaining % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerClock.textContent = display;
+
+            timerClock.classList.remove('warning', 'danger');
+            if (timerRemaining <= 30 && timerRunning) {
+                timerClock.classList.add('danger');
+            } else if (timerRemaining <= 60 && timerRunning) {
+                timerClock.classList.add('warning');
+            }
+        }
+
+        function setTimer(seconds) {
+            timerRemaining = seconds;
+            timerSeconds = seconds;
+            updateTimerDisplay();
+            timerStatus.textContent = '⏸️ Prêt';
+            timerStatus.className = 'status-text';
+            syncTimerToFirebase();
+        }
+
+        function startTimer() {
+            if (timerRunning && !timerPaused) return;
+            if (timerRemaining <= 0) setTimer(timerSeconds);
+
+            timerRunning = true;
+            timerPaused = false;
+            timerStatus.textContent = '▶️ En cours';
+            timerStatus.className = 'status-text en-cours';
+
+            timerInterval = setInterval(() => {
+                timerRemaining--;
+                updateTimerDisplay();
+                syncTimerToFirebase();
+
+                if (timerRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerStatus.textContent = '⏰ Temps écoulé !';
+                    timerStatus.className = 'status-text termine';
+                    syncTimerToFirebase();
+                    alert('⏰ Temps écoulé !');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!timerRunning) return;
+            clearInterval(timerInterval);
+            timerPaused = true;
+            timerRunning = false;
+            timerStatus.textContent = '⏸️ En pause';
+            timerStatus.className = 'status-text pause';
+            syncTimerToFirebase();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerPaused = false;
+            setTimer(timerSeconds);
+            timerStatus.textContent = '⏸️ Réinitialisé';
+            timerStatus.className = 'status-text';
+            syncTimerToFirebase();
+        }
+
+        function syncTimerToFirebase() {
+            db.collection('etat').doc('current').set({
+                timer: timerRemaining,
+                timerRunning: timerRunning,
+                timestamp: Date.now()
+            }, { merge: true }).catch(e => console.warn('⚠️ Timer non synchronisé:', e));
+        }
+
+        // ================================================================
+        // ENVOYER CANDIDAT AUX JURYS
+        // ================================================================
+
+        async function envoyerCandidat() {
+            const matchId = parseInt(matchSelect.value);
+            const candidatNom = candidatSelect.value;
+
+            if (!matchId || !candidatNom) {
+                alert('⚠️ Veuillez sélectionner un match et un candidat');
+                return;
+            }
+
+            const candidat = candidatsData.find(c => c.nom === candidatNom && c.matchId === matchId);
+            if (!candidat) {
+                alert('⚠️ Candidat non trouvé');
+                return;
+            }
+
+            let photoUrl = '';
+            if (photoFile) {
+                try {
+                    const storageRef = storage.ref(`photos/${candidatNom}`);
+                    await storageRef.put(photoFile);
+                    photoUrl = await storageRef.getDownloadURL();
+                } catch (error) {
+                    console.error('❌ Erreur upload photo:', error);
+                }
+            }
+
+            try {
+                await db.collection('etat').doc('current').set({
+                    matchId: matchId,
+                    candidatNom: candidatNom,
+                    candidatTheme: candidat.theme,
+                    candidatRole: candidat.role,
+                    candidatPhoto: photoUrl,
+                    timer: timerRemaining,
+                    timerRunning: timerRunning,
+                    status: 'en-cours',
+                    nombreJurys: 4,
+                    timestamp: Date.now()
+                }, { merge: true });
+
+                alert(`✅ Candidat "${candidatNom}" envoyé aux jurys !`);
+            } catch (error) {
+                console.error('❌ Erreur envoi:', error);
+                alert('❌ Erreur: ' + error.message);
+            }
+        }
+
+        // ================================================================
+        // RÉSULTATS
+        // ================================================================
+
+        function mettreAJourResultats() {
+            const resultats = {};
+
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let total = 0;
+                let count = 0;
+
+                JURYS.forEach(jury => {
+                    if (cotes[jury] && cotes[jury].valide) {
+                        total += cotes[jury].total || 0;
+                        count++;
+                    }
+                });
+
+                resultats[candidat] = {
+                    total: total,
+                    count: count,
+                    moyenne: count > 0 ? total / count : 0,
+                    cotes: cotes
+                };
+            });
+
+            const sorted = Object.entries(resultats)
+                .sort((a, b) => b[1].moyenne - a[1].moyenne);
+
+            if (sorted.length === 0) {
+                resultsBody.innerHTML =
+                    '<tr><td colspan="10" style="text-align:center;color:#999;padding:30px;">Aucune cotation</td></tr>';
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(([nom, data], index) => {
+                const cotes = data.cotes;
+                const juryNotes = JURYS.map(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        return `<td style="text-align:center;color:var(--green);">${cotes[j].total.toFixed(1)}</td>`;
+                    } else if (cotes[j]) {
+                        return `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
+                    }
+                    return `<td style="text-align:center;color:#ddd;">-</td>`;
+                }).join('');
+
+                const statut = data.count === JURYS.length ? 'valide' :
+                    data.count > 0 ? 'brouillon' : 'non-cote';
+
+                const statusText = statut === 'valide' ? '✅ Validé' :
+                    statut === 'brouillon' ? '⏳ En cours' : '⏹️ Non coté';
+
+                const rang = index + 1;
+                const rangClass = rang === 1 ? 'rank-1' : rang === 2 ? 'rank-2' : rang === 3 ? 'rank-3' : '';
+                const candidat = candidatsData.find(c => c.nom === nom);
+
+                html += `
+                            <tr>
+                                <td class="${rangClass}">${rang}</td>
+                                <td>${nom}</td>
+                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(26,42,74,0.08)' : 'rgba(192,57,43,0.08)'};color:${candidat?.role === 'Thèse' ? 'var(--bleu-fonce)' : 'var(--rouge)'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
+                                <td style="color:#888;">#${candidat?.matchId || '-'}</td>
+                                ${juryNotes}
+                                <td style="font-weight:700;color:${data.moyenne > 15 ? 'var(--bleu-fonce)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
+                                    ${data.moyenne > 0 ? data.moyenne.toFixed(2) : '-'}
+                                </td>
+                                <td><span class="status-badge ${statut}">${statusText}</span></td>
+                            </tr>
+                        `;
+            });
+
+            resultsBody.innerHTML = html;
+        }
+
+        function mettreAJourStatistiques() {
+            let totalCotes = 0;
+            const jurysActifs = {};
+
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let count = 0;
+                JURYS.forEach(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        count++;
+                        jurysActifs[j] = true;
+                    }
+                });
+                if (count > 0) totalCotes++;
+            });
+
+            document.getElementById('totalCandidats').textContent = candidatsData.length || 0;
+            document.getElementById('totalCotes').textContent = totalCotes;
+            document.getElementById('totalJurys').textContent = Object.keys(jurysActifs).length || 4;
+        }
+
+        function mettreAJourProgression() {
+            const total = candidatsData.length || 1;
+            let cotes = 0;
+
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotesJury = cotationsData[candidat];
+                let count = 0;
+                JURYS.forEach(j => {
+                    if (cotesJury[j] && cotesJury[j].valide) count++;
+                });
+                if (count > 0) cotes++;
+            });
+
+            const progression = (cotes / total) * 100;
+            progressFill.style.width = `${Math.min(progression, 100)}%`;
+            progressText.textContent = `${cotes} / ${total} cotés`;
+            progressPercent.textContent = `${Math.round(progression)}%`;
+        }
+
+        // ================================================================
+        // EXPORT CSV
+        // ================================================================
+
+        function exporterCSV() {
+            let csv = 'Rang;Candidat;Rôle;Match;';
+
+            JURYS.forEach(j => { csv += `${j};`; });
+            csv += 'Moyenne;Statut\n';
+
+            const resultats = {};
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let total = 0;
+                let count = 0;
+                const notes = {};
+                JURYS.forEach(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        notes[j] = cotes[j].total;
+                        total += cotes[j].total;
+                        count++;
+                    } else {
+                        notes[j] = '-';
+                    }
+                });
+                resultats[candidat] = { notes, moyenne: count > 0 ? total / count : 0, count };
+            });
+
+            const sorted = Object.entries(resultats)
+                .sort((a, b) => b[1].moyenne - a[1].moyenne);
+
+            sorted.forEach(([nom, data], index) => {
+                const candidat = candidatsData.find(c => c.nom === nom);
+                let ligne = `${index + 1};${nom};${candidat?.role || '-'};${candidat?.matchId || '-'};`;
+
+                JURYS.forEach(j => {
+                    ligne += `${data.notes[j] || '-'};`;
+                });
+
+                const statut = data.count === JURYS.length ? 'Validé' :
+                    data.count > 0 ? 'En cours' : 'Non coté';
+
+                ligne += `${data.moyenne.toFixed(2)};${statut}\n`;
+                csv += ligne;
+            });
+
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `classement_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // ================================================================
+        // PHOTO
+        // ================================================================
+
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                photoFile = file;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    photoPreview.src = event.target.result;
+                    photoPreview.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ================================================================
+        // ÉVÉNEMENTS
+        // ================================================================
+
+        timerStart.addEventListener('click', startTimer);
+        timerPause.addEventListener('click', pauseTimer);
+        timerReset.addEventListener('click', resetTimer);
+
+        document.querySelectorAll('.timer-presets button[data-time]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove(
+                    'active'));
+                this.classList.add('active');
+                const seconds = parseInt(this.dataset.time);
+                setTimer(seconds);
+            });
+        });
+
+        sendBtn.addEventListener('click', envoyerCandidat);
+        exportBtn.addEventListener('click', exporterCSV);
+
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location.reload();
+            });
+        });
+
+        // Modal aide
+        aideBtn.addEventListener('click', () => aideModal.classList.add('active'));
+        closeAideModal.addEventListener('click', () => aideModal.classList.remove('active'));
+        fermerAide.addEventListener('click', () => aideModal.classList.remove('active'));
+        contacterAide.addEventListener('click', () => {
+            alert('📞 Appel en cours...\nNuméro : +243 812 345 678');
+            aideModal.classList.remove('active');
+        });
+        aideModal.addEventListener('click', (e) => {
+            if (e.target === this) aideModal.classList.remove('active');
+        });
+
+        // ================================================================
+        // INITIALISATION
+        // ================================================================
+
+        connecterAdmin();
+        setTimer(300);
+
+        console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
+        console.log('📊 Firebase connecté - Projet: conf-94615');
+        console.log('👑 Mode Admin activé');
+        console.log('🎨 Design: Blanc, Bleu, Rouge');
+    </script>
+
+</body>
+</html>
