@@ -1,3 +1,4 @@
+<!-- Code du Centre de Contrôle -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -627,6 +628,66 @@
         .row-updated {
             animation: highlightRow 1.5s ease;
         }
+
+        /* Styles pour la gestion des jurys */
+        .jury-management {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .jury-management .jury-tag {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            color: var(--gold-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .jury-management .jury-tag i {
+            color: var(--gold);
+            font-size: 0.6rem;
+        }
+        .jury-management .btn-add-jury {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            color: #888;
+            padding: 4px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            transition: var(--transition);
+        }
+        .jury-management .btn-add-jury:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .jury-management .btn-remove-jury {
+            background: transparent;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+        .jury-management .btn-remove-jury:hover {
+            opacity: 1;
+        }
+        .jury-management .jury-count {
+            font-size: 0.65rem;
+            color: #666;
+            margin-left: auto;
+        }
     </style>
 </head>
 <body>
@@ -705,6 +766,18 @@
                     <button class="btn-send" id="sendBtn">
                         <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
                     </button>
+
+                    <!-- Gestion des jurys -->
+                    <div class="jury-management" id="juryManagement">
+                        <span style="font-size:0.7rem;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+                            <i class="fas fa-users"></i> Jurys
+                        </span>
+                        <div id="juryList" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                            <!-- Les jurys seront ajoutés ici dynamiquement -->
+                        </div>
+                        <button class="btn-add-jury" id="addJuryBtn"><i class="fas fa-plus"></i> Ajouter un jury</button>
+                        <span class="jury-count" id="juryCountDisplay">0 jury</span>
+                    </div>
                 </div>
             </section>
         </div>
@@ -753,17 +826,14 @@
                             <th>Candidat</th>
                             <th>Rôle</th>
                             <th>Match</th>
-                            <th>J1</th>
-                            <th>J2</th>
-                            <th>J3</th>
-                            <th>J4</th>
+                            <th id="jurysHeader">Jurys</th>
                             <th>Moyenne</th>
                             <th>Statut</th>
                         </tr>
                     </thead>
                     <tbody id="resultsBody">
                         <tr>
-                            <td colspan="10" style="text-align:center;color:#555;padding:30px;">
+                            <td colspan="7" style="text-align:center;color:#555;padding:30px;">
                                 <i class="fas fa-spinner fa-spin"></i> Chargement des données...
                             </td>
                         </tr>
@@ -870,8 +940,9 @@
         let photoFile = null;
         let etatActuel = null;
         let previousCotations = {};
+        let juryList = ['jury1']; // Liste des jurys, initialisée avec jury1
 
-        const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
+        const JURYS = juryList; // Utilisé pour les colonnes du tableau
 
         // ================================================================
         // 📦 RÉFÉRENCES DOM
@@ -901,6 +972,10 @@
         const connectionDot = document.getElementById('connectionDot');
         const connectionStatus = document.getElementById('connectionStatus');
         const notification = document.getElementById('notification');
+        const juryListEl = document.getElementById('juryList');
+        const addJuryBtn = document.getElementById('addJuryBtn');
+        const juryCountDisplay = document.getElementById('juryCountDisplay');
+        const jurysHeader = document.getElementById('jurysHeader');
 
         let notificationTimeout = null;
 
@@ -994,6 +1069,7 @@
             chargerDonnees();
             importerMatchsSiNecessaire();
             ecouterTimer();
+            ecouterJurys();
         }
 
         // ================================================================
@@ -1177,6 +1253,102 @@
         }
 
         // ================================================================
+        // 👂 ÉCOUTE DES JURYS
+        // ================================================================
+
+        function ecouterJurys() {
+            db.collection('jurys').doc('liste').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data && data.jurys) {
+                        juryList = data.jurys;
+                    } else {
+                        juryList = ['jury1'];
+                    }
+                } else {
+                    // Créer le document si inexistant
+                    db.collection('jurys').doc('liste').set({ jurys: ['jury1'] }).catch(e => console.warn('⚠️ Erreur création jurys:', e));
+                    juryList = ['jury1'];
+                }
+                // Mettre à jour les références
+                JURYS.length = 0;
+                juryList.forEach(j => JURYS.push(j));
+                mettreAJourInterfaceJurys();
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+            }, (error) => {
+                console.error('❌ Erreur écoute jurys:', error);
+            });
+        }
+
+        function mettreAJourInterfaceJurys() {
+            // Mettre à jour l'affichage des jurys
+            juryListEl.innerHTML = '';
+            juryList.forEach((jury, index) => {
+                const tag = document.createElement('span');
+                tag.className = 'jury-tag';
+                tag.innerHTML = `
+                            <i class="fas fa-user-check"></i>
+                            ${jury}
+                            <button class="btn-remove-jury" data-jury="${jury}" title="Retirer ce jury">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                juryListEl.appendChild(tag);
+            });
+
+            // Mettre à jour le compteur
+            juryCountDisplay.textContent = `${juryList.length} jury${juryList.length > 1 ? 's' : ''}`;
+
+            // Mettre à jour l'en-tête du tableau
+            jurysHeader.textContent = 'Jurys';
+            // Les colonnes seront recréées dans mettreAJourResultats
+        }
+
+        // Ajouter un jury
+        addJuryBtn.addEventListener('click', async function() {
+            const newJuryId = `jury${juryList.length + 1}`;
+            const newJuryName = prompt(`Nom du nouveau jury (ex: ${newJuryId}) :`, newJuryId);
+            if (newJuryName && newJuryName.trim()) {
+                const name = newJuryName.trim();
+                if (juryList.includes(name)) {
+                    showNotification(`⚠️ Le jury "${name}" existe déjà`, 'error');
+                    return;
+                }
+                try {
+                    const newList = [...juryList, name];
+                    await db.collection('jurys').doc('liste').set({ jurys: newList });
+                    showNotification(`✅ Jury "${name}" ajouté avec succès`, 'success');
+                } catch (error) {
+                    console.error('❌ Erreur ajout jury:', error);
+                    showNotification('❌ Erreur lors de l\'ajout du jury', 'error');
+                }
+            }
+        });
+
+        // Supprimer un jury (via event delegation)
+        juryListEl.addEventListener('click', async function(e) {
+            const removeBtn = e.target.closest('.btn-remove-jury');
+            if (removeBtn) {
+                const jury = removeBtn.dataset.jury;
+                if (juryList.length <= 1) {
+                    showNotification('⚠️ Il doit rester au moins un jury', 'error');
+                    return;
+                }
+                if (confirm(`Retirer le jury "${jury}" ?`)) {
+                    try {
+                        const newList = juryList.filter(j => j !== jury);
+                        await db.collection('jurys').doc('liste').set({ jurys: newList });
+                        showNotification(`✅ Jury "${jury}" retiré`, 'success');
+                    } catch (error) {
+                        console.error('❌ Erreur suppression jury:', error);
+                        showNotification('❌ Erreur lors de la suppression du jury', 'error');
+                    }
+                }
+            }
+        });
+
+        // ================================================================
         // 📁 CHARGEMENT DES DONNÉES
         // ================================================================
 
@@ -1256,6 +1428,21 @@
                     }
                 }
 
+                // Récupérer la liste des jurys
+                const jurysDoc = await db.collection('jurys').doc('liste').get();
+                if (jurysDoc.exists) {
+                    const data = jurysDoc.data();
+                    if (data && data.jurys) {
+                        juryList = data.jurys;
+                    }
+                } else {
+                    await db.collection('jurys').doc('liste').set({ jurys: ['jury1'] });
+                    juryList = ['jury1'];
+                }
+                JURYS.length = 0;
+                juryList.forEach(j => JURYS.push(j));
+                mettreAJourInterfaceJurys();
+
                 remplirMatchs();
                 mettreAJourResultats();
                 mettreAJourStatistiques();
@@ -1265,11 +1452,12 @@
                 ecouterEtat();
 
                 console.log(`📊 ${matchsData.length} matchs, ${candidatsData.length} candidats chargés`);
+                console.log(`👥 ${juryList.length} jurys : ${juryList.join(', ')}`);
 
             } catch (error) {
                 console.error('❌ Erreur chargement:', error);
                 resultsBody.innerHTML =
-                    `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
+                    `<tr><td colspan="7" style="text-align:center;color:var(--red);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
                 chargerDonneesLocales();
             }
         }
@@ -1364,7 +1552,7 @@
                         timerPaused: false,
                         timerSeconds: 300,
                         status: 'en-attente',
-                        nombreJurys: 4,
+                        nombreJurys: 1,
                         timestamp: Date.now()
                     }, { merge: true });
                     showNotification(`✅ ${success} matchs importés !`, 'success');
@@ -1453,12 +1641,12 @@
                     timerPaused: timerPaused,
                     timerSeconds: timerSeconds,
                     status: 'en-cours',
-                    nombreJurys: 4,
+                    nombreJurys: juryList.length,
                     timestamp: Date.now()
                 }, { merge: true });
 
                 candidatActuel.textContent = candidatNom;
-                showNotification(`✅ "${candidatNom}" envoyé aux jurys !`, 'success');
+                showNotification(`✅ "${candidatNom}" envoyé aux ${juryList.length} jurys !`, 'success');
             } catch (error) {
                 console.error('❌ Erreur envoi:', error);
                 showNotification('❌ Erreur: ' + error.message, 'error');
@@ -1493,23 +1681,36 @@
 
             if (sorted.length === 0) {
                 resultsBody.innerHTML =
-                    '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Aucune cotation</td></tr>';
+                    '<tr><td colspan="7" style="text-align:center;color:#555;padding:30px;">Aucune cotation</td></tr>';
                 return;
             }
 
             let html = '';
             const candidatEnCours = etatActuel?.candidatNom;
 
+            // Construire l'en-tête des jurys dynamiquement
+            let juryHeader = '';
+            JURYS.forEach(j => {
+                juryHeader += `<th style="text-align:center;font-size:0.6rem;">${j}</th>`;
+            });
+
+            // Mettre à jour l'en-tête du tableau
+            jurysHeader.textContent = JURYS.join(' | ');
+
             sorted.forEach(([nom, data], index) => {
                 const cotes = data.cotes;
-                const juryNotes = JURYS.map(j => {
+                let juryNotes = '';
+                JURYS.forEach(j => {
                     if (cotes[j] && cotes[j].valide) {
-                        return `<td style="text-align:center;color:var(--green);">${cotes[j].total.toFixed(1)}</td>`;
+                        juryNotes +=
+                            `<td style="text-align:center;color:var(--green);">${cotes[j].total.toFixed(1)}</td>`;
                     } else if (cotes[j]) {
-                        return `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
+                        juryNotes +=
+                            `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
+                    } else {
+                        juryNotes += `<td style="text-align:center;color:#333;">-</td>`;
                     }
-                    return `<td style="text-align:center;color:#333;">-</td>`;
-                }).join('');
+                });
 
                 const statut = data.count === JURYS.length ? 'valide' :
                     data.count > 0 ? 'brouillon' : 'non-cote';
@@ -1541,6 +1742,7 @@
                         `;
             });
 
+            // Reconstruire le tableau avec les colonnes dynamiques
             resultsBody.innerHTML = html;
         }
 
@@ -1560,7 +1762,7 @@
             });
             document.getElementById('totalCandidats').textContent = candidatsData.length || 0;
             document.getElementById('totalCotes').textContent = totalCotes;
-            document.getElementById('totalJurys').textContent = Object.keys(jurysActifs).length || 4;
+            document.getElementById('totalJurys').textContent = Object.keys(jurysActifs).length || juryList.length;
         }
 
         function mettreAJourProgression() {
@@ -1685,6 +1887,7 @@
         console.log('👑 Mode Admin');
         console.log('⏱️ Chronomètre synchronisé en temps réel');
         console.log('📊 Cotations en temps réel avec notifications');
+        console.log('👥 Gestion dynamique des jurys');
     </script>
 
 </body>
