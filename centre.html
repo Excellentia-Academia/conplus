@@ -384,6 +384,10 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         .stats {
             display: flex;
             gap: 20px;
@@ -609,6 +613,19 @@
         }
         .timer-sync-status i {
             color: var(--gold);
+        }
+
+        /* Animation pour les nouvelles cotations */
+        @keyframes highlightRow {
+            0% {
+                background: rgba(212, 175, 55, 0.2);
+            }
+            100% {
+                background: transparent;
+            }
+        }
+        .row-updated {
+            animation: highlightRow 1.5s ease;
         }
     </style>
 </head>
@@ -852,6 +869,7 @@
         let cotationsData = {};
         let photoFile = null;
         let etatActuel = null;
+        let previousCotations = {};
 
         const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
 
@@ -1122,7 +1140,6 @@
                         timerPaused = false;
                         timerStatus.textContent = '▶️ En cours (synchro)';
                         timerStatus.className = 'status-text en-cours';
-                        // Redémarrer l'intervalle local
                         if (timerInterval) clearInterval(timerInterval);
                         timerInterval = setInterval(() => {
                             timerRemaining--;
@@ -1140,7 +1157,6 @@
                         updateTimerDisplay();
                     }
 
-                    // Si le timer a été arrêté depuis Firebase
                     if (!newRunning && !newPaused && timerRunning) {
                         if (timerInterval) clearInterval(timerInterval);
                         timerRunning = false;
@@ -1150,7 +1166,6 @@
                         updateTimerDisplay();
                     }
 
-                    // Mettre à jour le statut général
                     if (data.timerRemaining === 0 && !timerRunning) {
                         timerStatus.textContent = '⏰ Temps écoulé !';
                         timerStatus.className = 'status-text termine';
@@ -1204,6 +1219,7 @@
                 cotationsSnapshot.forEach(doc => {
                     cotationsData[doc.id] = doc.data();
                 });
+                previousCotations = JSON.parse(JSON.stringify(cotationsData));
 
                 const etatDoc = await db.collection('etat').doc('current').get();
                 if (etatDoc.exists) {
@@ -1216,7 +1232,6 @@
                         if (timerRunning) {
                             timerStatus.textContent = '▶️ En cours';
                             timerStatus.className = 'status-text en-cours';
-                            // Redémarrer l'intervalle
                             if (timerInterval) clearInterval(timerInterval);
                             timerInterval = setInterval(() => {
                                 timerRemaining--;
@@ -1265,13 +1280,41 @@
 
         function ecouterCotations() {
             db.collection('cotations').onSnapshot((snapshot) => {
-                cotationsData = {};
+                const newCotations = {};
                 snapshot.forEach(doc => {
-                    cotationsData[doc.id] = doc.data();
+                    newCotations[doc.id] = doc.data();
                 });
+
+                // Détecter les changements pour les notifications
+                let changedCandidats = [];
+                Object.keys(newCotations).forEach(candidat => {
+                    const oldData = previousCotations[candidat] || {};
+                    const newData = newCotations[candidat] || {};
+                    if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+                        changedCandidats.push(candidat);
+                    }
+                });
+
+                cotationsData = newCotations;
+
+                // Notifier les changements
+                if (changedCandidats.length > 0) {
+                    changedCandidats.forEach(candidat => {
+                        const data = cotationsData[candidat];
+                        let juryCount = 0;
+                        JURYS.forEach(j => {
+                            if (data[j] && data[j].valide) juryCount++;
+                        });
+                        showNotification(`📊 Nouvelle cotation pour "${candidat}" (${juryCount}/${JURYS.length})`,
+                            'info');
+                    });
+                }
+
+                previousCotations = JSON.parse(JSON.stringify(cotationsData));
                 mettreAJourResultats();
                 mettreAJourStatistiques();
                 mettreAJourProgression();
+
             }, (error) => {
                 console.error('❌ Erreur écoute cotations:', error);
             });
@@ -1478,8 +1521,13 @@
                 const isActif = nom === candidatEnCours;
                 const rowClass = isActif ? 'candidat-actif' : '';
 
+                // Vérifier si ce candidat a été récemment mis à jour
+                const isUpdated = previousCotations[nom] && JSON.stringify(previousCotations[nom]) !== JSON.stringify(
+                cotes);
+                const updateClass = isUpdated ? 'row-updated' : '';
+
                 html += `
-                            <tr class="${rowClass}">
+                            <tr class="${rowClass} ${updateClass}">
                                 <td class="${rangClass}">${rang}</td>
                                 <td>${nom} ${isActif ? '👑' : ''}</td>
                                 <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(212,175,55,0.15)' : 'rgba(70,130,255,0.12)'};color:${candidat?.role === 'Thèse' ? 'var(--gold)' : '#7aa9ff'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
@@ -1636,6 +1684,7 @@
         console.log('📊 Firebase configuré');
         console.log('👑 Mode Admin');
         console.log('⏱️ Chronomètre synchronisé en temps réel');
+        console.log('📊 Cotations en temps réel avec notifications');
     </script>
 
 </body>
