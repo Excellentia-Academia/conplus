@@ -5,27 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🎛️ Centre de Contrôle - Éloquence en Scène</title>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
     <style>
-        /* ============================================================
-           STYLES COMPLETS - CENTRE DE CONTRÔLE
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             --gold: #d4af37;
             --gold-light: #f5e6a3;
@@ -42,19 +35,15 @@
             --blue: #3498db;
             --orange: #f39c12;
         }
-
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--black);
             color: var(--white);
             min-height: 100vh;
             padding: 20px;
-            background-image:
-                radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%),
-                radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
+            background-image: radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%), radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
             background-attachment: fixed;
         }
-
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -68,7 +57,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gold);
         }
-
         header {
             display: flex;
             flex-wrap: wrap;
@@ -85,7 +73,6 @@
             top: 10px;
             z-index: 100;
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -94,26 +81,22 @@
             font-weight: 900;
             color: var(--gold);
         }
-
         .logo i {
             font-size: 2rem;
             filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.25));
         }
-
         .logo span {
             background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .header-info {
             display: flex;
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .admin-badge {
             background: var(--gold);
             color: var(--black);
@@ -123,7 +106,6 @@
             font-weight: 700;
             letter-spacing: 1px;
         }
-
         .status-connection {
             display: flex;
             align-items: center;
@@ -131,7 +113,6 @@
             font-size: 0.75rem;
             color: #888;
         }
-
         .status-connection .dot {
             width: 10px;
             height: 10px;
@@ -144,7 +125,6 @@
         .dot.offline {
             background: var(--red);
         }
-
         .btn-logout {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -160,7 +140,6 @@
             border-color: var(--red);
             color: var(--red);
         }
-
         section {
             background: var(--card-bg);
             backdrop-filter: blur(6px);
@@ -170,7 +149,6 @@
             border: 1px solid rgba(212, 175, 55, 0.06);
             box-shadow: var(--shadow);
         }
-
         h2 {
             font-size: 1.1rem;
             font-weight: 600;
@@ -182,36 +160,26 @@
             color: var(--gold);
             margin-right: 10px;
         }
-
-        .hidden {
-            display: none !important;
-        }
-
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
         }
-
         @media (max-width: 1024px) {
             .admin-grid {
                 grid-template-columns: 1fr;
             }
         }
-
-        /* ---- CHRONOMÈTRE ---- */
         .timer-section {
             background: rgba(212, 175, 55, 0.03);
             border-radius: var(--radius);
             padding: 20px;
             border: 1px solid rgba(212, 175, 55, 0.06);
         }
-
         .timer-display {
             text-align: center;
             padding: 20px 0;
         }
-
         .timer-display .timer-clock {
             font-size: 5rem;
             font-weight: 800;
@@ -220,17 +188,14 @@
             letter-spacing: 4px;
             text-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
         }
-
         .timer-display .timer-clock.warning {
             color: var(--orange);
             animation: pulse-timer 0.5s infinite alternate;
         }
-
         .timer-display .timer-clock.danger {
             color: var(--red);
             animation: pulse-timer 0.3s infinite alternate;
         }
-
         @keyframes pulse-timer {
             0% {
                 opacity: 1;
@@ -241,7 +206,6 @@
                 transform: scale(1.05);
             }
         }
-
         .timer-controls {
             display: flex;
             justify-content: center;
@@ -249,7 +213,6 @@
             flex-wrap: wrap;
             margin-bottom: 16px;
         }
-
         .timer-controls button {
             padding: 10px 24px;
             border: none;
@@ -263,7 +226,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .timer-controls .btn-start {
             background: var(--green);
             color: #fff;
@@ -272,7 +234,6 @@
             background: #27ae60;
             transform: scale(1.05);
         }
-
         .timer-controls .btn-pause {
             background: var(--orange);
             color: #fff;
@@ -281,7 +242,6 @@
             background: #e67e22;
             transform: scale(1.05);
         }
-
         .timer-controls .btn-reset {
             background: var(--red);
             color: #fff;
@@ -290,14 +250,12 @@
             background: #c0392b;
             transform: scale(1.05);
         }
-
         .timer-presets {
             display: flex;
             justify-content: center;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .timer-presets button {
             padding: 6px 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -318,7 +276,6 @@
             color: var(--gold);
             background: rgba(212, 175, 55, 0.06);
         }
-
         .timer-status {
             text-align: center;
             font-size: 0.8rem;
@@ -334,20 +291,16 @@
         .timer-status .status-text.termine {
             color: var(--red);
         }
-
-        /* ---- GESTION CANDIDATS ---- */
         .candidat-control {
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
-
         .candidat-control .form-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-
         .candidat-control .form-group label {
             font-size: 0.75rem;
             color: #888;
@@ -355,7 +308,6 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
-
         .candidat-control .form-group select,
         .candidat-control .form-group input {
             padding: 10px 14px;
@@ -367,19 +319,16 @@
             font-size: 0.9rem;
             transition: var(--transition);
         }
-
         .candidat-control .form-group select:focus,
         .candidat-control .form-group input:focus {
             outline: none;
             border-color: var(--gold);
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
         }
-
         .candidat-control .form-group select option {
             background: var(--black);
             color: var(--white);
         }
-
         .photo-preview {
             display: flex;
             align-items: center;
@@ -389,7 +338,6 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .photo-preview img {
             width: 60px;
             height: 60px;
@@ -397,7 +345,6 @@
             object-fit: cover;
             background: var(--dark-grey);
         }
-
         .photo-preview .photo-placeholder {
             width: 60px;
             height: 60px;
@@ -409,7 +356,6 @@
             color: #555;
             font-size: 1.5rem;
         }
-
         .btn-send {
             padding: 12px 24px;
             background: linear-gradient(135deg, var(--gold), var(--gold-dark));
@@ -431,20 +377,12 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
-        .btn-send:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* ---- RÉSULTATS ---- */
         .stats {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             margin-bottom: 16px;
         }
-
         .stats .stat-card {
             background: rgba(255, 255, 255, 0.02);
             padding: 12px 20px;
@@ -454,7 +392,6 @@
             min-width: 120px;
             text-align: center;
         }
-
         .stats .stat-card .stat-number {
             font-size: 1.5rem;
             font-weight: 700;
@@ -466,11 +403,9 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
         .progress-container {
             margin-bottom: 16px;
         }
-
         .progress-container .progress-bar {
             width: 100%;
             height: 6px;
@@ -478,14 +413,12 @@
             border-radius: 10px;
             overflow: hidden;
         }
-
         .progress-container .progress-bar .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
             border-radius: 10px;
             transition: width 0.5s ease;
         }
-
         .progress-container .progress-info {
             display: flex;
             justify-content: space-between;
@@ -493,23 +426,19 @@
             color: #666;
             margin-top: 4px;
         }
-
         .table-wrapper {
             overflow-x: auto;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.8rem;
         }
-
         thead {
             background: rgba(212, 175, 55, 0.06);
         }
-
         th {
             padding: 10px 10px;
             text-align: left;
@@ -520,17 +449,14 @@
             text-transform: uppercase;
             border-bottom: 1px solid rgba(212, 175, 55, 0.06);
         }
-
         td {
             padding: 8px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             color: #ccc;
         }
-
         tr:hover td {
             background: rgba(255, 255, 255, 0.02);
         }
-
         .status-badge {
             font-size: 0.6rem;
             padding: 2px 12px;
@@ -550,7 +476,6 @@
             background: rgba(255, 255, 255, 0.04);
             color: #666;
         }
-
         .btn-export {
             padding: 8px 20px;
             background: var(--blue);
@@ -571,8 +496,6 @@
             background: #2980b9;
             transform: translateY(-2px);
         }
-
-        /* ---- RESPONSIVE ---- */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -610,7 +533,6 @@
                 flex-direction: column;
             }
         }
-
         @media (max-width: 480px) {
             body {
                 padding: 10px;
@@ -624,134 +546,6 @@
                 font-size: 0.65rem;
             }
         }
-
-        /* ---- MODAL AIDE ---- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            max-width: 500px;
-            width: 100%;
-            padding: 30px;
-            border: 1px solid rgba(212, 175, 55, 0.06);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            0% {
-                transform: scale(0.9) translateY(20px);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-content .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .modal-content .modal-header h3 {
-            font-size: 1.1rem;
-            color: var(--gold-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-content .modal-header .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #666;
-            cursor: pointer;
-        }
-
-        .modal-content .modal-body {
-            color: #999;
-            font-size: 0.9rem;
-            line-height: 1.8;
-        }
-
-        .modal-content .modal-body .info-contact {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 14px 18px;
-            border-radius: 10px;
-            border-left: 4px solid var(--gold);
-            margin-top: 12px;
-        }
-
-        .modal-content .modal-body .info-contact .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: #ccc;
-            padding: 4px 0;
-        }
-
-        .modal-content .modal-body .info-contact .contact-item i {
-            color: var(--gold);
-            width: 20px;
-        }
-
-        .modal-content .modal-footer {
-            margin-top: 16px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-content .modal-footer button {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            flex: 1;
-        }
-
-        .modal-content .modal-footer .btn-modal-fermer {
-            background: rgba(255, 255, 255, 0.06);
-            color: #aaa;
-        }
-        .modal-content .modal-footer .btn-modal-fermer:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-content .modal-footer .btn-modal-contacter {
-            background: var(--gold);
-            color: var(--black);
-        }
-        .modal-content .modal-footer .btn-modal-contacter:hover {
-            background: var(--gold-light);
-            transform: scale(1.02);
-        }
-
         .rank-1 {
             color: var(--gold) !important;
             font-weight: 700 !important;
@@ -764,48 +558,46 @@
             color: #cd7f32 !important;
             font-weight: 600 !important;
         }
-
         .candidat-actif {
             background: rgba(212, 175, 55, 0.08) !important;
             border-left: 3px solid var(--gold) !important;
         }
-
-        .flash-new {
-            animation: flashRow 1s ease 3;
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            max-width: 400px;
         }
-
-        @keyframes flashRow {
-            0%,
-            100% {
-                background: transparent;
-            }
-            50% {
-                background: rgba(212, 175, 55, 0.1);
-            }
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
         }
-
-        .btn-reset-all {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #888;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.7rem;
-            transition: var(--transition);
+        .notification.success {
+            background: var(--green);
         }
-        .btn-reset-all:hover {
-            border-color: var(--red);
-            color: var(--red);
+        .notification.error {
+            background: var(--red);
+        }
+        .notification.info {
+            background: var(--blue);
+        }
+        .notification.warning {
+            background: var(--orange);
         }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================
-    HEADER
-    ============================================================ -->
     <header>
         <div class="logo">
             <i class="fas fa-crown"></i>
@@ -818,22 +610,11 @@
                 <span id="connectionStatus">Connexion...</span>
             </span>
             <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
-            <button class="btn-logout" id="aideBtn" style="border-color:var(--gold);color:var(--gold);">
-                <i class="fas fa-life-ring"></i> Aide
-            </button>
         </div>
     </header>
 
-    <!-- ============================================================
-    MAIN
-    ============================================================ -->
     <main>
-
-        <!-- ============================================================
-        GRILLE ADMIN
-        ============================================================ -->
         <div class="admin-grid">
-
             <!-- CHRONOMÈTRE -->
             <section>
                 <h2><i class="fas fa-clock"></i> Chronomètre</h2>
@@ -866,21 +647,18 @@
             <section>
                 <h2><i class="fas fa-user-tie"></i> Gestion des Candidats</h2>
                 <div class="candidat-control">
-
                     <div class="form-group">
                         <label><i class="fas fa-gavel"></i> Match</label>
                         <select id="matchSelect">
                             <option value="">-- Sélectionner un match --</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label><i class="fas fa-user"></i> Candidat</label>
                         <select id="candidatSelect">
                             <option value="">-- Sélectionner un candidat --</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label><i class="fas fa-image"></i> Photo du candidat</label>
                         <div class="photo-preview">
@@ -891,27 +669,14 @@
                             <input type="file" id="photoUpload" accept="image/*" style="flex:1;" />
                         </div>
                     </div>
-
                     <button class="btn-send" id="sendBtn">
                         <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
                     </button>
-
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-                        <button class="btn-reset-all" id="resetEtatBtn">
-                            <i class="fas fa-undo"></i> Réinitialiser l'état
-                        </button>
-                        <button class="btn-reset-all" id="resetAllCotationsBtn" style="border-color:var(--red);color:var(--red);">
-                            <i class="fas fa-trash"></i> Supprimer toutes les cotations
-                        </button>
-                    </div>
                 </div>
             </section>
-
         </div>
 
-        <!-- ============================================================
-        RÉSULTATS EN TEMPS RÉEL
-        ============================================================ -->
+        <!-- RÉSULTATS -->
         <section>
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
                 <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Cotations en Temps Réel</h2>
@@ -973,74 +738,32 @@
                 </table>
             </div>
         </section>
-
     </main>
 
-    <!-- ============================================================
-    MODAL AIDE
-    ============================================================ -->
-    <div class="modal-overlay" id="aideModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-life-ring"></i> Centre de Contrôle - Aide</h3>
-                <button class="close-modal" id="closeAideModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Fonctionnalités :</strong></p>
-                <ul style="list-style:none;padding:0;margin:8px 0;">
-                    <li style="padding:4px 0;">⏱️ <strong>Chronomètre</strong> : Contrôlez le temps des prestations</li>
-                    <li style="padding:4px 0;">👤 <strong>Candidats</strong> : Sélectionnez et envoyez aux jurys</li>
-                    <li style="padding:4px 0;">📊 <strong>Résultats</strong> : Visualisez les cotations en direct</li>
-                    <li style="padding:4px 0;">📤 <strong>Export</strong> : Téléchargez les résultats en CSV</li>
-                </ul>
-                <div class="info-contact">
-                    <div class="contact-item">
-                        <i class="fas fa-user-tie"></i>
-                        <span><strong>Responsable :</strong> Jean-Pierre</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span><strong>Téléphone :</strong> +243 812 345 678</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span><strong>Email :</strong> support@eloquence-scene.cd</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-modal-fermer" id="fermerAide"><i class="fas fa-times"></i> Fermer</button>
-                <button class="btn-modal-contacter" id="contacterAide"><i class="fas fa-phone"></i> Contacter</button>
-            </div>
-        </div>
-    </div>
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification"></div>
 
-    <!-- ============================================================
-    SCRIPTS COMPLETS
-    ============================================================ -->
     <script>
         // ================================================================
-        // CONFIGURATION FIREBASE
+        // 🔥 CONFIGURATION FIREBASE - À MODIFIER AVEC VOS CLÉS
         // ================================================================
-
+        
         const firebaseConfig = {
             apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
             authDomain: "conf-94615.firebaseapp.com",
             projectId: "conf-94615",
             storageBucket: "conf-94615.firebasestorage.app",
             messagingSenderId: "312554343685",
-            appId: "1:312554343685:web:b199e33ff4ca050d533b6c",
-            measurementId: "G-BLCPS9S0ZJ"
+            appId: "1:312554343685:web:b199e33ff4ca050d533b6c"
         };
 
         firebase.initializeApp(firebaseConfig);
-
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
 
         // ================================================================
-        // DONNÉES : 26 MATCHS
+        // 📋 DONNÉES DES 26 MATCHS
         // ================================================================
 
         const MATCHS_DATA = [
@@ -1099,7 +822,7 @@
         ];
 
         // ================================================================
-        // ÉTAT GLOBAL
+        // 🎯 ÉTAT GLOBAL
         // ================================================================
 
         let timerSeconds = 300;
@@ -1107,7 +830,6 @@
         let timerInterval = null;
         let timerRunning = false;
         let timerPaused = false;
-
         let matchsData = [];
         let candidatsData = [];
         let cotationsData = {};
@@ -1119,7 +841,7 @@
         const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
 
         // ================================================================
-        // RÉFÉRENCES DOM
+        // 📦 RÉFÉRENCES DOM
         // ================================================================
 
         const timerClock = document.getElementById('timerClock');
@@ -1127,14 +849,12 @@
         const timerStart = document.getElementById('timerStart');
         const timerPause = document.getElementById('timerPause');
         const timerReset = document.getElementById('timerReset');
-
         const matchSelect = document.getElementById('matchSelect');
         const candidatSelect = document.getElementById('candidatSelect');
         const photoUpload = document.getElementById('photoUpload');
         const photoPreview = document.getElementById('photoPreview');
         const photoPlaceholder = document.getElementById('photoPlaceholder');
         const sendBtn = document.getElementById('sendBtn');
-
         const resultsBody = document.getElementById('resultsBody');
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
@@ -1143,111 +863,129 @@
         const totalCotes = document.getElementById('totalCotes');
         const totalJurys = document.getElementById('totalJurys');
         const candidatActuel = document.getElementById('candidatActuel');
-
         const exportBtn = document.getElementById('exportBtn');
         const logoutBtn = document.getElementById('logoutBtn');
-        const aideBtn = document.getElementById('aideBtn');
-        const resetEtatBtn = document.getElementById('resetEtatBtn');
-        const resetAllCotationsBtn = document.getElementById('resetAllCotationsBtn');
-
         const connectionDot = document.getElementById('connectionDot');
         const connectionStatus = document.getElementById('connectionStatus');
+        const notification = document.getElementById('notification');
 
-        const aideModal = document.getElementById('aideModal');
-        const closeAideModal = document.getElementById('closeAideModal');
-        const fermerAide = document.getElementById('fermerAide');
-        const contacterAide = document.getElementById('contacterAide');
+        let notificationTimeout = null;
 
         // ================================================================
-        // AUTHENTIFICATION
+        // 🔔 NOTIFICATIONS
+        // ================================================================
+
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // ================================================================
+        // 🔐 AUTHENTIFICATION - CORRIGÉE
         // ================================================================
 
         function connecterAdmin() {
             connectionStatus.textContent = 'Connexion...';
             connectionDot.className = 'dot offline';
 
-            auth.signInAnonymously()
-                .then(() => {
-                    currentUser = auth.currentUser;
+            // Vérifier si déjà connecté
+            if (auth.currentUser) {
+                currentUser = auth.currentUser;
+                isAdmin = true;
+                connectionDot.className = 'dot online';
+                connectionStatus.textContent = '✅ Connecté (Admin)';
+                console.log('✅ Déjà connecté');
+                initialiserApp();
+                return;
+            }
+
+            // 1. Tentative de connexion avec email/password
+            auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
                     isAdmin = true;
                     connectionDot.className = 'dot online';
                     connectionStatus.textContent = '✅ Connecté (Admin)';
-                    console.log('✅ Admin connecté');
-                    chargerDonnees();
-                    importerMatchsSiNecessaire();
+                    console.log('✅ Admin connecté (email)');
+                    showNotification('✅ Connecté à Firebase', 'success');
+                    initialiserApp();
                 })
-                .catch(error => {
-                    console.error('❌ Erreur connexion:', error);
-                    connectionStatus.textContent = '❌ Erreur connexion';
-                    connectionDot.className = 'dot offline';
+                .catch((error) => {
+                    console.warn('⚠️ Erreur email:', error.code);
 
-                    auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
-                        .then(() => {
-                            currentUser = auth.currentUser;
-                            isAdmin = true;
-                            connectionDot.className = 'dot online';
-                            connectionStatus.textContent = '✅ Connecté (Admin)';
-                            console.log('✅ Admin connecté (email)');
-                            chargerDonnees();
-                            importerMatchsSiNecessaire();
-                        })
-                        .catch(err => {
-                            console.error('❌ Erreur connexion email:', err);
-                            connectionStatus.textContent = '⚠️ Mode hors ligne';
-                            chargerDonnees();
-                        });
+                    // 2. Si l'utilisateur n'existe pas, on le crée
+                    if (error.code === 'auth/user-not-found') {
+                        connectionStatus.textContent = '📝 Création du compte...';
+                        auth.createUserWithEmailAndPassword('admin@eloquence.cd', 'admin123')
+                            .then((userCredential) => {
+                                currentUser = userCredential.user;
+                                isAdmin = true;
+                                connectionDot.className = 'dot online';
+                                connectionStatus.textContent = '✅ Compte créé !';
+                                console.log('✅ Compte admin créé');
+                                showNotification('✅ Compte admin créé', 'success');
+                                initialiserApp();
+                            })
+                            .catch((createError) => {
+                                console.error('❌ Erreur création:', createError);
+                                connexionAnonyme();
+                            });
+                    } else {
+                        // 3. Autre erreur : tentative anonyme
+                        connexionAnonyme();
+                    }
                 });
         }
 
-        // ================================================================
-        // IMPORT AUTOMATIQUE DES MATCHS
-        // ================================================================
+        function connexionAnonyme() {
+            connectionStatus.textContent = '🔄 Connexion anonyme...';
+            auth.signInAnonymously()
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
+                    isAdmin = true;
+                    connectionDot.className = 'dot online';
+                    connectionStatus.textContent = '✅ Connecté (Anonyme)';
+                    console.log('✅ Connexion anonyme réussie');
+                    showNotification('✅ Connecté en mode anonyme', 'success');
+                    initialiserApp();
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur anonyme:', error);
+                    connectionStatus.textContent = '⚠️ Mode hors ligne';
+                    connectionDot.className = 'dot offline';
+                    showNotification('⚠️ Mode hors ligne - Données locales', 'warning');
+                    chargerDonneesLocales();
+                });
+        }
 
-        async function importerMatchsSiNecessaire() {
-            try {
-                const snapshot = await db.collection('matchs').limit(1).get();
-
-                if (snapshot.empty) {
-                    console.log('📥 Importation des 26 matchs...');
-                    let success = 0;
-
-                    for (const match of MATCHS_DATA) {
-                        try {
-                            await db.collection('matchs').doc(match.id.toString()).set(match);
-                            console.log(`✅ Match #${match.id} importé`);
-                            success++;
-                        } catch (e) {
-                            console.error(`❌ Erreur match #${match.id}:`, e);
-                        }
-                    }
-
-                    console.log(`📊 ${success}/${MATCHS_DATA.length} matchs importés`);
-
-                    await db.collection('etat').doc('current').set({
-                        matchId: 0,
-                        candidatNom: '',
-                        candidatTheme: '',
-                        candidatRole: '',
-                        candidatPhoto: '',
-                        timer: 300,
-                        timerRunning: false,
-                        status: 'en-attente',
-                        nombreJurys: 4,
-                        timestamp: Date.now()
-                    }, { merge: true });
-
-                    alert(`✅ ${success} matchs importés avec succès !`);
-                } else {
-                    console.log('✅ Les matchs existent déjà dans la base');
-                }
-            } catch (error) {
-                console.error('❌ Erreur vérification matchs:', error);
-            }
+        function initialiserApp() {
+            chargerDonnees();
+            importerMatchsSiNecessaire();
         }
 
         // ================================================================
-        // CHARGEMENT DES DONNÉES
+        // 📁 CHARGEMENT DES DONNÉES
         // ================================================================
+
+        function chargerDonneesLocales() {
+            console.log('📁 Chargement des données locales...');
+            matchsData = MATCHS_DATA;
+            candidatsData = [];
+            matchsData.forEach(m => {
+                if (m.these) candidatsData.push({ nom: m.these, matchId: parseInt(m.id), role: 'Thèse',
+                theme: m.theme });
+                if (m.antithese) candidatsData.push({ nom: m.antithese, matchId: parseInt(m.id),
+                    role: 'Antithèse', theme: m.theme });
+            });
+            remplirMatchs();
+            mettreAJourResultats();
+            mettreAJourStatistiques();
+            mettreAJourProgression();
+        }
 
         async function chargerDonnees() {
             try {
@@ -1304,11 +1042,12 @@
                 console.error('❌ Erreur chargement:', error);
                 resultsBody.innerHTML =
                     `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
+                chargerDonneesLocales();
             }
         }
 
         // ================================================================
-        // ÉCOUTES EN TEMPS RÉEL
+        // 👂 ÉCOUTES EN TEMPS RÉEL
         // ================================================================
 
         function ecouterCotations() {
@@ -1330,7 +1069,6 @@
                 if (doc.exists) {
                     const data = doc.data();
                     etatActuel = data;
-
                     if (data && data.timer !== undefined) {
                         timerRemaining = data.timer;
                         timerRunning = data.timerRunning || false;
@@ -1343,11 +1081,9 @@
                             timerStatus.className = 'status-text pause';
                         }
                     }
-
                     if (data && data.candidatNom) {
                         candidatActuel.textContent = data.candidatNom;
                     }
-
                     mettreAJourResultats();
                 }
             }, (error) => {
@@ -1356,7 +1092,45 @@
         }
 
         // ================================================================
-        // REMPLIR LES SÉLECTEURS
+        // 📥 IMPORT DES MATCHS
+        // ================================================================
+
+        async function importerMatchsSiNecessaire() {
+            try {
+                const snapshot = await db.collection('matchs').limit(1).get();
+                if (snapshot.empty) {
+                    console.log('📥 Importation des 26 matchs...');
+                    let success = 0;
+                    for (const match of MATCHS_DATA) {
+                        try {
+                            await db.collection('matchs').doc(match.id.toString()).set(match);
+                            success++;
+                        } catch (e) {
+                            console.error(`❌ Erreur match #${match.id}:`, e);
+                        }
+                    }
+                    await db.collection('etat').doc('current').set({
+                        matchId: 0,
+                        candidatNom: '',
+                        candidatTheme: '',
+                        candidatRole: '',
+                        candidatPhoto: '',
+                        timer: 300,
+                        timerRunning: false,
+                        status: 'en-attente',
+                        nombreJurys: 4,
+                        timestamp: Date.now()
+                    }, { merge: true });
+                    showNotification(`✅ ${success} matchs importés !`, 'success');
+                    chargerDonnees();
+                }
+            } catch (error) {
+                console.error('❌ Erreur import:', error);
+            }
+        }
+
+        // ================================================================
+        // 🔄 REMPLIR LES SÉLECTEURS
         // ================================================================
 
         function remplirMatchs() {
@@ -1372,7 +1146,6 @@
         function remplirCandidats(matchId) {
             candidatSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
             if (!matchId) return;
-
             const filtered = candidatsData.filter(c => c.matchId === parseInt(matchId));
             filtered.forEach(c => {
                 const option = document.createElement('option');
@@ -1393,7 +1166,7 @@
         });
 
         // ================================================================
-        // CHRONOMÈTRE
+        // ⏱️ CHRONOMÈTRE
         // ================================================================
 
         function updateTimerDisplay() {
@@ -1401,7 +1174,6 @@
             const seconds = timerRemaining % 60;
             const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             timerClock.textContent = display;
-
             timerClock.classList.remove('warning', 'danger');
             if (timerRemaining <= 30 && timerRunning) {
                 timerClock.classList.add('danger');
@@ -1422,26 +1194,22 @@
         function startTimer() {
             if (timerRunning && !timerPaused) return;
             if (timerRemaining <= 0) setTimer(timerSeconds);
-
             timerRunning = true;
             timerPaused = false;
             timerStatus.textContent = '▶️ En cours';
             timerStatus.className = 'status-text en-cours';
-
             if (timerInterval) clearInterval(timerInterval);
-
             timerInterval = setInterval(() => {
                 timerRemaining--;
                 updateTimerDisplay();
                 syncTimerToFirebase();
-
                 if (timerRemaining <= 0) {
                     clearInterval(timerInterval);
                     timerRunning = false;
                     timerStatus.textContent = '⏰ Temps écoulé !';
                     timerStatus.className = 'status-text termine';
                     syncTimerToFirebase();
-                    alert('⏰ Temps écoulé !');
+                    showNotification('⏰ Temps écoulé !', 'warning');
                 }
             }, 1000);
         }
@@ -1475,7 +1243,7 @@
         }
 
         // ================================================================
-        // ENVOYER CANDIDAT AUX JURYS
+        // 📤 ENVOYER CANDIDAT AUX JURYS
         // ================================================================
 
         async function envoyerCandidat() {
@@ -1483,13 +1251,13 @@
             const candidatNom = candidatSelect.value;
 
             if (!matchId || !candidatNom) {
-                alert('⚠️ Veuillez sélectionner un match et un candidat');
+                showNotification('⚠️ Veuillez sélectionner un match et un candidat', 'error');
                 return;
             }
 
             const candidat = candidatsData.find(c => c.nom === candidatNom && c.matchId === matchId);
             if (!candidat) {
-                alert('⚠️ Candidat non trouvé');
+                showNotification('⚠️ Candidat non trouvé', 'error');
                 return;
             }
 
@@ -1519,32 +1287,29 @@
                 }, { merge: true });
 
                 candidatActuel.textContent = candidatNom;
-                alert(`✅ Candidat "${candidatNom}" envoyé aux jurys !`);
+                showNotification(`✅ "${candidatNom}" envoyé aux jurys !`, 'success');
             } catch (error) {
                 console.error('❌ Erreur envoi:', error);
-                alert('❌ Erreur: ' + error.message);
+                showNotification('❌ Erreur: ' + error.message, 'error');
             }
         }
 
         // ================================================================
-        // RÉSULTATS
+        // 📊 RÉSULTATS
         // ================================================================
 
         function mettreAJourResultats() {
             const resultats = {};
-
             Object.keys(cotationsData).forEach(candidat => {
                 const cotes = cotationsData[candidat];
                 let total = 0;
                 let count = 0;
-
                 JURYS.forEach(jury => {
                     if (cotes[jury] && cotes[jury].valide) {
                         total += cotes[jury].total || 0;
                         count++;
                     }
                 });
-
                 resultats[candidat] = {
                     total: total,
                     count: count,
@@ -1553,8 +1318,7 @@
                 };
             });
 
-            const sorted = Object.entries(resultats)
-                .sort((a, b) => b[1].moyenne - a[1].moyenne);
+            const sorted = Object.entries(resultats).sort((a, b) => b[1].moyenne - a[1].moyenne);
 
             if (sorted.length === 0) {
                 resultsBody.innerHTML =
@@ -1578,14 +1342,11 @@
 
                 const statut = data.count === JURYS.length ? 'valide' :
                     data.count > 0 ? 'brouillon' : 'non-cote';
-
                 const statusText = statut === 'valide' ? '✅ Validé' :
                     statut === 'brouillon' ? '⏳ En cours' : '⏹️ Non coté';
-
                 const rang = index + 1;
                 const rangClass = rang === 1 ? 'rank-1' : rang === 2 ? 'rank-2' : rang === 3 ? 'rank-3' : '';
                 const candidat = candidatsData.find(c => c.nom === nom);
-
                 const isActif = nom === candidatEnCours;
                 const rowClass = isActif ? 'candidat-actif' : '';
 
@@ -1610,7 +1371,6 @@
         function mettreAJourStatistiques() {
             let totalCotes = 0;
             const jurysActifs = {};
-
             Object.keys(cotationsData).forEach(candidat => {
                 const cotes = cotationsData[candidat];
                 let count = 0;
@@ -1622,7 +1382,6 @@
                 });
                 if (count > 0) totalCotes++;
             });
-
             document.getElementById('totalCandidats').textContent = candidatsData.length || 0;
             document.getElementById('totalCotes').textContent = totalCotes;
             document.getElementById('totalJurys').textContent = Object.keys(jurysActifs).length || 4;
@@ -1631,7 +1390,6 @@
         function mettreAJourProgression() {
             const total = candidatsData.length || 1;
             let cotes = 0;
-
             Object.keys(cotationsData).forEach(candidat => {
                 const cotesJury = cotationsData[candidat];
                 let count = 0;
@@ -1640,7 +1398,6 @@
                 });
                 if (count > 0) cotes++;
             });
-
             const progression = (cotes / total) * 100;
             progressFill.style.width = `${Math.min(progression, 100)}%`;
             progressText.textContent = `${cotes} / ${total} cotés`;
@@ -1648,12 +1405,11 @@
         }
 
         // ================================================================
-        // EXPORT CSV
+        // 📤 EXPORT CSV
         // ================================================================
 
         function exporterCSV() {
             let csv = 'Rang;Candidat;Rôle;Match;';
-
             JURYS.forEach(j => { csv += `${j};`; });
             csv += 'Moyenne;Statut\n';
 
@@ -1675,20 +1431,15 @@
                 resultats[candidat] = { notes, moyenne: count > 0 ? total / count : 0, count };
             });
 
-            const sorted = Object.entries(resultats)
-                .sort((a, b) => b[1].moyenne - a[1].moyenne);
-
+            const sorted = Object.entries(resultats).sort((a, b) => b[1].moyenne - a[1].moyenne);
             sorted.forEach(([nom, data], index) => {
                 const candidat = candidatsData.find(c => c.nom === nom);
                 let ligne = `${index + 1};${nom};${candidat?.role || '-'};${candidat?.matchId || '-'};`;
-
                 JURYS.forEach(j => {
                     ligne += `${data.notes[j] || '-'};`;
                 });
-
                 const statut = data.count === JURYS.length ? 'Validé' :
                     data.count > 0 ? 'En cours' : 'Non coté';
-
                 ligne += `${data.moyenne.toFixed(2)};${statut}\n`;
                 csv += ligne;
             });
@@ -1696,69 +1447,14 @@
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `classement_${new Date().toISOString().slice(0,10)}.csv`;
+            link.download = `classement_${new Date().toISOString().slice(0, 10)}.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
+            showNotification('✅ Export CSV terminé', 'success');
         }
 
         // ================================================================
-        // RÉINITIALISATIONS
-        // ================================================================
-
-        async function resetEtat() {
-            if (!confirm('⚠️ Réinitialiser l\'état actuel (candidat en cours, timer) ?')) return;
-
-            try {
-                await db.collection('etat').doc('current').set({
-                    matchId: 0,
-                    candidatNom: '',
-                    candidatTheme: '',
-                    candidatRole: '',
-                    candidatPhoto: '',
-                    timer: 300,
-                    timerRunning: false,
-                    status: 'en-attente',
-                    nombreJurys: 4,
-                    timestamp: Date.now()
-                }, { merge: true });
-
-                timerRemaining = 300;
-                timerRunning = false;
-                updateTimerDisplay();
-                timerStatus.textContent = '⏸️ Réinitialisé';
-                timerStatus.className = 'status-text';
-                candidatActuel.textContent = '-';
-                alert('✅ État réinitialisé !');
-            } catch (error) {
-                console.error('❌ Erreur réinitialisation:', error);
-                alert('❌ Erreur: ' + error.message);
-            }
-        }
-
-        async function resetAllCotations() {
-            if (!confirm('⚠️⚠️ SUPPRIMER TOUTES LES COTATIONS ? Cette action est irréversible !')) return;
-            if (!confirm('⚠️ Êtes-vous vraiment sûr ?')) return;
-
-            try {
-                const snapshot = await db.collection('cotations').get();
-                const batch = db.batch();
-                snapshot.forEach(doc => {
-                    batch.delete(doc.ref);
-                });
-                await batch.commit();
-                alert('✅ Toutes les cotations ont été supprimées !');
-                cotationsData = {};
-                mettreAJourResultats();
-                mettreAJourStatistiques();
-                mettreAJourProgression();
-            } catch (error) {
-                console.error('❌ Erreur suppression:', error);
-                alert('❌ Erreur: ' + error.message);
-            }
-        }
-
-        // ================================================================
-        // PHOTO
+        // 📸 PHOTO
         // ================================================================
 
         photoUpload.addEventListener('change', function(e) {
@@ -1776,7 +1472,7 @@
         });
 
         // ================================================================
-        // ÉVÉNEMENTS
+        // 🎯 ÉVÉNEMENTS
         // ================================================================
 
         timerStart.addEventListener('click', startTimer);
@@ -1788,15 +1484,12 @@
                 document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove(
                     'active'));
                 this.classList.add('active');
-                const seconds = parseInt(this.dataset.time);
-                setTimer(seconds);
+                setTimer(parseInt(this.dataset.time));
             });
         });
 
         sendBtn.addEventListener('click', envoyerCandidat);
         exportBtn.addEventListener('click', exporterCSV);
-        resetEtatBtn.addEventListener('click', resetEtat);
-        resetAllCotationsBtn.addEventListener('click', resetAllCotations);
 
         logoutBtn.addEventListener('click', () => {
             auth.signOut().then(() => {
@@ -1804,27 +1497,16 @@
             });
         });
 
-        aideBtn.addEventListener('click', () => aideModal.classList.add('active'));
-        closeAideModal.addEventListener('click', () => aideModal.classList.remove('active'));
-        fermerAide.addEventListener('click', () => aideModal.classList.remove('active'));
-        contacterAide.addEventListener('click', () => {
-            alert('📞 Appel en cours...\nNuméro : +243 812 345 678');
-            aideModal.classList.remove('active');
-        });
-        aideModal.addEventListener('click', (e) => {
-            if (e.target === this) aideModal.classList.remove('active');
-        });
-
         // ================================================================
-        // INITIALISATION
+        // 🚀 INITIALISATION
         // ================================================================
 
         connecterAdmin();
         setTimer(300);
 
         console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
-        console.log('📊 Firebase connecté - Projet: conf-94615');
-        console.log('👑 Mode Admin activé');
+        console.log('📊 Firebase configuré');
+        console.log('👑 Mode Admin');
     </script>
 
 </body>
