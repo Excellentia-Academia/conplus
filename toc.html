@@ -1,333 +1,1682 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Éloquence en Scène — Cotation</title>
-<style>
-/* ===== Design tokens (thème scène / projecteur) ===== */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎛️ Centre de Contrôle - Éloquence en Scène</title>
 
-#eloquence-app {
-  --stage-black: #14110F;
-  --surface: #211C18;
-  --surface-high: #2E2620;
-  --gold: #E7C873;
-  --gold-dim: #B99B4E;
-  --text-light: #F4EEE2;
-  --text-muted: #8C8377;
-  --line: #3A322A;
-  --danger: #C9584F;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Work Sans', -apple-system, sans-serif;
-  --radius: 10px;
-  --shadow: 0 8px 24px rgba(0,0,0,.35);
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-  background: var(--stage-black);
-  color: var(--text-light);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  background-image: radial-gradient(ellipse 900px 500px at 50% -10%, rgba(231,200,115,.10), transparent 60%);
-}
-#eloquence-app * { box-sizing: border-box; }
-#eloquence-app h1, #eloquence-app h2, #eloquence-app h3 { font-family: var(--font-display); font-weight: 600; margin: 0 0 .5em; }
-#eloquence-app a { color: var(--gold); }
+    <style>
+        /* ============================================================
+           STYLES COMPLETS - CENTRE DE CONTRÔLE
+           ============================================================ */
 
-#eloquence-app .app-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: .9rem 1.5rem; background: var(--surface); border-bottom: 1px solid var(--line);
-}
-#eloquence-app .brand { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: .5rem; cursor: pointer; }
-#eloquence-app .meta { display: flex; align-items: center; gap: 1.1rem; font-size: .92rem; color: var(--text-muted); flex-wrap: wrap; }
-#eloquence-app .app-main { max-width: 1180px; margin: 0 auto; padding: 1.75rem 1.5rem 3rem; }
-#eloquence-app .app-footer { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .82rem; border-top: 1px solid var(--line); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-#eloquence-app .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem; margin-bottom: 1.25rem; box-shadow: var(--shadow); }
-#eloquence-app .card h2, #eloquence-app .card h3 { color: var(--gold); font-size: 1.02rem; text-transform: uppercase; letter-spacing: .06em; }
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f5e6a3;
+            --gold-dark: #a07c1e;
+            --black: #0a0a0a;
+            --dark-grey: #141414;
+            --card-bg: rgba(20, 18, 14, 0.95);
+            --white: #f0ede6;
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            --radius: 16px;
+            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --blue: #3498db;
+            --orange: #f39c12;
+        }
 
-#eloquence-app button, #eloquence-app .btn {
-  font-family: var(--font-body); font-weight: 600; font-size: .92rem; border: 1px solid var(--line);
-  background: var(--surface-high); color: var(--text-light); padding: .6rem 1.1rem; border-radius: 8px;
-  cursor: pointer; transition: transform .08s ease, border-color .15s ease, background .15s ease; text-decoration: none; display: inline-block;
-}
-#eloquence-app button:hover, #eloquence-app .btn:hover { border-color: var(--gold-dim); }
-#eloquence-app button:active { transform: scale(.98); }
-#eloquence-app button:disabled { opacity: .45; cursor: not-allowed; }
-#eloquence-app .btn-primary { background: var(--gold); color: #201808; border-color: var(--gold); }
-#eloquence-app .btn-primary:hover { background: #f0d488; }
-#eloquence-app .btn-danger { border-color: var(--danger); color: var(--danger); background: transparent; }
-#eloquence-app .btn-danger:hover { background: rgba(201,88,79,.12); }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%),
+                radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
+            background-attachment: fixed;
+        }
 
-#eloquence-app input, #eloquence-app select, #eloquence-app textarea {
-  font-family: var(--font-body); background: var(--stage-black); border: 1px solid var(--line);
-  color: var(--text-light); border-radius: 7px; padding: .55rem .7rem; font-size: .95rem;
-}
-#eloquence-app input:focus, #eloquence-app select:focus, #eloquence-app textarea:focus, #eloquence-app button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-#eloquence-app label { font-size: .85rem; color: var(--text-muted); display: block; margin-bottom: .3rem; }
-#eloquence-app table { width: 100%; border-collapse: collapse; font-size: .92rem; }
-#eloquence-app th, #eloquence-app td { padding: .55rem .6rem; text-align: left; border-bottom: 1px solid var(--line); }
-#eloquence-app th { color: var(--text-muted); text-transform: uppercase; font-size: .75rem; letter-spacing: .05em; }
-#eloquence-app .rank-1 { color: var(--gold); font-weight: 700; }
-#eloquence-app .rank-2 { color: #C9C2B4; font-weight: 700; }
-#eloquence-app .rank-3 { color: #B5895A; font-weight: 700; }
-#eloquence-app .pill { display: inline-block; padding: .2rem .6rem; border-radius: 999px; background: var(--surface-high); border: 1px solid var(--line); font-size: .8rem; color: var(--text-muted); }
-#eloquence-app .progress-bar { height: 8px; border-radius: 999px; background: var(--surface-high); overflow: hidden; border: 1px solid var(--line); }
-#eloquence-app .progress-bar > div { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); transition: width .4s ease; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
 
-/* Vues (routeur par ancre) */
-#eloquence-app .view { display: none; }
-#eloquence-app .view.active { display: block; }
+        /* ---- HEADER ---- */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 32px;
+            background: rgba(12, 11, 8, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 80px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
 
-/* Accueil / connexion */
-#eloquence-app .login-wrap { max-width: 460px; margin: 3rem auto; }
-#eloquence-app .logo-hero { text-align: center; margin-bottom: 2rem; }
-#eloquence-app .logo-hero .emoji { font-size: 2.6rem; }
-#eloquence-app .tabs { display: flex; gap: .5rem; margin-bottom: 1.2rem; }
-#eloquence-app .tab-btn { flex: 1; background: var(--surface-high); border: 1px solid var(--line); padding: .6rem; border-radius: 8px; cursor: pointer; color: var(--text-muted); }
-#eloquence-app .tab-btn.active { color: var(--gold); border-color: var(--gold-dim); }
-#eloquence-app .pane { display: none; }
-#eloquence-app .pane.active { display: block; }
-#eloquence-app .field-group { margin-bottom: .9rem; }
-#eloquence-app .field-group input, #eloquence-app .field-group textarea { width: 100%; }
-#eloquence-app .error-msg { color: var(--danger); font-size: .85rem; margin-top: .6rem; min-height: 1.1em; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+        }
 
-/* Jury */
-#eloquence-app .jury-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; }
-#eloquence-app .candidat-photo { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: var(--radius); background: var(--surface-high); border: 1px solid var(--line); margin-bottom: .9rem; }
-#eloquence-app .candidat-role { display: inline-block; background: var(--gold); color: #201808; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; padding: .2rem .6rem; border-radius: 999px; margin-bottom: .5rem; }
-#eloquence-app .candidat-nom { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: .3rem; }
-#eloquence-app .candidat-theme { color: var(--text-muted); font-style: italic; font-size: .92rem; margin-bottom: .9rem; }
-#eloquence-app .candidat-stats { display: flex; justify-content: space-between; font-size: .85rem; color: var(--text-muted); border-top: 1px solid var(--line); padding-top: .7rem; }
-#eloquence-app #timerDisplay, #eloquence-app #adminTimerDisplay { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gold); }
-#eloquence-app .critere-row { display: grid; grid-template-columns: 1fr 90px 40px; align-items: center; gap: .6rem; margin-bottom: .7rem; }
-#eloquence-app .critere-row input { text-align: center; }
-#eloquence-app .critere-max { color: var(--text-muted); font-size: .85rem; }
-#eloquence-app .total-row { display: flex; justify-content: space-between; align-items: baseline; padding: .9rem 0; margin: .8rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-#eloquence-app .total-row .label { font-family: var(--font-display); font-size: 1.05rem; color: var(--gold); }
-#eloquence-app #totalCotation { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--gold); }
-#eloquence-app .action-row { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
-#eloquence-app #statutCotation { display: block; margin-top: .8rem; text-align: center; color: var(--text-muted); font-size: .85rem; }
+        .logo i {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.25));
+        }
 
-/* Admin */
-#eloquence-app .timer-block { text-align: center; padding: .5rem 0 1rem; }
-#eloquence-app #adminTimerDisplay { font-family: var(--font-display); font-size: 3.2rem; display: block; margin-bottom: .8rem; }
-#eloquence-app .timer-controls { display: flex; justify-content: center; gap: .6rem; margin-bottom: 1rem; flex-wrap: wrap; }
-#eloquence-app .timer-presets { display: flex; justify-content: center; align-items: center; gap: .5rem; flex-wrap: wrap; }
-#eloquence-app .timer-preset { background: var(--surface-high); font-size: .85rem; padding: .4rem .8rem; }
-#eloquence-app #timerCustomInput { width: 70px; }
-#eloquence-app .status-line { text-align: center; margin-top: .8rem; color: var(--text-muted); }
-#eloquence-app .candidat-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-#eloquence-app .candidat-form .full { grid-column: 1 / -1; }
-#eloquence-app .form-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
-#eloquence-app .progression-bar-wrap { display: flex; align-items: center; gap: 1rem; margin-top: .6rem; max-width: 520px; margin-left: auto; margin-right: auto; }
-#eloquence-app .progression-bar-wrap .progress-bar { flex: 1; }
+        .logo span {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-/* Résultats */
-#eloquence-app .results-hero { text-align: center; padding: 1rem 0 2rem; }
-#eloquence-app .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-#eloquence-app .podium-card { text-align: center; padding: 1.4rem 1rem; }
-#eloquence-app .podium-card .medal { font-size: 1.8rem; }
-#eloquence-app .podium-card .nom { font-family: var(--font-display); font-size: 1.05rem; margin: .4rem 0; }
-#eloquence-app .podium-card .moyenne { color: var(--gold); font-weight: 700; font-size: 1.2rem; }
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-@media (max-width: 860px) {
-  #eloquence-app .jury-layout { grid-template-columns: 1fr; }
-  #eloquence-app .candidat-form, #eloquence-app .podium { grid-template-columns: 1fr; }
-}
-</style>
+        .header-info .admin-badge {
+            background: var(--gold);
+            color: var(--black);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header-info .status-connection {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .header-info .status-connection .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.online {
+            background: var(--green);
+        }
+        .dot.offline {
+            background: var(--red);
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #aaa;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ---- SECTIONS ---- */
+        section {
+            background: var(--card-bg);
+            backdrop-filter: blur(6px);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        h2 i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ---- GRILLE ---- */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================================
+           CHRONOMÈTRE
+           ============================================================ */
+
+        .timer-section {
+            background: rgba(212, 175, 55, 0.03);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+        }
+
+        .timer-display {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .timer-display .timer-clock {
+            font-size: 5rem;
+            font-weight: 800;
+            font-family: 'Poppins', monospace;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
+        }
+
+        .timer-display .timer-clock.warning {
+            color: var(--orange);
+            animation: pulse-timer 0.5s infinite alternate;
+        }
+
+        .timer-display .timer-clock.danger {
+            color: var(--red);
+            animation: pulse-timer 0.3s infinite alternate;
+        }
+
+        @keyframes pulse-timer {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .timer-controls button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-controls .btn-start {
+            background: var(--green);
+            color: #fff;
+        }
+        .timer-controls .btn-start:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .timer-controls .btn-pause {
+            background: var(--orange);
+            color: #fff;
+        }
+        .timer-controls .btn-pause:hover {
+            background: #e67e22;
+            transform: scale(1.05);
+        }
+
+        .timer-controls .btn-reset {
+            background: var(--red);
+            color: #fff;
+        }
+        .timer-controls .btn-reset:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .timer-presets {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timer-presets button {
+            padding: 6px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #888;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .timer-presets button:hover {
+            border-color: var(--gold);
+            color: var(--white);
+        }
+
+        .timer-presets button.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        .timer-status {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .timer-status .status-text.en-cours {
+            color: var(--green);
+        }
+        .timer-status .status-text.pause {
+            color: var(--orange);
+        }
+        .timer-status .status-text.termine {
+            color: var(--red);
+        }
+
+        /* ============================================================
+           GESTION CANDIDATS
+           ============================================================ */
+
+        .candidat-control {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .candidat-control .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .candidat-control .form-group label {
+            font-size: 0.75rem;
+            color: #888;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .candidat-control .form-group select,
+        .candidat-control .form-group input {
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            color: var(--white);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .candidat-control .form-group select:focus,
+        .candidat-control .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
+        }
+
+        .candidat-control .form-group select option {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .candidat-control .photo-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .candidat-control .photo-preview img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--dark-grey);
+        }
+
+        .candidat-control .photo-preview .photo-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--dark-grey);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 1.5rem;
+        }
+
+        .btn-send {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ============================================================
+           RÉSULTATS EN TEMPS RÉEL
+           ============================================================ */
+
+        .results-section .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .results-section .stats .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .results-section .stats .stat-card .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .results-section .stats .stat-card .stat-label {
+            font-size: 0.65rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-container .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-container .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-container .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* ---- TABLEAU ---- */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        thead {
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        th {
+            padding: 10px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gold-light);
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+        }
+
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: #ccc;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 2px 12px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .status-badge.valide {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--green);
+        }
+
+        .status-badge.brouillon {
+            background: rgba(243, 156, 18, 0.12);
+            color: var(--orange);
+        }
+
+        .status-badge.non-cote {
+            background: rgba(255, 255, 255, 0.04);
+            color: #666;
+        }
+
+        .btn-export {
+            padding: 8px 20px;
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-export:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* ---- MODAL AIDE ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            0% {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-content .modal-header h3 {
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-content .modal-header .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .modal-content .modal-body {
+            color: #999;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .modal-content .modal-body .info-contact {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--gold);
+            margin-top: 12px;
+        }
+
+        .modal-content .modal-body .info-contact .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #ccc;
+            padding: 4px 0;
+        }
+
+        .modal-content .modal-body .info-contact .contact-item i {
+            color: var(--gold);
+            width: 20px;
+        }
+
+        .modal-content .modal-footer {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-content .modal-footer button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .modal-content .modal-footer .btn-modal-fermer {
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
+        }
+
+        .modal-content .modal-footer .btn-modal-fermer:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-content .modal-footer .btn-modal-contacter {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .modal-content .modal-footer .btn-modal-contacter:hover {
+            background: var(--gold-light);
+            transform: scale(1.02);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                border-radius: 30px;
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+            .logo i {
+                font-size: 1.5rem;
+            }
+
+            .header-info {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            section {
+                padding: 16px 14px;
+            }
+
+            .timer-display .timer-clock {
+                font-size: 3.5rem;
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .timer-controls button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .timer-presets {
+                gap: 5px;
+            }
+
+            .candidat-control .photo-preview {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .results-section .stats {
+                flex-direction: column;
+            }
+
+            .btn-export {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .modal-content .modal-footer {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .timer-display .timer-clock {
+                font-size: 2.8rem;
+            }
+
+            th,
+            td {
+                padding: 4px 6px;
+                font-size: 0.65rem;
+            }
+
+            table {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div id="eloquence-app">
-
-<header class="app-header">
-  <div class="brand" onclick="showView('accueil')">🏆 Éloquence en Scène</div>
-  <div class="meta" id="headerMeta">
-    <a href="#resultats" onclick="showView('resultats')">📊 Résultats</a>
-    <button class="btn-danger" id="btnHeaderLogout" type="button" style="display:none;">🚪 Déconnexion</button>
-  </div>
-</header>
-
-<main class="app-main">
-
-  <!-- ===================== VUE ACCUEIL / CONNEXION ===================== -->
-  <section class="view active" id="view-accueil">
-    <div class="login-wrap">
-      <div class="logo-hero">
-        <div class="emoji">🏆</div>
-        <h1>Éloquence en Scène</h1>
-        <p style="color:var(--text-muted);">Plateforme de cotation du concours</p>
-      </div>
-      <div class="card">
-        <div class="tabs">
-          <button class="tab-btn active" id="tabJury" type="button">🎫 Jury</button>
-          <button class="tab-btn" id="tabAdmin" type="button">👑 Admin</button>
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-crown"></i>
+            <span>Centre de Contrôle</span>
         </div>
-        <div class="pane active" id="paneJury">
-          <div class="field-group">
-            <label for="juryCodeInput">Code jury (4 chiffres)</label>
-            <input type="text" id="juryCodeInput" maxlength="4" inputmode="numeric" placeholder="0001" autocomplete="off">
-          </div>
-          <button class="btn-primary" id="btnConnexionJury" type="button" style="width:100%;">Se connecter</button>
-          <div class="error-msg" id="juryError"></div>
+        <div class="header-info">
+            <span class="admin-badge"><i class="fas fa-user-shield"></i> Admin</span>
+            <span class="status-connection">
+                <span class="dot online" id="connectionDot"></span>
+                <span id="connectionStatus">Connecté</span>
+            </span>
+            <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
         </div>
-        <div class="pane" id="paneAdmin">
-          <div class="field-group">
-            <label for="adminEmail">Email administrateur</label>
-            <input type="email" id="adminEmail" placeholder="admin@eloquence.scene" autocomplete="username">
-          </div>
-          <div class="field-group">
-            <label for="adminPassword">Mot de passe</label>
-            <input type="password" id="adminPassword" autocomplete="current-password">
-          </div>
-          <button class="btn-primary" id="btnConnexionAdmin" type="button" style="width:100%;">Se connecter</button>
-          <div class="error-msg" id="adminError"></div>
+    </header>
+
+    <!-- ============================================================
+    MAIN
+    ============================================================ -->
+    <main>
+
+        <!-- ============================================================
+        CHRONOMÈTRE + GESTION CANDIDATS
+        ============================================================ -->
+        <div class="admin-grid">
+
+            <!-- CHRONOMÈTRE -->
+            <section>
+                <h2><i class="fas fa-clock"></i> Chronomètre</h2>
+                <div class="timer-section">
+                    <div class="timer-display">
+                        <div class="timer-clock" id="timerClock">05:00</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn-start" id="timerStart"><i class="fas fa-play"></i> Démarrer</button>
+                        <button class="btn-pause" id="timerPause"><i class="fas fa-pause"></i> Pause</button>
+                        <button class="btn-reset" id="timerReset"><i class="fas fa-undo"></i> Réinitialiser</button>
+                    </div>
+                    <div class="timer-presets">
+                        <button data-time="180">3 min</button>
+                        <button data-time="300" class="active">5 min</button>
+                        <button data-time="420">7 min</button>
+                        <button data-time="600">10 min</button>
+                        <button data-time="900">15 min</button>
+                    </div>
+                    <div class="timer-status">
+                        Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GESTION CANDIDATS -->
+            <section>
+                <h2><i class="fas fa-user-tie"></i> Gestion des Candidats</h2>
+                <div class="candidat-control">
+
+                    <div class="form-group">
+                        <label><i class="fas fa-gavel"></i> Match</label>
+                        <select id="matchSelect">
+                            <option value="">-- Sélectionner un match --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Candidat</label>
+                        <select id="candidatSelect">
+                            <option value="">-- Sélectionner un candidat --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Photo du candidat</label>
+                        <div class="photo-preview">
+                            <div class="photo-placeholder" id="photoPlaceholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <img id="photoPreview" style="display:none;" alt="Photo candidat" />
+                            <input type="file" id="photoUpload" accept="image/*" style="flex:1;" />
+                        </div>
+                    </div>
+
+                    <button class="btn-send" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
+                    </button>
+                </div>
+            </section>
+
         </div>
-      </div>
-      <div style="text-align:center; margin-top:1.2rem;">
-        <a href="#resultats" onclick="showView('resultats')">Voir le classement public →</a>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== VUE JURY ===================== -->
-  <section class="view" id="view-jury">
-    <div class="jury-layout">
-      <div class="card">
-        <div class="pill" id="statusLabel">⏳ En attente</div>
-        <p style="margin:.6rem 0 0; color:var(--text-muted); font-size:.85rem;">📌 Match #<span id="matchNumber">—</span></p>
-        <img class="candidat-photo" id="candidatPhoto" src="" alt="Photo du candidat">
-        <span class="candidat-role" id="candidatRole">—</span>
-        <div class="candidat-nom" id="candidatNom">En attente du centre de contrôle…</div>
-        <div class="candidat-theme" id="candidatTheme">—</div>
-        <div class="candidat-stats">
-          <span>👥 <span id="nombreJurys">4</span> jurys</span>
-          <span>⏱️ <span id="timerDisplay">05:00</span></span>
+        <!-- ============================================================
+        RÉSULTATS EN TEMPS RÉEL
+        ============================================================ -->
+        <section class="results-section">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Cotations en Temps Réel</h2>
+                <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> Exporter CSV</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCandidats">0</div>
+                    <div class="stat-label">Total Candidats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCotes">0</div>
+                    <div class="stat-label">Candidats Cotés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalJurys">0</div>
+                    <div class="stat-label">Jurys Actifs</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText">0 / 0 cotés</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Candidat</th>
+                            <th>Rôle</th>
+                            <th>Match</th>
+                            <th>J1</th>
+                            <th>J2</th>
+                            <th>J3</th>
+                            <th>J4</th>
+                            <th>Moyenne</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <tr>
+                            <td colspan="10" style="text-align:center;color:#555;padding:30px;">
+                                <i class="fas fa-spinner fa-spin"></i> Chargement des données...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+    MODAL AIDE
+    ============================================================ -->
+    <div class="modal-overlay" id="aideModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-life-ring"></i> Centre de Contrôle - Aide</h3>
+                <button class="close-modal" id="closeAideModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Fonctionnalités :</strong></p>
+                <ul style="list-style:none;padding:0;margin:8px 0;">
+                    <li style="padding:4px 0;">⏱️ <strong>Chronomètre</strong> : Contrôlez le temps des prestations</li>
+                    <li style="padding:4px 0;">👤 <strong>Candidats</strong> : Sélectionnez et envoyez aux jurys</li>
+                    <li style="padding:4px 0;">📊 <strong>Résultats</strong> : Visualisez les cotations en direct</li>
+                    <li style="padding:4px 0;">📤 <strong>Export</strong> : Téléchargez les résultats en CSV</li>
+                </ul>
+                <div class="info-contact">
+                    <div class="contact-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span><strong>Responsable :</strong> Jean-Pierre</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span><strong>Téléphone :</strong> +243 812 345 678</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span><strong>Email :</strong> support@eloquence-scene.cd</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-fermer" id="fermerAide"><i class="fas fa-times"></i> Fermer</button>
+                <button class="btn-modal-contacter" id="contacterAide"><i class="fas fa-phone"></i> Contacter</button>
+            </div>
         </div>
-      </div>
-      <div class="card">
-        <h2>📋 Fiche de Cotation</h2>
-        <div id="criteresGrid">
-          <div class="critere-row"><label>Maîtrise sujet</label><input type="number" id="score_maitrise" min="0" max="4" step="0.5" value="0"><span class="critere-max">/4</span></div>
-          <div class="critere-row"><label>Pertinence</label><input type="number" id="score_pertinence" min="0" max="5" step="0.5" value="0"><span class="critere-max">/5</span></div>
-          <div class="critere-row"><label>Structure</label><input type="number" id="score_structure" min="0" max="3" step="0.5" value="0"><span class="critere-max">/3</span></div>
-          <div class="critere-row"><label>Éloquence</label><input type="number" id="score_eloquence" min="0" max="4" step="0.5" value="0"><span class="critere-max">/4</span></div>
-          <div class="critere-row"><label>Persuasion</label><input type="number" id="score_persuasion" min="0" max="2" step="0.5" value="0"><span class="critere-max">/2</span></div>
-          <div class="critere-row"><label>Temps</label><input type="number" id="score_temps" min="0" max="2" step="0.5" value="0"><span class="critere-max">/2</span></div>
-        </div>
-        <div class="total-row"><span class="label">TOTAL</span><span id="totalCotation">0.0 / 20</span></div>
-        <div class="field-group"><label for="commentaire">💬 Commentaire</label><textarea id="commentaire" placeholder="Vos observations…"></textarea></div>
-        <div class="field-group"><label for="conseil">💡 Conseil</label><textarea id="conseil" placeholder="Un conseil pour le candidat…"></textarea></div>
-        <div class="action-row">
-          <button id="btnEnregistrer" type="button">💾 Enregistrer</button>
-          <button class="btn-primary" id="btnValider" type="button">✅ Valider</button>
-          <button class="btn-danger" id="btnReinitialiser" type="button">↺ Réinitialiser</button>
-        </div>
-        <span id="statutCotation">📌 Non coté</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== VUE ADMIN ===================== -->
-  <section class="view" id="view-admin">
-    <div class="card timer-block">
-      <h2>⏱️ Chronomètre</h2>
-      <span id="adminTimerDisplay">05:00</span>
-      <div class="timer-controls">
-        <button class="btn-primary" id="btnTimerStart" type="button">▶️ Démarrer</button>
-        <button id="btnTimerPause" type="button">⏸️ Pause</button>
-        <button id="btnTimerReset" type="button">↺ Reset</button>
-      </div>
-      <div class="timer-presets">
-        <span style="color:var(--text-muted); font-size:.85rem;">Préréglages :</span>
-        <button class="timer-preset" data-seconds="180" type="button">3 min</button>
-        <button class="timer-preset" data-seconds="300" type="button">5 min</button>
-        <button class="timer-preset" data-seconds="420" type="button">7 min</button>
-        <button class="timer-preset" data-seconds="600" type="button">10 min</button>
-        <input type="number" id="timerCustomInput" min="1" placeholder="min">
-      </div>
-      <div class="status-line">Statut : <span id="adminStatusLabel">⏳ En attente</span></div>
     </div>
 
-    <div class="card">
-      <h2>👤 Gestion des Candidats</h2>
-      <div class="candidat-form">
-        <div><label for="matchSelect">Match</label><select id="matchSelect"></select></div>
-        <div><label for="candidatSelect">Candidat</label><select id="candidatSelect"></select></div>
-        <div class="full"><label for="candidatPhotoInput">📤 Choisir une photo</label><input type="file" id="candidatPhotoInput" accept="image/*"></div>
-      </div>
-      <div class="form-actions">
-        <button class="btn-primary" id="btnEnvoyerJurys" type="button">📤 Envoyer aux jurys</button>
-        <a class="btn" href="#resultats" onclick="showView('resultats')">📊 Voir les résultats</a>
-      </div>
-    </div>
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
 
-    <div class="card">
-      <h2>📊 Cotations en Temps Réel</h2>
-      <div style="overflow-x:auto;">
-        <table><thead><tr><th>#</th><th>Candidat</th><th>Moyenne</th><th>Notes</th></tr></thead><tbody id="resultsBody"></tbody></table>
-      </div>
-      <div class="form-actions" style="margin-top:1rem;"><button id="btnExporter" type="button">⬇️ Exporter (CSV)</button></div>
-    </div>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
+    </script>
 
-    <div class="progression-bar-wrap">
-      <span id="progressText" style="white-space:nowrap;">0 / 0 cotés</span>
-      <div class="progress-bar"><div id="progressFill" style="width:0%"></div></div>
-    </div>
-  </section>
+    <script>
+        // ================================================================
+        // CONFIGURATION FIREBASE - À REMPLACER
+        // ================================================================
 
-  <!-- ===================== VUE RÉSULTATS (publique) ===================== -->
-  <section class="view" id="view-resultats">
-    <div class="results-hero">
-      <h1>📊 Classement</h1>
-      <p style="color:var(--text-muted);">Résultats mis à jour en temps réel</p>
-    </div>
-    <div class="podium" id="podium"></div>
-    <div class="card">
-      <h2>Classement complet</h2>
-      <div style="overflow-x:auto;">
-        <table><thead><tr><th>Rang</th><th>Candidat</th><th>Moyenne</th><th>Notes validées</th></tr></thead><tbody id="publicResultsBody"></tbody></table>
-      </div>
-    </div>
-  </section>
+        const firebaseConfig = {
+            apiKey: "VOTRE_API_KEY",
+            authDomain: "VOTRE_PROJET.firebaseapp.com",
+            projectId: "VOTRE_PROJET",
+            storageBucket: "VOTRE_PROJET.appspot.com",
+            messagingSenderId: "VOTRE_SENDER_ID",
+            appId: "VOTRE_APP_ID"
+        };
 
-</main>
+        firebase.initializeApp(firebaseConfig);
 
-<footer class="app-footer">© 2026 — Éloquence en Scène</footer>
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
 
-</div><!-- /#eloquence-app -->
+        // ================================================================
+        // ÉTAT GLOBAL
+        // ================================================================
 
-<!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+        let timerSeconds = 300;
+        let timerRemaining = 300;
+        let timerInterval = null;
+        let timerRunning = false;
+        let timerPaused = false;
 
-<script>
-// ===================================================================
-// ⚠️ CONFIG FIREBASE — à remplacer par les valeurs de VOTRE projet
-// (Console Firebase > Paramètres du projet > Vos applications)
-// ===================================================================
-const firebaseConfig = {
-  apiKey: "REMPLACER_PAR_VOTRE_API_KEY",
-  authDomain: "REMPLACER.firebaseapp.com",
-  databaseURL: "https://REMPLACER-default-rtdb.firebaseio.com",
-  projectId: "REMPLACER_PROJECT_ID",
-  storageBucket: "REMPLACER.appspot.com",
-  messagingSenderId: "REMPLACER_SENDER_ID",
-  appId: "REMPLACER_APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const database = firebase.database();
-const firestore = firebase.firestore();
-const storage = firebase.storage();
+        let matchsData = [];
+        let candidatsData = [];
+        let cotationsData = {};
+        let etatActuel = null;
+        let photoFile = null;
 
-// ===================================================================
-// Utils (SecurityUtils) — section 7.4 du plan directeur
-// ===================================================================
-class SecurityUtils {
-  static escapeHTML(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-  static validerCodeJury(code) { return /^[0-9]{4}$/.test(code); }
-  static validerNote(valeur, min, max) { const num = parseFlo
+        let currentUser = null;
+        let isAdmin = false;
+
+        // ================================================================
+        // RÉFÉRENCES DOM
+        // ================================================================
+
+        const timerClock = document.getElementById('timerClock');
+        const timerStatus = document.getElementById('timerStatus');
+        const timerStart = document.getElementById('timerStart');
+        const timerPause = document.getElementById('timerPause');
+        const timerReset = document.getElementById('timerReset');
+
+        const matchSelect = document.getElementById('matchSelect');
+        const candidatSelect = document.getElementById('candidatSelect');
+        const photoUpload = document.getElementById('photoUpload');
+        const photoPreview = document.getElementById('photoPreview');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        const sendBtn = document.getElementById('sendBtn');
+
+        const resultsBody = document.getElementById('resultsBody');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const progressPercent = document.getElementById('progressPercent');
+        const totalCandidats = document.getElementById('totalCandidats');
+        const totalCotes = document.getElementById('totalCotes');
+        const totalJurys = document.getElementById('totalJurys');
+
+        const exportBtn = document.getElementById('exportBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        const connectionDot = document.getElementById('connectionDot');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        // Modal aide
+        const aideModal = document.getElementById('aideModal');
+        const closeAideModal = document.getElementById('closeAideModal');
+        const fermerAide = document.getElementById('fermerAide');
+        const contacterAide = document.getElementById('contacterAide');
+
+        // ================================================================
+        // AUTHENTIFICATION
+        // ================================================================
+
+        function connecterAdmin() {
+            const code = prompt('🔑 Entrez le code administrateur :', '0000');
+            if (code === '0000') {
+                // Connexion anonyme
+                auth.signInAnonymously()
+                    .then(() => {
+                        return auth.currentUser.getIdTokenResult();
+                    })
+                    .then((token) => {
+                        // Simuler admin (dans la vraie vie, utiliser custom claims)
+                        isAdmin = true;
+                        currentUser = auth.currentUser;
+                        connectionDot.className = 'dot online';
+                        connectionStatus.textContent = 'Connecté (Admin)';
+                        chargerDonnees();
+                        console.log('✅ Admin connecté');
+                    })
+                    .catch(error => {
+                        console.error('❌ Erreur connexion:', error);
+                        alert('Erreur de connexion: ' + error.message);
+                    });
+            } else {
+                alert('❌ Code administrateur incorrect');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function deconnecter() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // ================================================================
+        // CHARGEMENT DES DONNÉES
+        // ================================================================
+
+        async function chargerDonnees() {
+            try {
+                // 1. Charger les matchs
+                const matchsSnapshot = await db.collection('matchs').get();
+                matchsData = [];
+                matchsSnapshot.forEach(doc => {
+                    matchsData.push({ id: doc.id, ...doc.data() });
+                });
+                matchsData.sort((a, b) => a.id - b.id);
+
+                // 2. Charger les cotations
+                const cotationsSnapshot = await db.collection('cotations').get();
+                cotationsData = {};
+                cotationsSnapshot.forEach(doc => {
+                    cotationsData[doc.id] = doc.data();
+                });
+
+                // 3. Charger l'état actuel
+                const etatDoc = await db.collection('etat').doc('current').get();
+                if (etatDoc.exists) {
+                    etatActuel = etatDoc.data();
+                }
+
+                // 4. Mettre à jour l'interface
+                remplirMatchs();
+                remplirCandidats();
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+
+                // 5. Écouter les changements en temps réel
+                ecouterCotations();
+                ecouterEtat();
+
+            } catch (error) {
+                console.error('❌ Erreur chargement:', error);
+                resultsBody.innerHTML =
+                    `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:30px;">❌ Erreur de chargement: ${error.message}</td></tr>`;
+            }
+        }
+
+        // ================================================================
+        // ÉCOUTE EN TEMPS RÉEL
+        // ================================================================
+
+        function ecouterCotations() {
+            db.collection('cotations').onSnapshot((snapshot) => {
+                cotationsData = {};
+                snapshot.forEach(doc => {
+                    cotationsData[doc.id] = doc.data();
+                });
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+            }, (error) => {
+                console.error('❌ Erreur écoute cotations:', error);
+            });
+        }
+
+        function ecouterEtat() {
+            db.collection('etat').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    etatActuel = doc.data();
+                    // Mettre à jour l'interface si besoin
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute état:', error);
+            });
+        }
+
+        // ================================================================
+        // REMPLIR LES SÉLECTEURS
+        // ================================================================
+
+        function remplirMatchs() {
+            matchSelect.innerHTML = '<option value="">-- Sélectionner un match --</option>';
+            matchsData.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.id;
+                option.textContent = `Match #${m.id} : ${m.theme.substring(0, 50)}...`;
+                matchSelect.appendChild(option);
+
+                // Ajouter les candidats à la liste globale
+                if (m.these) candidatsData.push({ nom: m.these, matchId: m.id, role: 'Thèse', theme: m.theme });
+                if (m.antithese) candidatsData.push({ nom: m.antithese, matchId: m.id, role: 'Antithèse', theme: m
+                        .theme });
+            });
+            candidatsData.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
+        }
+
+        function remplirCandidats() {
+            const matchId = parseInt(matchSelect.value);
+            candidatSelect.innerHTML = '<option value="">-- Sélectionner un candidat --</option>';
+
+            if (!matchId) return;
+
+            const filtered = candidatsData.filter(c => c.matchId === matchId);
+            filtered.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.nom;
+                option.textContent = `${c.nom} (${c.role})`;
+                option.dataset.role = c.role;
+                option.dataset.theme = c.theme;
+                candidatSelect.appendChild(option);
+            });
+        }
+
+        // ================================================================
+        // CHRONOMÈTRE
+        // ================================================================
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerRemaining / 60);
+            const seconds = timerRemaining % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerClock.textContent = display;
+
+            timerClock.classList.remove('warning', 'danger');
+            if (timerRemaining <= 30 && timerRunning) {
+                timerClock.classList.add('danger');
+            } else if (timerRemaining <= 60 && timerRunning) {
+                timerClock.classList.add('warning');
+            }
+        }
+
+        function setTimer(seconds) {
+            timerRemaining = seconds;
+            timerSeconds = seconds;
+            updateTimerDisplay();
+            timerStatus.textContent = '⏸️ Prêt';
+            timerStatus.className = 'status-text';
+            envoyerTimer();
+        }
+
+        function startTimer() {
+            if (timerRunning && !timerPaused) return;
+            if (timerRemaining <= 0) {
+                setTimer(timerSeconds);
+            }
+
+            timerRunning = true;
+            timerPaused = false;
+            timerStatus.textContent = '▶️ En cours';
+            timerStatus.className = 'status-text en-cours';
+
+            timerInterval = setInterval(() => {
+                timerRemaining--;
+                updateTimerDisplay();
+                envoyerTimer();
+
+                if (timerRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerStatus.textContent = '⏰ Temps écoulé !';
+                    timerStatus.className = 'status-text termine';
+                    envoyerTimer();
+                    alert('⏰ Temps écoulé !');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!timerRunning) return;
+            clearInterval(timerInterval);
+            timerPaused = true;
+            timerRunning = false;
+            timerStatus.textContent = '⏸️ En pause';
+            timerStatus.className = 'status-text pause';
+            envoyerTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerPaused = false;
+            setTimer(timerSeconds);
+            timerStatus.textContent = '⏸️ Réinitialisé';
+            timerStatus.className = 'status-text';
+            envoyerTimer();
+        }
+
+        function envoyerTimer() {
+            // Envoyer le timer à Firebase pour synchronisation
+            db.collection('etat').doc('current').set({
+                timer: timerRemaining,
+                timerRunning: timerRunning,
+                timestamp: Date.now()
+            }, { merge: true });
+        }
+
+        // ================================================================
+        // ENVOYER CANDIDAT AUX JURYS
+        // ================================================================
+
+        async function envoyerCandidat() {
+            const matchId = parseInt(matchSelect.value);
+            const candidatNom = candidatSelect.value;
+
+            if (!matchId || !candidatNom) {
+                alert('⚠️ Veuillez sélectionner un match et un candidat');
+                return;
+            }
+
+            const candidat = candidatsData.find(c => c.nom === candidatNom && c.matchId === matchId);
+            if (!candidat) {
+                alert('⚠️ Candidat non trouvé');
+                return;
+            }
+
+            // Upload photo si présente
+            let photoUrl = '';
+            if (photoFile) {
+                try {
+                    const storageRef = storage.ref(`photos/${candidatNom}`);
+                    await storageRef.put(photoFile);
+                    photoUrl = await storageRef.getDownloadURL();
+                } catch (error) {
+                    console.error('❌ Erreur upload photo:', error);
+                }
+            }
+
+            // Envoyer l'état à Firebase
+            try {
+                await db.collection('etat').doc('current').set({
+                    matchId: matchId,
+                    candidatNom: candidatNom,
+                    candidatTheme: candidat.theme,
+                    candidatRole: candidat.role,
+                    candidatPhoto: photoUrl,
+                    timer: timerRemaining,
+                    timerRunning: timerRunning,
+                    status: 'en-cours',
+                    nombreJurys: 4,
+                    timestamp: Date.now()
+                }, { merge: true });
+
+                alert(`✅ Candidat "${candidatNom}" envoyé aux jurys !`);
+            } catch (error) {
+                console.error('❌ Erreur envoi:', error);
+                alert('❌ Erreur lors de l\'envoi: ' + error.message);
+            }
+        }
+
+        // ================================================================
+        // RÉSULTATS ET CLASSEMENT
+        // ================================================================
+
+        function mettreAJourResultats() {
+            const jurys = ['jury1', 'jury2', 'jury3', 'jury4'];
+            const resultats = {};
+
+            // Parcourir toutes les cotations
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let total = 0;
+                let count = 0;
+
+                jurys.forEach(jury => {
+                    if (cotes[jury] && cotes[jury].valide) {
+                        total += cotes[jury].total || 0;
+                        count++;
+                    }
+                });
+
+                resultats[candidat] = {
+                    total: total,
+                    count: count,
+                    moyenne: count > 0 ? total / count : 0,
+                    cotes: cotes
+                };
+            });
+
+            // Trier par moyenne
+            const sorted = Object.entries(resultats)
+                .sort((a, b) => b[1].moyenne - a[1].moyenne);
+
+            // Afficher
+            if (sorted.length === 0) {
+                resultsBody.innerHTML =
+                    '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Aucune cotation pour le moment</td></tr>';
+                return;
+            }
+
+            let html = '';
+            sorted.forEach(([nom, data], index) => {
+                const cotes = data.cotes;
+                const juryNotes = jurys.map(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        return `<td style="text-align:center;color:var(--green);">${cotes[j].total.toFixed(1)}</td>`;
+                    } else if (cotes[j]) {
+                        return `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
+                    }
+                    return `<td style="text-align:center;color:#333;">-</td>`;
+                }).join('');
+
+                const statut = data.count === jurys.length ? 'valide' :
+                    data.count > 0 ? 'brouillon' : 'non-cote';
+
+                const statusText = statut === 'valide' ? '✅ Validé' :
+                    statut === 'brouillon' ? '⏳ En cours' : '⏹️ Non coté';
+
+                const rang = index + 1;
+                const rangClass = rang === 1 ? 'rank-1' : rang === 2 ? 'rank-2' : rang === 3 ? 'rank-3' : '';
+
+                // Trouver le rôle et match
+                const candidat = candidatsData.find(c => c.nom === nom);
+
+                html += `
+                            <tr>
+                                <td class="${rangClass}" style="font-weight:${rang <= 3 ? '700' : '400'};color:${rang === 1 ? 'var(--gold)' : rang === 2 ? '#c0c0c0' : rang === 3 ? '#cd7f32' : '#ccc'};">
+                                    ${rang}
+                                </td>
+                                <td>${nom}</td>
+                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(212,175,55,0.15)' : 'rgba(70,130,255,0.12)'};color:${candidat?.role === 'Thèse' ? 'var(--gold)' : '#7aa9ff'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
+                                <td style="color:#666;">#${candidat?.matchId || '-'}</td>
+                                ${juryNotes}
+                                <td style="font-weight:700;color:${data.moyenne > 15 ? 'var(--gold)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
+                                    ${data.moyenne > 0 ? data.moyenne.toFixed(2) : '-'}
+                                </td>
+                                <td><span class="status-badge ${statut}">${statusText}</span></td>
+                            </tr>
+                        `;
+            });
+
+            resultsBody.innerHTML = html;
+        }
+
+        function mettreAJourStatistiques() {
+            const jurys = ['jury1', 'jury2', 'jury3', 'jury4'];
+            let totalCotes = 0;
+            let totalJurysActifs = 0;
+
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let count = 0;
+                jurys.forEach(j => {
+                    if (cotes[j] && cotes[j].valide) count++;
+                });
+                if (count > 0) totalCotes++;
+            });
+
+            // Compter les jurys actifs
+            const jurysActifs = {};
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                jurys.forEach(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        jurysActifs[j] = true;
+                    }
+                });
+            });
+            totalJurysActifs = Object.keys(jurysActifs).length;
+
+            document.getElementById('totalCandidats').textContent = candidatsData.length || 0;
+            document.getElementById('totalCotes').textContent = totalCotes;
+            document.getElementById('totalJurys').textContent = totalJurysActifs || 4;
+        }
+
+        function mettreAJourProgression() {
+            const total = candidatsData.length || 1;
+            const jurys = ['jury1', 'jury2', 'jury3', 'jury4'];
+            let cotes = 0;
+
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotesJury = cotationsData[candidat];
+                let count = 0;
+                jurys.forEach(j => {
+                    if (cotesJury[j] && cotesJury[j].valide) count++;
+                });
+                if (count > 0) cotes++;
+            });
+
+            const progression = (cotes / total) * 100;
+            progressFill.style.width = `${Math.min(progression, 100)}%`;
+            progressText.textContent = `${cotes} / ${total} cotés`;
+            progressPercent.textContent = `${Math.round(progression)}%`;
+        }
+
+        // ================================================================
+        // EXPORT CSV
+        // ================================================================
+
+        function exporterCSV() {
+            const jurys = ['jury1', 'jury2', 'jury3', 'jury4'];
+            let csv = 'Rang;Candidat;Rôle;Match;';
+
+            // En-têtes des jurys
+            jurys.forEach(j => {
+                csv += `${j};`;
+            });
+            csv += 'Moyenne;Statut\n';
+
+            const resultats = {};
+            Object.keys(cotationsData).forEach(candidat => {
+                const cotes = cotationsData[candidat];
+                let total = 0;
+                let count = 0;
+                const notes = {};
+                jurys.forEach(j => {
+                    if (cotes[j] && cotes[j].valide) {
+                        notes[j] = cotes[j].total;
+                        total += cotes[j].total;
+                        count++;
+                    } else {
+                        notes[j] = '-';
+                    }
+                });
+                resultats[candidat] = {
+                    notes: notes,
+                    moyenne: count > 0 ? total / count : 0,
+                    count: count
+                };
+            });
+
+            const sorted = Object.entries(resultats)
+                .sort((a, b) => b[1].moyenne - a[1].moyenne);
+
+            sorted.forEach(([nom, data], index) => {
+                const candidat = candidatsData.find(c => c.nom === nom);
+                let ligne = `${index + 1};${nom};${candidat?.role || '-'};${candidat?.matchId || '-'};`;
+
+                jurys.forEach(j => {
+                    ligne += `${data.notes[j] || '-'};`;
+                });
+
+                const statut = data.count === jurys.length ? 'Validé' :
+                    data.count > 0 ? 'En cours' : 'Non coté';
+
+                ligne += `${data.moyenne.toFixed(2)};${statut}\n`;
+                csv += ligne;
+            });
+
+            // Télécharger
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `classement_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // ================================================================
+        // PHOTO
+        // ================================================================
+
+        photoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                photoFile = file;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    photoPreview.src = event.target.result;
+                    photoPreview.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ================================================================
+        // ÉVÉNEMENTS
+        // ================================================================
+
+        // Timer
+        timerStart.addEventListener('click', startTimer);
+        timerPause.addEventListener('click', pauseTimer);
+        timerReset.addEventListener('click', resetTimer);
+
+        // Préréglages timer
+        document.querySelectorAll('.timer-presets button[data-time]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove(
+                    'active'));
+                this.classList.add('active');
+                const seconds = parseInt(this.dataset.time);
+                setTimer(seconds);
+            });
+        });
+
+        // Match select
+        matchSelect.addEventListener('change', function() {
+            remplirCandidats();
+            // Réinitialiser la photo
+            photoPreview.style.display = 'none';
+            photoPlaceholder.style.display = 'flex';
+            photoFile = null;
+            photoUpload.value = '';
+        });
+
+        // Send button
+        sendBtn.addEventListener('click', envoyerCandidat);
+
+        // Export
+        exportBtn.addEventListener('click', exporterCSV);
+
+        // Logout
+        logoutBtn.addEventListener('click', deconnecter);
+
+        // Modal aide
+        document.querySelector('.btn-aide')?.addEventListener('click', () => {
+            aideModal.classList.add('active');
+        });
+
+        closeAideModal.addEventListener('click', () => {
+            aideModal.classList.remove('active');
+        });
+
+        fermerAide.addEventListener('click', () => {
+            aideModal.classList.remove('active');
+        });
+
+        contacterAide.addEventListener('click', () => {
+            alert('📞 Appel en cours vers le centre de contrôle...\n\nNuméro : +243 812 345 678');
+            aideModal.classList.remove('active');
+        });
+
+        aideModal.addEventListener('click', (e) => {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        // ================================================================
+        // INITIALISATION
+        // ================================================================
+
+        // Connecter l'admin
+        connecterAdmin();
+
+        // Initialiser le timer
+        setTimer(300);
+
+        console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
+        console.log('📊 Firebase Firestore connecté');
+        console.log('👑 Mode Admin activé');
+    </script>
+
+</body>
+</html>
