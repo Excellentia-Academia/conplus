@@ -1,3 +1,4 @@
+<!-- Code de la Fiche Jury -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -749,6 +750,33 @@
             margin-top: 4px;
             text-align: center;
         }
+
+        /* Style pour le sélecteur de jury */
+        .jury-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .jury-selector select {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--gris-clair);
+            background: var(--blanc);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            color: var(--bleu-fonce);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .jury-selector select:focus {
+            outline: none;
+            border-color: var(--bleu-ciel);
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+        }
+        .jury-selector select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -766,7 +794,13 @@
                 <span class="dot online" id="connectionDot"></span>
                 <span id="connectionStatus">Connecté</span>
             </span>
-            <span class="badge-jury"><i class="fas fa-user-check"></i> <span id="juryName">Jury 1</span></span>
+            <div class="jury-selector">
+                <label for="jurySelect" style="font-size:0.75rem;color:var(--gris-moyen);"><i class="fas fa-user-check"></i></label>
+                <select id="jurySelect">
+                    <option value="">Choisir mon jury</option>
+                </select>
+            </div>
+            <span class="badge-jury" id="juryBadge"><i class="fas fa-user"></i> <span id="juryName">Jury</span></span>
             <span class="badge-jury rouge"><i class="fas fa-clock"></i> <span id="timerDisplay">05:00</span></span>
             <button class="btn-deconnexion" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
         </div>
@@ -799,7 +833,7 @@
                 </span>
                 <span class="statut-item">
                     <i class="fas fa-users" style="color:var(--bleu-ciel);"></i>
-                    <span id="juryCount">4 jurys</span>
+                    <span id="juryCount">-- jurys</span>
                 </span>
                 <span class="statut-item">
                     <i class="fas fa-sync-alt" style="color:var(--or);"></i>
@@ -811,7 +845,7 @@
         <section class="cotation-card">
             <div class="card-header">
                 <h2><i class="fas fa-clipboard-list"></i> Fiche de Cotation</h2>
-                <span class="jury-name"><i class="fas fa-user"></i> <span id="juryNameBadge">Jury 1</span></span>
+                <span class="jury-name"><i class="fas fa-user"></i> <span id="juryNameBadge">--</span></span>
             </div>
             <div class="card-body">
                 <div class="candidat-actif-info">
@@ -1011,8 +1045,7 @@
         let timerRunning = false;
         let timerPaused = false;
         let isConnected = false;
-
-        const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
+        let juryList = ['jury1']; // Liste des jurys disponibles
 
         // ================================================================
         // 📦 RÉFÉRENCES DOM
@@ -1049,6 +1082,9 @@
         const notification = document.getElementById('notification');
         const candidatPhoto = document.getElementById('candidatPhoto');
         const candidatImg = document.getElementById('candidatImg');
+        const jurySelect = document.getElementById('jurySelect');
+        const juryBadge = document.getElementById('juryBadge');
+        const juryCount = document.getElementById('juryCount');
 
         let notificationTimeout = null;
 
@@ -1181,6 +1217,92 @@
         }
 
         // ================================================================
+        // 👂 ÉCOUTE DES JURYS
+        // ================================================================
+
+        function ecouterJurys() {
+            db.collection('jurys').doc('liste').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data && data.jurys) {
+                        juryList = data.jurys;
+                    } else {
+                        juryList = ['jury1'];
+                    }
+                } else {
+                    juryList = ['jury1'];
+                }
+                mettreAJourSelecteurJurys();
+                mettreAJourCompteurJurys();
+            }, (error) => {
+                console.error('❌ Erreur écoute jurys:', error);
+            });
+        }
+
+        function mettreAJourSelecteurJurys() {
+            const currentVal = jurySelect.value;
+            jurySelect.innerHTML = '<option value="">-- Choisir mon jury --</option>';
+            juryList.forEach(j => {
+                const opt = document.createElement('option');
+                opt.value = j;
+                opt.textContent = j;
+                jurySelect.appendChild(opt);
+            });
+            if (currentVal && juryList.includes(currentVal)) {
+                jurySelect.value = currentVal;
+            } else {
+                // Sélectionner le premier jury par défaut
+                if (juryList.length > 0) {
+                    jurySelect.value = juryList[0];
+                }
+            }
+            // Mettre à jour l'identité du jury
+            updateJuryIdentity();
+        }
+
+        function mettreAJourCompteurJurys() {
+            juryCount.textContent = `${juryList.length} jurys`;
+        }
+
+        function updateJuryIdentity() {
+            const selected = jurySelect.value;
+            if (selected) {
+                currentUser.id = selected;
+                currentUser.nom = selected;
+                juryName.textContent = selected;
+                juryNameBadge.textContent = selected;
+                // Recharger les cotations pour ce jury
+                chargerCotationsLocales();
+                chargerCotationCourante();
+                showNotification(`👤 Vous êtes le jury "${selected}"`, 'info');
+            } else {
+                juryName.textContent = '--';
+                juryNameBadge.textContent = '--';
+                // Désactiver les champs de cotation
+                disableAllInputs(true);
+            }
+        }
+
+        // Gérer le changement de jury
+        jurySelect.addEventListener('change', function() {
+            updateJuryIdentity();
+            // Recharger les données pour ce jury
+            chargerCotationsLocales();
+            chargerCotationCourante();
+            // Mettre à jour l'affichage
+            mettreAJourInterface(etatActuel);
+        });
+
+        function disableAllInputs(disabled) {
+            scoreInputs.forEach(i => i.disabled = disabled);
+            comment.disabled = disabled;
+            conseil.disabled = disabled;
+            saveBtn.disabled = disabled;
+            validateBtn.disabled = disabled;
+            resetBtn.disabled = disabled;
+        }
+
+        // ================================================================
         // 📁 CHARGEMENT DES DONNÉES
         // ================================================================
 
@@ -1195,6 +1317,7 @@
             ecouterEtat();
             ecouterCotations();
             ecouterTimer();
+            ecouterJurys();
             remplirSelectCandidats();
 
             db.collection('etat').doc('current').get()
@@ -1206,6 +1329,9 @@
                         if (data.timer !== undefined) {
                             timerRemaining = data.timer;
                             updateTimerDisplay();
+                        }
+                        if (data.nombreJurys !== undefined) {
+                            juryCount.textContent = `${data.nombreJurys} jurys`;
                         }
                     }
                 })
@@ -1240,6 +1366,9 @@
                     mettreAJourInterface(data);
                     if (data.candidatNom) {
                         showNotification(`📢 ${data.candidatNom} en cours`, 'info');
+                    }
+                    if (data.nombreJurys !== undefined) {
+                        juryCount.textContent = `${data.nombreJurys} jurys`;
                     }
                 }
             }, (error) => {
@@ -1524,6 +1653,11 @@
                 return false;
             }
 
+            if (!currentUser.id) {
+                showNotification('⚠️ Veuillez sélectionner votre jury', 'error');
+                return false;
+            }
+
             const scores = {};
             scoreInputs.forEach(input => {
                 scores[input.dataset.criteria] = parseFloat(input.value) || 0;
@@ -1647,17 +1781,14 @@
         // 🚀 INITIALISATION
         // ================================================================
 
-        juryName.textContent = currentUser.nom;
-        juryNameBadge.textContent = currentUser.nom;
-
         timerRemaining = 300;
         updateTimerDisplay();
 
         connecterJury();
 
         console.log('🏆 Éloquence en Scène - Fiche Jury');
-        console.log(`👤 ${currentUser.nom} connecté`);
         console.log('📡 Synchronisation en temps réel');
+        console.log('👥 Gestion dynamique des jurys');
     </script>
 
 </body>
