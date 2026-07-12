@@ -187,6 +187,7 @@
             color: var(--gold);
             letter-spacing: 4px;
             text-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
+            transition: color 0.3s ease;
         }
         .timer-display .timer-clock.warning {
             color: var(--orange);
@@ -195,6 +196,9 @@
         .timer-display .timer-clock.danger {
             color: var(--red);
             animation: pulse-timer 0.3s infinite alternate;
+        }
+        .timer-display .timer-clock.paused {
+            color: var(--blue);
         }
         @keyframes pulse-timer {
             0% {
@@ -290,6 +294,9 @@
         }
         .timer-status .status-text.termine {
             color: var(--red);
+        }
+        .timer-status .status-text.ready {
+            color: var(--blue);
         }
         .candidat-control {
             display: flex;
@@ -594,6 +601,15 @@
         .notification.warning {
             background: var(--orange);
         }
+        .timer-sync-status {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #444;
+            margin-top: 8px;
+        }
+        .timer-sync-status i {
+            color: var(--gold);
+        }
     </style>
 </head>
 <body>
@@ -637,8 +653,8 @@
                     <div class="timer-status">
                         Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
                     </div>
-                    <div style="margin-top:12px;text-align:center;font-size:0.7rem;color:#444;">
-                        <i class="fas fa-sync-alt"></i> Synchronisé avec les jurys
+                    <div class="timer-sync-status">
+                        <i class="fas fa-sync-alt"></i> Synchronisé avec tous les jurys en temps réel
                     </div>
                 </div>
             </section>
@@ -740,14 +756,13 @@
         </section>
     </main>
 
-    <!-- NOTIFICATION -->
     <div class="notification" id="notification"></div>
 
     <script>
         // ================================================================
-        // 🔥 CONFIGURATION FIREBASE - À MODIFIER AVEC VOS CLÉS
+        // 🔥 CONFIGURATION FIREBASE
         // ================================================================
-        
+
         const firebaseConfig = {
             apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
             authDomain: "conf-94615.firebaseapp.com",
@@ -830,12 +845,12 @@
         let timerInterval = null;
         let timerRunning = false;
         let timerPaused = false;
+        let isAdmin = false;
+        let currentUser = null;
         let matchsData = [];
         let candidatsData = [];
         let cotationsData = {};
         let photoFile = null;
-        let currentUser = null;
-        let isAdmin = false;
         let etatActuel = null;
 
         const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
@@ -885,14 +900,13 @@
         }
 
         // ================================================================
-        // 🔐 AUTHENTIFICATION - CORRIGÉE
+        // 🔐 AUTHENTIFICATION
         // ================================================================
 
         function connecterAdmin() {
             connectionStatus.textContent = 'Connexion...';
             connectionDot.className = 'dot offline';
 
-            // Vérifier si déjà connecté
             if (auth.currentUser) {
                 currentUser = auth.currentUser;
                 isAdmin = true;
@@ -903,7 +917,6 @@
                 return;
             }
 
-            // 1. Tentative de connexion avec email/password
             auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
                 .then((userCredential) => {
                     currentUser = userCredential.user;
@@ -916,8 +929,6 @@
                 })
                 .catch((error) => {
                     console.warn('⚠️ Erreur email:', error.code);
-
-                    // 2. Si l'utilisateur n'existe pas, on le crée
                     if (error.code === 'auth/user-not-found') {
                         connectionStatus.textContent = '📝 Création du compte...';
                         auth.createUserWithEmailAndPassword('admin@eloquence.cd', 'admin123')
@@ -935,7 +946,6 @@
                                 connexionAnonyme();
                             });
                     } else {
-                        // 3. Autre erreur : tentative anonyme
                         connexionAnonyme();
                     }
                 });
@@ -965,6 +975,190 @@
         function initialiserApp() {
             chargerDonnees();
             importerMatchsSiNecessaire();
+            ecouterTimer();
+        }
+
+        // ================================================================
+        // ⏱️ CHRONOMÈTRE - SYNCHRONISATION TOTALE
+        // ================================================================
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerRemaining / 60);
+            const seconds = timerRemaining % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerClock.textContent = display;
+
+            timerClock.classList.remove('warning', 'danger', 'paused');
+            if (timerRemaining <= 30 && timerRunning) {
+                timerClock.classList.add('danger');
+            } else if (timerRemaining <= 60 && timerRunning) {
+                timerClock.classList.add('warning');
+            } else if (!timerRunning && timerPaused) {
+                timerClock.classList.add('paused');
+            }
+        }
+
+        function startTimer() {
+            if (timerRunning && !timerPaused) {
+                showNotification('⚠️ Le timer est déjà en cours', 'warning');
+                return;
+            }
+            if (timerRemaining <= 0) setTimer(timerSeconds);
+
+            timerRunning = true;
+            timerPaused = false;
+            timerStatus.textContent = '▶️ En cours';
+            timerStatus.className = 'status-text en-cours';
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timerRemaining--;
+                updateTimerDisplay();
+                syncTimerToFirebase();
+
+                if (timerRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerStatus.textContent = '⏰ Temps écoulé !';
+                    timerStatus.className = 'status-text termine';
+                    syncTimerToFirebase();
+                    showNotification('⏰ Temps écoulé !', 'warning');
+                    timerClock.classList.add('danger');
+                }
+            }, 1000);
+
+            syncTimerToFirebase();
+            showNotification('▶️ Timer démarré', 'info');
+        }
+
+        function pauseTimer() {
+            if (!timerRunning && !timerPaused) {
+                showNotification('⚠️ Le timer n\'est pas en cours', 'warning');
+                return;
+            }
+            if (timerPaused) {
+                showNotification('⚠️ Le timer est déjà en pause', 'warning');
+                return;
+            }
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerPaused = true;
+            timerRunning = false;
+            timerStatus.textContent = '⏸️ En pause';
+            timerStatus.className = 'status-text pause';
+
+            syncTimerToFirebase();
+            showNotification('⏸️ Timer en pause', 'info');
+            updateTimerDisplay();
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerRunning = false;
+            timerPaused = false;
+            timerRemaining = timerSeconds;
+            updateTimerDisplay();
+            timerStatus.textContent = '⏸️ Réinitialisé';
+            timerStatus.className = 'status-text ready';
+            syncTimerToFirebase();
+            showNotification('🔄 Timer réinitialisé', 'info');
+        }
+
+        function setTimer(seconds) {
+            if (timerInterval) clearInterval(timerInterval);
+            timerRemaining = seconds;
+            timerSeconds = seconds;
+            timerRunning = false;
+            timerPaused = false;
+            updateTimerDisplay();
+            timerStatus.textContent = '⏸️ Prêt';
+            timerStatus.className = 'status-text ready';
+            syncTimerToFirebase();
+        }
+
+        function syncTimerToFirebase() {
+            db.collection('etat').doc('current').set({
+                timer: timerRemaining,
+                timerRunning: timerRunning,
+                timerPaused: timerPaused,
+                timerSeconds: timerSeconds,
+                timestamp: Date.now()
+            }, { merge: true }).catch(e => console.warn('⚠️ Timer non synchronisé:', e));
+        }
+
+        function ecouterTimer() {
+            db.collection('etat').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+
+                    // Mettre à jour le timer depuis Firebase (si changé par un autre)
+                    if (data.timer !== undefined && data.timer !== timerRemaining) {
+                        timerRemaining = data.timer;
+                        updateTimerDisplay();
+                    }
+
+                    if (data.timerSeconds !== undefined && data.timerSeconds !== timerSeconds) {
+                        timerSeconds = data.timerSeconds;
+                    }
+
+                    // Mettre à jour l'état du timer
+                    const newRunning = data.timerRunning || false;
+                    const newPaused = data.timerPaused || false;
+
+                    // Si le timer a été mis en pause depuis Firebase
+                    if (newPaused && !timerPaused && !newRunning) {
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerRunning = false;
+                        timerPaused = true;
+                        timerStatus.textContent = '⏸️ En pause (synchro)';
+                        timerStatus.className = 'status-text pause';
+                        updateTimerDisplay();
+                    }
+
+                    // Si le timer a été redémarré depuis Firebase
+                    if (newRunning && !timerRunning) {
+                        timerRunning = true;
+                        timerPaused = false;
+                        timerStatus.textContent = '▶️ En cours (synchro)';
+                        timerStatus.className = 'status-text en-cours';
+                        // Redémarrer l'intervalle local
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = setInterval(() => {
+                            timerRemaining--;
+                            updateTimerDisplay();
+                            syncTimerToFirebase();
+                            if (timerRemaining <= 0) {
+                                clearInterval(timerInterval);
+                                timerRunning = false;
+                                timerStatus.textContent = '⏰ Temps écoulé !';
+                                timerStatus.className = 'status-text termine';
+                                syncTimerToFirebase();
+                                showNotification('⏰ Temps écoulé !', 'warning');
+                            }
+                        }, 1000);
+                        updateTimerDisplay();
+                    }
+
+                    // Si le timer a été arrêté depuis Firebase
+                    if (!newRunning && !newPaused && timerRunning) {
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerRunning = false;
+                        timerPaused = false;
+                        timerStatus.textContent = '⏸️ Réinitialisé (synchro)';
+                        timerStatus.className = 'status-text ready';
+                        updateTimerDisplay();
+                    }
+
+                    // Mettre à jour le statut général
+                    if (data.timerRemaining === 0 && !timerRunning) {
+                        timerStatus.textContent = '⏰ Temps écoulé !';
+                        timerStatus.className = 'status-text termine';
+                    }
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute timer:', error);
+            });
         }
 
         // ================================================================
@@ -977,7 +1171,7 @@
             candidatsData = [];
             matchsData.forEach(m => {
                 if (m.these) candidatsData.push({ nom: m.these, matchId: parseInt(m.id), role: 'Thèse',
-                theme: m.theme });
+                    theme: m.theme });
                 if (m.antithese) candidatsData.push({ nom: m.antithese, matchId: parseInt(m.id),
                     role: 'Antithèse', theme: m.theme });
             });
@@ -1017,10 +1211,29 @@
                     if (etatActuel && etatActuel.timer !== undefined) {
                         timerRemaining = etatActuel.timer;
                         timerRunning = etatActuel.timerRunning || false;
+                        timerPaused = etatActuel.timerPaused || false;
                         updateTimerDisplay();
                         if (timerRunning) {
                             timerStatus.textContent = '▶️ En cours';
                             timerStatus.className = 'status-text en-cours';
+                            // Redémarrer l'intervalle
+                            if (timerInterval) clearInterval(timerInterval);
+                            timerInterval = setInterval(() => {
+                                timerRemaining--;
+                                updateTimerDisplay();
+                                syncTimerToFirebase();
+                                if (timerRemaining <= 0) {
+                                    clearInterval(timerInterval);
+                                    timerRunning = false;
+                                    timerStatus.textContent = '⏰ Temps écoulé !';
+                                    timerStatus.className = 'status-text termine';
+                                    syncTimerToFirebase();
+                                    showNotification('⏰ Temps écoulé !', 'warning');
+                                }
+                            }, 1000);
+                        } else if (timerPaused) {
+                            timerStatus.textContent = '⏸️ En pause';
+                            timerStatus.className = 'status-text pause';
                         }
                     }
                     if (etatActuel && etatActuel.candidatNom) {
@@ -1069,18 +1282,6 @@
                 if (doc.exists) {
                     const data = doc.data();
                     etatActuel = data;
-                    if (data && data.timer !== undefined) {
-                        timerRemaining = data.timer;
-                        timerRunning = data.timerRunning || false;
-                        updateTimerDisplay();
-                        if (timerRunning) {
-                            timerStatus.textContent = '▶️ En cours';
-                            timerStatus.className = 'status-text en-cours';
-                        } else if (timerRemaining > 0) {
-                            timerStatus.textContent = '⏸️ En pause';
-                            timerStatus.className = 'status-text pause';
-                        }
-                    }
                     if (data && data.candidatNom) {
                         candidatActuel.textContent = data.candidatNom;
                     }
@@ -1117,6 +1318,8 @@
                         candidatPhoto: '',
                         timer: 300,
                         timerRunning: false,
+                        timerPaused: false,
+                        timerSeconds: 300,
                         status: 'en-attente',
                         nombreJurys: 4,
                         timestamp: Date.now()
@@ -1166,83 +1369,6 @@
         });
 
         // ================================================================
-        // ⏱️ CHRONOMÈTRE
-        // ================================================================
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timerRemaining / 60);
-            const seconds = timerRemaining % 60;
-            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            timerClock.textContent = display;
-            timerClock.classList.remove('warning', 'danger');
-            if (timerRemaining <= 30 && timerRunning) {
-                timerClock.classList.add('danger');
-            } else if (timerRemaining <= 60 && timerRunning) {
-                timerClock.classList.add('warning');
-            }
-        }
-
-        function setTimer(seconds) {
-            timerRemaining = seconds;
-            timerSeconds = seconds;
-            updateTimerDisplay();
-            timerStatus.textContent = '⏸️ Prêt';
-            timerStatus.className = 'status-text';
-            syncTimerToFirebase();
-        }
-
-        function startTimer() {
-            if (timerRunning && !timerPaused) return;
-            if (timerRemaining <= 0) setTimer(timerSeconds);
-            timerRunning = true;
-            timerPaused = false;
-            timerStatus.textContent = '▶️ En cours';
-            timerStatus.className = 'status-text en-cours';
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timerRemaining--;
-                updateTimerDisplay();
-                syncTimerToFirebase();
-                if (timerRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    timerRunning = false;
-                    timerStatus.textContent = '⏰ Temps écoulé !';
-                    timerStatus.className = 'status-text termine';
-                    syncTimerToFirebase();
-                    showNotification('⏰ Temps écoulé !', 'warning');
-                }
-            }, 1000);
-        }
-
-        function pauseTimer() {
-            if (!timerRunning) return;
-            if (timerInterval) clearInterval(timerInterval);
-            timerPaused = true;
-            timerRunning = false;
-            timerStatus.textContent = '⏸️ En pause';
-            timerStatus.className = 'status-text pause';
-            syncTimerToFirebase();
-        }
-
-        function resetTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            timerRunning = false;
-            timerPaused = false;
-            setTimer(timerSeconds);
-            timerStatus.textContent = '⏸️ Réinitialisé';
-            timerStatus.className = 'status-text';
-            syncTimerToFirebase();
-        }
-
-        function syncTimerToFirebase() {
-            db.collection('etat').doc('current').set({
-                timer: timerRemaining,
-                timerRunning: timerRunning,
-                timestamp: Date.now()
-            }, { merge: true }).catch(e => console.warn('⚠️ Timer non synchronisé:', e));
-        }
-
-        // ================================================================
         // 📤 ENVOYER CANDIDAT AUX JURYS
         // ================================================================
 
@@ -1281,6 +1407,8 @@
                     candidatPhoto: photoUrl,
                     timer: timerRemaining,
                     timerRunning: timerRunning,
+                    timerPaused: timerPaused,
+                    timerSeconds: timerSeconds,
                     status: 'en-cours',
                     nombreJurys: 4,
                     timestamp: Date.now()
@@ -1507,6 +1635,7 @@
         console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
         console.log('📊 Firebase configuré');
         console.log('👑 Mode Admin');
+        console.log('⏱️ Chronomètre synchronisé en temps réel');
     </script>
 
 </body>
