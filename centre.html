@@ -22,7 +22,7 @@
 
     <style>
         /* ============================================================
-           STYLES COMPLETS - BLANC, BLEU, ROUGE
+           STYLES COMPLETS
            ============================================================ */
         * {
             margin: 0;
@@ -31,47 +31,46 @@
         }
 
         :root {
-            --blanc: #ffffff;
-            --blanc-casse: #f5f5f5;
-            --bleu-fonce: #0a1628;
-            --bleu-marine: #1a2a4a;
-            --bleu-clair: #2c5f8a;
-            --bleu-ciel: #4a90d9;
-            --rouge: #c0392b;
-            --rouge-clair: #e74c3c;
-            --rouge-dore: #a93226;
-            --blanc-transparent: rgba(255,255,255,0.9);
-            --shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --gold: #d4af37;
+            --gold-light: #f5e6a3;
+            --gold-dark: #a07c1e;
+            --black: #0a0a0a;
+            --dark-grey: #141414;
+            --card-bg: rgba(20, 18, 14, 0.95);
+            --white: #f0ede6;
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
             --radius: 16px;
             --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            --green: #27ae60;
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --blue: #3498db;
             --orange: #f39c12;
-            --gris-clair: #e8e6e1;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--blanc-casse);
-            color: var(--bleu-fonce);
+            background: var(--black);
+            color: var(--white);
             min-height: 100vh;
             padding: 20px;
-            background-image: 
-                radial-gradient(ellipse at 0% 0%, rgba(26, 42, 74, 0.03) 0%, transparent 60%),
-                radial-gradient(ellipse at 100% 100%, rgba(192, 57, 43, 0.03) 0%, transparent 60%);
+            background-image:
+                radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%),
+                radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
+            background-attachment: fixed;
         }
 
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: var(--blanc-casse);
+            background: #0a0a0a;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--rouge);
+            background: var(--gold-dark);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--rouge-dore);
+            background: var(--gold);
         }
 
         header {
@@ -80,12 +79,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 14px 32px;
-            background: var(--blanc);
+            background: rgba(12, 11, 8, 0.85);
+            backdrop-filter: blur(14px);
             border-radius: 80px;
             margin-bottom: 28px;
-            border-left: 5px solid var(--rouge);
-            border-right: 5px solid var(--bleu-fonce);
-            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             position: sticky;
             top: 10px;
             z-index: 100;
@@ -97,16 +96,16 @@
             gap: 12px;
             font-size: 1.5rem;
             font-weight: 900;
-            color: var(--bleu-fonce);
+            color: var(--gold);
         }
 
         .logo i {
             font-size: 2rem;
-            color: var(--rouge);
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.25));
         }
 
         .logo span {
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--rouge));
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -120,8 +119,8 @@
         }
 
         .admin-badge {
-            background: var(--bleu-fonce);
-            color: var(--blanc);
+            background: var(--gold);
+            color: var(--black);
             padding: 6px 18px;
             border-radius: 30px;
             font-size: 0.75rem;
@@ -147,13 +146,13 @@
             background: var(--green);
         }
         .dot.offline {
-            background: var(--rouge);
+            background: var(--red);
         }
 
         .btn-logout {
-            background: transparent;
-            border: 1px solid var(--gris-clair);
-            color: #888;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #aaa;
             padding: 8px 18px;
             border-radius: 30px;
             cursor: pointer;
@@ -162,44 +161,29 @@
             transition: var(--transition);
         }
         .btn-logout:hover {
-            border-color: var(--rouge);
-            color: var(--rouge);
-        }
-
-        .btn-aide {
-            background: transparent;
-            border: 1px solid var(--bleu-ciel);
-            color: var(--bleu-ciel);
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
-            transition: var(--transition);
-        }
-        .btn-aide:hover {
-            background: var(--bleu-ciel);
-            color: var(--blanc);
+            border-color: var(--red);
+            color: var(--red);
         }
 
         section {
-            background: var(--blanc);
+            background: var(--card-bg);
+            backdrop-filter: blur(6px);
             border-radius: var(--radius);
             padding: 24px 28px;
             margin-bottom: 24px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.06);
             box-shadow: var(--shadow);
         }
 
         h2 {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--bleu-fonce);
+            color: var(--gold-light);
             margin-bottom: 18px;
             letter-spacing: 0.5px;
         }
         h2 i {
-            color: var(--rouge);
+            color: var(--gold);
             margin-right: 10px;
         }
 
@@ -221,10 +205,10 @@
 
         /* ---- CHRONOMÈTRE ---- */
         .timer-section {
-            background: var(--blanc-casse);
+            background: rgba(212, 175, 55, 0.03);
             border-radius: var(--radius);
             padding: 20px;
-            border: 1px solid rgba(26, 42, 74, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.06);
         }
 
         .timer-display {
@@ -236,8 +220,9 @@
             font-size: 5rem;
             font-weight: 800;
             font-family: 'Poppins', monospace;
-            color: var(--bleu-fonce);
+            color: var(--gold);
             letter-spacing: 4px;
+            text-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
         }
 
         .timer-display .timer-clock.warning {
@@ -246,7 +231,7 @@
         }
 
         .timer-display .timer-clock.danger {
-            color: var(--rouge);
+            color: var(--red);
             animation: pulse-timer 0.3s infinite alternate;
         }
 
@@ -288,7 +273,7 @@
             color: #fff;
         }
         .timer-controls .btn-start:hover {
-            background: #219a52;
+            background: #27ae60;
             transform: scale(1.05);
         }
 
@@ -297,16 +282,16 @@
             color: #fff;
         }
         .timer-controls .btn-pause:hover {
-            background: #d68910;
+            background: #e67e22;
             transform: scale(1.05);
         }
 
         .timer-controls .btn-reset {
-            background: var(--rouge);
+            background: var(--red);
             color: #fff;
         }
         .timer-controls .btn-reset:hover {
-            background: var(--rouge-dore);
+            background: #c0392b;
             transform: scale(1.05);
         }
 
@@ -319,9 +304,9 @@
 
         .timer-presets button {
             padding: 6px 16px;
-            border: 1px solid var(--gris-clair);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 20px;
-            background: var(--blanc);
+            background: rgba(255, 255, 255, 0.03);
             color: #888;
             font-family: 'Poppins', sans-serif;
             font-size: 0.7rem;
@@ -329,19 +314,19 @@
             transition: var(--transition);
         }
         .timer-presets button:hover {
-            border-color: var(--bleu-ciel);
-            color: var(--bleu-ciel);
+            border-color: var(--gold);
+            color: var(--white);
         }
         .timer-presets button.active {
-            border-color: var(--bleu-fonce);
-            color: var(--blanc);
-            background: var(--bleu-fonce);
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.06);
         }
 
         .timer-status {
             text-align: center;
             font-size: 0.8rem;
-            color: #888;
+            color: #666;
             margin-top: 10px;
         }
         .timer-status .status-text.en-cours {
@@ -351,7 +336,7 @@
             color: var(--orange);
         }
         .timer-status .status-text.termine {
-            color: var(--rouge);
+            color: var(--red);
         }
 
         /* ---- GESTION CANDIDATS ---- */
@@ -378,10 +363,10 @@
         .candidat-control .form-group select,
         .candidat-control .form-group input {
             padding: 10px 14px;
-            background: var(--blanc-casse);
-            border: 1px solid var(--gris-clair);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 10px;
-            color: var(--bleu-fonce);
+            color: var(--white);
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
             transition: var(--transition);
@@ -390,13 +375,13 @@
         .candidat-control .form-group select:focus,
         .candidat-control .form-group input:focus {
             outline: none;
-            border-color: var(--bleu-ciel);
-            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.08);
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
         }
 
         .candidat-control .form-group select option {
-            background: var(--blanc);
-            color: var(--bleu-fonce);
+            background: var(--black);
+            color: var(--white);
         }
 
         .photo-preview {
@@ -404,9 +389,9 @@
             align-items: center;
             gap: 16px;
             padding: 10px;
-            background: var(--blanc-casse);
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 10px;
-            border: 1px solid var(--gris-clair);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .photo-preview img {
@@ -414,25 +399,25 @@
             height: 60px;
             border-radius: 50%;
             object-fit: cover;
-            background: var(--gris-clair);
+            background: var(--dark-grey);
         }
 
         .photo-preview .photo-placeholder {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: var(--gris-clair);
+            background: var(--dark-grey);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
+            color: #555;
             font-size: 1.5rem;
         }
 
         .btn-send {
             padding: 12px 24px;
-            background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu-marine));
-            color: var(--blanc);
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
             border: none;
             border-radius: 10px;
             font-family: 'Poppins', sans-serif;
@@ -448,7 +433,7 @@
         }
         .btn-send:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(26, 42, 74, 0.15);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
         }
         .btn-send:disabled {
             opacity: 0.5;
@@ -465,10 +450,10 @@
         }
 
         .stats .stat-card {
-            background: var(--blanc-casse);
+            background: rgba(255, 255, 255, 0.02);
             padding: 12px 20px;
             border-radius: 10px;
-            border: 1px solid var(--gris-clair);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             flex: 1;
             min-width: 120px;
             text-align: center;
@@ -477,11 +462,11 @@
         .stats .stat-card .stat-number {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--bleu-fonce);
+            color: var(--gold);
         }
         .stats .stat-card .stat-label {
             font-size: 0.65rem;
-            color: #888;
+            color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -493,14 +478,14 @@
         .progress-container .progress-bar {
             width: 100%;
             height: 6px;
-            background: var(--gris-clair);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 10px;
             overflow: hidden;
         }
 
         .progress-container .progress-bar .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--bleu-fonce), var(--rouge));
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
             border-radius: 10px;
             transition: width 0.5s ease;
         }
@@ -509,14 +494,14 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.75rem;
-            color: #888;
+            color: #666;
             margin-top: 4px;
         }
 
         .table-wrapper {
             overflow-x: auto;
             border-radius: 10px;
-            border: 1px solid var(--gris-clair);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         table {
@@ -526,27 +511,28 @@
         }
 
         thead {
-            background: var(--bleu-fonce);
+            background: rgba(212, 175, 55, 0.06);
         }
 
         th {
             padding: 10px 10px;
             text-align: left;
             font-weight: 600;
-            color: var(--blanc);
+            color: var(--gold-light);
             font-size: 0.65rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.06);
         }
 
         td {
             padding: 8px 10px;
-            border-bottom: 1px solid var(--gris-clair);
-            color: #444;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            color: #ccc;
         }
 
         tr:hover td {
-            background: rgba(74, 144, 217, 0.04);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .status-badge {
@@ -557,7 +543,7 @@
             font-weight: 600;
         }
         .status-badge.valide {
-            background: rgba(39, 174, 96, 0.12);
+            background: rgba(46, 204, 113, 0.12);
             color: var(--green);
         }
         .status-badge.brouillon {
@@ -565,14 +551,14 @@
             color: var(--orange);
         }
         .status-badge.non-cote {
-            background: var(--gris-clair);
-            color: #888;
+            background: rgba(255, 255, 255, 0.04);
+            color: #666;
         }
 
         .btn-export {
             padding: 8px 20px;
-            background: var(--rouge);
-            color: var(--blanc);
+            background: var(--blue);
+            color: #fff;
             border: none;
             border-radius: 10px;
             font-family: 'Poppins', sans-serif;
@@ -586,7 +572,7 @@
             margin-top: 12px;
         }
         .btn-export:hover {
-            background: var(--rouge-dore);
+            background: #2980b9;
             transform: translateY(-2px);
         }
 
@@ -663,13 +649,12 @@
         }
 
         .modal-content {
-            background: var(--blanc);
+            background: var(--card-bg);
             border-radius: var(--radius);
             max-width: 500px;
             width: 100%;
             padding: 30px;
-            border-top: 5px solid var(--rouge);
-            border-bottom: 5px solid var(--bleu-fonce);
+            border: 1px solid rgba(212, 175, 55, 0.06);
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
             animation: modalIn 0.3s ease;
         }
@@ -694,35 +679,31 @@
 
         .modal-content .modal-header h3 {
             font-size: 1.1rem;
-            color: var(--bleu-fonce);
+            color: var(--gold-light);
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .modal-content .modal-header h3 i {
-            color: var(--rouge);
         }
 
         .modal-content .modal-header .close-modal {
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: #888;
+            color: #666;
             cursor: pointer;
         }
 
         .modal-content .modal-body {
-            color: #666;
+            color: #999;
             font-size: 0.9rem;
             line-height: 1.8;
         }
 
         .modal-content .modal-body .info-contact {
-            background: var(--blanc-casse);
+            background: rgba(255, 255, 255, 0.03);
             padding: 14px 18px;
             border-radius: 10px;
-            border-left: 4px solid var(--rouge);
+            border-left: 4px solid var(--gold);
             margin-top: 12px;
         }
 
@@ -731,12 +712,12 @@
             align-items: center;
             gap: 10px;
             font-size: 0.85rem;
-            color: var(--bleu-fonce);
+            color: #ccc;
             padding: 4px 0;
         }
 
         .modal-content .modal-body .info-contact .contact-item i {
-            color: var(--rouge);
+            color: var(--gold);
             width: 20px;
         }
 
@@ -759,32 +740,32 @@
         }
 
         .modal-content .modal-footer .btn-modal-fermer {
-            background: var(--gris-clair);
-            color: #888;
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
         }
         .modal-content .modal-footer .btn-modal-fermer:hover {
-            background: #ddd;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .modal-content .modal-footer .btn-modal-contacter {
-            background: var(--rouge);
-            color: var(--blanc);
+            background: var(--gold);
+            color: var(--black);
         }
         .modal-content .modal-footer .btn-modal-contacter:hover {
-            background: var(--rouge-dore);
+            background: var(--gold-light);
             transform: scale(1.02);
         }
 
         .rank-1 {
-            color: var(--bleu-fonce) !important;
+            color: var(--gold) !important;
             font-weight: 700 !important;
         }
         .rank-2 {
-            color: #666 !important;
+            color: #c0c0c0 !important;
             font-weight: 600 !important;
         }
         .rank-3 {
-            color: var(--rouge) !important;
+            color: #cd7f32 !important;
             font-weight: 600 !important;
         }
     </style>
@@ -806,7 +787,9 @@
                 <span id="connectionStatus">Connexion...</span>
             </span>
             <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
-            <button class="btn-aide" id="aideBtn"><i class="fas fa-life-ring"></i> Aide</button>
+            <button class="btn-logout" id="aideBtn" style="border-color:var(--gold);color:var(--gold);">
+                <i class="fas fa-life-ring"></i> Aide
+            </button>
         </div>
     </header>
 
@@ -935,7 +918,7 @@
                     </thead>
                     <tbody id="resultsBody">
                         <tr>
-                            <td colspan="10" style="text-align:center;color:#999;padding:30px;">
+                            <td colspan="10" style="text-align:center;color:#555;padding:30px;">
                                 <i class="fas fa-spinner fa-spin"></i> Chargement des données...
                             </td>
                         </tr>
@@ -1134,6 +1117,7 @@
             connectionStatus.textContent = 'Connexion...';
             connectionDot.className = 'dot offline';
 
+            // Connexion anonyme
             auth.signInAnonymously()
                 .then(() => {
                     currentUser = auth.currentUser;
@@ -1149,6 +1133,7 @@
                     connectionStatus.textContent = '❌ Erreur connexion';
                     connectionDot.className = 'dot offline';
 
+                    // Tentative avec email
                     auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
                         .then(() => {
                             currentUser = auth.currentUser;
@@ -1173,6 +1158,7 @@
 
         async function importerMatchsSiNecessaire() {
             try {
+                // Vérifier si les matchs existent déjà
                 const snapshot = await db.collection('matchs').limit(1).get();
 
                 if (snapshot.empty) {
@@ -1191,6 +1177,7 @@
 
                     console.log(`📊 ${success}/${MATCHS_DATA.length} matchs importés`);
 
+                    // Créer l'état initial
                     await db.collection('etat').doc('current').set({
                         matchId: 0,
                         candidatNom: '',
@@ -1219,6 +1206,7 @@
 
         async function chargerDonnees() {
             try {
+                // Charger les matchs
                 const matchsSnapshot = await db.collection('matchs').get();
                 matchsData = [];
                 matchsSnapshot.forEach(doc => {
@@ -1226,6 +1214,7 @@
                 });
                 matchsData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
+                // Construire la liste des candidats
                 candidatsData = [];
                 matchsData.forEach(m => {
                     if (m.these) candidatsData.push({ nom: m.these, matchId: parseInt(m.id), role: 'Thèse',
@@ -1235,19 +1224,23 @@
                 });
                 candidatsData.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
 
+                // Charger les cotations
                 const cotationsSnapshot = await db.collection('cotations').get();
                 cotationsData = {};
                 cotationsSnapshot.forEach(doc => {
                     cotationsData[doc.id] = doc.data();
                 });
 
+                // Mettre à jour l'interface
                 remplirMatchs();
                 mettreAJourResultats();
                 mettreAJourStatistiques();
                 mettreAJourProgression();
 
+                // Écouter en temps réel
                 ecouterCotations();
 
+                // Récupérer l'état du timer
                 const etatDoc = await db.collection('etat').doc('current').get();
                 if (etatDoc.exists) {
                     const data = etatDoc.data();
@@ -1267,7 +1260,7 @@
             } catch (error) {
                 console.error('❌ Erreur chargement:', error);
                 resultsBody.innerHTML =
-                    `<tr><td colspan="10" style="text-align:center;color:var(--rouge);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
+                    `<tr><td colspan="10" style="text-align:center;color:var(--red);padding:30px;">❌ Erreur: ${error.message}</td></tr>`;
             }
         }
 
@@ -1489,7 +1482,7 @@
 
             if (sorted.length === 0) {
                 resultsBody.innerHTML =
-                    '<tr><td colspan="10" style="text-align:center;color:#999;padding:30px;">Aucune cotation</td></tr>';
+                    '<tr><td colspan="10" style="text-align:center;color:#555;padding:30px;">Aucune cotation</td></tr>';
                 return;
             }
 
@@ -1502,7 +1495,7 @@
                     } else if (cotes[j]) {
                         return `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
                     }
-                    return `<td style="text-align:center;color:#ddd;">-</td>`;
+                    return `<td style="text-align:center;color:#333;">-</td>`;
                 }).join('');
 
                 const statut = data.count === JURYS.length ? 'valide' :
@@ -1519,10 +1512,10 @@
                             <tr>
                                 <td class="${rangClass}">${rang}</td>
                                 <td>${nom}</td>
-                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(26,42,74,0.08)' : 'rgba(192,57,43,0.08)'};color:${candidat?.role === 'Thèse' ? 'var(--bleu-fonce)' : 'var(--rouge)'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
-                                <td style="color:#888;">#${candidat?.matchId || '-'}</td>
+                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(212,175,55,0.15)' : 'rgba(70,130,255,0.12)'};color:${candidat?.role === 'Thèse' ? 'var(--gold)' : '#7aa9ff'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
+                                <td style="color:#666;">#${candidat?.matchId || '-'}</td>
                                 ${juryNotes}
-                                <td style="font-weight:700;color:${data.moyenne > 15 ? 'var(--bleu-fonce)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
+                                <td style="font-weight:700;color:${data.moyenne > 15 ? 'var(--gold)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
                                     ${data.moyenne > 0 ? data.moyenne.toFixed(2) : '-'}
                                 </td>
                                 <td><span class="status-badge ${statut}">${statusText}</span></td>
@@ -1694,7 +1687,6 @@
         console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
         console.log('📊 Firebase connecté - Projet: conf-94615');
         console.log('👑 Mode Admin activé');
-        console.log('🎨 Design: Blanc, Bleu, Rouge');
     </script>
 
 </body>
