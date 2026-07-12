@@ -1,4 +1,3 @@
-<!-- Code du Centre de Contrôle -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,6 +34,9 @@
             --red: #e74c3c;
             --blue: #3498db;
             --orange: #f39c12;
+            --bleu-france: #0055a4;
+            --rouge-france: #ef4135;
+            --blanc: #ffffff;
         }
         body {
             font-family: 'Poppins', sans-serif;
@@ -42,7 +44,9 @@
             color: var(--white);
             min-height: 100vh;
             padding: 20px;
-            background-image: radial-gradient(ellipse at 10% 20%, #1f1a0a 0%, #050505 70%), radial-gradient(ellipse at 90% 80%, #1a1508 0%, transparent 60%);
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, #1a1a2e 0%, #050505 70%),
+                radial-gradient(ellipse at 90% 80%, #1a0a0a 0%, transparent 60%);
             background-attachment: fixed;
         }
         ::-webkit-scrollbar {
@@ -52,11 +56,11 @@
             background: #0a0a0a;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--gold-dark);
+            background: var(--rouge-france);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--gold);
+            background: var(--bleu-france);
         }
         header {
             display: flex;
@@ -64,11 +68,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 14px 32px;
-            background: rgba(12, 11, 8, 0.85);
+            background: linear-gradient(135deg, rgba(0, 85, 164, 0.9), rgba(239, 65, 53, 0.85));
             backdrop-filter: blur(14px);
             border-radius: 80px;
             margin-bottom: 28px;
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             position: sticky;
             top: 10px;
@@ -80,14 +84,15 @@
             gap: 12px;
             font-size: 1.5rem;
             font-weight: 900;
-            color: var(--gold);
+            color: var(--blanc);
         }
         .logo i {
             font-size: 2rem;
-            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.25));
+            color: var(--blanc);
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
         }
         .logo span {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+            background: linear-gradient(135deg, var(--blanc), var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -99,8 +104,8 @@
             flex-wrap: wrap;
         }
         .admin-badge {
-            background: var(--gold);
-            color: var(--black);
+            background: var(--blanc);
+            color: var(--bleu-france);
             padding: 6px 18px;
             border-radius: 30px;
             font-size: 0.75rem;
@@ -112,7 +117,7 @@
             align-items: center;
             gap: 8px;
             font-size: 0.75rem;
-            color: #888;
+            color: rgba(255, 255, 255, 0.8);
         }
         .status-connection .dot {
             width: 10px;
@@ -127,9 +132,9 @@
             background: var(--red);
         }
         .btn-logout {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #aaa;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--blanc);
             padding: 8px 18px;
             border-radius: 30px;
             cursor: pointer;
@@ -138,8 +143,9 @@
             transition: var(--transition);
         }
         .btn-logout:hover {
-            border-color: var(--red);
-            color: var(--red);
+            border-color: var(--blanc);
+            color: var(--blanc);
+            background: rgba(255, 255, 255, 0.25);
         }
         section {
             background: var(--card-bg);
@@ -147,7 +153,7 @@
             border-radius: var(--radius);
             padding: 24px 28px;
             margin-bottom: 24px;
-            border: 1px solid rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: var(--shadow);
         }
         h2 {
@@ -366,8 +372,8 @@
         }
         .btn-send {
             padding: 12px 24px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--black);
+            background: linear-gradient(135deg, var(--bleu-france), var(--rouge-france));
+            color: var(--blanc);
             border: none;
             border-radius: 10px;
             font-family: 'Poppins', sans-serif;
@@ -383,7 +389,7 @@
         }
         .btn-send:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 85, 164, 0.3);
         }
         .btn-send:disabled {
             opacity: 0.5;
@@ -427,7 +433,7 @@
         }
         .progress-container .progress-bar .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            background: linear-gradient(90deg, var(--bleu-france), var(--rouge-france), var(--gold));
             border-radius: 10px;
             transition: width 0.5s ease;
         }
@@ -442,46 +448,54 @@
             overflow-x: auto;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.04);
+            max-height: 600px;
+            overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            min-width: 800px;
         }
         thead {
-            background: rgba(212, 175, 55, 0.06);
+            background: linear-gradient(135deg, rgba(0, 85, 164, 0.2), rgba(239, 65, 53, 0.15));
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         th {
-            padding: 10px 10px;
+            padding: 14px 12px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--gold-light);
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.1);
+            background: rgba(10, 10, 10, 0.95);
         }
         td {
-            padding: 8px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 12px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             color: #ccc;
+            font-size: 0.85rem;
         }
         tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
         }
         .status-badge {
             font-size: 0.6rem;
-            padding: 2px 12px;
+            padding: 3px 14px;
             border-radius: 30px;
             text-transform: uppercase;
             font-weight: 600;
         }
         .status-badge.valide {
-            background: rgba(46, 204, 113, 0.12);
+            background: rgba(46, 204, 113, 0.15);
             color: var(--green);
         }
         .status-badge.brouillon {
-            background: rgba(243, 156, 18, 0.12);
+            background: rgba(243, 156, 18, 0.15);
             color: var(--orange);
         }
         .status-badge.non-cote {
@@ -490,7 +504,7 @@
         }
         .btn-export {
             padding: 8px 20px;
-            background: var(--blue);
+            background: var(--bleu-france);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -505,8 +519,30 @@
             margin-top: 12px;
         }
         .btn-export:hover {
-            background: #2980b9;
+            background: #003d7a;
             transform: translateY(-2px);
+        }
+        .btn-auto-next {
+            padding: 8px 20px;
+            background: var(--rouge-france);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-auto-next:hover {
+            background: #c7352a;
+            transform: translateY(-2px);
+        }
+        .btn-auto-next.active {
+            background: var(--green);
         }
         @media (max-width: 768px) {
             header {
@@ -544,6 +580,16 @@
             .stats {
                 flex-direction: column;
             }
+            .table-wrapper {
+                max-height: 400px;
+            }
+            table {
+                font-size: 0.7rem;
+                min-width: 600px;
+            }
+            th, td {
+                padding: 8px 8px;
+            }
         }
         @media (max-width: 480px) {
             body {
@@ -555,12 +601,16 @@
             th,
             td {
                 padding: 4px 6px;
-                font-size: 0.65rem;
+                font-size: 0.6rem;
+            }
+            .table-wrapper {
+                max-height: 300px;
             }
         }
         .rank-1 {
             color: var(--gold) !important;
             font-weight: 700 !important;
+            font-size: 1.1rem !important;
         }
         .rank-2 {
             color: #c0c0c0 !important;
@@ -601,7 +651,7 @@
             background: var(--red);
         }
         .notification.info {
-            background: var(--blue);
+            background: var(--bleu-france);
         }
         .notification.warning {
             background: var(--orange);
@@ -616,7 +666,6 @@
             color: var(--gold);
         }
 
-        /* Animation pour les nouvelles cotations */
         @keyframes highlightRow {
             0% {
                 background: rgba(212, 175, 55, 0.2);
@@ -629,7 +678,6 @@
             animation: highlightRow 1.5s ease;
         }
 
-        /* Styles pour la gestion des jurys */
         .jury-management {
             display: flex;
             flex-wrap: wrap;
@@ -688,6 +736,24 @@
             color: #666;
             margin-left: auto;
         }
+
+        .auto-next-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .auto-next-indicator.active {
+            background: rgba(46, 204, 113, 0.15);
+            color: var(--green);
+        }
+        .auto-next-indicator.inactive {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--red);
+        }
     </style>
 </head>
 <body>
@@ -709,7 +775,6 @@
 
     <main>
         <div class="admin-grid">
-            <!-- CHRONOMÈTRE -->
             <section>
                 <h2><i class="fas fa-clock"></i> Chronomètre</h2>
                 <div class="timer-section">
@@ -737,7 +802,6 @@
                 </div>
             </section>
 
-            <!-- GESTION CANDIDATS -->
             <section>
                 <h2><i class="fas fa-user-tie"></i> Gestion des Candidats</h2>
                 <div class="candidat-control">
@@ -767,26 +831,33 @@
                         <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
                     </button>
 
-                    <!-- Gestion des jurys -->
                     <div class="jury-management" id="juryManagement">
                         <span style="font-size:0.7rem;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
                             <i class="fas fa-users"></i> Jurys
                         </span>
-                        <div id="juryList" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-                            <!-- Les jurys seront ajoutés ici dynamiquement -->
-                        </div>
-                        <button class="btn-add-jury" id="addJuryBtn"><i class="fas fa-plus"></i> Ajouter un jury</button>
+                        <div id="juryList" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;"></div>
+                        <button class="btn-add-jury" id="addJuryBtn"><i class="fas fa-plus"></i> Ajouter</button>
                         <span class="jury-count" id="juryCountDisplay">0 jury</span>
+                    </div>
+
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:4px;">
+                        <button class="btn-auto-next" id="autoNextBtn">
+                            <i class="fas fa-forward"></i> Passage Auto
+                        </button>
+                        <span class="auto-next-indicator inactive" id="autoNextIndicator">
+                            <i class="fas fa-circle"></i> Désactivé
+                        </span>
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- RÉSULTATS -->
         <section>
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
-                <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Cotations en Temps Réel</h2>
-                <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> Exporter CSV</button>
+                <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Classement en Temps Réel</h2>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> Exporter CSV</button>
+                </div>
             </div>
 
             <div class="stats">
@@ -822,13 +893,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Candidat</th>
-                            <th>Rôle</th>
-                            <th>Match</th>
+                            <th style="width:50px;">#</th>
+                            <th style="min-width:180px;">Candidat</th>
+                            <th style="width:100px;">Rôle</th>
+                            <th style="width:80px;">Match</th>
                             <th id="jurysHeader">Jurys</th>
-                            <th>Moyenne</th>
-                            <th>Statut</th>
+                            <th style="width:100px;">Moyenne</th>
+                            <th style="width:110px;">Statut</th>
                         </tr>
                     </thead>
                     <tbody id="resultsBody">
@@ -846,10 +917,6 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // ================================================================
-        // 🔥 CONFIGURATION FIREBASE
-        // ================================================================
-
         const firebaseConfig = {
             apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
             authDomain: "conf-94615.firebaseapp.com",
@@ -863,10 +930,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         const storage = firebase.storage();
-
-        // ================================================================
-        // 📋 DONNÉES DES 26 MATCHS
-        // ================================================================
 
         const MATCHS_DATA = [
             { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
@@ -923,10 +986,6 @@
                 these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
         ];
 
-        // ================================================================
-        // 🎯 ÉTAT GLOBAL
-        // ================================================================
-
         let timerSeconds = 300;
         let timerRemaining = 300;
         let timerInterval = null;
@@ -940,13 +999,11 @@
         let photoFile = null;
         let etatActuel = null;
         let previousCotations = {};
-        let juryList = ['jury1']; // Liste des jurys, initialisée avec jury1
+        let juryList = ['jury1'];
+        let autoNextEnabled = false;
+        let isProcessingAutoNext = false;
 
-        const JURYS = juryList; // Utilisé pour les colonnes du tableau
-
-        // ================================================================
-        // 📦 RÉFÉRENCES DOM
-        // ================================================================
+        const JURYS = juryList;
 
         const timerClock = document.getElementById('timerClock');
         const timerStatus = document.getElementById('timerStatus');
@@ -976,12 +1033,10 @@
         const addJuryBtn = document.getElementById('addJuryBtn');
         const juryCountDisplay = document.getElementById('juryCountDisplay');
         const jurysHeader = document.getElementById('jurysHeader');
+        const autoNextBtn = document.getElementById('autoNextBtn');
+        const autoNextIndicator = document.getElementById('autoNextIndicator');
 
         let notificationTimeout = null;
-
-        // ================================================================
-        // 🔔 NOTIFICATIONS
-        // ================================================================
 
         function showNotification(message, type = 'info') {
             notification.textContent = message;
@@ -991,10 +1046,6 @@
                 notification.classList.remove('show');
             }, 4000);
         }
-
-        // ================================================================
-        // 🔐 AUTHENTIFICATION
-        // ================================================================
 
         function connecterAdmin() {
             connectionStatus.textContent = 'Connexion...';
@@ -1071,10 +1122,6 @@
             ecouterTimer();
             ecouterJurys();
         }
-
-        // ================================================================
-        // ⏱️ CHRONOMÈTRE - SYNCHRONISATION TOTALE
-        // ================================================================
 
         function updateTimerDisplay() {
             const minutes = Math.floor(timerRemaining / 60);
@@ -1186,7 +1233,6 @@
                 if (doc.exists) {
                     const data = doc.data();
 
-                    // Mettre à jour le timer depuis Firebase (si changé par un autre)
                     if (data.timer !== undefined && data.timer !== timerRemaining) {
                         timerRemaining = data.timer;
                         updateTimerDisplay();
@@ -1196,11 +1242,9 @@
                         timerSeconds = data.timerSeconds;
                     }
 
-                    // Mettre à jour l'état du timer
                     const newRunning = data.timerRunning || false;
                     const newPaused = data.timerPaused || false;
 
-                    // Si le timer a été mis en pause depuis Firebase
                     if (newPaused && !timerPaused && !newRunning) {
                         if (timerInterval) clearInterval(timerInterval);
                         timerRunning = false;
@@ -1210,7 +1254,6 @@
                         updateTimerDisplay();
                     }
 
-                    // Si le timer a été redémarré depuis Firebase
                     if (newRunning && !timerRunning) {
                         timerRunning = true;
                         timerPaused = false;
@@ -1252,10 +1295,6 @@
             });
         }
 
-        // ================================================================
-        // 👂 ÉCOUTE DES JURYS
-        // ================================================================
-
         function ecouterJurys() {
             db.collection('jurys').doc('liste').onSnapshot((doc) => {
                 if (doc.exists) {
@@ -1266,11 +1305,9 @@
                         juryList = ['jury1'];
                     }
                 } else {
-                    // Créer le document si inexistant
                     db.collection('jurys').doc('liste').set({ jurys: ['jury1'] }).catch(e => console.warn('⚠️ Erreur création jurys:', e));
                     juryList = ['jury1'];
                 }
-                // Mettre à jour les références
                 JURYS.length = 0;
                 juryList.forEach(j => JURYS.push(j));
                 mettreAJourInterfaceJurys();
@@ -1282,7 +1319,6 @@
         }
 
         function mettreAJourInterfaceJurys() {
-            // Mettre à jour l'affichage des jurys
             juryListEl.innerHTML = '';
             juryList.forEach((jury, index) => {
                 const tag = document.createElement('span');
@@ -1297,15 +1333,10 @@
                 juryListEl.appendChild(tag);
             });
 
-            // Mettre à jour le compteur
             juryCountDisplay.textContent = `${juryList.length} jury${juryList.length > 1 ? 's' : ''}`;
-
-            // Mettre à jour l'en-tête du tableau
-            jurysHeader.textContent = 'Jurys';
-            // Les colonnes seront recréées dans mettreAJourResultats
+            jurysHeader.textContent = JURYS.join(' | ');
         }
 
-        // Ajouter un jury
         addJuryBtn.addEventListener('click', async function() {
             const newJuryId = `jury${juryList.length + 1}`;
             const newJuryName = prompt(`Nom du nouveau jury (ex: ${newJuryId}) :`, newJuryId);
@@ -1326,7 +1357,6 @@
             }
         });
 
-        // Supprimer un jury (via event delegation)
         juryListEl.addEventListener('click', async function(e) {
             const removeBtn = e.target.closest('.btn-remove-jury');
             if (removeBtn) {
@@ -1347,10 +1377,6 @@
                 }
             }
         });
-
-        // ================================================================
-        // 📁 CHARGEMENT DES DONNÉES
-        // ================================================================
 
         function chargerDonneesLocales() {
             console.log('📁 Chargement des données locales...');
@@ -1428,7 +1454,6 @@
                     }
                 }
 
-                // Récupérer la liste des jurys
                 const jurysDoc = await db.collection('jurys').doc('liste').get();
                 if (jurysDoc.exists) {
                     const data = jurysDoc.data();
@@ -1462,10 +1487,6 @@
             }
         }
 
-        // ================================================================
-        // 👂 ÉCOUTES EN TEMPS RÉEL
-        // ================================================================
-
         function ecouterCotations() {
             db.collection('cotations').onSnapshot((snapshot) => {
                 const newCotations = {};
@@ -1473,7 +1494,6 @@
                     newCotations[doc.id] = doc.data();
                 });
 
-                // Détecter les changements pour les notifications
                 let changedCandidats = [];
                 Object.keys(newCotations).forEach(candidat => {
                     const oldData = previousCotations[candidat] || {};
@@ -1485,7 +1505,6 @@
 
                 cotationsData = newCotations;
 
-                // Notifier les changements
                 if (changedCandidats.length > 0) {
                     changedCandidats.forEach(candidat => {
                         const data = cotationsData[candidat];
@@ -1495,6 +1514,14 @@
                         });
                         showNotification(`📊 Nouvelle cotation pour "${candidat}" (${juryCount}/${JURYS.length})`,
                             'info');
+
+                        // Vérifier si le candidat est complètement validé par tous les jurys
+                        if (juryCount === JURYS.length && autoNextEnabled && !isProcessingAutoNext) {
+                            const candidatActuelNom = etatActuel?.candidatNom;
+                            if (candidatActuelNom === candidat) {
+                                passerAuCandidatSuivant();
+                            }
+                        }
                     });
                 }
 
@@ -1522,10 +1549,6 @@
                 console.error('❌ Erreur écoute état:', error);
             });
         }
-
-        // ================================================================
-        // 📥 IMPORT DES MATCHS
-        // ================================================================
 
         async function importerMatchsSiNecessaire() {
             try {
@@ -1563,10 +1586,6 @@
             }
         }
 
-        // ================================================================
-        // 🔄 REMPLIR LES SÉLECTEURS
-        // ================================================================
-
         function remplirMatchs() {
             matchSelect.innerHTML = '<option value="">-- Sélectionner un match --</option>';
             matchsData.forEach(m => {
@@ -1598,10 +1617,6 @@
             photoFile = null;
             photoUpload.value = '';
         });
-
-        // ================================================================
-        // 📤 ENVOYER CANDIDAT AUX JURYS
-        // ================================================================
 
         async function envoyerCandidat() {
             const matchId = parseInt(matchSelect.value);
@@ -1653,9 +1668,61 @@
             }
         }
 
-        // ================================================================
-        // 📊 RÉSULTATS
-        // ================================================================
+        function passerAuCandidatSuivant() {
+            if (isProcessingAutoNext) return;
+            isProcessingAutoNext = true;
+
+            const candidatActuelNom = etatActuel?.candidatNom;
+            if (!candidatActuelNom) {
+                isProcessingAutoNext = false;
+                return;
+            }
+
+            // Trouver l'index du candidat actuel
+            const indexActuel = candidatsData.findIndex(c => c.nom === candidatActuelNom);
+            if (indexActuel === -1) {
+                isProcessingAutoNext = false;
+                return;
+            }
+
+            // Chercher le prochain candidat non coté
+            let nextIndex = indexActuel + 1;
+            let found = false;
+
+            while (nextIndex < candidatsData.length) {
+                const nextCandidat = candidatsData[nextIndex];
+                const cotations = cotationsData[nextCandidat.nom] || {};
+                let juryCount = 0;
+                JURYS.forEach(j => {
+                    if (cotations[j] && cotations[j].valide) juryCount++;
+                });
+
+                if (juryCount < JURYS.length) {
+                    // Ce candidat n'est pas encore complètement validé
+                    found = true;
+                    break;
+                }
+                nextIndex++;
+            }
+
+            if (found) {
+                const prochainCandidat = candidatsData[nextIndex];
+                // Sélectionner le match correspondant
+                matchSelect.value = prochainCandidat.matchId;
+                remplirCandidats(prochainCandidat.matchId);
+                candidatSelect.value = prochainCandidat.nom;
+
+                // Envoyer automatiquement le candidat
+                setTimeout(() => {
+                    envoyerCandidat();
+                    showNotification(`🔄 Passage automatique au candidat suivant: ${prochainCandidat.nom}`, 'success');
+                    isProcessingAutoNext = false;
+                }, 1000);
+            } else {
+                showNotification('🎯 Tous les candidats ont été évalués !', 'success');
+                isProcessingAutoNext = false;
+            }
+        }
 
         function mettreAJourResultats() {
             const resultats = {};
@@ -1688,13 +1755,11 @@
             let html = '';
             const candidatEnCours = etatActuel?.candidatNom;
 
-            // Construire l'en-tête des jurys dynamiquement
             let juryHeader = '';
             JURYS.forEach(j => {
                 juryHeader += `<th style="text-align:center;font-size:0.6rem;">${j}</th>`;
             });
 
-            // Mettre à jour l'en-tête du tableau
             jurysHeader.textContent = JURYS.join(' | ');
 
             sorted.forEach(([nom, data], index) => {
@@ -1703,7 +1768,7 @@
                 JURYS.forEach(j => {
                     if (cotes[j] && cotes[j].valide) {
                         juryNotes +=
-                            `<td style="text-align:center;color:var(--green);">${cotes[j].total.toFixed(1)}</td>`;
+                            `<td style="text-align:center;color:var(--green);font-weight:600;">${cotes[j].total.toFixed(1)}</td>`;
                     } else if (cotes[j]) {
                         juryNotes +=
                             `<td style="text-align:center;color:var(--orange);">${cotes[j].total.toFixed(1)}</td>`;
@@ -1722,19 +1787,18 @@
                 const isActif = nom === candidatEnCours;
                 const rowClass = isActif ? 'candidat-actif' : '';
 
-                // Vérifier si ce candidat a été récemment mis à jour
                 const isUpdated = previousCotations[nom] && JSON.stringify(previousCotations[nom]) !== JSON.stringify(
                 cotes);
                 const updateClass = isUpdated ? 'row-updated' : '';
 
                 html += `
                             <tr class="${rowClass} ${updateClass}">
-                                <td class="${rangClass}">${rang}</td>
-                                <td>${nom} ${isActif ? '👑' : ''}</td>
-                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(212,175,55,0.15)' : 'rgba(70,130,255,0.12)'};color:${candidat?.role === 'Thèse' ? 'var(--gold)' : '#7aa9ff'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
+                                <td class="${rangClass}" style="text-align:center;font-weight:700;font-size:1.1rem;">${rang}</td>
+                                <td><strong>${nom}</strong> ${isActif ? '<span style="color:var(--gold);font-size:1.1rem;">👑</span>' : ''}</td>
+                                <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(0,85,164,0.15)' : 'rgba(239,65,53,0.15)'};color:${candidat?.role === 'Thèse' ? 'var(--bleu-france)' : 'var(--rouge-france)'};padding:4px 14px;border-radius:30px;font-size:0.65rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
                                 <td style="color:#666;">#${candidat?.matchId || '-'}</td>
                                 ${juryNotes}
-                                <td style="font-weight:700;color:${data.moyenne > 15 ? 'var(--gold)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
+                                <td style="font-weight:700;font-size:1rem;color:${data.moyenne > 15 ? 'var(--gold)' : data.moyenne > 10 ? 'var(--green)' : '#888'};">
                                     ${data.moyenne > 0 ? data.moyenne.toFixed(2) : '-'}
                                 </td>
                                 <td><span class="status-badge ${statut}">${statusText}</span></td>
@@ -1742,7 +1806,6 @@
                         `;
             });
 
-            // Reconstruire le tableau avec les colonnes dynamiques
             resultsBody.innerHTML = html;
         }
 
@@ -1781,10 +1844,6 @@
             progressText.textContent = `${cotes} / ${total} cotés`;
             progressPercent.textContent = `${Math.round(progression)}%`;
         }
-
-        // ================================================================
-        // 📤 EXPORT CSV
-        // ================================================================
 
         function exporterCSV() {
             let csv = 'Rang;Candidat;Rôle;Match;';
@@ -1831,10 +1890,6 @@
             showNotification('✅ Export CSV terminé', 'success');
         }
 
-        // ================================================================
-        // 📸 PHOTO
-        // ================================================================
-
         photoUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -1848,10 +1903,6 @@
                 reader.readAsDataURL(file);
             }
         });
-
-        // ================================================================
-        // 🎯 ÉVÉNEMENTS
-        // ================================================================
 
         timerStart.addEventListener('click', startTimer);
         timerPause.addEventListener('click', pauseTimer);
@@ -1875,9 +1926,22 @@
             });
         });
 
-        // ================================================================
-        // 🚀 INITIALISATION
-        // ================================================================
+        autoNextBtn.addEventListener('click', function() {
+            autoNextEnabled = !autoNextEnabled;
+            if (autoNextEnabled) {
+                this.innerHTML = '<i class="fas fa-pause"></i> Auto Actif';
+                this.classList.add('active');
+                autoNextIndicator.className = 'auto-next-indicator active';
+                autoNextIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Activé';
+                showNotification('✅ Passage automatique activé', 'success');
+            } else {
+                this.innerHTML = '<i class="fas fa-forward"></i> Passage Auto';
+                this.classList.remove('active');
+                autoNextIndicator.className = 'auto-next-indicator inactive';
+                autoNextIndicator.innerHTML = '<i class="fas fa-circle"></i> Désactivé';
+                showNotification('⏸️ Passage automatique désactivé', 'info');
+            }
+        });
 
         connecterAdmin();
         setTimer(300);
@@ -1888,6 +1952,7 @@
         console.log('⏱️ Chronomètre synchronisé en temps réel');
         console.log('📊 Cotations en temps réel avec notifications');
         console.log('👥 Gestion dynamique des jurys');
+        console.log('🔄 Passage automatique vers le candidat suivant');
     </script>
 
 </body>
