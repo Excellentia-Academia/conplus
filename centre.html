@@ -11,18 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
     <style>
         /* ============================================================
-           STYLES COMPLETS
+           STYLES COMPLETS - CENTRE DE CONTRÔLE
            ============================================================ */
         * {
             margin: 0;
@@ -768,6 +764,41 @@
             color: #cd7f32 !important;
             font-weight: 600 !important;
         }
+
+        .candidat-actif {
+            background: rgba(212, 175, 55, 0.08) !important;
+            border-left: 3px solid var(--gold) !important;
+        }
+
+        .flash-new {
+            animation: flashRow 1s ease 3;
+        }
+
+        @keyframes flashRow {
+            0%,
+            100% {
+                background: transparent;
+            }
+            50% {
+                background: rgba(212, 175, 55, 0.1);
+            }
+        }
+
+        .btn-reset-all {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #888;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            transition: var(--transition);
+        }
+        .btn-reset-all:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
     </style>
 </head>
 <body>
@@ -825,6 +856,9 @@
                     <div class="timer-status">
                         Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
                     </div>
+                    <div style="margin-top:12px;text-align:center;font-size:0.7rem;color:#444;">
+                        <i class="fas fa-sync-alt"></i> Synchronisé avec les jurys
+                    </div>
                 </div>
             </section>
 
@@ -861,6 +895,15 @@
                     <button class="btn-send" id="sendBtn">
                         <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
                     </button>
+
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+                        <button class="btn-reset-all" id="resetEtatBtn">
+                            <i class="fas fa-undo"></i> Réinitialiser l'état
+                        </button>
+                        <button class="btn-reset-all" id="resetAllCotationsBtn" style="border-color:var(--red);color:var(--red);">
+                            <i class="fas fa-trash"></i> Supprimer toutes les cotations
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -887,6 +930,10 @@
                 <div class="stat-card">
                     <div class="stat-number" id="totalJurys">0</div>
                     <div class="stat-label">Jurys Actifs</div>
+                </div>
+                <div class="stat-card" style="border-color:rgba(212,175,55,0.15);">
+                    <div class="stat-number" id="candidatActuel" style="font-size:1rem;">-</div>
+                    <div class="stat-label">Candidat en cours</div>
                 </div>
             </div>
 
@@ -973,7 +1020,7 @@
     ============================================================ -->
     <script>
         // ================================================================
-        // CONFIGURATION FIREBASE - TES CLÉS
+        // CONFIGURATION FIREBASE
         // ================================================================
 
         const firebaseConfig = {
@@ -986,7 +1033,6 @@
             measurementId: "G-BLCPS9S0ZJ"
         };
 
-        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();
@@ -994,7 +1040,7 @@
         const storage = firebase.storage();
 
         // ================================================================
-        // TOUS LES 26 MATCHS
+        // DONNÉES : 26 MATCHS
         // ================================================================
 
         const MATCHS_DATA = [
@@ -1068,6 +1114,7 @@
         let photoFile = null;
         let currentUser = null;
         let isAdmin = false;
+        let etatActuel = null;
 
         const JURYS = ['jury1', 'jury2', 'jury3', 'jury4'];
 
@@ -1095,15 +1142,17 @@
         const totalCandidats = document.getElementById('totalCandidats');
         const totalCotes = document.getElementById('totalCotes');
         const totalJurys = document.getElementById('totalJurys');
+        const candidatActuel = document.getElementById('candidatActuel');
 
         const exportBtn = document.getElementById('exportBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const aideBtn = document.getElementById('aideBtn');
+        const resetEtatBtn = document.getElementById('resetEtatBtn');
+        const resetAllCotationsBtn = document.getElementById('resetAllCotationsBtn');
 
         const connectionDot = document.getElementById('connectionDot');
         const connectionStatus = document.getElementById('connectionStatus');
 
-        // Modal aide
         const aideModal = document.getElementById('aideModal');
         const closeAideModal = document.getElementById('closeAideModal');
         const fermerAide = document.getElementById('fermerAide');
@@ -1117,7 +1166,6 @@
             connectionStatus.textContent = 'Connexion...';
             connectionDot.className = 'dot offline';
 
-            // Connexion anonyme
             auth.signInAnonymously()
                 .then(() => {
                     currentUser = auth.currentUser;
@@ -1133,7 +1181,6 @@
                     connectionStatus.textContent = '❌ Erreur connexion';
                     connectionDot.className = 'dot offline';
 
-                    // Tentative avec email
                     auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
                         .then(() => {
                             currentUser = auth.currentUser;
@@ -1158,7 +1205,6 @@
 
         async function importerMatchsSiNecessaire() {
             try {
-                // Vérifier si les matchs existent déjà
                 const snapshot = await db.collection('matchs').limit(1).get();
 
                 if (snapshot.empty) {
@@ -1177,7 +1223,6 @@
 
                     console.log(`📊 ${success}/${MATCHS_DATA.length} matchs importés`);
 
-                    // Créer l'état initial
                     await db.collection('etat').doc('current').set({
                         matchId: 0,
                         candidatNom: '',
@@ -1206,7 +1251,6 @@
 
         async function chargerDonnees() {
             try {
-                // Charger les matchs
                 const matchsSnapshot = await db.collection('matchs').get();
                 matchsData = [];
                 matchsSnapshot.forEach(doc => {
@@ -1214,7 +1258,6 @@
                 });
                 matchsData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-                // Construire la liste des candidats
                 candidatsData = [];
                 matchsData.forEach(m => {
                     if (m.these) candidatsData.push({ nom: m.these, matchId: parseInt(m.id), role: 'Thèse',
@@ -1224,36 +1267,36 @@
                 });
                 candidatsData.sort((a, b) => a.matchId - b.matchId || (a.role === 'Thèse' ? -1 : 1));
 
-                // Charger les cotations
                 const cotationsSnapshot = await db.collection('cotations').get();
                 cotationsData = {};
                 cotationsSnapshot.forEach(doc => {
                     cotationsData[doc.id] = doc.data();
                 });
 
-                // Mettre à jour l'interface
-                remplirMatchs();
-                mettreAJourResultats();
-                mettreAJourStatistiques();
-                mettreAJourProgression();
-
-                // Écouter en temps réel
-                ecouterCotations();
-
-                // Récupérer l'état du timer
                 const etatDoc = await db.collection('etat').doc('current').get();
                 if (etatDoc.exists) {
-                    const data = etatDoc.data();
-                    if (data && data.timer) {
-                        timerRemaining = data.timer;
-                        timerRunning = data.timerRunning || false;
+                    etatActuel = etatDoc.data();
+                    if (etatActuel && etatActuel.timer !== undefined) {
+                        timerRemaining = etatActuel.timer;
+                        timerRunning = etatActuel.timerRunning || false;
                         updateTimerDisplay();
                         if (timerRunning) {
                             timerStatus.textContent = '▶️ En cours';
                             timerStatus.className = 'status-text en-cours';
                         }
                     }
+                    if (etatActuel && etatActuel.candidatNom) {
+                        candidatActuel.textContent = etatActuel.candidatNom;
+                    }
                 }
+
+                remplirMatchs();
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+
+                ecouterCotations();
+                ecouterEtat();
 
                 console.log(`📊 ${matchsData.length} matchs, ${candidatsData.length} candidats chargés`);
 
@@ -1265,7 +1308,7 @@
         }
 
         // ================================================================
-        // ÉCOUTE EN TEMPS RÉEL
+        // ÉCOUTES EN TEMPS RÉEL
         // ================================================================
 
         function ecouterCotations() {
@@ -1278,7 +1321,37 @@
                 mettreAJourStatistiques();
                 mettreAJourProgression();
             }, (error) => {
-                console.error('❌ Erreur écoute:', error);
+                console.error('❌ Erreur écoute cotations:', error);
+            });
+        }
+
+        function ecouterEtat() {
+            db.collection('etat').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    etatActuel = data;
+
+                    if (data && data.timer !== undefined) {
+                        timerRemaining = data.timer;
+                        timerRunning = data.timerRunning || false;
+                        updateTimerDisplay();
+                        if (timerRunning) {
+                            timerStatus.textContent = '▶️ En cours';
+                            timerStatus.className = 'status-text en-cours';
+                        } else if (timerRemaining > 0) {
+                            timerStatus.textContent = '⏸️ En pause';
+                            timerStatus.className = 'status-text pause';
+                        }
+                    }
+
+                    if (data && data.candidatNom) {
+                        candidatActuel.textContent = data.candidatNom;
+                    }
+
+                    mettreAJourResultats();
+                }
+            }, (error) => {
+                console.error('❌ Erreur écoute état:', error);
             });
         }
 
@@ -1355,6 +1428,8 @@
             timerStatus.textContent = '▶️ En cours';
             timerStatus.className = 'status-text en-cours';
 
+            if (timerInterval) clearInterval(timerInterval);
+
             timerInterval = setInterval(() => {
                 timerRemaining--;
                 updateTimerDisplay();
@@ -1373,7 +1448,7 @@
 
         function pauseTimer() {
             if (!timerRunning) return;
-            clearInterval(timerInterval);
+            if (timerInterval) clearInterval(timerInterval);
             timerPaused = true;
             timerRunning = false;
             timerStatus.textContent = '⏸️ En pause';
@@ -1382,7 +1457,7 @@
         }
 
         function resetTimer() {
-            clearInterval(timerInterval);
+            if (timerInterval) clearInterval(timerInterval);
             timerRunning = false;
             timerPaused = false;
             setTimer(timerSeconds);
@@ -1421,7 +1496,7 @@
             let photoUrl = '';
             if (photoFile) {
                 try {
-                    const storageRef = storage.ref(`photos/${candidatNom}`);
+                    const storageRef = storage.ref(`photos/${candidatNom.replace(/\s/g, '_')}`);
                     await storageRef.put(photoFile);
                     photoUrl = await storageRef.getDownloadURL();
                 } catch (error) {
@@ -1443,6 +1518,7 @@
                     timestamp: Date.now()
                 }, { merge: true });
 
+                candidatActuel.textContent = candidatNom;
                 alert(`✅ Candidat "${candidatNom}" envoyé aux jurys !`);
             } catch (error) {
                 console.error('❌ Erreur envoi:', error);
@@ -1487,6 +1563,8 @@
             }
 
             let html = '';
+            const candidatEnCours = etatActuel?.candidatNom;
+
             sorted.forEach(([nom, data], index) => {
                 const cotes = data.cotes;
                 const juryNotes = JURYS.map(j => {
@@ -1508,10 +1586,13 @@
                 const rangClass = rang === 1 ? 'rank-1' : rang === 2 ? 'rank-2' : rang === 3 ? 'rank-3' : '';
                 const candidat = candidatsData.find(c => c.nom === nom);
 
+                const isActif = nom === candidatEnCours;
+                const rowClass = isActif ? 'candidat-actif' : '';
+
                 html += `
-                            <tr>
+                            <tr class="${rowClass}">
                                 <td class="${rangClass}">${rang}</td>
-                                <td>${nom}</td>
+                                <td>${nom} ${isActif ? '👑' : ''}</td>
                                 <td><span style="background:${candidat?.role === 'Thèse' ? 'rgba(212,175,55,0.15)' : 'rgba(70,130,255,0.12)'};color:${candidat?.role === 'Thèse' ? 'var(--gold)' : '#7aa9ff'};padding:2px 12px;border-radius:30px;font-size:0.6rem;font-weight:700;text-transform:uppercase;">${candidat?.role || '-'}</span></td>
                                 <td style="color:#666;">#${candidat?.matchId || '-'}</td>
                                 ${juryNotes}
@@ -1621,6 +1702,62 @@
         }
 
         // ================================================================
+        // RÉINITIALISATIONS
+        // ================================================================
+
+        async function resetEtat() {
+            if (!confirm('⚠️ Réinitialiser l\'état actuel (candidat en cours, timer) ?')) return;
+
+            try {
+                await db.collection('etat').doc('current').set({
+                    matchId: 0,
+                    candidatNom: '',
+                    candidatTheme: '',
+                    candidatRole: '',
+                    candidatPhoto: '',
+                    timer: 300,
+                    timerRunning: false,
+                    status: 'en-attente',
+                    nombreJurys: 4,
+                    timestamp: Date.now()
+                }, { merge: true });
+
+                timerRemaining = 300;
+                timerRunning = false;
+                updateTimerDisplay();
+                timerStatus.textContent = '⏸️ Réinitialisé';
+                timerStatus.className = 'status-text';
+                candidatActuel.textContent = '-';
+                alert('✅ État réinitialisé !');
+            } catch (error) {
+                console.error('❌ Erreur réinitialisation:', error);
+                alert('❌ Erreur: ' + error.message);
+            }
+        }
+
+        async function resetAllCotations() {
+            if (!confirm('⚠️⚠️ SUPPRIMER TOUTES LES COTATIONS ? Cette action est irréversible !')) return;
+            if (!confirm('⚠️ Êtes-vous vraiment sûr ?')) return;
+
+            try {
+                const snapshot = await db.collection('cotations').get();
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                alert('✅ Toutes les cotations ont été supprimées !');
+                cotationsData = {};
+                mettreAJourResultats();
+                mettreAJourStatistiques();
+                mettreAJourProgression();
+            } catch (error) {
+                console.error('❌ Erreur suppression:', error);
+                alert('❌ Erreur: ' + error.message);
+            }
+        }
+
+        // ================================================================
         // PHOTO
         // ================================================================
 
@@ -1658,6 +1795,8 @@
 
         sendBtn.addEventListener('click', envoyerCandidat);
         exportBtn.addEventListener('click', exporterCSV);
+        resetEtatBtn.addEventListener('click', resetEtat);
+        resetAllCotationsBtn.addEventListener('click', resetAllCotations);
 
         logoutBtn.addEventListener('click', () => {
             auth.signOut().then(() => {
@@ -1665,7 +1804,6 @@
             });
         });
 
-        // Modal aide
         aideBtn.addEventListener('click', () => aideModal.classList.add('active'));
         closeAideModal.addEventListener('click', () => aideModal.classList.remove('active'));
         fermerAide.addEventListener('click', () => aideModal.classList.remove('active'));
