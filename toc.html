@@ -791,6 +791,126 @@
         .syncing {
             animation: syncPulse 0.6s ease-in-out 3;
         }
+
+        /* ===== NOUVEAU : LISTE COMPLÈTE DES CANDIDATS ===== */
+        .candidats-list-toggle {
+            margin-bottom: 16px;
+        }
+        .candidats-list-toggle button {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--blanc-casse);
+            border: 2px solid var(--gris-clair);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--bleu-fonce);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .candidats-list-toggle button:hover {
+            border-color: var(--bleu-france);
+            background: rgba(0, 85, 164, 0.04);
+        }
+        .candidats-list-toggle button i {
+            color: var(--bleu-france);
+        }
+
+        .candidats-list {
+            display: none;
+            background: var(--blanc-casse);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--gris-clair);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .candidats-list.open {
+            display: block;
+        }
+        .candidats-list .candidat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 6px;
+        }
+        .candidats-list .candidat-item:hover {
+            background: rgba(0, 85, 164, 0.04);
+        }
+        .candidats-list .candidat-item .candidat-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .candidats-list .candidat-item .candidat-info .role-tag {
+            font-size: 0.55rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .role-tag.these {
+            background: rgba(0, 85, 164, 0.1);
+            color: var(--bleu-france);
+        }
+        .role-tag.antithese {
+            background: rgba(239, 65, 53, 0.1);
+            color: var(--rouge-france);
+        }
+        .candidats-list .candidat-item .status-mini {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .status-mini.valide {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--green);
+        }
+        .status-mini.brouillon {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--orange);
+        }
+        .status-mini.non-cote {
+            background: rgba(0, 0, 0, 0.03);
+            color: #999;
+        }
+        .candidats-list .candidat-item .select-btn {
+            background: var(--bleu-france);
+            color: white;
+            border: none;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+        .candidats-list .candidat-item .select-btn:hover {
+            background: var(--rouge-france);
+        }
+        .candidats-list .candidat-item .select-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .candidats-list .candidat-item.candidat-actif-item {
+            background: rgba(212, 175, 55, 0.06);
+            border-left: 3px solid var(--or);
+        }
+        .candidats-list .candidat-item.candidat-valide-item {
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -868,6 +988,16 @@
                         <div class="value" id="actifCandidatNom">-</div>
                     </div>
                     <span class="badge-en-cours" id="actifStatusBadge">⏳ En attente</span>
+                </div>
+
+                <!-- ===== NOUVEAU : LISTE COMPLÈTE DES CANDIDATS ===== -->
+                <div class="candidats-list-toggle">
+                    <button id="toggleCandidatsBtn">
+                        <i class="fas fa-list"></i> Voir tous les candidats
+                    </button>
+                </div>
+                <div class="candidats-list" id="candidatsList">
+                    <!-- Rempli dynamiquement -->
                 </div>
 
                 <div style="margin-bottom:16px;">
@@ -1084,8 +1214,11 @@
         const jurySelect = document.getElementById('jurySelect');
         const juryBadge = document.getElementById('juryBadge');
         const juryCount = document.getElementById('juryCount');
+        const toggleCandidatsBtn = document.getElementById('toggleCandidatsBtn');
+        const candidatsListEl = document.getElementById('candidatsList');
 
         let notificationTimeout = null;
+        let candidatsListOpen = false;
 
         function showNotification(message, type = 'info') {
             notification.textContent = message;
@@ -1102,11 +1235,96 @@
                 this.select();
             });
             
-            // Support pour le clic simple (sélectionne tout)
             input.addEventListener('click', function() {
                 this.select();
             });
         });
+
+        // ===== NOUVEAU : TOGGLE LISTE DES CANDIDATS =====
+        toggleCandidatsBtn.addEventListener('click', function() {
+            candidatsListOpen = !candidatsListOpen;
+            if (candidatsListOpen) {
+                candidatsListEl.classList.add('open');
+                this.innerHTML = '<i class="fas fa-chevron-up"></i> Masquer la liste';
+                afficherListeCandidats();
+            } else {
+                candidatsListEl.classList.remove('open');
+                this.innerHTML = '<i class="fas fa-list"></i> Voir tous les candidats';
+            }
+        });
+
+        function afficherListeCandidats() {
+            if (!candidatsListEl) return;
+            
+            let html = '';
+            const candidatEnCours = etatActuel?.candidatNom;
+            
+            candidatsList.forEach(c => {
+                const key = `${c.nom}_${currentUser.id}`;
+                const cotation = cotations[key];
+                let statut = 'non-cote';
+                let statutText = '⏹️ Non coté';
+                
+                if (cotation) {
+                    if (cotation.valide) {
+                        statut = 'valide';
+                        statutText = '✅ Validé';
+                    } else {
+                        statut = 'brouillon';
+                        statutText = '⏳ En cours';
+                    }
+                }
+                
+                const isActif = c.nom === candidatEnCours;
+                const isValide = statut === 'valide';
+                const rowClass = isActif ? 'candidat-actif-item' : '';
+                const valideClass = isValide ? 'candidat-valide-item' : '';
+                
+                html += `
+                    <div class="candidat-item ${rowClass} ${valideClass}">
+                        <div class="candidat-info">
+                            <span><strong>${c.nom}</strong></span>
+                            <span class="role-tag ${c.role === 'Thèse' ? 'these' : 'antithese'}">${c.role}</span>
+                            <span style="color:#999;font-size:0.65rem;">#${c.matchId}</span>
+                            <span class="status-mini ${statut}">${statutText}</span>
+                        </div>
+                        <button class="select-btn" data-nom="${c.nom}" data-match="${c.matchId}" data-role="${c.role}" data-theme="${c.theme}" ${isValide ? 'disabled' : ''}>
+                            ${isValide ? '✅ Coté' : 'Sélectionner'}
+                        </button>
+                    </div>
+                `;
+            });
+            
+            candidatsListEl.innerHTML = html;
+            
+            // Événements pour les boutons de sélection
+            candidatsListEl.querySelectorAll('.select-btn:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const nom = this.dataset.nom;
+                    const matchId = parseInt(this.dataset.match);
+                    const role = this.dataset.role;
+                    const theme = this.dataset.theme;
+                    
+                    // Sélectionner le candidat
+                    currentCandidatNom = nom;
+                    const etat = {
+                        candidatNom: nom,
+                        candidatTheme: theme,
+                        candidatRole: role,
+                        matchId: matchId,
+                        status: 'en-cours'
+                    };
+                    mettreAJourInterface(etat);
+                    chargerCotationCourante();
+                    showNotification(`📋 ${nom} sélectionné`, 'info');
+                    
+                    // Fermer la liste
+                    candidatsListOpen = false;
+                    candidatsListEl.classList.remove('open');
+                    toggleCandidatsBtn.innerHTML = '<i class="fas fa-list"></i> Voir tous les candidats';
+                });
+            });
+        }
 
         function connecterJury() {
             connectionStatus.textContent = 'Connexion...';
@@ -1270,6 +1488,7 @@
             chargerCotationsLocales();
             chargerCotationCourante();
             mettreAJourInterface(etatActuel);
+            afficherListeCandidats();
         });
 
         function disableAllInputs(disabled) {
@@ -1284,6 +1503,7 @@
         function chargerDonneesLocales() {
             console.log('📁 Chargement des données locales...');
             remplirSelectCandidats();
+            afficherListeCandidats();
             showNotification('📁 Mode hors ligne', 'warning');
         }
 
@@ -1325,6 +1545,7 @@
                     });
                     sauvegarderCotationsLocales();
                     chargerCotationCourante();
+                    afficherListeCandidats();
                 })
                 .catch(err => console.warn('⚠️ Erreur chargement cotations:', err));
         }
@@ -1341,6 +1562,7 @@
                     if (data.nombreJurys !== undefined) {
                         juryCount.textContent = `${data.nombreJurys} jurys`;
                     }
+                    afficherListeCandidats();
                 }
             }, (error) => {
                 console.error('❌ Erreur écoute état:', error);
@@ -1367,6 +1589,7 @@
                 if (changed) {
                     sauvegarderCotationsLocales();
                     chargerCotationCourante();
+                    afficherListeCandidats();
                     showNotification('🔄 Cotation mise à jour', 'info');
                 }
             }, (error) => {
@@ -1456,6 +1679,7 @@
 
             currentCandidatNom = nom;
             chargerCotationCourante();
+            afficherListeCandidats();
         }
 
         function chargerCotationCourante() {
@@ -1626,7 +1850,6 @@
             };
 
             try {
-                // Indicateur de synchronisation
                 isSyncing = true;
                 syncBtn.classList.add('syncing');
                 syncStatus.textContent = '⏳ Synchronisation...';
@@ -1653,10 +1876,12 @@
                 if (valide) {
                     showNotification(`✅ Cotation validée pour ${currentCandidatNom} !`, 'success');
                     chargerCotationCourante();
+                    afficherListeCandidats();
                 } else {
                     showNotification(`💾 Cotation enregistrée pour ${currentCandidatNom}`, 'success');
                     lastSaveInfo.textContent = `💾 Sauvegardé à ${new Date().toLocaleTimeString()}`;
                     syncStatus.textContent = '✅ Synchronisé';
+                    afficherListeCandidats();
                 }
                 return true;
             } catch (error) {
@@ -1707,6 +1932,7 @@
                 showNotification('🔄 Fiche réinitialisée', 'info');
                 lastSaveInfo.textContent = '🔄 Réinitialisé';
                 syncStatus.textContent = '✅ Synchronisé';
+                afficherListeCandidats();
             }
         });
 
@@ -1719,6 +1945,7 @@
                         mettreAJourInterface(doc.data());
                         showNotification('✅ Synchronisé avec le centre de contrôle', 'success');
                         syncStatus.textContent = '✅ Synchronisé';
+                        afficherListeCandidats();
                     }
                 })
                 .catch(err => {
@@ -1744,6 +1971,7 @@
         console.log('📡 Synchronisation en temps réel');
         console.log('👥 Gestion dynamique des jurys');
         console.log('✨ Saisie simplifiée : clic sur les champs = sélection automatique');
+        console.log('📋 Liste complète des candidats disponible');
     </script>
 
 </body>
