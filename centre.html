@@ -112,6 +112,29 @@
             font-weight: 700;
             letter-spacing: 1px;
         }
+        .badge-problemes {
+            background: var(--red);
+            color: var(--blanc);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: pulse-badge 2s infinite;
+            display: none;
+        }
+        .badge-problemes:hover {
+            transform: scale(1.05);
+        }
+        .badge-problemes i {
+            margin-right: 6px;
+        }
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
         .status-connection {
             display: flex;
             align-items: center;
@@ -755,7 +778,6 @@
             color: var(--red);
         }
 
-        /* Style pour le suivi des votes */
         .vote-status {
             display: inline-flex;
             align-items: center;
@@ -854,6 +876,10 @@
         </div>
         <div class="header-info">
             <span class="admin-badge"><i class="fas fa-user-shield"></i> Admin</span>
+            <span class="badge-problemes" id="problemesBadge">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="problemesCount">0</span> problème(s)
+            </span>
             <span class="status-connection">
                 <span class="dot online" id="connectionDot"></span>
                 <span id="connectionStatus">Connexion...</span>
@@ -938,7 +964,6 @@
                         </span>
                     </div>
 
-                    <!-- Suivi des votes des jurys -->
                     <div class="vote-tracking">
                         <div class="vote-header">
                             <span class="vote-title"><i class="fas fa-check-double"></i> Suivi des votes des jurys</span>
@@ -1103,7 +1128,7 @@
         let photoFile = null;
         let etatActuel = null;
         let previousCotations = {};
-        let juryList = ['jury1'];
+        let juryList = ['jury1', 'jury2', 'jury3', 'jury4'];
         let autoNextEnabled = false;
         let isProcessingAutoNext = false;
 
@@ -1142,8 +1167,11 @@
         const juryVoteStatus = document.getElementById('juryVoteStatus');
         const voteStats = document.getElementById('voteStats');
         const resetVotesBtn = document.getElementById('resetVotesBtn');
+        const problemesBadge = document.getElementById('problemesBadge');
+        const problemesCount = document.getElementById('problemesCount');
 
         let notificationTimeout = null;
+        let problemesList = [];
 
         function showNotification(message, type = 'info') {
             notification.textContent = message;
@@ -1168,7 +1196,7 @@
                 return;
             }
 
-            auth.signInWithEmailAndPassword('admin@eloquence.cd', 'admin123')
+            auth.signInWithEmailAndPassword('admin.elogence@gmail.com', 'admin123')
                 .then((userCredential) => {
                     currentUser = userCredential.user;
                     isAdmin = true;
@@ -1182,7 +1210,7 @@
                     console.warn('⚠️ Erreur email:', error.code);
                     if (error.code === 'auth/user-not-found') {
                         connectionStatus.textContent = '📝 Création du compte...';
-                        auth.createUserWithEmailAndPassword('admin@eloquence.cd', 'admin123')
+                        auth.createUserWithEmailAndPassword('admin.elogence@gmail.com', 'admin123')
                             .then((userCredential) => {
                                 currentUser = userCredential.user;
                                 isAdmin = true;
@@ -1228,6 +1256,7 @@
             importerMatchsSiNecessaire();
             ecouterTimer();
             ecouterJurys();
+            ecouterProblemes();
         }
 
         function updateTimerDisplay() {
@@ -1409,11 +1438,11 @@
                     if (data && data.jurys) {
                         juryList = data.jurys;
                     } else {
-                        juryList = ['jury1'];
+                        juryList = ['jury1', 'jury2', 'jury3', 'jury4'];
                     }
                 } else {
-                    db.collection('jurys').doc('liste').set({ jurys: ['jury1'] }).catch(e => console.warn('⚠️ Erreur création jurys:', e));
-                    juryList = ['jury1'];
+                    db.collection('jurys').doc('liste').set({ jurys: ['jury1', 'jury2', 'jury3', 'jury4'] }).catch(e => console.warn('⚠️ Erreur création jurys:', e));
+                    juryList = ['jury1', 'jury2', 'jury3', 'jury4'];
                 }
                 JURYS.length = 0;
                 juryList.forEach(j => JURYS.push(j));
@@ -1424,6 +1453,132 @@
             }, (error) => {
                 console.error('❌ Erreur écoute jurys:', error);
             });
+        }
+
+        // ===== SYSTÈME D'ÉCOUTE DES PROBLÈMES =====
+        function ecouterProblemes() {
+            db.collection('problemes')
+                .where('traite', '==', false)
+                .orderBy('timestamp', 'desc')
+                .onSnapshot((snapshot) => {
+                    problemesList = [];
+                    snapshot.forEach(doc => {
+                        problemesList.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (problemesList.length > 0) {
+                        problemesBadge.style.display = 'inline-flex';
+                        problemesCount.textContent = problemesList.length;
+                        showNotification(`🚨 ${problemesList.length} problème(s) signalé(s) par les jurys !`, 'warning');
+                    } else {
+                        problemesBadge.style.display = 'none';
+                    }
+                }, (error) => {
+                    console.error('❌ Erreur écoute problèmes:', error);
+                });
+        }
+
+        // ===== AFFICHER LA LISTE DES PROBLÈMES =====
+        function afficherProblemes() {
+            if (problemesList.length === 0) {
+                showNotification('✅ Aucun problème signalé', 'success');
+                return;
+            }
+
+            let html = `
+                <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">
+                    <div style="background:#1a1a1a;border-radius:16px;max-width:800px;width:100%;max-height:80vh;overflow-y:auto;padding:24px;border:1px solid rgba(255,255,255,0.1);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                            <h2 style="color:var(--red);margin:0;">
+                                <i class="fas fa-exclamation-triangle"></i> 
+                                Signalements (${problemesList.length})
+                            </h2>
+                            <button onclick="this.closest('div[style]').remove()" style="background:transparent;border:none;color:#888;font-size:1.5rem;cursor:pointer;">✕</button>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+            `;
+
+            problemesList.forEach((p, index) => {
+                const isUrgent = p.urgent ? '🚨 URGENT' : '';
+                html += `
+                    <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px 18px;border-left:4px solid ${p.urgent ? 'var(--red)' : 'var(--orange)'};">
+                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                            <div>
+                                <strong style="color:var(--red);">${p.juryName}</strong>
+                                <span style="color:#888;font-size:0.8rem;margin-left:8px;">${p.date || new Date(p.timestamp).toLocaleString()}</span>
+                            </div>
+                            <span style="color:var(--orange);font-size:0.7rem;font-weight:600;">${isUrgent}</span>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span style="color:var(--gold-light);font-weight:600;">${p.type}</span>
+                            ${p.detail ? `<span style="color:#aaa;font-size:0.85rem;display:block;margin-top:4px;">📝 ${p.detail}</span>` : ''}
+                        </div>
+                        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <span style="color:#666;font-size:0.7rem;">Candidat: ${p.candidatActuel || 'N/A'}</span>
+                            <button onclick="resoudreProbleme('${p.id}')" style="background:var(--green);color:#fff;border:none;padding:4px 16px;border-radius:20px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:var(--transition);">
+                                <i class="fas fa-check"></i> Résoudre
+                            </button>
+                            <button onclick="supprimerProbleme('${p.id}')" style="background:rgba(231,76,60,0.15);color:var(--red);border:1px solid var(--red);padding:4px 16px;border-radius:20px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:var(--transition);">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
+
+        // ===== RÉSOUDRE UN PROBLÈME =====
+        async function resoudreProbleme(id) {
+            if (!confirm('Confirmer la résolution de ce problème ?')) return;
+            try {
+                await db.collection('problemes').doc(id).update({
+                    traite: true,
+                    resoluLe: new Date().toISOString(),
+                    resoluPar: 'Admin'
+                });
+                
+                const doc = await db.collection('problemes').doc(id).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    await db.collection('etat').doc('current').set({
+                        problemAlert: {
+                            juryId: data.juryId,
+                            resolu: true
+                        }
+                    }, { merge: true });
+                }
+                
+                showNotification('✅ Problème résolu ! Le jury en est informé.', 'success');
+                document.querySelector('div[style*="position:fixed"]')?.remove();
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                showNotification('❌ Erreur lors de la résolution', 'error');
+            }
+        }
+
+        // ===== SUPPRIMER UN PROBLÈME =====
+        async function supprimerProbleme(id) {
+            if (!confirm('Supprimer ce signalement ?')) return;
+            try {
+                await db.collection('problemes').doc(id).delete();
+                showNotification('✅ Signalement supprimé', 'success');
+                document.querySelector('div[style*="position:fixed"]')?.remove();
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                showNotification('❌ Erreur lors de la suppression', 'error');
+            }
+        }
+
+        if (problemesBadge) {
+            problemesBadge.addEventListener('click', afficherProblemes);
         }
 
         function mettreAJourInterfaceJurys() {
@@ -1577,8 +1732,8 @@
                         juryList = data.jurys;
                     }
                 } else {
-                    await db.collection('jurys').doc('liste').set({ jurys: ['jury1'] });
-                    juryList = ['jury1'];
+                    await db.collection('jurys').doc('liste').set({ jurys: ['jury1', 'jury2', 'jury3', 'jury4'] });
+                    juryList = ['jury1', 'jury2', 'jury3', 'jury4'];
                 }
                 JURYS.length = 0;
                 juryList.forEach(j => JURYS.push(j));
@@ -1668,7 +1823,6 @@
             });
         }
 
-        // Fonction de suivi des votes des jurys
         function suivreVotesJurys() {
             const candidatNom = etatActuel?.candidatNom;
             if (!candidatNom) {
@@ -1745,7 +1899,6 @@
             resetVotesBtn.disabled = false;
         }
 
-        // Réinitialiser les votes du candidat actuel
         resetVotesBtn.addEventListener('click', async function() {
             const candidatNom = etatActuel?.candidatNom;
             if (!candidatNom) {
@@ -1763,10 +1916,8 @@
                 
                 if (docSnap.exists) {
                     const data = docSnap.data();
-                    // Supprimer les votes de tous les jurys
                     const newData = {};
                     juryList.forEach(jury => {
-                        // Garder seulement les données non-jury (si elles existent)
                         if (data[jury] === undefined) {
                             newData[jury] = data[jury];
                         }
@@ -1807,7 +1958,7 @@
                         timerPaused: false,
                         timerSeconds: 300,
                         status: 'en-attente',
-                        nombreJurys: 1,
+                        nombreJurys: 4,
                         timestamp: Date.now()
                     }, { merge: true });
                     showNotification(`✅ ${success} matchs importés !`, 'success');
@@ -2184,6 +2335,7 @@
         console.log('👥 Gestion dynamique des jurys');
         console.log('🔄 Passage automatique vers le candidat suivant');
         console.log('👁️ Suivi des votes des jurys en temps réel');
+        console.log('🚨 Système de signalement de problèmes actif');
     </script>
 
 </body>
