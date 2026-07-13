@@ -459,6 +459,9 @@
         .criteria-item input::-webkit-inner-spin-button {
             -webkit-appearance: none;
         }
+        .criteria-item input[type="number"] {
+            -moz-appearance: textfield;
+        }
         .total-section {
             display: flex;
             align-items: center;
@@ -779,6 +782,15 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        /* Animation de synchronisation */
+        @keyframes syncPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .syncing {
+            animation: syncPulse 0.6s ease-in-out 3;
+        }
     </style>
 </head>
 <body>
@@ -1036,6 +1048,7 @@
         let timerPaused = false;
         let isConnected = false;
         let juryList = ['jury1'];
+        let isSyncing = false;
 
         const candidateSelect = document.getElementById('candidateSelect');
         const candidatNom = document.getElementById('candidatNom');
@@ -1082,6 +1095,18 @@
                 notification.classList.remove('show');
             }, 4000);
         }
+
+        // ===== AMÉLIORATION : Sélection automatique du contenu au clic =====
+        scoreInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.select();
+            });
+            
+            // Support pour le clic simple (sélectionne tout)
+            input.addEventListener('click', function() {
+                this.select();
+            });
+        });
 
         function connecterJury() {
             connectionStatus.textContent = 'Connexion...';
@@ -1601,6 +1626,11 @@
             };
 
             try {
+                // Indicateur de synchronisation
+                isSyncing = true;
+                syncBtn.classList.add('syncing');
+                syncStatus.textContent = '⏳ Synchronisation...';
+
                 const docRef = db.collection('cotations').doc(currentCandidatNom);
                 const docSnap = await docRef.get();
 
@@ -1617,16 +1647,23 @@
                 cotations[key] = data;
                 sauvegarderCotationsLocales();
 
+                isSyncing = false;
+                syncBtn.classList.remove('syncing');
+
                 if (valide) {
                     showNotification(`✅ Cotation validée pour ${currentCandidatNom} !`, 'success');
                     chargerCotationCourante();
                 } else {
                     showNotification(`💾 Cotation enregistrée pour ${currentCandidatNom}`, 'success');
                     lastSaveInfo.textContent = `💾 Sauvegardé à ${new Date().toLocaleTimeString()}`;
+                    syncStatus.textContent = '✅ Synchronisé';
                 }
                 return true;
             } catch (error) {
                 console.error('❌ Erreur sauvegarde:', error);
+                isSyncing = false;
+                syncBtn.classList.remove('syncing');
+                syncStatus.textContent = '⚠️ Non synchronisé';
                 showNotification(`❌ Erreur: ${error.message}`, 'error');
                 return false;
             }
@@ -1669,6 +1706,7 @@
                     .catch(err => console.warn('⚠️ Erreur suppression:', err));
                 showNotification('🔄 Fiche réinitialisée', 'info');
                 lastSaveInfo.textContent = '🔄 Réinitialisé';
+                syncStatus.textContent = '✅ Synchronisé';
             }
         });
 
@@ -1680,10 +1718,12 @@
                     if (doc.exists) {
                         mettreAJourInterface(doc.data());
                         showNotification('✅ Synchronisé avec le centre de contrôle', 'success');
+                        syncStatus.textContent = '✅ Synchronisé';
                     }
                 })
                 .catch(err => {
                     showNotification('⚠️ Erreur synchronisation', 'error');
+                    syncStatus.textContent = '⚠️ Non synchronisé';
                 });
         });
 
@@ -1703,6 +1743,7 @@
         console.log('🏆 Éloquence en Scène - Fiche Jury');
         console.log('📡 Synchronisation en temps réel');
         console.log('👥 Gestion dynamique des jurys');
+        console.log('✨ Saisie simplifiée : clic sur les champs = sélection automatique');
     </script>
 
 </body>
