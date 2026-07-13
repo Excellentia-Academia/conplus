@@ -14,22 +14,24 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
     <style>
+        /* ===== STYLES GLOBAUX ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         :root {
             --gold: #d4af37;
             --gold-light: #f5e6a3;
             --gold-dark: #a07c1e;
             --black: #0a0a0a;
             --dark-grey: #141414;
-            --card-bg: rgba(20, 18, 14, 0.95);
+            --card-bg: rgba(18, 16, 14, 0.96);
             --white: #f0ede6;
-            --shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-            --radius: 16px;
-            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
             --green: #2ecc71;
             --red: #e74c3c;
             --blue: #3498db;
@@ -37,59 +39,66 @@
             --bleu-france: #0055a4;
             --rouge-france: #ef4135;
             --blanc: #ffffff;
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.06);
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--black);
             color: var(--white);
             min-height: 100vh;
             padding: 20px;
-            background-image: 
+            background-image:
                 radial-gradient(ellipse at 10% 20%, #1a1a2e 0%, #050505 70%),
                 radial-gradient(ellipse at 90% 80%, #1a0a0a 0%, transparent 60%);
             background-attachment: fixed;
         }
+
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #0a0a0a;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--rouge-france);
+            background: var(--gold);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: var(--bleu-france);
         }
+
+        /* ===== HEADER ===== */
         header {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 32px;
-            background: linear-gradient(135deg, rgba(0, 85, 164, 0.9), rgba(239, 65, 53, 0.85));
-            backdrop-filter: blur(14px);
-            border-radius: 80px;
-            margin-bottom: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            padding: 16px 36px;
+            background: linear-gradient(135deg, rgba(0, 85, 164, 0.85), rgba(239, 65, 53, 0.80));
+            backdrop-filter: blur(18px);
+            border-radius: 100px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6);
             position: sticky;
-            top: 10px;
+            top: 12px;
             z-index: 100;
         }
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
+            gap: 14px;
+            font-size: 1.6rem;
             font-weight: 900;
             color: var(--blanc);
         }
         .logo i {
-            font-size: 2rem;
-            color: var(--blanc);
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+            font-size: 2.2rem;
+            color: var(--gold-light);
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
         }
         .logo span {
             background: linear-gradient(135deg, var(--blanc), var(--gold-light));
@@ -97,21 +106,25 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .header-info {
             display: flex;
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
         }
+
         .admin-badge {
             background: var(--blanc);
             color: var(--bleu-france);
-            padding: 6px 18px;
+            padding: 6px 20px;
             border-radius: 30px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
+
         .status-connection {
             display: flex;
             align-items: center;
@@ -127,73 +140,90 @@
         }
         .dot.online {
             background: var(--green);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
         }
         .dot.offline {
             background: var(--red);
         }
+
         .btn-logout {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--blanc);
-            padding: 8px 18px;
+            padding: 8px 22px;
             border-radius: 30px;
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
             font-size: 0.75rem;
             transition: var(--transition);
+            backdrop-filter: blur(4px);
         }
         .btn-logout:hover {
             border-color: var(--blanc);
-            color: var(--blanc);
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.20);
+            transform: translateY(-2px);
         }
+
+        /* ===== SECTIONS ===== */
         section {
             background: var(--card-bg);
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
             border-radius: var(--radius);
-            padding: 24px 28px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
+            transition: var(--transition);
         }
+        section:hover {
+            border-color: rgba(212, 175, 55, 0.10);
+        }
+
         h2 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--gold-light);
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         h2 i {
             color: var(--gold);
-            margin-right: 10px;
+            font-size: 1.3rem;
         }
+
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            gap: 28px;
         }
         @media (max-width: 1024px) {
             .admin-grid {
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ===== TIMER ===== */
         .timer-section {
             background: rgba(212, 175, 55, 0.03);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 24px;
             border: 1px solid rgba(212, 175, 55, 0.06);
         }
+
         .timer-display {
             text-align: center;
-            padding: 20px 0;
+            padding: 24px 0 16px;
         }
         .timer-display .timer-clock {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: 800;
             font-family: 'Poppins', monospace;
             color: var(--gold);
-            letter-spacing: 4px;
-            text-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
+            letter-spacing: 6px;
+            text-shadow: 0 0 80px rgba(212, 175, 55, 0.08);
             transition: color 0.3s ease;
         }
         .timer-display .timer-clock.warning {
@@ -207,91 +237,101 @@
         .timer-display .timer-clock.paused {
             color: var(--blue);
         }
+
         @keyframes pulse-timer {
             0% {
                 opacity: 1;
                 transform: scale(1);
             }
             100% {
-                opacity: 0.6;
-                transform: scale(1.05);
+                opacity: 0.5;
+                transform: scale(1.04);
             }
         }
+
         .timer-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
         .timer-controls button {
-            padding: 10px 24px;
+            padding: 12px 28px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .timer-controls .btn-start {
             background: var(--green);
             color: #fff;
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.25);
         }
         .timer-controls .btn-start:hover {
             background: #27ae60;
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(46, 204, 113, 0.35);
         }
         .timer-controls .btn-pause {
             background: var(--orange);
             color: #fff;
+            box-shadow: 0 6px 25px rgba(243, 156, 18, 0.25);
         }
         .timer-controls .btn-pause:hover {
             background: #e67e22;
-            transform: scale(1.05);
+            transform: translateY(-3px);
         }
         .timer-controls .btn-reset {
             background: var(--red);
             color: #fff;
+            box-shadow: 0 6px 25px rgba(231, 76, 60, 0.25);
         }
         .timer-controls .btn-reset:hover {
             background: #c0392b;
-            transform: scale(1.05);
+            transform: translateY(-3px);
         }
+
         .timer-presets {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .timer-presets button {
-            padding: 6px 16px;
+            padding: 8px 20px;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.02);
             color: #888;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: var(--transition);
         }
         .timer-presets button:hover {
             border-color: var(--gold);
             color: var(--white);
+            background: rgba(212, 175, 55, 0.05);
         }
         .timer-presets button.active {
             border-color: var(--gold);
             color: var(--gold);
-            background: rgba(212, 175, 55, 0.06);
+            background: rgba(212, 175, 55, 0.08);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.04);
         }
+
         .timer-status {
             text-align: center;
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 12px;
         }
         .timer-status .status-text.en-cours {
             color: var(--green);
@@ -305,11 +345,24 @@
         .timer-status .status-text.ready {
             color: var(--blue);
         }
+
+        .timer-sync-status {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #444;
+            margin-top: 10px;
+        }
+        .timer-sync-status i {
+            color: var(--gold);
+        }
+
+        /* ===== GESTION CANDIDATS ===== */
         .candidat-control {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
         }
+
         .candidat-control .form-group {
             display: flex;
             flex-direction: column;
@@ -324,10 +377,10 @@
         }
         .candidat-control .form-group select,
         .candidat-control .form-group input {
-            padding: 10px 14px;
+            padding: 12px 16px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--white);
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
@@ -337,19 +390,20 @@
         .candidat-control .form-group input:focus {
             outline: none;
             border-color: var(--gold);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.04);
         }
         .candidat-control .form-group select option {
             background: var(--black);
             color: var(--white);
         }
+
         .photo-preview {
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 10px;
+            padding: 12px 16px;
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .photo-preview img {
@@ -358,6 +412,7 @@
             border-radius: 50%;
             object-fit: cover;
             background: var(--dark-grey);
+            border: 2px solid var(--gold);
         }
         .photo-preview .photo-placeholder {
             width: 60px;
@@ -368,50 +423,173 @@
             align-items: center;
             justify-content: center;
             color: #555;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            border: 2px dashed rgba(255, 255, 255, 0.05);
         }
+
         .btn-send {
-            padding: 12px 24px;
+            padding: 14px 28px;
             background: linear-gradient(135deg, var(--bleu-france), var(--rouge-france));
             color: var(--blanc);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             margin-top: 4px;
+            box-shadow: 0 8px 30px rgba(0, 85, 164, 0.2);
         }
         .btn-send:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 85, 164, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(0, 85, 164, 0.35);
         }
         .btn-send:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
         }
+
+        /* ===== JURY MANAGEMENT ===== */
+        .jury-management {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .jury-management .jury-tag {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.10);
+            color: var(--gold-light);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        .jury-management .jury-tag i {
+            color: var(--gold);
+            font-size: 0.7rem;
+        }
+        .jury-management .btn-add-jury {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            color: #888;
+            padding: 6px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .jury-management .btn-add-jury:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.04);
+        }
+        .jury-management .btn-remove-jury {
+            background: transparent;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            font-size: 0.7rem;
+            opacity: 0.4;
+            transition: var(--transition);
+            padding: 0 4px;
+        }
+        .jury-management .btn-remove-jury:hover {
+            opacity: 1;
+        }
+        .jury-management .jury-count {
+            font-size: 0.7rem;
+            color: #666;
+            margin-left: auto;
+        }
+
+        /* ===== AUTO NEXT ===== */
+        .auto-next-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .auto-next-indicator.active {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(46, 204, 113, 0.15);
+        }
+        .auto-next-indicator.inactive {
+            background: rgba(231, 76, 60, 0.06);
+            color: var(--red);
+            border: 1px solid rgba(231, 76, 60, 0.08);
+        }
+
+        .btn-auto-next {
+            padding: 10px 24px;
+            background: var(--rouge-france);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(239, 65, 53, 0.2);
+        }
+        .btn-auto-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(239, 65, 53, 0.3);
+        }
+        .btn-auto-next.active {
+            background: var(--green);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.25);
+        }
+        .btn-auto-next.active:hover {
+            box-shadow: 0 10px 35px rgba(46, 204, 113, 0.35);
+        }
+
+        /* ===== STATS ===== */
         .stats {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         .stats .stat-card {
             background: rgba(255, 255, 255, 0.02);
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 16px 24px;
+            border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.04);
             flex: 1;
             min-width: 120px;
             text-align: center;
+            transition: var(--transition);
+        }
+        .stats .stat-card:hover {
+            border-color: rgba(212, 175, 55, 0.08);
+            background: rgba(255, 255, 255, 0.03);
         }
         .stats .stat-card .stat-number {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--gold);
         }
@@ -421,8 +599,13 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        .stats .stat-card.highlight {
+            border-color: rgba(212, 175, 55, 0.10);
+        }
+
+        /* ===== PROGRESS ===== */
         .progress-container {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         .progress-container .progress-bar {
             width: 100%;
@@ -435,22 +618,29 @@
             height: 100%;
             background: linear-gradient(90deg, var(--bleu-france), var(--rouge-france), var(--gold));
             border-radius: 10px;
-            transition: width 0.5s ease;
+            transition: width 0.6s ease;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.10);
         }
         .progress-container .progress-info {
             display: flex;
             justify-content: space-between;
             font-size: 0.75rem;
             color: #666;
-            margin-top: 4px;
+            margin-top: 6px;
         }
+
+        /* ===== TABLEAU ===== */
         .table-wrapper {
             overflow-x: auto;
-            border-radius: 10px;
+            border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.04);
             max-height: 600px;
             overflow-y: auto;
         }
+        .table-wrapper::-webkit-scrollbar {
+            width: 4px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -458,113 +648,166 @@
             min-width: 800px;
         }
         thead {
-            background: linear-gradient(135deg, rgba(0, 85, 164, 0.2), rgba(239, 65, 53, 0.15));
+            background: linear-gradient(135deg, rgba(0, 85, 164, 0.15), rgba(239, 65, 53, 0.08));
             position: sticky;
             top: 0;
             z-index: 10;
         }
         th {
-            padding: 14px 12px;
+            padding: 14px 14px;
             text-align: left;
             font-weight: 700;
             color: var(--gold-light);
             font-size: 0.7rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            border-bottom: 2px solid rgba(212, 175, 55, 0.1);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.06);
             background: rgba(10, 10, 10, 0.95);
         }
         td {
-            padding: 12px 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             color: #ccc;
             font-size: 0.85rem;
+            transition: var(--transition);
         }
         tr:hover td {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
         }
+
         .status-badge {
             font-size: 0.6rem;
-            padding: 3px 14px;
+            padding: 4px 16px;
             border-radius: 30px;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         .status-badge.valide {
-            background: rgba(46, 204, 113, 0.15);
+            background: rgba(46, 204, 113, 0.12);
             color: var(--green);
         }
         .status-badge.brouillon {
-            background: rgba(243, 156, 18, 0.15);
+            background: rgba(243, 156, 18, 0.12);
             color: var(--orange);
         }
         .status-badge.non-cote {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
             color: #666;
         }
+
+        .rank-1 {
+            color: var(--gold) !important;
+            font-weight: 800 !important;
+            font-size: 1.2rem !important;
+        }
+        .rank-2 {
+            color: #c0c0c0 !important;
+            font-weight: 700 !important;
+        }
+        .rank-3 {
+            color: #cd7f32 !important;
+            font-weight: 700 !important;
+        }
+
+        .candidat-actif {
+            background: rgba(212, 175, 55, 0.04) !important;
+            border-left: 3px solid var(--gold) !important;
+        }
+
+        @keyframes highlightRow {
+            0% {
+                background: rgba(212, 175, 55, 0.08);
+            }
+            100% {
+                background: transparent;
+            }
+        }
+        .row-updated {
+            animation: highlightRow 1.2s ease;
+        }
+
+        /* ===== BOUTONS ===== */
         .btn-export {
-            padding: 8px 20px;
+            padding: 10px 24px;
             background: var(--bleu-france);
             color: #fff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(0, 85, 164, 0.15);
         }
         .btn-export:hover {
             background: #003d7a;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(0, 85, 164, 0.25);
         }
-        .btn-auto-next {
-            padding: 8px 20px;
-            background: var(--rouge-france);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 14px;
+            color: white;
             font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.85rem;
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+            z-index: 1000;
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .btn-auto-next:hover {
-            background: #c7352a;
-            transform: translateY(-2px);
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
         }
-        .btn-auto-next.active {
-            background: var(--green);
+        .notification.success {
+            background: rgba(46, 204, 113, 0.92);
         }
+        .notification.error {
+            background: rgba(231, 76, 60, 0.92);
+        }
+        .notification.info {
+            background: rgba(0, 85, 164, 0.92);
+        }
+        .notification.warning {
+            background: rgba(243, 156, 18, 0.92);
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
-                gap: 12px;
-                border-radius: 30px;
-                padding: 16px 20px;
+                gap: 14px;
+                border-radius: 40px;
+                padding: 18px 20px;
             }
             .logo {
                 font-size: 1.2rem;
             }
             .logo i {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
             }
             .header-info {
                 justify-content: center;
             }
             section {
-                padding: 16px 14px;
+                padding: 18px 16px;
             }
             .timer-display .timer-clock {
-                font-size: 3.5rem;
+                font-size: 3.8rem;
             }
             .admin-grid {
                 grid-template-columns: 1fr;
@@ -587,10 +830,12 @@
                 font-size: 0.7rem;
                 min-width: 600px;
             }
-            th, td {
+            th,
+            td {
                 padding: 8px 8px;
             }
         }
+
         @media (max-width: 480px) {
             body {
                 padding: 10px;
@@ -606,158 +851,21 @@
             .table-wrapper {
                 max-height: 300px;
             }
-        }
-        .rank-1 {
-            color: var(--gold) !important;
-            font-weight: 700 !important;
-            font-size: 1.1rem !important;
-        }
-        .rank-2 {
-            color: #c0c0c0 !important;
-            font-weight: 600 !important;
-        }
-        .rank-3 {
-            color: #cd7f32 !important;
-            font-weight: 600 !important;
-        }
-        .candidat-actif {
-            background: rgba(212, 175, 55, 0.08) !important;
-            border-left: 3px solid var(--gold) !important;
-        }
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 1000;
-            max-width: 400px;
-        }
-        .notification.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .notification.success {
-            background: var(--green);
-        }
-        .notification.error {
-            background: var(--red);
-        }
-        .notification.info {
-            background: var(--bleu-france);
-        }
-        .notification.warning {
-            background: var(--orange);
-        }
-        .timer-sync-status {
-            text-align: center;
-            font-size: 0.65rem;
-            color: #444;
-            margin-top: 8px;
-        }
-        .timer-sync-status i {
-            color: var(--gold);
-        }
-
-        @keyframes highlightRow {
-            0% {
-                background: rgba(212, 175, 55, 0.2);
-            }
-            100% {
-                background: transparent;
+            .jury-management .jury-tag {
+                font-size: 0.65rem;
+                padding: 4px 12px;
             }
         }
-        .row-updated {
-            animation: highlightRow 1.5s ease;
-        }
 
-        .jury-management {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            margin-top: 12px;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .jury-management .jury-tag {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            color: var(--gold-light);
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .jury-management .jury-tag i {
-            color: var(--gold);
-            font-size: 0.6rem;
-        }
-        .jury-management .btn-add-jury {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px dashed rgba(255, 255, 255, 0.15);
-            color: #888;
-            padding: 4px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.7rem;
-            transition: var(--transition);
-        }
-        .jury-management .btn-add-jury:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-        .jury-management .btn-remove-jury {
-            background: transparent;
-            border: none;
-            color: var(--red);
-            cursor: pointer;
-            font-size: 0.7rem;
-            opacity: 0.5;
-            transition: var(--transition);
-        }
-        .jury-management .btn-remove-jury:hover {
-            opacity: 1;
-        }
-        .jury-management .jury-count {
-            font-size: 0.65rem;
-            color: #666;
-            margin-left: auto;
-        }
-
-        .auto-next-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .auto-next-indicator.active {
-            background: rgba(46, 204, 113, 0.15);
-            color: var(--green);
-        }
-        .auto-next-indicator.inactive {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--red);
+        /* ===== CLASSE POUR LE SCROLL ===== */
+        .candidat-actif td:first-child {
+            border-left: 3px solid var(--gold);
         }
     </style>
 </head>
 <body>
 
+    <!-- ===== HEADER ===== -->
     <header>
         <div class="logo">
             <i class="fas fa-crown"></i>
@@ -773,8 +881,11 @@
         </div>
     </header>
 
+    <!-- ===== MAIN ===== -->
     <main>
+        <!-- ===== GRILLE ADMIN ===== -->
         <div class="admin-grid">
+            <!-- ===== SECTION CHRONOMÈTRE ===== -->
             <section>
                 <h2><i class="fas fa-clock"></i> Chronomètre</h2>
                 <div class="timer-section">
@@ -797,11 +908,12 @@
                         Statut : <span class="status-text" id="timerStatus">⏸️ En pause</span>
                     </div>
                     <div class="timer-sync-status">
-                        <i class="fas fa-sync-alt"></i> Synchronisé avec tous les jurys en temps réel
+                        <i class="fas fa-sync-alt fa-fw"></i> Synchronisé avec tous les jurys en temps réel
                     </div>
                 </div>
             </section>
 
+            <!-- ===== SECTION GESTION CANDIDATS ===== -->
             <section>
                 <h2><i class="fas fa-user-tie"></i> Gestion des Candidats</h2>
                 <div class="candidat-control">
@@ -831,6 +943,7 @@
                         <i class="fas fa-paper-plane"></i> Envoyer aux Jurys
                     </button>
 
+                    <!-- ===== JURY MANAGEMENT ===== -->
                     <div class="jury-management" id="juryManagement">
                         <span style="font-size:0.7rem;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
                             <i class="fas fa-users"></i> Jurys
@@ -840,7 +953,8 @@
                         <span class="jury-count" id="juryCountDisplay">0 jury</span>
                     </div>
 
-                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:4px;">
+                    <!-- ===== AUTO NEXT ===== -->
+                    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;">
                         <button class="btn-auto-next" id="autoNextBtn">
                             <i class="fas fa-forward"></i> Passage Auto
                         </button>
@@ -852,14 +966,16 @@
             </section>
         </div>
 
+        <!-- ===== SECTION CLASSEMENT ===== -->
         <section>
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
                 <h2 style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> Classement en Temps Réel</h2>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> Exporter CSV</button>
                 </div>
             </div>
 
+            <!-- ===== STATS ===== -->
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number" id="totalCandidats">0</div>
@@ -873,12 +989,13 @@
                     <div class="stat-number" id="totalJurys">0</div>
                     <div class="stat-label">Jurys Actifs</div>
                 </div>
-                <div class="stat-card" style="border-color:rgba(212,175,55,0.15);">
-                    <div class="stat-number" id="candidatActuel" style="font-size:1rem;">-</div>
+                <div class="stat-card highlight">
+                    <div class="stat-number" id="candidatActuel" style="font-size:1.1rem;">-</div>
                     <div class="stat-label">Candidat en cours</div>
                 </div>
             </div>
 
+            <!-- ===== PROGRESS ===== -->
             <div class="progress-container">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill" style="width:0%"></div>
@@ -889,6 +1006,7 @@
                 </div>
             </div>
 
+            <!-- ===== TABLEAU ===== -->
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -914,9 +1032,13 @@
         </section>
     </main>
 
+    <!-- ===== NOTIFICATION ===== -->
     <div class="notification" id="notification"></div>
 
     <script>
+        // ============================================================
+        // CONFIGURATION FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCOSnZ0ogR05svM0SbALqSlNqmODDDlIyw",
             authDomain: "conf-94615.firebaseapp.com",
@@ -931,6 +1053,9 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
+        // ============================================================
+        // DONNÉES STATIQUES (26 MATCHS)
+        // ============================================================
         const MATCHS_DATA = [
             { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
                 these: "Bernadine Mandanda Mbangu", antithese: "Adju Abdallah Djuma" },
@@ -986,6 +1111,9 @@
                 these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
         ];
 
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
         let timerSeconds = 300;
         let timerRemaining = 300;
         let timerInterval = null;
@@ -1002,9 +1130,11 @@
         let juryList = ['jury1'];
         let autoNextEnabled = false;
         let isProcessingAutoNext = false;
-
         const JURYS = juryList;
 
+        // ============================================================
+        // RÉFÉRENCES DOM
+        // ============================================================
         const timerClock = document.getElementById('timerClock');
         const timerStatus = document.getElementById('timerStatus');
         const timerStart = document.getElementById('timerStart');
@@ -1038,15 +1168,21 @@
 
         let notificationTimeout = null;
 
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
         function showNotification(message, type = 'info') {
             notification.textContent = message;
             notification.className = `notification ${type} show`;
             clearTimeout(notificationTimeout);
             notificationTimeout = setTimeout(() => {
                 notification.classList.remove('show');
-            }, 4000);
+            }, 4500);
         }
 
+        // ============================================================
+        // AUTHENTIFICATION
+        // ============================================================
         function connecterAdmin() {
             connectionStatus.textContent = 'Connexion...';
             connectionDot.className = 'dot offline';
@@ -1116,6 +1252,9 @@
                 });
         }
 
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
         function initialiserApp() {
             chargerDonnees();
             importerMatchsSiNecessaire();
@@ -1123,6 +1262,9 @@
             ecouterJurys();
         }
 
+        // ============================================================
+        // TIMER
+        // ============================================================
         function updateTimerDisplay() {
             const minutes = Math.floor(timerRemaining / 60);
             const seconds = timerRemaining % 60;
@@ -1295,6 +1437,9 @@
             });
         }
 
+        // ============================================================
+        // JURYS
+        // ============================================================
         function ecouterJurys() {
             db.collection('jurys').doc('liste').onSnapshot((doc) => {
                 if (doc.exists) {
@@ -1378,6 +1523,9 @@
             }
         });
 
+        // ============================================================
+        // CHARGEMENT DES DONNÉES
+        // ============================================================
         function chargerDonneesLocales() {
             console.log('📁 Chargement des données locales...');
             matchsData = MATCHS_DATA;
@@ -1586,6 +1734,9 @@
             }
         }
 
+        // ============================================================
+        // GESTION DES CANDIDATS (SELECTS)
+        // ============================================================
         function remplirMatchs() {
             matchSelect.innerHTML = '<option value="">-- Sélectionner un match --</option>';
             matchsData.forEach(m => {
@@ -1618,6 +1769,9 @@
             photoUpload.value = '';
         });
 
+        // ============================================================
+        // ENVOI CANDIDAT AUX JURYS
+        // ============================================================
         async function envoyerCandidat() {
             const matchId = parseInt(matchSelect.value);
             const candidatNom = candidatSelect.value;
@@ -1668,6 +1822,9 @@
             }
         }
 
+        // ============================================================
+        // PASSAGE AUTOMATIQUE
+        // ============================================================
         function passerAuCandidatSuivant() {
             if (isProcessingAutoNext) return;
             isProcessingAutoNext = true;
@@ -1698,7 +1855,6 @@
                 });
 
                 if (juryCount < JURYS.length) {
-                    // Ce candidat n'est pas encore complètement validé
                     found = true;
                     break;
                 }
@@ -1707,12 +1863,10 @@
 
             if (found) {
                 const prochainCandidat = candidatsData[nextIndex];
-                // Sélectionner le match correspondant
                 matchSelect.value = prochainCandidat.matchId;
                 remplirCandidats(prochainCandidat.matchId);
                 candidatSelect.value = prochainCandidat.nom;
 
-                // Envoyer automatiquement le candidat
                 setTimeout(() => {
                     envoyerCandidat();
                     showNotification(`🔄 Passage automatique au candidat suivant: ${prochainCandidat.nom}`, 'success');
@@ -1724,6 +1878,9 @@
             }
         }
 
+        // ============================================================
+        // AFFICHAGE DES RÉSULTATS
+        // ============================================================
         function mettreAJourResultats() {
             const resultats = {};
             Object.keys(cotationsData).forEach(candidat => {
@@ -1809,6 +1966,9 @@
             resultsBody.innerHTML = html;
         }
 
+        // ============================================================
+        // STATISTIQUES & PROGRESSION
+        // ============================================================
         function mettreAJourStatistiques() {
             let totalCotes = 0;
             const jurysActifs = {};
@@ -1845,6 +2005,9 @@
             progressPercent.textContent = `${Math.round(progression)}%`;
         }
 
+        // ============================================================
+        // EXPORT CSV
+        // ============================================================
         function exporterCSV() {
             let csv = 'Rang;Candidat;Rôle;Match;';
             JURYS.forEach(j => { csv += `${j};`; });
@@ -1890,6 +2053,9 @@
             showNotification('✅ Export CSV terminé', 'success');
         }
 
+        // ============================================================
+        // ÉVÉNEMENTS
+        // ============================================================
         photoUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -1943,6 +2109,9 @@
             }
         });
 
+        // ============================================================
+        // DÉMARRAGE
+        // ============================================================
         connecterAdmin();
         setTimer(300);
 
