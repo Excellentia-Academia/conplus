@@ -114,36 +114,6 @@
         .jury-header .user-info .badge-jury.rouge {
             background: var(--rouge-france);
         }
-        .btn-signal-probleme {
-            background: rgba(231, 76, 60, 0.15);
-            border: 2px solid var(--red);
-            color: var(--red);
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-signal-probleme:hover {
-            background: var(--red);
-            color: var(--blanc);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
-        }
-        .btn-signal-probleme.active {
-            background: var(--red);
-            color: var(--blanc);
-            animation: pulse-alert 1s infinite;
-        }
-        @keyframes pulse-alert {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
         .jury-header .user-info .btn-deconnexion {
             background: transparent;
             border: 1px solid var(--gris-clair);
@@ -662,6 +632,15 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(74, 144, 217, 0.2);
         }
+        .btn-probleme {
+            background: var(--red);
+            color: var(--blanc);
+            border: 2px solid transparent;
+        }
+        .btn-probleme:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+        }
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -847,6 +826,28 @@
         .candidate-select-wrapper .info-text i {
             color: var(--or);
         }
+        .btn-probleme {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-probleme:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(192, 57, 43, 0.3);
+        }
+        .btn-probleme i {
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -866,9 +867,6 @@
             </span>
             <span class="badge-jury" id="juryBadge"><i class="fas fa-user"></i> <span id="juryName">Jury 1</span></span>
             <span class="badge-jury rouge"><i class="fas fa-clock"></i> <span id="timerDisplay">05:00</span></span>
-            <button class="btn-signal-probleme" id="signalProblemBtn">
-                <i class="fas fa-exclamation-triangle"></i> Signaler un problème
-            </button>
             <button class="btn-deconnexion" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
         </div>
     </header>
@@ -938,42 +936,42 @@
                 <div class="criteria-grid">
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-brain" style="color:var(--jury-color);"></i> Maîtrise et compréhension du sujet</label>
+                            <label><i class="fas fa-brain" style="color:var(--jury-color);"></i> Maîtrise du sujet</label>
                             <span class="max-points">/4</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="maitrise" min="0" max="4" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-balance-scale" style="color:var(--rouge-france);"></i> Pertinence et solidité des arguments</label>
+                            <label><i class="fas fa-balance-scale" style="color:var(--rouge-france);"></i> Pertinence arguments</label>
                             <span class="max-points">/5</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="pertinence" min="0" max="5" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-sitemap" style="color:var(--bleu-fonce);"></i> Structure et cohérence du discours</label>
+                            <label><i class="fas fa-sitemap" style="color:var(--bleu-fonce);"></i> Structure discours</label>
                             <span class="max-points">/3</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="structure" min="0" max="3" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-microphone-alt" style="color:var(--or);"></i> Éloquence et présence scénique</label>
+                            <label><i class="fas fa-microphone-alt" style="color:var(--or);"></i> Éloquence / présence</label>
                             <span class="max-points">/4</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="eloquence" min="0" max="4" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-bullhorn" style="color:var(--rouge-france);"></i> Force de persuasion et impact</label>
+                            <label><i class="fas fa-bullhorn" style="color:var(--rouge-france);"></i> Force de persuasion</label>
                             <span class="max-points">/2</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="persuasion" min="0" max="2" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-clock" style="color:var(--jury-color);"></i> Respect du temps et des consignes</label>
+                            <label><i class="fas fa-clock" style="color:var(--jury-color);"></i> Respect du temps</label>
                             <span class="max-points">/2</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="temps" min="0" max="2" step="0.5" value="0" />
@@ -1003,6 +1001,12 @@
                     <button class="btn-valider" id="validateBtn"><i class="fas fa-check-circle"></i> Valider</button>
                     <button class="btn-reinitialiser" id="resetBtn"><i class="fas fa-undo"></i> Réinitialiser</button>
                     <button class="btn-sync" id="syncBtn"><i class="fas fa-sync-alt"></i> Synchro</button>
+                </div>
+
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
+                    <button class="btn-probleme" id="problemeBtn">
+                        <i class="fas fa-exclamation-triangle"></i> 📢 Signaler un problème
+                    </button>
                 </div>
 
                 <div class="status-bar">
@@ -1130,6 +1134,7 @@
         const validateBtn = document.getElementById('validateBtn');
         const resetBtn = document.getElementById('resetBtn');
         const syncBtn = document.getElementById('syncBtn');
+        const problemeBtn = document.getElementById('problemeBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const connectionDot = document.getElementById('connectionDot');
         const connectionStatus = document.getElementById('connectionStatus');
@@ -1139,11 +1144,8 @@
         const candidatImg = document.getElementById('candidatImg');
         const juryBadge = document.getElementById('juryBadge');
         const juryCount = document.getElementById('juryCount');
-        const signalProblemBtn = document.getElementById('signalProblemBtn');
 
         let notificationTimeout = null;
-        let hasProblem = false;
-        let problemTimeout = null;
 
         function showNotification(message, type = 'info') {
             notification.textContent = message;
@@ -1170,13 +1172,13 @@
             if (auth.currentUser) {
                 isConnected = true;
                 connectionDot.className = 'dot online';
-                connectionStatus.textContent = '✅ Connecté (Jury 1)';
+                connectionStatus.textContent = '✅ Connecté';
                 console.log('✅ Déjà connecté');
                 chargerDonnees();
                 return;
             }
 
-            auth.signInWithEmailAndPassword('jury1.elogence@gmail.com', 'jury123')
+            auth.signInWithEmailAndPassword('jury1@eloquence.cd', 'jury123')
                 .then(() => {
                     isConnected = true;
                     connectionDot.className = 'dot online';
@@ -1188,7 +1190,7 @@
                 .catch((error) => {
                     console.warn('⚠️ Erreur email:', error.code);
                     if (error.code === 'auth/user-not-found') {
-                        auth.createUserWithEmailAndPassword('jury1.elogence@gmail.com', 'jury123')
+                        auth.createUserWithEmailAndPassword('jury1@eloquence.cd', 'jury123')
                             .then(() => {
                                 isConnected = true;
                                 connectionDot.className = 'dot online';
@@ -1646,6 +1648,45 @@
             }
         }
 
+        async function signalerProbleme() {
+            const juryNom = currentUser.nom || 'Jury inconnu';
+            const candidatNom = currentCandidatNom || 'Aucun candidat';
+            
+            if (!confirm(`Voulez-vous signaler un problème au centre de contrôle en tant que ${juryNom} ?`)) {
+                return;
+            }
+
+            try {
+                const problemeData = {
+                    jury: juryNom,
+                    juryId: currentUser.id,
+                    candidat: candidatNom,
+                    message: `⚠️ Problème signalé par ${juryNom} pour le candidat "${candidatNom}"`,
+                    timestamp: new Date().toISOString(),
+                    lu: false
+                };
+
+                await db.collection('problemes').add(problemeData);
+                
+                showNotification(`✅ Problème signalé au centre de contrôle depuis ${juryNom}`, 'success');
+                
+                // Notification supplémentaire pour le centre de contrôle via l'état
+                await db.collection('etat').doc('current').set({
+                    derniereAlerte: {
+                        jury: juryNom,
+                        candidat: candidatNom,
+                        timestamp: Date.now(),
+                        lu: false
+                    }
+                }, { merge: true });
+                
+                console.log('📢 Problème signalé par', juryNom);
+            } catch (error) {
+                console.error('❌ Erreur signalement:', error);
+                showNotification('❌ Erreur lors du signalement', 'error');
+            }
+        }
+
         saveBtn.addEventListener('click', async function() {
             await sauvegarderCotationCloud(false);
         });
@@ -1704,6 +1745,8 @@
                 });
         });
 
+        problemeBtn.addEventListener('click', signalerProbleme);
+
         logoutBtn.addEventListener('click', function() {
             if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
                 auth.signOut().then(() => {
@@ -1711,132 +1754,6 @@
                 });
             }
         });
-
-        // ===== SYSTÈME DE SIGNALEMENT DE PROBLÈME =====
-        async function signalerProbleme() {
-            if (hasProblem) {
-                showNotification('⚠️ Un problème a déjà été signalé', 'warning');
-                return;
-            }
-
-            const problemType = prompt(
-                '📋 Quel type de problème rencontrez-vous ?\n\n' +
-                '1 - Problème d\'affichage\n' +
-                '2 - Problème de connexion\n' +
-                '3 - Problème avec le candidat\n' +
-                '4 - Problème technique (Firebase)\n' +
-                '5 - Autre problème\n\n' +
-                'Entrez le numéro correspondant :'
-            );
-
-            if (!problemType) return;
-
-            const problemMessages = {
-                '1': 'Problème d\'affichage',
-                '2': 'Problème de connexion',
-                '3': 'Problème avec le candidat',
-                '4': 'Problème technique (Firebase)',
-                '5': 'Autre problème'
-            };
-
-            const message = problemMessages[problemType];
-            if (!message) {
-                showNotification('❌ Type de problème invalide', 'error');
-                return;
-            }
-
-            const detail = prompt('🔍 Décrivez brièvement le problème :');
-            if (detail === null) return;
-
-            const signalement = {
-                juryId: currentUser.id,
-                juryName: currentUser.nom || `Jury ${currentUser.id}`,
-                type: message,
-                detail: detail || 'Aucun détail fourni',
-                candidatActuel: currentCandidatNom || 'Aucun candidat',
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleString('fr-FR'),
-                traite: false,
-                urgent: true
-            };
-
-            try {
-                showNotification('📤 Envoi du signalement...', 'info');
-                signalProblemBtn.disabled = true;
-                signalProblemBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
-
-                await db.collection('problemes').add(signalement);
-
-                hasProblem = true;
-                signalProblemBtn.classList.add('active');
-                signalProblemBtn.innerHTML = '<i class="fas fa-check-circle"></i> Problème signalé';
-                signalProblemBtn.disabled = false;
-
-                showNotification('✅ Problème signalé au centre de contrôle !', 'success');
-
-                await db.collection('etat').doc('current').set({
-                    problemAlert: {
-                        juryId: currentUser.id,
-                        juryName: currentUser.nom || `Jury ${currentUser.id}`,
-                        type: message,
-                        detail: detail || 'Aucun détail fourni',
-                        timestamp: new Date().toISOString(),
-                        active: true
-                    }
-                }, { merge: true });
-
-                await db.collection('notifications').add({
-                    type: 'probleme',
-                    juryId: currentUser.id,
-                    juryName: currentUser.nom || `Jury ${currentUser.id}`,
-                    message: `🚨 Le jury ${currentUser.nom || currentUser.id} signale un problème : ${message}`,
-                    detail: detail || 'Aucun détail fourni',
-                    candidatActuel: currentCandidatNom || 'Aucun candidat',
-                    timestamp: new Date().toISOString(),
-                    lu: false,
-                    urgent: true
-                });
-
-                problemTimeout = setTimeout(() => {
-                    hasProblem = false;
-                    signalProblemBtn.classList.remove('active');
-                    signalProblemBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Signaler un problème';
-                    showNotification('🔄 Vous pouvez à nouveau signaler un problème', 'info');
-                }, 300000);
-
-            } catch (error) {
-                console.error('❌ Erreur signalement:', error);
-                showNotification('❌ Erreur lors du signalement : ' + error.message, 'error');
-                signalProblemBtn.disabled = false;
-                signalProblemBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Réessayer';
-            }
-        }
-
-        function ecouterResolutionProbleme() {
-            db.collection('etat').doc('current').onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data.problemAlert && data.problemAlert.juryId === currentUser.id) {
-                        if (data.problemAlert.resolu) {
-                            hasProblem = false;
-                            signalProblemBtn.classList.remove('active');
-                            signalProblemBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Signaler un problème';
-                            clearTimeout(problemTimeout);
-                            showNotification('✅ Votre problème a été résolu par le centre de contrôle', 'success');
-                            
-                            db.collection('etat').doc('current').set({
-                                problemAlert: null
-                            }, { merge: true });
-                        }
-                    }
-                }
-            });
-        }
-
-        if (signalProblemBtn) {
-            signalProblemBtn.addEventListener('click', signalerProbleme);
-            ecouterResolutionProbleme();
-        }
 
         timerRemaining = 300;
         updateTimerDisplay();
@@ -1846,6 +1763,7 @@
         console.log('🏆 Éloquence en Scène - Jury 1');
         console.log('📡 Synchronisation en temps réel');
         console.log('👤 Jury 1 - Sélection des candidats contrôlée par le centre');
+        console.log('📢 Bouton de signalement de problème activé');
     </script>
 
 </body>
