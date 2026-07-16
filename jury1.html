@@ -527,47 +527,6 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-        .conseil-area {
-            background: rgba(212, 175, 55, 0.04);
-            border-left: 4px solid var(--or);
-            padding: 12px 16px;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 20px;
-        }
-        .conseil-area label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--bleu-fonce);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-        .conseil-area label i {
-            color: var(--or);
-        }
-        .conseil-area textarea {
-            width: 100%;
-            padding: 10px 14px;
-            background: var(--blanc);
-            border: 1px solid var(--gris-clair);
-            border-radius: 10px;
-            color: var(--bleu-fonce);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.85rem;
-            resize: vertical;
-            min-height: 40px;
-            transition: var(--transition);
-        }
-        .conseil-area textarea:focus {
-            outline: none;
-            border-color: var(--or);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
-        }
-        .conseil-area textarea:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
         .actions {
             display: flex;
             gap: 12px;
@@ -593,16 +552,6 @@
             opacity: 0.4;
             cursor: not-allowed;
             transform: none !important;
-        }
-        .btn-brouillon {
-            background: var(--blanc-casse);
-            color: var(--bleu-fonce);
-            border: 2px solid var(--gris-clair);
-        }
-        .btn-brouillon:hover:not(:disabled) {
-            border-color: var(--or);
-            color: var(--or);
-            transform: translateY(-2px);
         }
         .btn-valider {
             background: linear-gradient(135deg, var(--jury-color), var(--bleu-marine));
@@ -936,42 +885,42 @@
                 <div class="criteria-grid">
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-brain" style="color:var(--jury-color);"></i> Maîtrise du sujet</label>
+                            <label><i class="fas fa-brain" style="color:var(--jury-color);"></i> Maîtrise et compréhension du sujet</label>
                             <span class="max-points">/4</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="maitrise" min="0" max="4" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-balance-scale" style="color:var(--rouge-france);"></i> Pertinence arguments</label>
+                            <label><i class="fas fa-balance-scale" style="color:var(--rouge-france);"></i> Pertinence et solidité des arguments</label>
                             <span class="max-points">/5</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="pertinence" min="0" max="5" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-sitemap" style="color:var(--bleu-fonce);"></i> Structure discours</label>
+                            <label><i class="fas fa-sitemap" style="color:var(--bleu-fonce);"></i> Structure et cohérence du discours</label>
                             <span class="max-points">/3</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="structure" min="0" max="3" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-microphone-alt" style="color:var(--or);"></i> Éloquence / présence</label>
+                            <label><i class="fas fa-microphone-alt" style="color:var(--or);"></i> Éloquence et présence scénique</label>
                             <span class="max-points">/4</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="eloquence" min="0" max="4" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-bullhorn" style="color:var(--rouge-france);"></i> Force de persuasion</label>
+                            <label><i class="fas fa-bullhorn" style="color:var(--rouge-france);"></i> Force de persuasion et impact</label>
                             <span class="max-points">/2</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="persuasion" min="0" max="2" step="0.5" value="0" />
                     </div>
                     <div class="criteria-item">
                         <div class="criteria-header">
-                            <label><i class="fas fa-clock" style="color:var(--jury-color);"></i> Respect du temps</label>
+                            <label><i class="fas fa-clock" style="color:var(--jury-color);"></i> Respect du temps et des consignes</label>
                             <span class="max-points">/2</span>
                         </div>
                         <input type="number" class="score-input" data-criteria="temps" min="0" max="2" step="0.5" value="0" />
@@ -991,13 +940,7 @@
                     <textarea id="comment" placeholder="Vos observations sur la prestation du candidat..."></textarea>
                 </div>
 
-                <div class="conseil-area">
-                    <label><i class="fas fa-lightbulb"></i> Conseil personnalisé pour le candidat</label>
-                    <textarea id="conseil" placeholder="Ex: 'Travaillez votre respiration pour gagner en aisance scénique'"></textarea>
-                </div>
-
                 <div class="actions">
-                    <button class="btn-brouillon" id="saveBtn"><i class="fas fa-save"></i> Enregistrer</button>
                     <button class="btn-valider" id="validateBtn"><i class="fas fa-check-circle"></i> Valider</button>
                     <button class="btn-reinitialiser" id="resetBtn"><i class="fas fa-undo"></i> Réinitialiser</button>
                     <button class="btn-sync" id="syncBtn"><i class="fas fa-sync-alt"></i> Synchro</button>
@@ -1117,7 +1060,6 @@
         const roleBadge = document.getElementById('roleBadge');
         const totalScore = document.getElementById('totalScore');
         const comment = document.getElementById('comment');
-        const conseil = document.getElementById('conseil');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         const statusDotBar = document.getElementById('statusDotBar');
@@ -1130,7 +1072,6 @@
         const actifCandidatNom = document.getElementById('actifCandidatNom');
         const actifStatusBadge = document.getElementById('actifStatusBadge');
         const syncStatus = document.getElementById('syncStatus');
-        const saveBtn = document.getElementById('saveBtn');
         const validateBtn = document.getElementById('validateBtn');
         const resetBtn = document.getElementById('resetBtn');
         const syncBtn = document.getElementById('syncBtn');
@@ -1474,7 +1415,6 @@
                     }
                 });
                 comment.value = cotation.commentaire || '';
-                conseil.value = cotation.conseil || '';
                 updateTotal();
 
                 if (cotation.valide) {
@@ -1482,22 +1422,18 @@
                     statusText.textContent = 'Validé ✅';
                     statusDotBar.className = 'status-dot valide';
                     statusTextBar.textContent = 'Validé ✅';
-                    saveBtn.disabled = true;
                     validateBtn.disabled = true;
                     scoreInputs.forEach(i => i.disabled = true);
                     comment.disabled = true;
-                    conseil.disabled = true;
                     lastSaveInfo.textContent = `✅ Validé le ${new Date(cotation.dateModification).toLocaleString()}`;
                 } else {
                     statusDot.className = 'dot brouillon';
                     statusText.textContent = 'Brouillon';
                     statusDotBar.className = 'status-dot brouillon';
                     statusTextBar.textContent = 'Brouillon';
-                    saveBtn.disabled = false;
                     validateBtn.disabled = false;
                     scoreInputs.forEach(i => i.disabled = false);
                     comment.disabled = false;
-                    conseil.disabled = false;
                     lastSaveInfo.textContent = `📝 Brouillon - ${new Date(cotation.dateModification).toLocaleString()}`;
                 }
             } else {
@@ -1506,11 +1442,9 @@
                 statusText.textContent = 'En attente';
                 statusDotBar.className = 'status-dot en-attente';
                 statusTextBar.textContent = 'En attente';
-                saveBtn.disabled = false;
                 validateBtn.disabled = false;
                 scoreInputs.forEach(i => i.disabled = false);
                 comment.disabled = false;
-                conseil.disabled = false;
                 lastSaveInfo.textContent = 'Dernière sauvegarde : -';
             }
         }
@@ -1535,11 +1469,8 @@
                 input.disabled = false;
             });
             comment.value = '';
-            conseil.value = '';
             comment.disabled = false;
-            conseil.disabled = false;
             updateTotal();
-            saveBtn.disabled = false;
             validateBtn.disabled = false;
             lastSaveInfo.textContent = 'Dernière sauvegarde : -';
         }
@@ -1600,7 +1531,6 @@
                 scores: scores,
                 total: total,
                 commentaire: comment.value,
-                conseil: conseil.value,
                 valide: valide,
                 dateModification: new Date().toISOString()
             };
@@ -1670,7 +1600,6 @@
                 
                 showNotification(`✅ Problème signalé au centre de contrôle depuis ${juryNom}`, 'success');
                 
-                // Notification supplémentaire pour le centre de contrôle via l'état
                 await db.collection('etat').doc('current').set({
                     derniereAlerte: {
                         jury: juryNom,
@@ -1686,10 +1615,6 @@
                 showNotification('❌ Erreur lors du signalement', 'error');
             }
         }
-
-        saveBtn.addEventListener('click', async function() {
-            await sauvegarderCotationCloud(false);
-        });
 
         validateBtn.addEventListener('click', async function() {
             if (!confirm(`Valider définitivement la cotation pour ${currentCandidatNom} ?`)) return;
