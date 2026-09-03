@@ -686,6 +686,7 @@
             </div>
             <div class="card-body" id="cardBody">
                 <div class="invitation-letter">
+                    <!-- AJOUT : Bonjour Monsieur/Madame -->
                     <div class="salutation">Bonjour Monsieur/Madame,</div>
                     <div class="guest-name-large" id="guestNameDisplay">
                         <strong id="guestNameStrong">Invité(e) d'honneur</strong>
@@ -719,11 +720,11 @@
                     <div class="qr-note">Scannez ce QR Code pour confirmer votre présence</div>
                 </div>
 
-                <!-- BOUTON DE CONFIRMATION DE PRÉSENCE - RENDU VISIBLE -->
+                <!-- AJOUT : Bouton de confirmation de présence VISIBLE -->
                 <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()">
                     <i class="fas fa-check-circle"></i> Confirmer ma présence
                 </button>
-                <!-- FIN DU BOUTON -->
+                <!-- FIN AJOUT -->
                 
                 <button class="btn-download-invite" onclick="downloadInvitation()">
                     <i class="fas fa-download"></i> Télécharger mon invitation
@@ -733,7 +734,7 @@
     </div>
 
     <script>
-        // Configuration Firebase
+        // Configuration Firebase (inchangée)
         const firebaseConfig = {
             apiKey: "AIzaSyBr3QMEZBHc5CjHZ9m9Z3G5X7fP8T9uJ2M",
             authDomain: "eloquence-invitations.firebaseapp.com",
@@ -828,7 +829,7 @@
             }
         }
 
-        // Confirmation de présence (bouton visible)
+        // AJOUT : Fonction de confirmation de présence
         function confirmPresence() {
             const btn = document.getElementById('confirmBtn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmation en cours...';
@@ -848,7 +849,6 @@
             overlay.classList.add('show');
             
             const card = document.getElementById('invitationCard');
-            // Temporairement ajuster l'opacité pour éviter le blanc
             const originalBg = card.style.background;
             card.style.background = 'rgba(10, 10, 18, 0.98)';
             
@@ -859,9 +859,7 @@
                     allowTaint: true,
                     backgroundColor: '#0a0a12',
                     logging: false,
-                    onclone: (document) => {
-                        // Assurer que tous les éléments sont visibles
-                    }
+                    onclone: (document) => {}
                 }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = 'invitation-eloquence-en-scene.png';
@@ -909,11 +907,9 @@
             document.getElementById('inviteLink').textContent = link;
             document.getElementById('generatedLinkContainer').style.display = 'block';
             
-            // Mettre à jour l'affichage
             document.getElementById('guestNameStrong').textContent = name;
             document.getElementById('guestNameDisplay').innerHTML = `<strong>${name}</strong>`;
             
-            // QR Code
             generateQRCode(link);
             
             alert(`✅ Invitation générée pour ${name}`);
@@ -942,8 +938,6 @@
             initParticles();
             initAnimations();
             generateQRCode('https://eloquence-scene.com/invitation');
-            
-            // Exemple: nom par défaut (peut être remplacé dynamiquement)
             document.getElementById('guestNameStrong').textContent = 'Invité(e) d\'honneur';
         };
     </script>
