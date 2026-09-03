@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Éloquence en Scène | Invitation Officielle</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <!-- GSAP & ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- html2canvas pour le téléchargement -->
+    <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -33,7 +30,6 @@
             color: #fff;
         }
 
-        /* Particules d'arrière-plan */
         #particles {
             position: fixed;
             top: 0;
@@ -44,7 +40,6 @@
             pointer-events: none;
         }
 
-        /* Hero Background - Bleu et Blanc */
         .hero-bg {
             position: fixed;
             top: 0;
@@ -80,7 +75,6 @@
             background: radial-gradient(circle at center, transparent 0%, rgba(10, 22, 40, 0.6) 100%);
         }
 
-        /* Navigation Admin */
         .admin-nav {
             position: fixed;
             top: 30px;
@@ -111,17 +105,6 @@
             box-shadow: 0 10px 30px rgba(255,255,255,0.2);
         }
 
-        .download-btn {
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .download-btn:hover {
-            background: #10b981;
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Container principal */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -130,7 +113,6 @@
             z-index: 2;
         }
 
-        /* Carte d'invitation Premium - Bleu/Blanc */
         .invitation-card {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
@@ -146,7 +128,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* En-tête */
         .card-header {
             background: linear-gradient(135deg, rgba(10,22,40,0.9) 0%, rgba(26,58,107,0.9) 50%, rgba(74,138,200,0.9) 100%);
             padding: 50px 40px 40px;
@@ -169,17 +150,6 @@
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
-        }
-
-        .card-header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.2);
-            pointer-events: none;
         }
 
         .logo-accent {
@@ -243,13 +213,11 @@
             z-index: 2;
         }
 
-        /* Corps de la carte */
         .card-body {
             padding: 50px;
             background: rgba(10,22,40,0.6);
         }
 
-        /* Lettre d'invitation */
         .invitation-letter {
             margin-bottom: 40px;
         }
@@ -312,19 +280,12 @@
             font-size: 1.2rem;
         }
 
-        /* Carte GPS */
         .map-container {
             margin: 30px 0;
             border-radius: 24px;
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.15);
             background: #000;
-            animation: fadeInUp 0.8s ease 0.5s both;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .map-container iframe {
@@ -362,7 +323,6 @@
             padding-top: 25px;
         }
 
-        /* QR Code Section */
         .qr-section {
             background: rgba(255,255,255,0.05);
             border-radius: 24px;
@@ -399,7 +359,6 @@
             margin-top: 12px;
         }
 
-        /* Boutons */
         .btn-confirm {
             background: linear-gradient(135deg, #4a8ac8 0%, #1a3a6b 100%);
             color: #ffffff;
@@ -457,17 +416,6 @@
             filter: brightness(1.05);
         }
 
-        .btn-download-invite:disabled {
-            opacity: 0.6;
-            transform: none;
-            cursor: not-allowed;
-        }
-
-        .btn-download-invite i {
-            font-size: 1.2rem;
-        }
-
-        /* Modal Admin */
         .modal {
             display: none;
             position: fixed;
@@ -583,7 +531,6 @@
             cursor: pointer;
         }
 
-        /* Loading spinner pour le téléchargement */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -623,7 +570,6 @@
             font-weight: 500;
         }
 
-        /* Compteur d'invités */
         .invite-counter {
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -655,14 +601,6 @@
             color: rgba(255,255,255,0.5);
         }
 
-        .admin-phone-col {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.05);
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
         @media (max-width: 768px) {
             .container { padding: 30px 16px; }
             .card-body { padding: 30px 25px; }
@@ -672,7 +610,6 @@
             .map-container iframe { height: 220px; }
             .admin-nav { top: 15px; right: 15px; flex-direction: column; gap: 8px; }
             .admin-btn, .download-btn { padding: 8px 16px; font-size: 0.75rem; }
-            .invite-counter { flex-direction: column; align-items: stretch; text-align: center; }
         }
     </style>
 </head>
@@ -680,7 +617,6 @@
     <div class="hero-bg"></div>
     <canvas id="particles"></canvas>
     
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <div class="loading-text">Préparation de votre invitation...</div>
@@ -695,7 +631,6 @@
         </button>
     </div>
     
-    <!-- Modal Admin -->
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-crown"></i> Administration</h2>
@@ -720,13 +655,11 @@
                     </button>
                 </div>
                 
-                <!-- Compteur d'invités -->
                 <div class="invite-counter" id="inviteCounter">
                     <span class="label"><i class="fas fa-users"></i> Total invités</span>
                     <span class="count" id="totalInviteCount">0 <span>personnes</span></span>
                 </div>
                 
-                <!-- Liste des invités -->
                 <h3><i class="fas fa-list"></i> Liste des invités</h3>
                 <div id="guestList" class="guest-list">
                     <p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Aucun invité pour le moment</p>
@@ -743,7 +676,7 @@
                 </div>
                 <div class="badge-premium">★ INVITATION OFFICIELLE</div>
                 <h1>Éloquence en Scène</h1>
-                <div class="event-date">📅 Samedi 12 Avril 2026 • 18h00</div>
+                <div class="event-date">📅 Samedi 05 Septembre 2026 • 08h00</div>
             </div>
             <div class="card-body" id="invitationBody">
                 <div class="invitation-letter" id="invitationLetter">
@@ -754,18 +687,17 @@
                         <p>Venez vivre une expérience unique dans un cadre prestigieux, où l'éloquence et la convivialité se rencontrent.</p>
                     </div>
                     <div class="event-details">
-                        <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 12 Avril 2026</p>
-                        <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 18h00 - 23h00</p>
-                        <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Salon Bantu, Kinshasa</p>
+                        <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 05 Septembre 2026</p>
+                        <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 08h00 - 12h30</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
                         <p><i class="fas fa-glass-cheers"></i> <strong>Dress code :</strong> Tenue de soirée élégante</p>
                     </div>
                     
-                    <!-- Carte GPS -->
                     <div class="map-container">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.4489522506047!2d15.297256!3d-4.324837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a33140c1c2c2b%3A0x7c1c2c2b1a6a3314!2sKinshasa%2C%20R%C3%A9publique%20D%C3%A9mocratique%20du%20Congo!5e0!3m2!1sfr!2sfr!4v1712000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                     <div class="map-link">
-                        <a href="https://maps.google.com/maps?q=Salon+Bantu+Kinshasa" target="_blank">
+                        <a href="https://maps.google.com/maps?q=Silikin+Village+Kinshasa" target="_blank">
                             <i class="fas fa-directions"></i> Voir l'itinéraire sur Google Maps
                         </a>
                     </div>
@@ -776,14 +708,12 @@
                     </div>
                 </div>
                 
-                <!-- QR Code -->
                 <div class="qr-section">
                     <div class="qr-title"><i class="fas fa-qrcode"></i> Votre accès exclusif</div>
                     <div id="qrcode"></div>
                     <div class="qr-note">Présentez ce QR code à l'entrée</div>
                 </div>
                 
-                <!-- Boutons -->
                 <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()">
                     <i class="fas fa-check-circle"></i> Confirmer ma présence
                 </button>
@@ -793,27 +723,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Firebase Config -->
-    <script>
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyC7sE6nQ4Z5x3L8m9Np2R6tY3uV7wX4zA",
-            authDomain: "eloquence-invitation.firebaseapp.com",
-            projectId: "eloquence-invitation",
-            storageBucket: "eloquence-invitation.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456"
-        };
-        
-        // Initialiser Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // Référence Firestore pour les invitations
-        const INVITES_COLLECTION = 'invitations';
-        const ADMIN_PASSWORD = 'admin2026';
-    </script>
 
     <script>
         // ===== PARTICULES =====
@@ -861,7 +770,6 @@
             function animateParticles() {
                 ctx.clearRect(0, 0, width, height);
                 particles.forEach(p => { p.update(); p.draw(); });
-                // Lignes entre particules proches
                 for (let i = 0; i < particles.length; i++) {
                     for (let j = i + 1; j < particles.length; j++) {
                         const dx = particles[i].x - particles[j].x;
@@ -881,6 +789,23 @@
             }
             animateParticles();
         })();
+
+        // ===== GESTION DES INVITÉS (localStorage) =====
+        function getGuests() {
+            try {
+                return JSON.parse(localStorage.getItem('eloquence_guests')) || [];
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function saveGuests(guests) {
+            localStorage.setItem('eloquence_guests', JSON.stringify(guests));
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
 
         // ===== QR CODE =====
         function generateQRCode(data) {
@@ -920,7 +845,7 @@
         }
 
         // ===== CHARGER INVITATION =====
-        async function loadInvitation() {
+        function loadInvitation() {
             const params = getUrlParams();
             const guestName = params.guest || '';
             const inviteId = params.id || '';
@@ -928,18 +853,18 @@
             displayGuest(guestName);
             generateQRCode(`https://eloquence-evenement.com/invitation?id=${inviteId}&guest=${encodeURIComponent(guestName)}`);
             
-            // Si on a un ID, on marque comme vu
             if (inviteId) {
-                try {
-                    await db.collection(INVITES_COLLECTION).doc(inviteId).update({
-                        lastViewed: firebase.firestore.FieldValue.serverTimestamp()
-                    }).catch(() => {});
-                } catch(e) {}
+                const guests = getGuests();
+                const guest = guests.find(g => g.id === inviteId);
+                if (guest) {
+                    guest.lastViewed = new Date().toISOString();
+                    saveGuests(guests);
+                }
             }
         }
 
         // ===== CONFIRMER PRÉSENCE =====
-        async function confirmPresence() {
+        function confirmPresence() {
             const btn = document.getElementById('confirmBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
@@ -954,25 +879,31 @@
                 return;
             }
             
-            try {
-                await db.collection(INVITES_COLLECTION).doc(inviteId).update({
-                    confirmed: true,
-                    confirmedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                btn.innerHTML = '✅ Présence confirmée !';
-                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                // Mettre à jour l'UI admin si ouvert
-                if (document.getElementById('adminPanel').style.display !== 'none') {
-                    loadGuestList();
-                }
-            } catch(e) {
-                alert('❌ Erreur lors de la confirmation. Veuillez réessayer.');
+            const guests = getGuests();
+            const guest = guests.find(g => g.id === inviteId);
+            
+            if (!guest) {
+                alert('❌ Invitation non trouvée.');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
+                return;
+            }
+            
+            guest.confirmed = true;
+            guest.confirmedAt = new Date().toISOString();
+            saveGuests(guests);
+            
+            btn.innerHTML = '✅ Présence confirmée !';
+            btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            
+            if (document.getElementById('adminPanel').style.display !== 'none') {
+                loadGuestList();
             }
         }
 
         // ===== ADMIN =====
+        const ADMIN_PASSWORD = 'admin2026';
+
         function showAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminPassword').value = '';
@@ -983,7 +914,6 @@
             document.getElementById('adminModal').style.display = 'none';
         }
 
-        // Fermer en cliquant en dehors
         document.getElementById('adminModal').addEventListener('click', function(e) {
             if (e.target === this) closeAdminModal();
         });
@@ -999,68 +929,58 @@
         }
 
         // ===== CHARGER LISTE INVITÉS =====
-        async function loadGuestList() {
+        function loadGuestList() {
             const listDiv = document.getElementById('guestList');
             const counterSpan = document.getElementById('totalInviteCount');
             
-            try {
-                const snapshot = await db.collection(INVITES_COLLECTION)
-                    .orderBy('createdAt', 'desc')
-                    .get();
-                
-                if (snapshot.empty) {
-                    listDiv.innerHTML = '<p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Aucun invité pour le moment</p>';
-                    counterSpan.innerHTML = '0 <span>personnes</span>';
-                    return;
-                }
-                
-                let html = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const name = data.name || 'Inconnu';
-                    const phone = data.phone || '';
-                    const confirmed = data.confirmed || false;
-                    const statusClass = confirmed ? 'status-confirmed' : 'status-pending';
-                    const statusText = confirmed ? '✅ Confirmé' : '⏳ En attente';
-                    const docId = doc.id;
-                    
-                    html += `
-                        <div class="guest-item">
-                            <div>
-                                <strong style="color:#fff;">${name}</strong>
-                                <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${phone || 'Pas de numéro'}</div>
-                            </div>
-                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                <span class="${statusClass}">${statusText}</span>
-                                ${phone ? `<a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
-                                <button class="btn-delete" onclick="deleteGuest('${docId}')"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                listDiv.innerHTML = html;
-                counterSpan.innerHTML = `${snapshot.size} <span>personne${snapshot.size > 1 ? 's' : ''}</span>`;
-                
-            } catch(e) {
-                listDiv.innerHTML = '<p style="color:#ef4444;">Erreur de chargement des invités</p>';
+            const guests = getGuests();
+            
+            if (guests.length === 0) {
+                listDiv.innerHTML = '<p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Aucun invité pour le moment</p>';
                 counterSpan.innerHTML = '0 <span>personnes</span>';
+                return;
             }
+            
+            let html = '';
+            guests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            guests.forEach(guest => {
+                const name = guest.name || 'Inconnu';
+                const phone = guest.phone || '';
+                const confirmed = guest.confirmed || false;
+                const statusClass = confirmed ? 'status-confirmed' : 'status-pending';
+                const statusText = confirmed ? '✅ Confirmé' : '⏳ En attente';
+                
+                html += `
+                    <div class="guest-item">
+                        <div>
+                            <strong style="color:#fff;">${name}</strong>
+                            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${phone || 'Pas de numéro'}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span class="${statusClass}">${statusText}</span>
+                            ${phone ? `<a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
+                            <button class="btn-delete" onclick="deleteGuest('${guest.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            listDiv.innerHTML = html;
+            counterSpan.innerHTML = `${guests.length} <span>personne${guests.length > 1 ? 's' : ''}</span>`;
         }
 
         // ===== SUPPRIMER INVITÉ =====
-        async function deleteGuest(id) {
+        function deleteGuest(id) {
             if (!confirm('Supprimer définitivement cet invité ?')) return;
-            try {
-                await db.collection(INVITES_COLLECTION).doc(id).delete();
-                loadGuestList();
-            } catch(e) {
-                alert('❌ Erreur lors de la suppression');
-            }
+            let guests = getGuests();
+            guests = guests.filter(g => g.id !== id);
+            saveGuests(guests);
+            loadGuestList();
         }
 
         // ===== GÉNÉRER INVITATION =====
-        async function generateInvitation() {
+        function generateInvitation() {
             const name = document.getElementById('guestName').value.trim();
             const phone = document.getElementById('guestPhone').value.trim();
             
@@ -1069,29 +989,27 @@
                 return;
             }
             
-            try {
-                const docRef = await db.collection(INVITES_COLLECTION).add({
-                    name: name,
-                    phone: phone,
-                    confirmed: false,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Construire l'URL d'invitation
-                const url = `${window.location.origin}${window.location.pathname}?id=${docRef.id}&guest=${encodeURIComponent(name)}`;
-                
-                alert(`✅ Invitation générée !\n\nLien : ${url}\n\nID : ${docRef.id}`);
-                
-                // Réinitialiser les champs
-                document.getElementById('guestName').value = '';
-                document.getElementById('guestPhone').value = '';
-                
-                // Recharger la liste
-                loadGuestList();
-                
-            } catch(e) {
-                alert('❌ Erreur lors de la génération : ' + e.message);
-            }
+            const id = generateId();
+            const guests = getGuests();
+            
+            guests.push({
+                id: id,
+                name: name,
+                phone: phone,
+                confirmed: false,
+                createdAt: new Date().toISOString()
+            });
+            
+            saveGuests(guests);
+            
+            const url = `${window.location.origin}${window.location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
+            
+            alert(`✅ Invitation générée !\n\nLien : ${url}\n\nID : ${id}`);
+            
+            document.getElementById('guestName').value = '';
+            document.getElementById('guestPhone').value = '';
+            
+            loadGuestList();
         }
 
         // ===== TÉLÉCHARGER L'INVITATION =====
@@ -1101,7 +1019,6 @@
             
             try {
                 const card = document.getElementById('invitationCard');
-                // S'assurer que la carte est bien visible
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
                 
@@ -1110,15 +1027,7 @@
                     backgroundColor: '#0a1628',
                     allowTaint: false,
                     useCORS: true,
-                    logging: false,
-                    onclone: (clonedDoc) => {
-                        const clonedCard = clonedDoc.getElementById('invitationCard');
-                        if (clonedCard) {
-                            clonedCard.style.opacity = '1';
-                            clonedCard.style.transform = 'none';
-                            clonedCard.style.animation = 'none';
-                        }
-                    }
+                    logging: false
                 });
                 
                 const link = document.createElement('a');
@@ -1138,7 +1047,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadInvitation();
             
-            // GSAP pour le titre
             gsap.from('.logo-accent', {
                 scale: 0.5,
                 opacity: 0,
@@ -1156,7 +1064,6 @@
             });
         });
 
-        // Enter pour le mot de passe admin
         document.getElementById('adminPassword').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') checkAdminAccess();
         });
