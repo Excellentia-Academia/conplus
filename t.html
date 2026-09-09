@@ -613,6 +613,7 @@
         let isDraft = false;
         let juryList = [];
         let notificationTimeout = null;
+        let aDejaVote = false; // 🆕 Empêche le vote multiple
 
         // ÉLÉMENTS DOM
         const jurySelect = document.getElementById('jurySelect');
@@ -725,6 +726,7 @@
         // ============================================================
         jurySelect.addEventListener('change', function() {
             currentJury = this.value;
+            aDejaVote = false; // 🆕 Réinitialiser quand le jury change
             if (currentJury) {
                 juryNameDisplay.textContent = currentJury;
                 selectedJuryInfo.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> ${currentJury}`;
@@ -753,7 +755,16 @@
             db.collection('etat').doc('current').onSnapshot((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
-                    currentCandidat = data.candidatNom || null;
+                    const nouveauCandidat = data.candidatNom || null;
+
+                    // 🆕 Si le candidat change, réinitialiser aDejaVote
+                    if (nouveauCandidat !== currentCandidat) {
+                        aDejaVote = false;
+                        hasVoted = false;
+                        isDraft = false;
+                    }
+
+                    currentCandidat = nouveauCandidat;
 
                     if (currentCandidat) {
                         candidatNom.textContent = currentCandidat;
@@ -791,6 +802,9 @@
                         candidatStatus.className = 'status attente';
                         photoContainer.innerHTML = `<i class="fas fa-user"></i>`;
                         desactiverChamps();
+                        aDejaVote = false;
+                        hasVoted = false;
+                        isDraft = false;
                     }
                 }
             }, (error) => {
@@ -818,6 +832,13 @@
                         calculerTotal();
                         hasVoted = juryData.valide || false;
                         isDraft = !hasVoted && (juryData.maitrise !== undefined);
+                        
+                        // 🆕 Si déjà validé, on bloque les modifications
+                        if (hasVoted) {
+                            aDejaVote = true;
+                            bloquerApresVote();
+                        }
+                        
                         mettreAJourStatut();
                     } else {
                         reinitialiserChamps();
@@ -836,7 +857,16 @@
             calculerTotal();
             hasVoted = false;
             isDraft = false;
+            aDejaVote = false;
             mettreAJourStatut();
+            // 🆕 Réactiver les champs si pas encore voté
+            if (currentJury && currentCandidat && !aDejaVote) {
+                allInputs.forEach(input => input.disabled = false);
+                commentaire.disabled = false;
+                validerBtn.disabled = false;
+                brouillonBtn.disabled = false;
+                problemeBtn.disabled = false;
+            }
         }
 
         function desactiverChamps() {
@@ -846,6 +876,16 @@
             brouillonBtn.disabled = true;
             problemeBtn.disabled = true;
             reinitialiserChamps();
+        }
+
+        // 🆕 Bloquer les champs après validation
+        function bloquerApresVote() {
+            allInputs.forEach(input => input.disabled = true);
+            commentaire.disabled = true;
+            validerBtn.disabled = true;
+            brouillonBtn.disabled = true;
+            // Problème reste accessible
+            problemeBtn.disabled = false;
         }
 
         // ============================================================
@@ -877,6 +917,27 @@
                 return;
             }
 
+            // 🆕 EMPÊCHER LE VOTE MULTIPLE
+            if (aDejaVote && valide) {
+                showToast('⚠️ Vous avez déjà voté pour ce candidat !', 'error');
+                return;
+            }
+
+            if (valide) {
+                // Vérifier si le jury a déjà voté pour ce candidat
+                const doc = await db.collection('cotations').doc(currentCandidat).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data[currentJury] && data[currentJury].valide === true) {
+                        showToast('⚠️ Vous avez déjà validé votre vote pour ce candidat !', 'error');
+                        aDejaVote = true;
+                        bloquerApresVote();
+                        mettreAJourStatut();
+                        return;
+                    }
+                }
+            }
+
             const total = calculerTotal();
             const data = {
                 [currentJury]: {
@@ -897,9 +958,18 @@
                 await db.collection('cotations').doc(currentCandidat).set(data, { merge: true });
                 hasVoted = valide;
                 isDraft = !valide;
+                
+                // 🆕 Si validation, bloquer définitivement
+                if (valide) {
+                    aDejaVote = true;
+                    bloquerApresVote();
+                    showToast('✅ Vote validé ! Vous ne pouvez plus modifier votre note.', 'success');
+                } else {
+                    showToast('📝 Brouillon sauvegardé', 'warning');
+                }
+                
                 mettreAJourStatut();
                 lastUpdate.textContent = `🕐 ${new Date().toLocaleTimeString()}`;
-                showToast(valide ? '✅ Cotation validée !' : '📝 Brouillon sauvegardé', valide ? 'success' : 'warning');
             } catch (error) {
                 console.error('❌ Erreur sauvegarde:', error);
                 showToast('❌ Erreur: ' + error.message, 'error');
@@ -936,7 +1006,7 @@
         }
 
         // ============================================================
-        // 🆕 PASSAGE AUTOMATIQUE - QUAND TOUS LES JURYS ONT VOTÉ
+        // PASSAGE AUTOMATIQUE
         // ============================================================
         async function verifierEtPasserSuivant(candidatNom) {
             if (!candidatNom) return;
@@ -954,27 +1024,22 @@
                     }
                 });
                 
-                // Si tous les jurys ont voté
                 if (jurysAyantVote === juryList.length && juryList.length > 0) {
-                    // Récupérer l'état actuel
                     const etatDoc = await db.collection('etat').doc('current').get();
                     if (!etatDoc.exists) return;
                     
                     const etatData = etatDoc.data();
                     const matchId = etatData.matchId;
                     
-                    // Trouver le prochain candidat
                     const matchsRef = await db.collection('matchs').doc(matchId.toString()).get();
                     if (!matchsRef.exists) return;
                     
                     const matchData = matchsRef.data();
                     const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
-                    
-                    // Trouver l'index du candidat actuel
                     const indexActuel = tousCandidats.indexOf(candidatNom);
+                    
                     if (indexActuel === -1) return;
                     
-                    // Prochain candidat
                     const prochainIndex = indexActuel + 1;
                     if (prochainIndex >= tousCandidats.length) {
                         showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
@@ -983,7 +1048,6 @@
                     
                     const prochainCandidat = tousCandidats[prochainIndex];
                     
-                    // Envoyer le prochain candidat
                     await db.collection('etat').doc('current').set({
                         matchId: matchId,
                         candidatNom: prochainCandidat,
@@ -1003,14 +1067,13 @@
         }
 
         // ============================================================
-        // SURVEILLER LES CHANGEMENTS DE COTATIONS (pour déclencher le passage)
+        // SURVEILLANCE DES COTATIONS
         // ============================================================
         function surveillerCotations() {
             db.collection('cotations').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'modified') {
                         const candidatNom = change.doc.id;
-                        // Vérifier si tous les jurys ont voté
                         setTimeout(() => {
                             verifierEtPasserSuivant(candidatNom);
                         }, 500);
@@ -1033,12 +1096,13 @@
         // ============================================================
         ecouterJurys();
         ecouterEtat();
-        surveillerCotations(); // 🆕 Surveillance pour passage automatique
+        surveillerCotations();
         
         showToast('✅ Jury connecté - Sélectionnez votre nom', 'success');
         console.log('🏆 Jury Éloquence en Scène - Connecté à Firebase');
         console.log('📋 6 critères officiels chargés');
         console.log('🔄 Passage automatique activé quand tous les jurys ont voté');
+        console.log('🔒 Vote unique par candidat activé');
     </script>
 </body>
 </html>
