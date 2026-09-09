@@ -425,23 +425,38 @@
         }
         .btn-lu:hover { background: rgba(16,185,129,0.25); }
 
-        /* Nouveau bouton passage automatique */
+        /* ===== NOUVEAU STYLE POUR LE BOUTON AUTO-PASS ===== */
         .btn-auto-pass {
-            background: rgba(212,175,55,0.15);
-            border: 1px solid rgba(212,175,55,0.3);
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 12px;
             color: #d4af37;
-            padding: 10px 20px;
-            border-radius: 10px;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 12px;
-            width: 100%;
+            transition: all 0.3s ease;
         }
-        .btn-auto-pass:hover { background: rgba(212,175,55,0.25); transform: scale(1.02); }
-        .btn-auto-pass:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-auto-pass:hover {
+            background: rgba(212,175,55,0.2);
+            transform: translateY(-1px);
+        }
+        .btn-auto-pass.active {
+            background: rgba(16,185,129,0.15);
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .btn-auto-pass.active:hover {
+            background: rgba(16,185,129,0.25);
+        }
+        .btn-auto-pass:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
     </style>
 </head>
 <body>
@@ -512,9 +527,11 @@
                         </select>
                     </div>
                     <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i> Envoyer aux Jurys</button>
-                    
-                    <!-- NOUVEAU BOUTON PASSAGE AUTOMATIQUE -->
-                    <button class="btn-auto-pass" id="autoPassBtn"><i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)</button>
+
+                    <!-- ===== NOUVEAU BOUTON ===== -->
+                    <button class="btn-auto-pass" id="autoPassBtn">
+                        <i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)
+                    </button>
                 </div>
 
                 <div class="card alertes-section" id="alertesContainer">
@@ -600,7 +617,9 @@
         let matches = [];
         let classementData = [];
         let candidatActuelId = null;
-        let autoPassActive = false;
+
+        // ===== NOUVEL ÉTAT POUR AUTO-PASS =====
+        let autoPassActif = false;
         let autoPassInterval = null;
 
         // Timer
@@ -634,6 +653,8 @@
         const progressPercent = document.getElementById('progressPercent');
         const alertesList = document.getElementById('alertesList');
         const toast = document.getElementById('toast');
+
+        // ===== RÉFÉRENCE AUTO-PASS =====
         const autoPassBtn = document.getElementById('autoPassBtn');
 
         // --- INIT ---
@@ -694,26 +715,25 @@
             }
         });
 
-        // --- CANDIDATS & MATCHES (simulés pour démo) ---
+        // --- CANDIDATS & MATCHES ---
         function chargerCandidats() {
-            candidats = [
-                { id: 'c1', nom: 'Alice Martin', matchId: 'm1' },
-                { id: 'c2', nom: 'Benoît Dupont', matchId: 'm1' },
-                { id: 'c3', nom: 'Claire Durand', matchId: 'm2' },
-                { id: 'c4', nom: 'David Moreau', matchId: 'm2' },
-                { id: 'c5', nom: 'Élise Rousseau', matchId: 'm3' },
-                { id: 'c6', nom: 'François Lefèvre', matchId: 'm3' },
-            ];
-            remplirCandidats();
+            db.collection('candidats').onSnapshot((snapshot) => {
+                candidats = [];
+                snapshot.forEach(doc => {
+                    candidats.push({ id: doc.id, ...doc.data() });
+                });
+                remplirCandidats(matchSelect.value);
+            });
         }
 
         function chargerMatches() {
-            matches = [
-                { id: 'm1', nom: 'Match 1 - Débat' },
-                { id: 'm2', nom: 'Match 2 - Éloquence' },
-                { id: 'm3', nom: 'Match 3 - Finale' },
-            ];
-            remplirMatches();
+            db.collection('matches').onSnapshot((snapshot) => {
+                matches = [];
+                snapshot.forEach(doc => {
+                    matches.push({ id: doc.id, ...doc.data() });
+                });
+                remplirMatches();
+            });
         }
 
         function remplirMatches() {
@@ -747,7 +767,6 @@
             const candidat = candidats.find(c => c.id === candidatId);
             if (!candidat) return;
 
-            // Envoyer aux jurys via Firestore
             try {
                 const sessionId = `session_${Date.now()}`;
                 for (const jury of jurys) {
@@ -767,10 +786,12 @@
                 candidatActuel.textContent = candidat.nom;
                 candidatEnCours.textContent = `🎯 ${candidat.nom}`;
                 showToast(`✅ ${candidat.nom} envoyé aux ${jurys.length} jurys`, 'success');
-                // Démarrer le timer
                 demarrerTimer();
-                // Activer auto-pass si actif
-                if (autoPassActive) verifierVotesAuto();
+
+                // ===== VÉRIFICATION AUTO-PASS APRÈS ENVOI =====
+                if (autoPassActif) {
+                    verifierVotesAuto();
+                }
             } catch (e) {
                 showToast('Erreur: ' + e.message, 'error');
             }
@@ -842,8 +863,7 @@
         function ecouterVotes() {
             db.collection('votes').where('statut', '==', 'en_attente')
                 .onSnapshot((snapshot) => {
-                    // On va chercher tous les votes pour le candidat actuel
-                    if (candidatActuelId) {
+                    if (candidatActuelId && autoPassActif) {
                         verifierVotesAuto();
                     }
                     mettreAJourClassement();
@@ -851,69 +871,87 @@
                 });
         }
 
+        // ===== FONCTION DE VÉRIFICATION AUTO-PASS =====
         function verifierVotesAuto() {
             if (!candidatActuelId || jurys.length === 0) return;
+
             db.collection('votes')
                 .where('candidatId', '==', candidatActuelId)
                 .where('statut', '==', 'valide')
                 .get()
                 .then((snapshot) => {
                     const votesValides = snapshot.docs.length;
-                    if (votesValides >= jurys.length && autoPassActive) {
-                        // Tous les jurys ont voté
+                    if (votesValides >= jurys.length && autoPassActif) {
                         showToast('✅ Tous les jurys ont voté ! Passage automatique...', 'success');
-                        passerAuSuivant();
+                        passerAuCandidatSuivant();
                     }
                 })
                 .catch(() => {});
         }
 
-        function passerAuSuivant() {
-            // Trouver le prochain candidat non coté
-            const candidatsCotes = new Set();
+        // ===== FONCTION DE PASSAGE AU SUIVANT =====
+        function passerAuCandidatSuivant() {
+            // Récupérer tous les candidats déjà cotés
             db.collection('votes')
                 .where('statut', '==', 'valide')
                 .get()
                 .then((snapshot) => {
+                    const candidatsCotes = new Set();
                     snapshot.docs.forEach(doc => {
                         const data = doc.data();
                         if (data.candidatId) candidatsCotes.add(data.candidatId);
                     });
-                    // Filtrer les candidats non cotés
-                    const nonCotes = candidats.filter(c => !candidatsCotes.has(c.id));
+
+                    // Filtrer les candidats non cotés du match actuel
+                    const matchId = matchSelect.value;
+                    const nonCotes = candidats.filter(c => 
+                        !candidatsCotes.has(c.id) && 
+                        (matchId ? c.matchId === matchId : true)
+                    );
+
                     if (nonCotes.length === 0) {
-                        showToast('🎉 Tous les candidats ont été évalués !', 'success');
+                        showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
+                        autoPassActif = false;
+                        autoPassBtn.classList.remove('active');
+                        autoPassBtn.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
                         return;
                     }
-                    // Sélectionner le premier
+
+                    // Sélectionner le premier candidat non coté
                     const suivant = nonCotes[0];
+                    
+                    // Mettre à jour les selects
                     const match = matches.find(m => m.id === suivant.matchId);
                     if (match) {
                         matchSelect.value = match.id;
                         remplirCandidats(match.id);
                         candidatSelect.value = suivant.id;
+                        // Déclencher l'envoi
                         sendBtn.click();
                     }
                 })
-                .catch(() => {});
+                .catch((err) => {
+                    console.error('Erreur passage auto:', err);
+                });
         }
 
-        // --- AUTO PASS BUTTON ---
+        // ===== BOUTON AUTO-PASS =====
         autoPassBtn.addEventListener('click', function() {
-            autoPassActive = !autoPassActive;
-            if (autoPassActive) {
+            autoPassActif = !autoPassActif;
+            
+            if (autoPassActif) {
+                this.classList.add('active');
                 this.innerHTML = '<i class="fas fa-pause"></i> Auto-pass activé (cliquer pour désactiver)';
-                this.style.background = 'rgba(16,185,129,0.2)';
-                this.style.borderColor = '#10b981';
-                this.style.color = '#10b981';
-                showToast('🔁 Mode passage automatique activé', 'success');
-                verifierVotesAuto();
+                showToast('🔁 Mode passage automatique ACTIVÉ', 'success');
+                
+                // Vérifier immédiatement si tous les votes sont déjà là
+                if (candidatActuelId) {
+                    verifierVotesAuto();
+                }
             } else {
+                this.classList.remove('active');
                 this.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
-                this.style.background = 'rgba(212,175,55,0.15)';
-                this.style.borderColor = 'rgba(212,175,55,0.3)';
-                this.style.color = '#d4af37';
-                showToast('🔁 Mode passage automatique désactivé', 'warning');
+                showToast('🔁 Mode passage automatique DÉSACTIVÉ', 'warning');
             }
         });
 
