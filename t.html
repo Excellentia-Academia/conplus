@@ -27,7 +27,6 @@
             margin: 0 auto;
         }
 
-        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
@@ -69,7 +68,6 @@
             color: #d4af37;
         }
 
-        /* CARTES */
         .card {
             background: #ffffff;
             border-radius: 20px;
@@ -107,7 +105,6 @@
             text-transform: uppercase;
         }
 
-        /* CANDIDAT */
         .candidat-actuel {
             text-align: center;
             padding: 8px 0;
@@ -174,7 +171,6 @@
         .status.en-cours { color: #10b981; }
         .status.termine { color: #6b7280; }
 
-        /* JURY SELECTOR */
         .jury-selector {
             display: flex;
             align-items: center;
@@ -215,7 +211,6 @@
         }
         .jury-selector .info i { color: #d4af37; }
 
-        /* GRILLE DES CRITÈRES - 6 CRITÈRES OFFICIELS */
         .criteria-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -285,7 +280,6 @@
             -moz-appearance: textfield;
         }
 
-        /* TOTAL */
         .total-section {
             display: flex;
             justify-content: space-between;
@@ -311,7 +305,6 @@
             font-weight: 400;
         }
 
-        /* COMMENTAIRE */
         .comment-area textarea {
             width: 100%;
             padding: 12px 16px;
@@ -339,7 +332,6 @@
             color: #aaa;
         }
 
-        /* BOUTONS */
         .actions {
             display: flex;
             gap: 12px;
@@ -400,7 +392,6 @@
             transform: translateY(-2px);
         }
 
-        /* STATUS BAR */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -427,7 +418,6 @@
         .dot.brouillon { background: #f59e0b; }
         .dot.valide { background: #10b981; }
 
-        /* TOAST */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -452,7 +442,6 @@
         .toast.error { background: #ef4444; }
         .toast.warning { background: #f59e0b; }
 
-        /* RESPONSIVE */
         @media (max-width: 600px) {
             body { padding: 16px; }
             .card { padding: 18px; }
@@ -466,7 +455,6 @@
 <body>
 
     <div class="container">
-        <!-- HEADER -->
         <header>
             <div class="logo"><i class="fas fa-gavel"></i> Jury Éloquence en Scène</div>
             <div class="jury-name">
@@ -476,7 +464,6 @@
             </div>
         </header>
 
-        <!-- CANDIDAT ACTUEL -->
         <div class="card">
             <h2><i class="fas fa-user-tie"></i> Candidat <span class="badge">En cours</span></h2>
             <div class="candidat-actuel" id="candidatInfo">
@@ -490,7 +477,6 @@
             </div>
         </div>
 
-        <!-- SÉLECTEUR JURY -->
         <div class="card">
             <h2><i class="fas fa-users"></i> Identifiez-vous</h2>
             <div class="jury-selector">
@@ -505,7 +491,6 @@
             </div>
         </div>
 
-        <!-- GRILLE DE NOTATION - 6 CRITÈRES OFFICIELS -->
         <div class="card">
             <h2><i class="fas fa-star"></i> Grille d'évaluation <span class="badge">6 critères</span></h2>
             
@@ -559,25 +544,21 @@
                 </div>
             </div>
 
-            <!-- TOTAL -->
             <div class="total-section">
                 <span class="label">Total</span>
                 <span class="value"><span id="totalScore">0</span><span class="sur"> /20</span></span>
             </div>
 
-            <!-- COMMENTAIRE -->
             <div class="comment-area">
                 <textarea id="commentaire" placeholder="Commentaire ou observation (optionnel)" disabled></textarea>
             </div>
 
-            <!-- ACTIONS -->
             <div class="actions">
                 <button class="btn-valider" id="validerBtn" disabled><i class="fas fa-check"></i> Valider</button>
                 <button class="btn-brouillon" id="brouillonBtn" disabled><i class="fas fa-save"></i> Brouillon</button>
                 <button class="btn-probleme" id="problemeBtn" disabled><i class="fas fa-exclamation-triangle"></i> Problème</button>
             </div>
 
-            <!-- STATUS BAR -->
             <div class="status-bar">
                 <span class="status-dot">
                     <span class="dot" id="statusDot"></span>
@@ -613,7 +594,8 @@
         let isDraft = false;
         let juryList = [];
         let notificationTimeout = null;
-        let aDejaVote = false; // 🆕 Empêche le vote multiple
+        let aDejaVote = false;
+        let candidatEnCours = null; // Pour suivre le changement de candidat
 
         // ÉLÉMENTS DOM
         const jurySelect = document.getElementById('jurySelect');
@@ -663,6 +645,45 @@
             return total;
         }
 
+        // Activer les champs de notation
+        function activerChamps() {
+            allInputs.forEach(input => input.disabled = false);
+            commentaire.disabled = false;
+            validerBtn.disabled = false;
+            brouillonBtn.disabled = false;
+            problemeBtn.disabled = false;
+        }
+
+        // Désactiver les champs de notation
+        function desactiverChamps() {
+            allInputs.forEach(input => input.disabled = true);
+            commentaire.disabled = true;
+            validerBtn.disabled = true;
+            brouillonBtn.disabled = true;
+            // Probleme reste accessible
+            problemeBtn.disabled = false;
+        }
+
+        // Bloquer après vote
+        function bloquerApresVote() {
+            allInputs.forEach(input => input.disabled = true);
+            commentaire.disabled = true;
+            validerBtn.disabled = true;
+            brouillonBtn.disabled = true;
+            problemeBtn.disabled = false;
+        }
+
+        // Réinitialiser les champs
+        function reinitialiserChamps() {
+            allInputs.forEach(input => input.value = 0);
+            commentaire.value = '';
+            calculerTotal();
+            hasVoted = false;
+            isDraft = false;
+            aDejaVote = false;
+            mettreAJourStatut();
+        }
+
         // Écouter les changements
         allInputs.forEach(input => {
             input.addEventListener('input', () => {
@@ -675,7 +696,7 @@
         });
 
         // ============================================================
-        // LISTE DES JURYS (depuis Firebase)
+        // LISTE DES JURYS
         // ============================================================
         function ecouterJurys() {
             db.collection('jurys').doc('liste').onSnapshot((doc) => {
@@ -726,7 +747,9 @@
         // ============================================================
         jurySelect.addEventListener('change', function() {
             currentJury = this.value;
-            aDejaVote = false; // 🆕 Réinitialiser quand le jury change
+            aDejaVote = false;
+            reinitialiserChamps();
+            
             if (currentJury) {
                 juryNameDisplay.textContent = currentJury;
                 selectedJuryInfo.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> ${currentJury}`;
@@ -734,17 +757,11 @@
                 if (currentCandidat) {
                     chargerCotation(currentCandidat);
                 }
-                if (currentCandidat) {
-                    allInputs.forEach(input => input.disabled = false);
-                    commentaire.disabled = false;
-                    validerBtn.disabled = false;
-                    brouillonBtn.disabled = false;
-                    problemeBtn.disabled = false;
-                }
             } else {
                 juryNameDisplay.textContent = 'Non sélectionné';
                 selectedJuryInfo.innerHTML = '<i class="fas fa-info-circle"></i> Sélectionnez votre nom';
                 desactiverChamps();
+                reinitialiserChamps();
             }
         });
 
@@ -757,11 +774,13 @@
                     const data = doc.data();
                     const nouveauCandidat = data.candidatNom || null;
 
-                    // 🆕 Si le candidat change, réinitialiser aDejaVote
-                    if (nouveauCandidat !== currentCandidat) {
+                    // Si le candidat change, réinitialiser
+                    if (nouveauCandidat !== candidatEnCours) {
+                        candidatEnCours = nouveauCandidat;
                         aDejaVote = false;
                         hasVoted = false;
                         isDraft = false;
+                        reinitialiserChamps();
                     }
 
                     currentCandidat = nouveauCandidat;
@@ -782,11 +801,7 @@
                         }
 
                         if (currentJury) {
-                            allInputs.forEach(input => input.disabled = false);
-                            commentaire.disabled = false;
-                            validerBtn.disabled = false;
-                            brouillonBtn.disabled = false;
-                            problemeBtn.disabled = false;
+                            activerChamps();
                             chargerCotation(currentCandidat);
                         } else {
                             desactiverChamps();
@@ -802,6 +817,7 @@
                         candidatStatus.className = 'status attente';
                         photoContainer.innerHTML = `<i class="fas fa-user"></i>`;
                         desactiverChamps();
+                        reinitialiserChamps();
                         aDejaVote = false;
                         hasVoted = false;
                         isDraft = false;
@@ -816,11 +832,13 @@
         // CHARGER UNE COTATION EXISTANTE
         // ============================================================
         function chargerCotation(candidat) {
-            if (!currentJury) return;
+            if (!currentJury || !candidat) return;
+            
             db.collection('cotations').doc(candidat).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
                     const juryData = data[currentJury];
+                    
                     if (juryData) {
                         maitrise.value = juryData.maitrise || 0;
                         argumentsField.value = juryData.arguments || 0;
@@ -830,62 +848,41 @@
                         temps.value = juryData.temps || 0;
                         commentaire.value = juryData.commentaire || '';
                         calculerTotal();
+                        
                         hasVoted = juryData.valide || false;
                         isDraft = !hasVoted && (juryData.maitrise !== undefined);
                         
-                        // 🆕 Si déjà validé, on bloque les modifications
                         if (hasVoted) {
                             aDejaVote = true;
                             bloquerApresVote();
+                        } else {
+                            aDejaVote = false;
+                            // Si pas validé, activer les champs
+                            if (currentJury && currentCandidat) {
+                                activerChamps();
+                            }
                         }
                         
                         mettreAJourStatut();
                     } else {
                         reinitialiserChamps();
+                        if (currentJury && currentCandidat) {
+                            activerChamps();
+                        }
                     }
                 } else {
                     reinitialiserChamps();
+                    if (currentJury && currentCandidat) {
+                        activerChamps();
+                    }
                 }
             }).catch((error) => {
                 console.error('❌ Erreur chargement cotation:', error);
+                reinitialiserChamps();
+                if (currentJury && currentCandidat) {
+                    activerChamps();
+                }
             });
-        }
-
-        function reinitialiserChamps() {
-            allInputs.forEach(input => input.value = 0);
-            commentaire.value = '';
-            calculerTotal();
-            hasVoted = false;
-            isDraft = false;
-            aDejaVote = false;
-            mettreAJourStatut();
-            // 🆕 Réactiver les champs si pas encore voté
-            if (currentJury && currentCandidat && !aDejaVote) {
-                allInputs.forEach(input => input.disabled = false);
-                commentaire.disabled = false;
-                validerBtn.disabled = false;
-                brouillonBtn.disabled = false;
-                problemeBtn.disabled = false;
-            }
-        }
-
-        function desactiverChamps() {
-            allInputs.forEach(input => input.disabled = true);
-            commentaire.disabled = true;
-            validerBtn.disabled = true;
-            brouillonBtn.disabled = true;
-            problemeBtn.disabled = true;
-            reinitialiserChamps();
-        }
-
-        // 🆕 Bloquer les champs après validation
-        function bloquerApresVote() {
-            allInputs.forEach(input => input.disabled = true);
-            commentaire.disabled = true;
-            validerBtn.disabled = true;
-            brouillonBtn.disabled = true;
-            // Problème reste accessible
-            problemeBtn.disabled = false;
         }
 
         // ============================================================
@@ -917,24 +914,28 @@
                 return;
             }
 
-            // 🆕 EMPÊCHER LE VOTE MULTIPLE
+            // 🔒 EMPÊCHER LE VOTE MULTIPLE
             if (aDejaVote && valide) {
                 showToast('⚠️ Vous avez déjà voté pour ce candidat !', 'error');
                 return;
             }
 
+            // Vérifier si déjà validé dans Firebase
             if (valide) {
-                // Vérifier si le jury a déjà voté pour ce candidat
-                const doc = await db.collection('cotations').doc(currentCandidat).get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data[currentJury] && data[currentJury].valide === true) {
-                        showToast('⚠️ Vous avez déjà validé votre vote pour ce candidat !', 'error');
-                        aDejaVote = true;
-                        bloquerApresVote();
-                        mettreAJourStatut();
-                        return;
+                try {
+                    const doc = await db.collection('cotations').doc(currentCandidat).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        if (data[currentJury] && data[currentJury].valide === true) {
+                            showToast('⚠️ Vous avez déjà validé votre vote pour ce candidat !', 'error');
+                            aDejaVote = true;
+                            bloquerApresVote();
+                            mettreAJourStatut();
+                            return;
+                        }
                     }
+                } catch (error) {
+                    console.error('❌ Erreur vérification:', error);
                 }
             }
 
@@ -959,11 +960,10 @@
                 hasVoted = valide;
                 isDraft = !valide;
                 
-                // 🆕 Si validation, bloquer définitivement
                 if (valide) {
                     aDejaVote = true;
                     bloquerApresVote();
-                    showToast('✅ Vote validé ! Vous ne pouvez plus modifier votre note.', 'success');
+                    showToast('✅ Vote validé !', 'success');
                 } else {
                     showToast('📝 Brouillon sauvegardé', 'warning');
                 }
@@ -1059,10 +1059,10 @@
                         timestamp: Date.now()
                     }, { merge: true });
                     
-                    showToast(`🔄 Passage automatique à ${prochainCandidat} (tous les jurys ont voté)`, 'success');
+                    showToast(`🔄 Passage automatique à ${prochainCandidat}`, 'success');
                 }
             } catch (error) {
-                console.error('❌ Erreur vérification passage automatique:', error);
+                console.error('❌ Erreur passage auto:', error);
             }
         }
 
@@ -1072,7 +1072,7 @@
         function surveillerCotations() {
             db.collection('cotations').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'modified') {
+                    if (change.type === 'modified' || change.type === 'added') {
                         const candidatNom = change.doc.id;
                         setTimeout(() => {
                             verifierEtPasserSuivant(candidatNom);
@@ -1101,7 +1101,7 @@
         showToast('✅ Jury connecté - Sélectionnez votre nom', 'success');
         console.log('🏆 Jury Éloquence en Scène - Connecté à Firebase');
         console.log('📋 6 critères officiels chargés');
-        console.log('🔄 Passage automatique activé quand tous les jurys ont voté');
+        console.log('🔄 Passage automatique activé');
         console.log('🔒 Vote unique par candidat activé');
     </script>
 </body>
