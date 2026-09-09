@@ -500,7 +500,8 @@
                         <label>Maîtrise et compréhension du sujet</label>
                         <span class="max">/4</span>
                     </div>
-                    <input type="number" id="maitrise" min="0" max="4" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="maitrise" min="0" max="4" step="0.5" value="" disabled>
                 </div>
                 
                 <div class="criteria-item">
@@ -508,7 +509,8 @@
                         <label>Pertinence et solidité des arguments</label>
                         <span class="max">/5</span>
                     </div>
-                    <input type="number" id="arguments" min="0" max="5" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="arguments" min="0" max="5" step="0.5" value="" disabled>
                 </div>
                 
                 <div class="criteria-item">
@@ -516,7 +518,8 @@
                         <label>Structure et cohérence du discours</label>
                         <span class="max">/3</span>
                     </div>
-                    <input type="number" id="structure" min="0" max="3" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="structure" min="0" max="3" step="0.5" value="" disabled>
                 </div>
                 
                 <div class="criteria-item">
@@ -524,7 +527,8 @@
                         <label>Éloquence et présence scénique</label>
                         <span class="max">/4</span>
                     </div>
-                    <input type="number" id="eloquence" min="0" max="4" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="eloquence" min="0" max="4" step="0.5" value="" disabled>
                 </div>
                 
                 <div class="criteria-item">
@@ -532,7 +536,8 @@
                         <label>Force de persuasion et impact</label>
                         <span class="max">/2</span>
                     </div>
-                    <input type="number" id="persuasion" min="0" max="2" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="persuasion" min="0" max="2" step="0.5" value="" disabled>
                 </div>
                 
                 <div class="criteria-item">
@@ -540,7 +545,8 @@
                         <label>Respect du temps et des consignes</label>
                         <span class="max">/2</span>
                     </div>
-                    <input type="number" id="temps" min="0" max="2" step="0.5" value="0" disabled>
+                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
+                    <input type="number" id="temps" min="0" max="2" step="0.5" value="" disabled>
                 </div>
             </div>
 
@@ -595,7 +601,7 @@
         let juryList = [];
         let notificationTimeout = null;
         let aDejaVote = false;
-        let candidatEnCours = null; // Pour suivre le changement de candidat
+        let candidatEnCours = null;
 
         // ÉLÉMENTS DOM
         const jurySelect = document.getElementById('jurySelect');
@@ -639,7 +645,10 @@
         function calculerTotal() {
             let total = 0;
             allInputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
+                const val = parseFloat(input.value);
+                if (!isNaN(val)) {
+                    total += val;
+                }
             });
             totalScore.textContent = total.toFixed(1);
             return total;
@@ -660,7 +669,6 @@
             commentaire.disabled = true;
             validerBtn.disabled = true;
             brouillonBtn.disabled = true;
-            // Probleme reste accessible
             problemeBtn.disabled = false;
         }
 
@@ -673,11 +681,11 @@
             problemeBtn.disabled = false;
         }
 
-        // Réinitialiser les champs
+        // Réinitialiser les champs (vides)
         function reinitialiserChamps() {
-            allInputs.forEach(input => input.value = 0);
+            allInputs.forEach(input => input.value = '');
             commentaire.value = '';
-            calculerTotal();
+            totalScore.textContent = '0';
             hasVoted = false;
             isDraft = false;
             aDejaVote = false;
@@ -687,10 +695,17 @@
         // Écouter les changements
         allInputs.forEach(input => {
             input.addEventListener('input', () => {
-                const val = parseFloat(input.value);
+                let val = parseFloat(input.value);
                 const max = parseFloat(input.max);
-                if (val < 0) input.value = 0;
-                if (val > max) input.value = max;
+                if (input.value === '') {
+                    // Ne rien faire, champ vide
+                } else if (isNaN(val)) {
+                    input.value = '';
+                } else if (val < 0) {
+                    input.value = 0;
+                } else if (val > max) {
+                    input.value = max;
+                }
                 calculerTotal();
             });
         });
@@ -774,7 +789,6 @@
                     const data = doc.data();
                     const nouveauCandidat = data.candidatNom || null;
 
-                    // Si le candidat change, réinitialiser
                     if (nouveauCandidat !== candidatEnCours) {
                         candidatEnCours = nouveauCandidat;
                         aDejaVote = false;
@@ -840,12 +854,12 @@
                     const juryData = data[currentJury];
                     
                     if (juryData) {
-                        maitrise.value = juryData.maitrise || 0;
-                        argumentsField.value = juryData.arguments || 0;
-                        structure.value = juryData.structure || 0;
-                        eloquence.value = juryData.eloquence || 0;
-                        persuasion.value = juryData.persuasion || 0;
-                        temps.value = juryData.temps || 0;
+                        maitrise.value = juryData.maitrise !== undefined ? juryData.maitrise : '';
+                        argumentsField.value = juryData.arguments !== undefined ? juryData.arguments : '';
+                        structure.value = juryData.structure !== undefined ? juryData.structure : '';
+                        eloquence.value = juryData.eloquence !== undefined ? juryData.eloquence : '';
+                        persuasion.value = juryData.persuasion !== undefined ? juryData.persuasion : '';
+                        temps.value = juryData.temps !== undefined ? juryData.temps : '';
                         commentaire.value = juryData.commentaire || '';
                         calculerTotal();
                         
@@ -857,7 +871,6 @@
                             bloquerApresVote();
                         } else {
                             aDejaVote = false;
-                            // Si pas validé, activer les champs
                             if (currentJury && currentCandidat) {
                                 activerChamps();
                             }
@@ -914,13 +927,11 @@
                 return;
             }
 
-            // 🔒 EMPÊCHER LE VOTE MULTIPLE
             if (aDejaVote && valide) {
                 showToast('⚠️ Vous avez déjà voté pour ce candidat !', 'error');
                 return;
             }
 
-            // Vérifier si déjà validé dans Firebase
             if (valide) {
                 try {
                     const doc = await db.collection('cotations').doc(currentCandidat).get();
@@ -940,14 +951,23 @@
             }
 
             const total = calculerTotal();
+            
+            // Récupérer les valeurs (si vides → 0)
+            const maitriseVal = parseFloat(maitrise.value) || 0;
+            const argumentsVal = parseFloat(argumentsField.value) || 0;
+            const structureVal = parseFloat(structure.value) || 0;
+            const eloquenceVal = parseFloat(eloquence.value) || 0;
+            const persuasionVal = parseFloat(persuasion.value) || 0;
+            const tempsVal = parseFloat(temps.value) || 0;
+
             const data = {
                 [currentJury]: {
-                    maitrise: parseFloat(maitrise.value) || 0,
-                    arguments: parseFloat(argumentsField.value) || 0,
-                    structure: parseFloat(structure.value) || 0,
-                    eloquence: parseFloat(eloquence.value) || 0,
-                    persuasion: parseFloat(persuasion.value) || 0,
-                    temps: parseFloat(temps.value) || 0,
+                    maitrise: maitriseVal,
+                    arguments: argumentsVal,
+                    structure: structureVal,
+                    eloquence: eloquenceVal,
+                    persuasion: persuasionVal,
+                    temps: tempsVal,
                     total: total,
                     valide: valide,
                     commentaire: commentaire.value || '',
@@ -1103,6 +1123,7 @@
         console.log('📋 6 critères officiels chargés');
         console.log('🔄 Passage automatique activé');
         console.log('🔒 Vote unique par candidat activé');
+        console.log('📝 Champs vides par défaut');
     </script>
 </body>
 </html>
