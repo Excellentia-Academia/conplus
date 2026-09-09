@@ -8,9 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -425,7 +422,7 @@
         }
         .btn-lu:hover { background: rgba(16,185,129,0.25); }
 
-        /* ===== NOUVEAU STYLE POUR LE BOUTON AUTO-PASS ===== */
+        /* ===== NOUVEAU STYLE ===== */
         .btn-auto-pass {
             width: 100%;
             padding: 12px;
@@ -451,11 +448,6 @@
         }
         .btn-auto-pass.active:hover {
             background: rgba(16,185,129,0.25);
-        }
-        .btn-auto-pass:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
         }
     </style>
 </head>
@@ -527,7 +519,7 @@
                         </select>
                     </div>
                     <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i> Envoyer aux Jurys</button>
-
+                    
                     <!-- ===== NOUVEAU BOUTON ===== -->
                     <button class="btn-auto-pass" id="autoPassBtn">
                         <i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)
@@ -599,28 +591,27 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // --- CONFIG FIREBASE ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-8zYtHw1XQvT7Q8xZ9A0B1C2D3E4F5G6H7I8J9",
-            authDomain: "eloquence-en-scene.firebaseapp.com",
-            projectId: "eloquence-en-scene",
-            storageBucket: "eloquence-en-scene.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // --- ÉTAT ---
+        // --- DONNÉES SIMULÉES (sans Firebase) ---
         let jurys = ['Jury 1', 'Jury 2', 'Jury 3'];
-        let candidats = [];
-        let matches = [];
+        let candidats = [
+            { id: 'c1', nom: 'Alice Martin', matchId: 'm1' },
+            { id: 'c2', nom: 'Benoît Dupont', matchId: 'm1' },
+            { id: 'c3', nom: 'Claire Durand', matchId: 'm2' },
+            { id: 'c4', nom: 'David Moreau', matchId: 'm2' },
+            { id: 'c5', nom: 'Élise Rousseau', matchId: 'm3' },
+            { id: 'c6', nom: 'François Lefèvre', matchId: 'm3' },
+        ];
+        let matches = [
+            { id: 'm1', nom: 'Match 1 - Débat' },
+            { id: 'm2', nom: 'Match 2 - Éloquence' },
+            { id: 'm3', nom: 'Match 3 - Finale' },
+        ];
         let classementData = [];
         let candidatActuelId = null;
+        let votes = {}; // Stockage local des votes
 
-        // ===== NOUVEL ÉTAT POUR AUTO-PASS =====
+        // ===== NOUVEL ÉTAT AUTO-PASS =====
         let autoPassActif = false;
-        let autoPassInterval = null;
 
         // Timer
         let timerSeconds = 300;
@@ -660,14 +651,18 @@
         // --- INIT ---
         function init() {
             chargerJurys();
-            chargerCandidats();
-            chargerMatches();
-            ecouterVotes();
-            ecouterAlertes();
-            mettreAJourClassement();
-            mettreAJourStatistiques();
+            remplirMatches();
+            remplirCandidats();
             afficherJuryTags();
+            mettreAJourStatistiques();
             document.getElementById('juryCountDisplay').textContent = `👥 ${jurys.length} jurys`;
+            
+            // Simuler des votes existants pour la démo
+            votes = {
+                'c1': { notes: [8, 7, 9], nom: 'Alice Martin' },
+                'c2': { notes: [6, 5, 7], nom: 'Benoît Dupont' },
+            };
+            mettreAJourClassement();
         }
 
         // --- JURYS ---
@@ -715,27 +710,7 @@
             }
         });
 
-        // --- CANDIDATS & MATCHES ---
-        function chargerCandidats() {
-            db.collection('candidats').onSnapshot((snapshot) => {
-                candidats = [];
-                snapshot.forEach(doc => {
-                    candidats.push({ id: doc.id, ...doc.data() });
-                });
-                remplirCandidats(matchSelect.value);
-            });
-        }
-
-        function chargerMatches() {
-            db.collection('matches').onSnapshot((snapshot) => {
-                matches = [];
-                snapshot.forEach(doc => {
-                    matches.push({ id: doc.id, ...doc.data() });
-                });
-                remplirMatches();
-            });
-        }
-
+        // --- MATCHES & CANDIDATS ---
         function remplirMatches() {
             matchSelect.innerHTML = '<option value="">-- Sélectionner --</option>' +
                 matches.map(m => `<option value="${m.id}">${m.nom}</option>`).join('');
@@ -752,7 +727,7 @@
         });
 
         // --- ENVOYER CANDIDAT ---
-        sendBtn.addEventListener('click', async () => {
+        sendBtn.addEventListener('click', () => {
             const matchId = matchSelect.value;
             const candidatId = candidatSelect.value;
             if (!matchId || !candidatId) {
@@ -767,33 +742,130 @@
             const candidat = candidats.find(c => c.id === candidatId);
             if (!candidat) return;
 
-            try {
-                const sessionId = `session_${Date.now()}`;
-                for (const jury of jurys) {
-                    await db.collection('votes').doc(`${sessionId}_${jury}`).set({
-                        sessionId,
-                        matchId,
-                        candidatId,
-                        candidatNom: candidat.nom,
-                        jury: jury,
-                        note: null,
-                        commentaire: '',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        statut: 'en_attente'
-                    });
-                }
-                candidatActuelId = candidatId;
-                candidatActuel.textContent = candidat.nom;
-                candidatEnCours.textContent = `🎯 ${candidat.nom}`;
-                showToast(`✅ ${candidat.nom} envoyé aux ${jurys.length} jurys`, 'success');
-                demarrerTimer();
+            // Simuler l'envoi aux jurys
+            candidatActuelId = candidatId;
+            candidatActuel.textContent = candidat.nom;
+            candidatEnCours.textContent = `🎯 ${candidat.nom}`;
+            showToast(`✅ ${candidat.nom} envoyé aux ${jurys.length} jurys`, 'success');
+            demarrerTimer();
 
-                // ===== VÉRIFICATION AUTO-PASS APRÈS ENVOI =====
-                if (autoPassActif) {
-                    verifierVotesAuto();
+            // Simuler que les jurys votent au bout de quelques secondes (pour la démo)
+            simulerVotesJurys(candidatId, candidat.nom);
+            
+            // ===== VÉRIFICATION AUTO-PASS =====
+            if (autoPassActif) {
+                setTimeout(() => verifierVotesAuto(), 500);
+            }
+        });
+
+        // --- SIMULATION DE VOTES (pour démo) ---
+        function simulerVotesJurys(candidatId, candidatNom) {
+            // Simuler que chaque jury vote au bout de 2-5 secondes
+            jurys.forEach((jury, index) => {
+                const delai = 2000 + index * 800 + Math.random() * 1000;
+                setTimeout(() => {
+                    const note = Math.floor(Math.random() * 5) + 5; // 5-9
+                    if (!votes[candidatId]) {
+                        votes[candidatId] = { notes: [], nom: candidatNom };
+                    }
+                    votes[candidatId].notes.push(note);
+                    
+                    // Ajouter une alerte simulée
+                    ajouterAlerte(jury, candidatNom, `A voté: ${note}/10`);
+                    
+                    showToast(`📊 ${jury} a voté pour ${candidatNom} (${note}/10)`, 'success');
+                    mettreAJourClassement();
+                    mettreAJourStatistiques();
+                    
+                    // ===== VÉRIFIER AUTO-PASS APRÈS CHAQUE VOTE =====
+                    if (autoPassActif) {
+                        verifierVotesAuto();
+                    }
+                }, delai);
+            });
+        }
+
+        // --- ALERTES SIMULÉES ---
+        function ajouterAlerte(jury, candidat, message) {
+            const div = document.createElement('div');
+            div.className = 'alerte-item';
+            div.innerHTML = `
+                <span><span class="jury">${jury}</span> 
+                <span class="candidat">${candidat}</span></span>
+                <span class="time">${message}</span>
+                <button class="btn-lu" onclick="this.parentElement.remove()">Lu</button>
+            `;
+            alertesList.prepend(div);
+            if (alertesList.children.length > 10) {
+                alertesList.lastElementChild.remove();
+            }
+        }
+
+        // ===== FONCTION DE VÉRIFICATION AUTO-PASS =====
+        function verifierVotesAuto() {
+            if (!candidatActuelId || jurys.length === 0) return;
+            
+            const voteCandidat = votes[candidatActuelId];
+            if (!voteCandidat) return;
+            
+            const nbVotes = voteCandidat.notes.length;
+            if (nbVotes >= jurys.length && autoPassActif) {
+                showToast('✅ Tous les jurys ont voté ! Passage automatique...', 'success');
+                setTimeout(() => passerAuCandidatSuivant(), 1000);
+            }
+        }
+
+        // ===== FONCTION DE PASSAGE AU SUIVANT =====
+        function passerAuCandidatSuivant() {
+            // Récupérer tous les candidats déjà cotés
+            const candidatsCotes = new Set(Object.keys(votes));
+            
+            // Filtrer les candidats non cotés du match actuel
+            const matchId = matchSelect.value;
+            const nonCotes = candidats.filter(c => 
+                !candidatsCotes.has(c.id) && 
+                (matchId ? c.matchId === matchId : true)
+            );
+
+            if (nonCotes.length === 0) {
+                showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
+                autoPassActif = false;
+                autoPassBtn.classList.remove('active');
+                autoPassBtn.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
+                return;
+            }
+
+            // Sélectionner le premier candidat non coté
+            const suivant = nonCotes[0];
+            
+            // Mettre à jour les selects
+            const match = matches.find(m => m.id === suivant.matchId);
+            if (match) {
+                matchSelect.value = match.id;
+                remplirCandidats(match.id);
+                candidatSelect.value = suivant.id;
+                // Déclencher l'envoi
+                sendBtn.click();
+            }
+        }
+
+        // ===== BOUTON AUTO-PASS =====
+        autoPassBtn.addEventListener('click', function() {
+            autoPassActif = !autoPassActif;
+            
+            if (autoPassActif) {
+                this.classList.add('active');
+                this.innerHTML = '<i class="fas fa-pause"></i> Auto-pass activé (cliquer pour désactiver)';
+                showToast('🔁 Mode passage automatique ACTIVÉ', 'success');
+                
+                // Vérifier immédiatement si tous les votes sont déjà là
+                if (candidatActuelId) {
+                    setTimeout(() => verifierVotesAuto(), 300);
                 }
-            } catch (e) {
-                showToast('Erreur: ' + e.message, 'error');
+            } else {
+                this.classList.remove('active');
+                this.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
+                showToast('🔁 Mode passage automatique DÉSACTIVÉ', 'warning');
             }
         });
 
@@ -859,129 +931,17 @@
         });
         afficherTimer();
 
-        // --- VOTES ---
-        function ecouterVotes() {
-            db.collection('votes').where('statut', '==', 'en_attente')
-                .onSnapshot((snapshot) => {
-                    if (candidatActuelId && autoPassActif) {
-                        verifierVotesAuto();
-                    }
-                    mettreAJourClassement();
-                    mettreAJourStatistiques();
-                });
-        }
-
-        // ===== FONCTION DE VÉRIFICATION AUTO-PASS =====
-        function verifierVotesAuto() {
-            if (!candidatActuelId || jurys.length === 0) return;
-
-            db.collection('votes')
-                .where('candidatId', '==', candidatActuelId)
-                .where('statut', '==', 'valide')
-                .get()
-                .then((snapshot) => {
-                    const votesValides = snapshot.docs.length;
-                    if (votesValides >= jurys.length && autoPassActif) {
-                        showToast('✅ Tous les jurys ont voté ! Passage automatique...', 'success');
-                        passerAuCandidatSuivant();
-                    }
-                })
-                .catch(() => {});
-        }
-
-        // ===== FONCTION DE PASSAGE AU SUIVANT =====
-        function passerAuCandidatSuivant() {
-            // Récupérer tous les candidats déjà cotés
-            db.collection('votes')
-                .where('statut', '==', 'valide')
-                .get()
-                .then((snapshot) => {
-                    const candidatsCotes = new Set();
-                    snapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        if (data.candidatId) candidatsCotes.add(data.candidatId);
-                    });
-
-                    // Filtrer les candidats non cotés du match actuel
-                    const matchId = matchSelect.value;
-                    const nonCotes = candidats.filter(c => 
-                        !candidatsCotes.has(c.id) && 
-                        (matchId ? c.matchId === matchId : true)
-                    );
-
-                    if (nonCotes.length === 0) {
-                        showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
-                        autoPassActif = false;
-                        autoPassBtn.classList.remove('active');
-                        autoPassBtn.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
-                        return;
-                    }
-
-                    // Sélectionner le premier candidat non coté
-                    const suivant = nonCotes[0];
-                    
-                    // Mettre à jour les selects
-                    const match = matches.find(m => m.id === suivant.matchId);
-                    if (match) {
-                        matchSelect.value = match.id;
-                        remplirCandidats(match.id);
-                        candidatSelect.value = suivant.id;
-                        // Déclencher l'envoi
-                        sendBtn.click();
-                    }
-                })
-                .catch((err) => {
-                    console.error('Erreur passage auto:', err);
-                });
-        }
-
-        // ===== BOUTON AUTO-PASS =====
-        autoPassBtn.addEventListener('click', function() {
-            autoPassActif = !autoPassActif;
-            
-            if (autoPassActif) {
-                this.classList.add('active');
-                this.innerHTML = '<i class="fas fa-pause"></i> Auto-pass activé (cliquer pour désactiver)';
-                showToast('🔁 Mode passage automatique ACTIVÉ', 'success');
-                
-                // Vérifier immédiatement si tous les votes sont déjà là
-                if (candidatActuelId) {
-                    verifierVotesAuto();
-                }
-            } else {
-                this.classList.remove('active');
-                this.innerHTML = '<i class="fas fa-forward"></i> Passage automatique (quand tous les jurys ont voté)';
-                showToast('🔁 Mode passage automatique DÉSACTIVÉ', 'warning');
-            }
-        });
-
         // --- CLASSEMENT ---
         function mettreAJourClassement() {
-            db.collection('votes')
-                .where('statut', '==', 'valide')
-                .get()
-                .then((snapshot) => {
-                    const votes = {};
-                    snapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        const id = data.candidatId;
-                        if (!votes[id]) {
-                            votes[id] = { notes: [], nom: data.candidatNom || id };
-                        }
-                        if (data.note !== null && data.note !== undefined) {
-                            votes[id].notes.push(parseFloat(data.note));
-                        }
-                    });
-                    const classement = Object.keys(votes).map(id => {
-                        const notes = votes[id].notes;
-                        const moyenne = notes.length > 0 ? notes.reduce((a,b) => a+b, 0) / notes.length : 0;
-                        return { id, nom: votes[id].nom, moyenne, nbVotes: notes.length };
-                    });
-                    classement.sort((a, b) => b.moyenne - a.moyenne);
-                    classementData = classement;
-                    afficherClassement();
-                })
-                .catch(() => {});
+            const classement = Object.keys(votes).map(id => {
+                const data = votes[id];
+                const moyenne = data.notes.length > 0 ? 
+                    data.notes.reduce((a,b) => a+b, 0) / data.notes.length : 0;
+                return { id, nom: data.nom, moyenne, nbVotes: data.notes.length };
+            });
+            classement.sort((a, b) => b.moyenne - a.moyenne);
+            classementData = classement;
+            afficherClassement();
         }
 
         function afficherClassement() {
@@ -1007,48 +967,15 @@
 
         // --- STATS ---
         function mettreAJourStatistiques() {
-            db.collection('votes')
-                .get()
-                .then((snapshot) => {
-                    const docs = snapshot.docs;
-                    const cotes = docs.filter(d => d.data().statut === 'valide');
-                    const candidatsCotes = new Set(cotes.map(d => d.data().candidatId));
-                    totalCandidats.textContent = candidats.length;
-                    totalCotes.textContent = cotes.length;
-                    totalJurys.textContent = jurys.length;
-                    const progress = candidats.length > 0 ? (candidatsCotes.size / candidats.length * 100) : 0;
-                    progressFill.style.width = `${Math.min(progress, 100)}%`;
-                    progressText.textContent = `${candidatsCotes.size} / ${candidats.length} cotés`;
-                    progressPercent.textContent = `${Math.round(progress)}%`;
-                })
-                .catch(() => {});
-        }
-
-        // --- ALERTES ---
-        function ecouterAlertes() {
-            db.collection('alertes')
-                .orderBy('timestamp', 'desc')
-                .limit(20)
-                .onSnapshot((snapshot) => {
-                    if (snapshot.empty) {
-                        alertesList.innerHTML = '<div style="color:#555;font-size:0.8rem;">Aucune alerte</div>';
-                        return;
-                    }
-                    alertesList.innerHTML = snapshot.docs.map(doc => {
-                        const data = doc.data();
-                        return `<div class="alerte-item">
-                            <span><span class="jury">${data.jury || 'Jury'}</span> 
-                            <span class="candidat">${data.candidatNom || 'candidat'}</span></span>
-                            <span class="time">${data.message || 'Alerte'}</span>
-                            <button class="btn-lu" data-id="${doc.id}">Lu</button>
-                        </div>`;
-                    }).join('');
-                    document.querySelectorAll('.btn-lu').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            db.collection('alertes').doc(btn.dataset.id).delete();
-                        });
-                    });
-                });
+            const total = candidats.length;
+            const cotes = Object.keys(votes).length;
+            totalCandidats.textContent = total;
+            totalCotes.textContent = cotes;
+            totalJurys.textContent = jurys.length;
+            const progress = total > 0 ? (cotes / total * 100) : 0;
+            progressFill.style.width = `${Math.min(progress, 100)}%`;
+            progressText.textContent = `${cotes} / ${total} cotés`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
         }
 
         // --- EXPORT ---
