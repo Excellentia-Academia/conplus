@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏆 Éloquence en scène · Demi-finale</title>
+    
+    <!-- Font Awesome (icônes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
+    <!-- Google Fonts (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+                   CSS COMPLET — THÈME GALAXIE BLEU & ÉTOILES
+                   ============================================================ */
+
+        /* ---- VARIABLES ---- */
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f5e6a3;
+            --gold-dark: #a07c1e;
+            --blue-deep: #0b0e1a;
+            --blue-mid: #141b2b;
+            --blue-soft: #1a2338;
+            --star-white: #e8f0ff;
+            --star-glow: rgba(180, 210, 255, 0.25);
+            --card-bg: rgba(16, 22, 38, 0.88);
+            --white: #f0f4fc;
+            --shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            --radius: 18px;
+            --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            --gold-glow: rgba(212, 175, 55, 0.2);
+        }
+
+        /* ---- RESET ---- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #05070f;
+            color: var(--white);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(ellipse at 20% 30%, #0f1a2f 0%, #05070f 70%),
+                radial-gradient(ellipse at 80% 70%, #0d1424 0%, #05070f 60%),
+                radial-gradient(ellipse at 50% 50%, #0a1120 0%, #05070f 100%);
+            background-attachment: fixed;
+        }
+
+        /* ---- ÉTOILES ANIMÉES ---- */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .stars-bg .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: twinkle 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.15; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.2); }
+            100% { opacity: 0.25; transform: scale(1); }
+        }
+
+        /* ---- SCROLLBAR ---- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0e18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a3a5a;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a4f7a;
+        }
+
+        /* ============================================================
+                   BANNIÈRE DEMI-FINALE
+                   ============================================================ */
+        .phase-banner {
+            text-align: center;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 5;
+            animation: fadeInDown 0.8s ease forwards;
+        }
+
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(120, 170, 255, 0.12));
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            padding: 10px 32px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #f5e6a3;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.08), 0 0 60px rgba(120, 170, 255, 0.05);
+            backdrop-filter: blur(8px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .phase-badge i {
+            color: var(--gold);
+            font-size: 0.9rem;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+        }
+
+        .phase-badge .round {
+            color: #7aa9ff;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            padding-left: 8px;
+            border-left: 1px solid rgba(180, 210, 255, 0.2);
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================================
+                   HEADER
+                   ============================================================ */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 32px;
+            background: rgba(10, 16, 30, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 80px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(180, 210, 255, 0.12);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 60px rgba(100, 150, 255, 0.03);
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2));
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #f5e6a3, #d4af37, #b8962a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 300;
+            color: #b8c8e8;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(180, 210, 255, 0.05);
+            padding: 6px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(180, 210, 255, 0.08);
+        }
+
+        .header-badge i {
+            font-size: 0.7rem;
+            color: #7aa9ff;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(180, 210, 255, 0.12);
+            padding: 10px 24px 10px 44px;
+            border-radius: 60px;
+            color: var(--white);
+            font-size: 0.92rem;
+            width: 270px;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(200, 215, 240, 0.3);
+            font-weight: 300;
+            font-size: 0.85rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #7aa9ff;
+            box-shadow: 0 0 30px rgba(120, 170, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
+            width: 320px;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(180, 210, 255, 0.25);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        /* ---- BOUTON RÉINITIALISER ---- */
+        .reset-btn {
+            background: rgba(180, 210, 255, 0.06);
+            border: 1px solid rgba(180, 210, 255, 0.1);
+            color: #b8c8e8;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            margin-left: 8px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(180, 210, 255, 0.12);
+            border-color: #7aa9ff;
+        }
+
+        .reset-btn.visible {
+            display: inline-flex;
+        }
+
+        /* ============================================================
+                   HERO
+                   ============================================================ */
+        .hero {
+            text-align: center;
+            padding: 20px 15px 30px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #7aa9ff, transparent);
+            opacity: 0.25;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e8f0ff 0%, #a8c8ff 40%, #7aa9ff 70%, #4a7ad0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 80px rgba(120, 170, 255, 0.06);
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+            color: #d4af37;
+            font-weight: 500;
+            margin-top: 8px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #8898b8;
+            font-weight: 300;
+            margin-top: 6px;
+            letter-spacing: 3px;
+        }
+
+        .hero .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .hero .stats span {
+            font-size: 0.8rem;
+            color: #6a7a9a;
+            background: rgba(180, 210, 255, 0.03);
+            padding: 4px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(180, 210, 255, 0.04);
+            letter-spacing: 1px;
+        }
+
+        .hero .stats span i {
+            color: #7aa9ff;
+            margin-right: 6px;
+        }
+
+        /* ============================================================
+                   GRILLE DES MATCHS
+                   ============================================================ */
+        #matchGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+            max-width: 1450px;
+            margin: 10px auto 0;
+            padding: 10px 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- CARTE MATCH ---- */
+        .match-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius);
+            padding: 24px 22px 20px;
+            border-left: 5px solid #7aa9ff;
+            box-shadow: var(--shadow), 0 0 60px rgba(100, 150, 255, 0.02);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            border: 1px solid rgba(180, 210, 255, 0.06);
+            border-left-width: 5px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .match-card:hover {
+            transform: translateY(-8px) scale(1.015);
+            border-color: #7aa9ff;
+            box-shadow: 0 25px 60px rgba(100, 150, 255, 0.06), 0 0 60px rgba(100, 150, 255, 0.02);
+            background: rgba(20, 30, 52, 0.94);
+        }
+
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(120, 170, 255, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .match-card::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -20%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(120, 170, 255, 0.02) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .match-number {
+            font-size: 0.7rem;
+            color: #5a7aaa;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            opacity: 0.6;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .match-number i {
+            margin-right: 5px;
+            font-size: 0.6rem;
+            color: #7aa9ff;
+        }
+
+        /* ---- BADGE DEMI-FINALE SUR CARTE ---- */
+        .card-phase {
+            display: inline-block;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #f5e6a3;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-left: auto;
+            opacity: 0.7;
+        }
+
+        .match-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #d0e0ff;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            padding: 6px 0 10px 0;
+            border-bottom: 1px dashed rgba(180, 210, 255, 0.08);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .match-title .icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: #7aa9ff;
+            opacity: 0.5;
+        }
+
+        /* ---- DUEL ---- */
+        .duel {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .duel .candidate {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92rem;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .duel .candidate:hover {
+            background: rgba(120, 170, 255, 0.04);
+        }
+
+        .duel .role {
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            padding: 3px 14px;
+            border-radius: 30px;
+            min-width: 80px;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .role.these {
+            background: rgba(212, 175, 55, 0.12);
+            color: #e8d48a;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .role.antithese {
+            background: rgba(120, 170, 255, 0.12);
+            color: #7aa9ff;
+            border: 1px solid rgba(120, 170, 255, 0.08);
+        }
+
+        .duel .name {
+            font-weight: 500;
+            color: #dce8ff;
+            letter-spacing: 0.3px;
+        }
+
+        .duel .vs-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 2px 0 2px 20px;
+            color: #3a4a6a;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .duel .vs-divider .line {
+            flex: 1;
+            max-width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #3a4a6a, transparent);
+        }
+
+        /* ---- BADGE CANDIDAT INCONNU ---- */
+        .candidate-inconnu .name {
+            color: #5a6a8a;
+            font-style: italic;
+        }
+
+        .candidate-inconnu .role {
+            background: rgba(100, 120, 160, 0.12);
+            color: #6a7a9a;
+            border-color: rgba(100, 120, 160, 0.08);
+        }
+
+        /* ============================================================
+                   MESSAGE AUCUN RÉSULTAT
+                   ============================================================ */
+        .no-result {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: #4a5a7a;
+        }
+
+        .no-result i {
+            font-size: 3rem;
+            color: #2a3a5a;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .no-result p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* ============================================================
+                   ANIMATIONS
+                   ============================================================ */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(35px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ============================================================
+                   FOOTER
+                   ============================================================ */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 30px 10px 15px;
+            border-top: 1px solid rgba(180, 210, 255, 0.05);
+            color: #3a4a6a;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer .footer-gold {
+            color: #7aa9ff;
+            font-weight: 400;
+        }
+
+        footer .small {
+            font-size: 0.65rem;
+            color: #2a3a5a;
+            margin-top: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        footer .social-links {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        footer .social-links a {
+            color: #2a3a5a;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        footer .social-links a:hover {
+            color: #7aa9ff;
+        }
+
+        /* ============================================================
+                   RESPONSIVE
+                   ============================================================ */
+
+        @media (max-width: 1024px) {
+            #matchGrid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 22px;
+            }
+        }
+
+        @media (max-width: 820px) {
+            header {
+                flex-direction: column;
+                gap: 14px;
+                border-radius: 40px;
+                padding: 18px 22px;
+                top: 8px;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .header-badge {
+                font-size: 0.7rem;
+                padding: 4px 14px;
+            }
+
+            .search-bar input {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .search-bar input:focus {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .reset-btn {
+                margin-left: 0;
+                margin-top: 6px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+                letter-spacing: 1.5px;
+            }
+
+            #matchGrid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .match-card {
+                padding: 18px 16px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 14px 16px;
+                border-radius: 30px;
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+            .logo i {
+                font-size: 1.4rem;
+            }
+
+            .header-badge {
+                font-size: 0.6rem;
+                padding: 3px 12px;
+                letter-spacing: 1px;
+            }
+
+            .search-bar input {
+                font-size: 0.8rem;
+                padding: 8px 16px 8px 36px;
+            }
+            .search-bar .search-icon {
+                left: 14px;
+                font-size: 0.75rem;
+            }
+
+            .phase-badge {
+                font-size: 0.65rem;
+                padding: 8px 20px;
+                letter-spacing: 2px;
+            }
+            .phase-badge .round {
+                font-size: 0.6rem;
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .hero p {
+                font-size: 0.8rem;
+            }
+            .hero .stats span {
+                font-size: 0.65rem;
+                padding: 2px 12px;
+            }
+
+            .match-title {
+                font-size: 0.85rem;
+                min-height: 45px;
+            }
+            .duel .candidate {
+                font-size: 0.8rem;
+                padding: 4px 6px;
+                flex-wrap: wrap;
+            }
+            .duel .role {
+                font-size: 0.55rem;
+                min-width: 60px;
+                padding: 2px 10px;
+            }
+            .duel .vs-divider {
+                font-size: 0.55rem;
+                margin-left: 0;
+                justify-content: flex-start;
+            }
+
+            .match-card {
+                padding: 14px 12px 14px;
+                border-left-width: 4px;
+            }
+
+            footer {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+            .match-title {
+                font-size: 0.75rem;
+            }
+            .duel .candidate {
+                font-size: 0.7rem;
+                gap: 5px;
+            }
+            .duel .role {
+                font-size: 0.5rem;
+                min-width: 50px;
+                padding: 1px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    ÉTOILES ANIMÉES
+    ============================================================ -->
+    <div class="stars-bg" id="starsBg"></div>
+
+    <!-- ============================================================
+    BANNIÈRE DEMI-FINALE
+    ============================================================ -->
+    <div class="phase-banner">
+        <div class="phase-badge">
+            <i class="fas fa-trophy"></i>
+            Demi-finale
+            <span class="round">Round 2</span>
+            <i class="fas fa-star"></i>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-microphone-alt"></i>
+            <span>Éloquence en Scène</span>
+        </div>
+        <div class="header-badge">
+            <i class="fas fa-star"></i> Kinshasa · Demi-finale · 12 matchs
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Candidat, thème, mot-clé..." autocomplete="off" />
+            <button class="reset-btn" id="resetBtn">
+                <i class="fas fa-times"></i> Effacer
+            </button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    HERO
+    ============================================================ -->
+    <section class="hero">
+        <h1>🌌 Duel d'Éloquence</h1>
+        <div class="subtitle">✦ Demi-finale · Round 2 ✦</div>
+        <p>THÈSE · ANTITHÈSE · GALAXIE</p>
+        <div class="stats">
+            <span><i class="fas fa-users"></i> 12 matchs</span>
+            <span><i class="fas fa-star"></i> 24 orateurs</span>
+            <span><i class="fas fa-comments"></i> 12 sujets</span>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    GRILLE DES MATCHS
+    ============================================================ -->
+    <main id="matchGrid"></main>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer>
+        <p class="footer-gold">✦ Éloquence en Scène · Demi-finale · Round 2 ✦</p>
+        <p class="small">Thème galaxie bleu · Étoiles scintillantes · 12 matchs</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================================
+        // GÉNÉRATION DES ÉTOILES
+        // ============================================================
+        (function generateStars() {
+            const container = document.getElementById('starsBg');
+            const starCount = 180;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                const colors = ['#ffffff', '#e0e8ff', '#c0d0ff', '#f5e6a3', '#d4e0ff'];
+                star.style.background = colors[Math.floor(Math.random() * colors.length)];
+                star.style.boxShadow = '0 0 ' + (size * 3) + 'px ' + star.style.background;
+                container.appendChild(star);
+            }
+        })();
+
+        // ============================================================
+        // DONNÉES DES MATCHS — DEMI-FINALE · ROUND 2
+        // ============================================================
+        const matchs = [
+            {
+                numero: 1,
+                sujet: "Au Congo, devient-on réellement adulte à 18 ans ?",
+                these: "Joyce Aziza",
+                antithese: "Béni Fungamali Ramazani"
+            },
+            {
+                numero: 2,
+                sujet: "L’amitié entre ex-partenaires est-elle possible ou un mensonge qu’on se raconte ?",
+                these: "Brineige Massamba",
+                antithese: "Furah Kipata"
+            },
+            {
+                numero: 3,
+                sujet: "La famille africaine protège-t-elle les jeunes ou étouffe-t-elle leur liberté ?",
+                these: "Abraham Mundanda",
+                antithese: "Mersei Kanemeka Wa Nzambi"
+            },
+            {
+                numero: 4,
+                sujet: "Faut-il respecter une tradition simplement parce qu’elle a été respectée par nos parents ?",
+                these: "Adju Abdallah",
+                antithese: "Ruth Kalonga"
+            },
+            {
+                numero: 5,
+                sujet: "Le mariage arrangé par les familles est-il plus honnête que le mariage par amour ?",
+                these: "Pax Fungamali",
+                antithese: "Joyce Eke-Shomba Kapinga"
+            },
+            {
+                numero: 6,
+                sujet: "Un homme qui obéit à sa femme est-il faible ou intelligent ?",
+                these: "Enoch Bilha Kalonda",
+                antithese: "Divine Nlandu Nsakanunu"
+            },
+            {
+                numero: 7,
+                sujet: "L’argent rend-il les relations plus simples ou révèle-t-il simplement leur vraie nature ?",
+                these: "Darlène Yowa Ngandu",
+                antithese: "Amerack Mavinga Ntali"
+            },
+            {
+                numero: 8,
+                sujet: "Si l’argent disparaissait demain, le monde serait-il meilleur ?",
+                these: "Exauce Mikila Waney",
+                antithese: "Henock Bolefo Wetshi"
+            },
+            {
+                numero: 9,
+                sujet: "« Je connais quelqu’un » : stratégie de survie ou injustice nationale ?",
+                these: "Emeraude Kanene Samba",
+                antithese: "Claudel Elongama"
+            },
+            {
+                numero: 10,
+                sujet: "Si votre meilleur ami devenait votre principal rival politique, faudrait-il choisir l’amitié ou le pouvoir ?",
+                these: "David Nakweti Musikwela",
+                antithese: "Christiane Bongo"
+            },
+            {
+                numero: 11,
+                sujet: "Faut-il choisir une personne qui nous aime plutôt qu’une personne que nous aimons ?",
+                these: "Eugenie Nabintu Basirwa",
+                antithese: "Gremis Flevia Funga Funga"
+            },
+            {
+                numero: 12,
+                sujet: "La réussite des autres est-elle un miroir qui nous élève ou un miroir qui nous détruit ?",
+                these: "Christian Mbo Ntali",
+                antithese: "David Kitengie Malangu"
+            }
+        ];
+
+        // ============================================================
+        // RENDU DES CARTES
+        // ============================================================
+        const grid = document.getElementById('matchGrid');
+        const searchInput = document.getElementById('searchInput');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function renderMatchs(filter = '') {
+            const term = filter.trim().toLowerCase();
+            let html = '';
+            let visibleCount = 0;
+
+            matchs.forEach((m, index) => {
+                const matchText = `match ${m.numero} ${m.sujet} ${m.these} ${m.antithese} demi-finale round 2`.toLowerCase();
+                if (term && !matchText.includes(term)) return;
+
+                visibleCount++;
+
+                const theseInconnu = !m.these || m.these.trim() === '' || m.these === '—';
+                const antitheseInconnu = !m.antithese || m.antithese.trim() === '' || m.antithese === '—';
+
+                const theseClass = theseInconnu ? 'candidate-inconnu' : '';
+                const antitheseClass = antitheseInconnu ? 'candidate-inconnu' : '';
+
+                const theseNom = theseInconnu ? '—' : m.these;
+                const antitheseNom = antitheseInconnu ? '—' : m.antithese;
+
+                const delay = (index * 0.06).toFixed(2);
+
+                html += `
+                    <article class="match-card" style="animation-delay: ${delay}s;">
+                        <div class="match-number">
+                            <i class="fas fa-star"></i> Match ${m.numero}
+                            <span class="card-phase">Demi-finale · R2</span>
+                        </div>
+                        <div class="match-title">
+                            <span class="icon">✦</span>
+                            ${m.sujet}
+                        </div>
+                        <div class="duel">
+                            <div class="candidate ${theseClass}">
+                                <span class="role these">Thèse</span>
+                                <span class="name">${theseNom}</span>
+                            </div>
+                            <div class="vs-divider">
+                                <span class="line"></span>
+                                VS
+                                <span class="line"></span>
+                            </div>
+                            <div class="candidate ${antitheseClass}">
+                                <span class="role antithese">Antithèse</span>
+                                <span class="name">${antitheseNom}</span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            });
+
+            if (visibleCount === 0) {
+                html = `
+                    <div class="no-result">
+                        <i class="fas fa-star"></i>
+                        <p>Aucun match ne correspond à votre recherche.</p>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
+        renderMatchs();
+
+        // ============================================================
+        // RECHERCHE
+        // ============================================================
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            renderMatchs(val);
+            resetBtn.classList.toggle('visible', val.trim().length > 0);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            renderMatchs();
+            resetBtn.classList.remove('visible');
+            searchInput.focus();
+        });
+
+        // ============================================================
+        // RACCOURCI : ÉCHAP POUR EFFACER
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchInput.value.trim().length > 0) {
+                searchInput.value = '';
+                renderMatchs();
+                resetBtn.classList.remove('visible');
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>
