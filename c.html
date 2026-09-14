@@ -81,63 +81,6 @@
         }
         .card h2 i { margin-right: 10px; }
 
-        .timer-display { text-align: center; padding: 16px; }
-        .timer-display .clock {
-            font-size: 4.5rem;
-            font-weight: 800;
-            font-family: 'Poppins', monospace;
-            color: #d4af37;
-        }
-        .timer-display .clock.warning { color: #f59e0b; animation: pulse 0.5s infinite alternate; }
-        .timer-display .clock.danger { color: #ef4444; animation: pulse 0.3s infinite alternate; }
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.5; transform: scale(1.05); }
-        }
-        .timer-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 12px 0;
-        }
-        .timer-controls button {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .timer-controls .btn-start { background: #10b981; color: #fff; }
-        .timer-controls .btn-start:hover { transform: scale(1.05); }
-        .timer-controls .btn-pause { background: #f59e0b; color: #fff; }
-        .timer-controls .btn-pause:hover { transform: scale(1.05); }
-        .timer-controls .btn-reset { background: #ef4444; color: #fff; }
-        .timer-controls .btn-reset:hover { transform: scale(1.05); }
-
-        .timer-presets {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .timer-presets button {
-            padding: 4px 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            background: rgba(255,255,255,0.03);
-            color: #888;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .timer-presets button:hover { border-color: #d4af37; color: #fff; }
-        .timer-presets button.active { border-color: #d4af37; color: #d4af37; background: rgba(212,175,55,0.05); }
-
         .form-group {
             margin-bottom: 16px;
         }
@@ -424,7 +367,7 @@
             font-family: 'Poppins', sans-serif;
         }
         .btn-lu:hover { background: rgba(16,185,129,0.25); }
-        
+
         /* Indicateur de passage auto */
         .auto-indicator {
             display: inline-flex;
@@ -458,25 +401,6 @@
         <div class="grid-2">
             <!-- Panneau gauche -->
             <div>
-                <div class="card">
-                    <h2><i class="fas fa-clock"></i> Chronomètre</h2>
-                    <div class="timer-display">
-                        <div class="clock" id="timerClock">05:00</div>
-                        <div style="font-size:0.8rem;color:#888;" id="timerStatus">⏸️ En pause</div>
-                    </div>
-                    <div class="timer-controls">
-                        <button class="btn-start" id="timerStart"><i class="fas fa-play"></i> Démarrer</button>
-                        <button class="btn-pause" id="timerPause"><i class="fas fa-pause"></i> Pause</button>
-                        <button class="btn-reset" id="timerReset"><i class="fas fa-undo"></i> Réinitialiser</button>
-                    </div>
-                    <div class="timer-presets">
-                        <button data-time="180">3 min</button>
-                        <button data-time="300" class="active">5 min</button>
-                        <button data-time="420">7 min</button>
-                        <button data-time="600">10 min</button>
-                    </div>
-                </div>
-
                 <div class="card">
                     <h2><i class="fas fa-users"></i> Gestion des jurys</h2>
                     <div class="jury-management">
@@ -651,11 +575,6 @@
         ];
 
         // Variables
-        let timerSeconds = 300;
-        let timerRemaining = 300;
-        let timerInterval = null;
-        let timerRunning = false;
-        let timerPaused = false;
         let cotationsData = {};
         let previousCotations = {};
         let juryList = ['Jury 1', 'Jury 2', 'Jury 3'];
@@ -665,8 +584,6 @@
         let isProcessingAutoNext = false;
 
         // Éléments DOM
-        const timerClock = document.getElementById('timerClock');
-        const timerStatus = document.getElementById('timerStatus');
         const matchSelect = document.getElementById('matchSelect');
         const candidatSelect = document.getElementById('candidatSelect');
         const sendBtn = document.getElementById('sendBtn');
@@ -692,81 +609,6 @@
             toast.className = `toast ${type} show`;
             clearTimeout(notificationTimeout);
             notificationTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
-        }
-
-        // ⏱️ TIMER
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timerRemaining / 60);
-            const seconds = timerRemaining % 60;
-            timerClock.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            timerClock.classList.remove('warning', 'danger');
-            if (timerRemaining <= 30 && timerRunning) timerClock.classList.add('danger');
-            else if (timerRemaining <= 60 && timerRunning) timerClock.classList.add('warning');
-        }
-
-        function startTimer() {
-            if (timerRunning && !timerPaused) return;
-            if (timerRemaining <= 0) timerRemaining = timerSeconds;
-            timerRunning = true;
-            timerPaused = false;
-            timerStatus.textContent = '▶️ En cours';
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timerRemaining--;
-                updateTimerDisplay();
-                syncTimer();
-                if (timerRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    timerRunning = false;
-                    timerStatus.textContent = '⏰ Temps écoulé !';
-                    syncTimer();
-                    showToast('⏰ Temps écoulé !', 'warning');
-                }
-            }, 1000);
-            syncTimer();
-            showToast('▶️ Timer démarré', 'success');
-        }
-
-        function pauseTimer() {
-            if (!timerRunning && !timerPaused) return;
-            if (timerInterval) clearInterval(timerInterval);
-            timerPaused = true;
-            timerRunning = false;
-            timerStatus.textContent = '⏸️ En pause';
-            syncTimer();
-            showToast('⏸️ Timer en pause', 'warning');
-        }
-
-        function resetTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            timerRunning = false;
-            timerPaused = false;
-            timerRemaining = timerSeconds;
-            updateTimerDisplay();
-            timerStatus.textContent = '⏸️ Réinitialisé';
-            syncTimer();
-            showToast('🔄 Timer réinitialisé', 'info');
-        }
-
-        function setTimer(seconds) {
-            if (timerInterval) clearInterval(timerInterval);
-            timerRemaining = seconds;
-            timerSeconds = seconds;
-            timerRunning = false;
-            timerPaused = false;
-            updateTimerDisplay();
-            timerStatus.textContent = '⏸️ Prêt';
-            syncTimer();
-        }
-
-        function syncTimer() {
-            db.collection('etat').doc('current').set({
-                timer: timerRemaining,
-                timerRunning: timerRunning,
-                timerPaused: timerPaused,
-                timerSeconds: timerSeconds,
-                timestamp: Date.now()
-            }, { merge: true }).catch(e => console.warn('⚠️ Timer sync error:', e));
         }
 
         // 👥 GESTION DES JURYS
@@ -895,10 +737,6 @@
                     candidatTheme: candidat.theme,
                     candidatRole: candidat.role,
                     candidatPhoto: '',
-                    timer: timerRemaining,
-                    timerRunning: timerRunning,
-                    timerPaused: timerPaused,
-                    timerSeconds: timerSeconds,
                     status: 'en-cours',
                     nombreJurys: juryList.length,
                     timestamp: Date.now()
@@ -910,60 +748,61 @@
             }
         }
 
-        // 🆕 PASSAGE AUTOMATIQUE (AJOUTÉ AU CENTRE DE CONTRÔLE)
+        // 🆕 PASSAGE AUTOMATIQUE (CORRIGÉ — utilise la constante MATCHS locale)
         async function verifierEtPasserSuivant(candidatNom) {
             if (!candidatNom) return;
             if (isProcessingAutoNext) return;
-            
+
             try {
                 const doc = await db.collection('cotations').doc(candidatNom).get();
                 if (!doc.exists) return;
-                
+
                 const data = doc.data();
                 let jurysAyantVote = 0;
-                
+
                 juryList.forEach(jury => {
                     if (data[jury] && data[jury].valide === true) {
                         jurysAyantVote++;
                     }
                 });
-                
+
                 if (jurysAyantVote === juryList.length && juryList.length > 0) {
                     isProcessingAutoNext = true;
-                    
+
                     const etatDoc = await db.collection('etat').doc('current').get();
                     if (!etatDoc.exists) {
                         isProcessingAutoNext = false;
                         return;
                     }
-                    
+
                     const etatData = etatDoc.data();
                     const matchId = etatData.matchId;
-                    
-                    const matchsRef = await db.collection('matchs').doc(matchId.toString()).get();
-                    if (!matchsRef.exists) {
+
+                    // ✅ CORRECTION : lecture dans la constante MATCHS locale au lieu de Firestore
+                    const matchData = MATCHS.find(m => m.id === parseInt(matchId));
+                    if (!matchData) {
+                        console.warn('⚠️ Match introuvable dans MATCHS:', matchId);
                         isProcessingAutoNext = false;
                         return;
                     }
-                    
-                    const matchData = matchsRef.data();
+
                     const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
                     const indexActuel = tousCandidats.indexOf(candidatNom);
-                    
+
                     if (indexActuel === -1) {
                         isProcessingAutoNext = false;
                         return;
                     }
-                    
+
                     const prochainIndex = indexActuel + 1;
                     if (prochainIndex >= tousCandidats.length) {
                         showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
                         isProcessingAutoNext = false;
                         return;
                     }
-                    
+
                     const prochainCandidat = tousCandidats[prochainIndex];
-                    
+
                     await db.collection('etat').doc('current').set({
                         matchId: matchId,
                         candidatNom: prochainCandidat,
@@ -974,7 +813,7 @@
                         nombreJurys: juryList.length,
                         timestamp: Date.now()
                     }, { merge: true });
-                    
+
                     candidatActuelEl.textContent = prochainCandidat;
                     showToast(`🔄 Passage automatique à ${prochainCandidat} (tous les jurys ont voté)`, 'success');
                     isProcessingAutoNext = false;
@@ -989,7 +828,7 @@
         function surveillerCotations() {
             db.collection('cotations').onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'modified') {
+                    if (change.type === 'modified' || change.type === 'added') {
                         const candidatNom = change.doc.id;
                         setTimeout(() => {
                             verifierEtPasserSuivant(candidatNom);
@@ -1008,12 +847,6 @@
                     const data = doc.data();
                     candidatActuel = data.candidatNom || null;
                     candidatActuelEl.textContent = candidatActuel || '-';
-                    if (data.timer !== undefined && data.timer !== timerRemaining) {
-                        timerRemaining = data.timer;
-                        updateTimerDisplay();
-                    }
-                    if (data.timerRunning !== undefined) timerRunning = data.timerRunning;
-                    if (data.timerPaused !== undefined) timerPaused = data.timerPaused;
                 }
             });
         }
@@ -1218,16 +1051,6 @@
         matchSelect.addEventListener('change', function() { remplirCandidats(this.value); });
         sendBtn.addEventListener('click', envoyerCandidat);
         exportBtn.addEventListener('click', exporterCSV);
-        document.getElementById('timerStart').addEventListener('click', startTimer);
-        document.getElementById('timerPause').addEventListener('click', pauseTimer);
-        document.getElementById('timerReset').addEventListener('click', resetTimer);
-        document.querySelectorAll('.timer-presets button[data-time]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.timer-presets button[data-time]').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                setTimer(parseInt(this.dataset.time));
-            });
-        });
 
         // 🚀 INIT
         chargerMatchs();
@@ -1235,14 +1058,13 @@
         ecouterEtat();
         ecouterCotations();
         ecouterAlertes();
-        surveillerCotations(); // 🆕 Surveillance pour passage auto
-        setTimer(300);
+        surveillerCotations();
 
         showToast('✅ Centre de contrôle connecté (passage auto actif)', 'success');
         console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
         console.log('📊 Firebase configuré');
         console.log(`👥 ${juryList.length} jurys`);
-        console.log('🔄 Passage automatique activé quand tous les jurys ont voté');
+        console.log('🔄 Passage automatique activé (via constante MATCHS)');
     </script>
 </body>
 </html>
