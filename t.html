@@ -591,6 +591,62 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // 🔥 DONNÉES DES 26 MATCHS (nécessaires pour le passage automatique)
+        const MATCHS = [
+            { id: 1, theme: "L'étudiant de la diaspora est-il le sauveur ou l'étranger du Congo de demain ?",
+                these: "Bernadine Mandanda Mbangu", antithese: "Adju Abdallah Djuma" },
+            { id: 2, theme: "La réussite à Kinshasa se mesure-t-elle au volume de ce que l'on affiche sur les réseaux ?",
+                these: "Bijou Belanza", antithese: "Arsène Sangwa Binanga" },
+            { id: 3, theme: "Le « Bureau » (deuxième bureau) : Pratique normalisée ou destruction silencieuse de la famille ?",
+                these: "Daniella Makululu Bebela", antithese: "Beni Fungamali Ramazani" },
+            { id: 4, theme: "L'entrepreneuriat des jeunes à Kinshasa : Véritable choix de carrière ou solution de désespoir ?",
+                these: "Divine Mwamba Bipendu", antithese: "Enoch Bilha Kalonda" },
+            { id: 5, theme: "Les produits éclaircissants (Tshoko) : Choix esthétique ou complexe d'infériorité ?",
+                these: "Henock Bolefo wetshi", antithese: "Darlène Yowa Ngandu" },
+            { id: 6, theme: "Les vêtements traditionnels (Pagne) face à la mode occidentale : Choix vestimentaire ou conflit d'identité ?",
+                these: "Jean Djemondo Toss", antithese: "Eugenie Nabintu Basirwa" },
+            { id: 7, theme: "La dot à Kinshasa : Célébration de la valeur de la femme ou transaction commerciale ?",
+                these: "Théovie Gabriel Ibambu", antithese: "Mersei Kanemeka Wa Nzambi" },
+            { id: 8, theme: "L'étiquette de « Mwana Ndaku » (enfant de bonne famille) : Une protection ou un fardeau ?",
+                these: "Glody Loleke Elembe", antithese: "Eunice Omokoko Baby" },
+            { id: 9, theme: "Le phénomène « Muana Frite » / « Muana Bonne Vie » : Privilège légitime ou illusion de supériorité ?",
+                these: "Rodrick Banza", antithese: "Gremis Flevia Funga Funga" },
+            { id: 10, theme: "L'émancipation de la femme kinoise est-elle une menace pour le foyer traditionnel ?",
+                these: "Émeraude Kanene Samba", antithese: "Christian Mbo Ntali" },
+            { id: 11, theme: "Facebook et TikTok à Kinshasa : Outils d'émancipation intellectuelle ou de destruction morale ?",
+                these: "Beni Musiteki", antithese: "Divine Nlandu Nsakanunu" },
+            { id: 12, theme: "Les funérailles à Kinshasa (Matanga) : Devoir de mémoire ou théâtralisation de la misère ?",
+                these: "Thomas Kashavu Muhigirwa", antithese: "Divine Mugoli Kashemwa" },
+            { id: 13, theme: "L'argent dans les relations amoureuses : Preuve d'amour ou prostitution déguisée ?",
+                these: "Joyce Eke-Shomba kapinga", antithese: "Gaspard Mwima Mupila" },
+            { id: 14, theme: "Les accusations de sorcellerie sur les enfants : Fait spirituel ou démission parentale ?",
+                these: "Junior Muteba Biayi", antithese: "Jenovic Sumaili Letashi" },
+            { id: 15, theme: "Le phénomène des « Kuluna » : Crise des valeurs ou échec socio-économique ?",
+                these: "Eric Bulembi Mafuku", antithese: "David Nakweti Musikwela" },
+            { id: 16, theme: "L'insalubrité à Kinshasa : Faute de l'État ou incivisme de la population ?",
+                these: "David Mukendi Kajingulu", antithese: "Dieudonné Mundala Kiomba" },
+            { id: 17, theme: "Les inondations à Kinshasa : Fatalité climatique ou négligence humaine ?",
+                these: "Remy Kingambo", antithese: "David Kitengie Malangu" },
+            { id: 18, theme: "Les marchés pirates sur les boulevards : Vitalité économique ou anarchie urbaine ?",
+                these: "Henry Lukonga Butumbi", antithese: "Exauce Mikila Waney" },
+            { id: 19, theme: "Les diplômes universitaires congolais ont-ils encore de la valeur sur le marché mondial ?",
+                these: "Benjamin Kabeya Kapongo", antithese: "Amerack Mavinga Ntali" },
+            { id: 20, theme: "L'enseignement en langues nationales à l'école primaire : Avancée pédagogique ou frein intellectuel ?",
+                these: "Claudel Elongama belongo", antithese: "Abraham Mudanda Lubuku" },
+            { id: 21, theme: "Le recours aux ancêtres et à la spiritualité traditionnelle : Retour aux sources ou régression ?",
+                these: "Brineige Massamba Bateka", antithese: "Christiane Bongo Matondo" },
+            { id: 22, theme: "Les influenceurs kinois sont-ils les nouveaux leaders d'opinion de la jeunesse ?",
+                these: "Nicky Musadi Bitota", antithese: "Furah Kipata" },
+            { id: 23, theme: "Le favoritisme (parachutage/recommandation) : Solidarité incontournable ou destruction de la méritocratie ?",
+                these: "Joyce Aziza Azama", antithese: "Blessing Elonga Winner" },
+            { id: 24, theme: "Les débats politiques sur les plateaux de télévision : Information ou distraction populaire ?",
+                these: "Espérance Kikadi Nzuzi", antithese: "Merveille Tshiala Mwana" },
+            { id: 25, theme: "Le divorce à Kinshasa : Libération nécessaire ou échec de la structure sociale ?",
+                these: "Rose Matunda", antithese: "Ruth Kalonga Ndaya" },
+            { id: 26, theme: "La jeunesse kinoise de 2026 : Génération sacrifiée ou génération du grand changement ?",
+                these: "Wilhelmine Safi Bagabo", antithese: "Pax Fungamali Salama" }
+        ];
+
         // ============================================================
         // VARIABLES
         // ============================================================
@@ -1026,7 +1082,7 @@
         }
 
         // ============================================================
-        // PASSAGE AUTOMATIQUE
+        // PASSAGE AUTOMATIQUE (CORRIGÉ — utilise la constante MATCHS locale)
         // ============================================================
         async function verifierEtPasserSuivant(candidatNom) {
             if (!candidatNom) return;
@@ -1051,10 +1107,13 @@
                     const etatData = etatDoc.data();
                     const matchId = etatData.matchId;
                     
-                    const matchsRef = await db.collection('matchs').doc(matchId.toString()).get();
-                    if (!matchsRef.exists) return;
+                    // ✅ CORRECTION : lecture dans la constante MATCHS locale au lieu de Firestore
+                    const matchData = MATCHS.find(m => m.id === parseInt(matchId));
+                    if (!matchData) {
+                        console.warn('⚠️ Match introuvable dans MATCHS:', matchId);
+                        return;
+                    }
                     
-                    const matchData = matchsRef.data();
                     const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
                     const indexActuel = tousCandidats.indexOf(candidatNom);
                     
