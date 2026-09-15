@@ -204,6 +204,126 @@
         }
         .btn-send:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,85,164,0.3); }
 
+        /* 🆕 BLOC CONTRÔLE DU PASSAGE */
+        .passage-control {
+            margin-top: 14px;
+            padding: 14px 16px;
+            background: rgba(212,175,55,0.06);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .passage-control .passage-info {
+            font-size: 0.75rem;
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .passage-control .passage-info i { font-size: 0.9rem; }
+        .passage-control .passage-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .passage-control .passage-actions button {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-next-candidat {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #0a0a1a;
+        }
+        .btn-next-candidat:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212,175,55,0.3);
+        }
+        .btn-next-candidat:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .btn-clear-candidat {
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid #ef4444 !important;
+        }
+        .btn-clear-candidat:hover:not(:disabled) {
+            background: #ef4444;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* 🆕 DÉTAIL DES VOTES PAR CANDIDAT EN COURS */
+        .current-vote-detail {
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .current-vote-detail .title {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .current-vote-detail .title .progress-mini {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .current-vote-detail .jury-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            margin-bottom: 3px;
+            background: rgba(255,255,255,0.02);
+        }
+        .current-vote-detail .jury-row.voted {
+            background: rgba(16,185,129,0.08);
+            border-left: 3px solid #10b981;
+        }
+        .current-vote-detail .jury-row.draft {
+            background: rgba(245,158,11,0.06);
+            border-left: 3px solid #f59e0b;
+        }
+        .current-vote-detail .jury-row.pending {
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid #333;
+        }
+        .current-vote-detail .jury-row .j-name {
+            color: #ccc;
+            font-weight: 600;
+        }
+        .current-vote-detail .jury-row .j-note {
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+        .current-vote-detail .jury-row.voted .j-note { color: #10b981; }
+        .current-vote-detail .jury-row.draft .j-note { color: #f59e0b; }
+        .current-vote-detail .jury-row.pending .j-note { color: #555; }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -368,7 +488,6 @@
         }
         .btn-lu:hover { background: rgba(16,185,129,0.25); }
 
-        /* Indicateur de passage auto */
         .auto-indicator {
             display: inline-flex;
             align-items: center;
@@ -377,9 +496,9 @@
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
-            background: rgba(16,185,129,0.15);
-            color: #10b981;
-            border: 1px solid rgba(16,185,129,0.2);
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239,68,68,0.2);
         }
         .auto-indicator i { font-size: 0.6rem; }
     </style>
@@ -393,7 +512,7 @@
                 <span class="badge"><i class="fas fa-circle" style="color:#10b981;"></i> En ligne</span>
                 <span class="badge" id="candidatEnCours">Aucun</span>
                 <span class="badge" id="juryCountDisplay">👥 0 jurys</span>
-                <span class="auto-indicator" id="autoIndicator"><i class="fas fa-arrow-right"></i> Auto</span>
+                <span class="auto-indicator" id="autoIndicator"><i class="fas fa-hand-paper"></i> Manuel</span>
                 <button class="btn-logout" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Recharger</button>
             </div>
         </header>
@@ -434,6 +553,31 @@
                         </select>
                     </div>
                     <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i> Envoyer aux Jurys</button>
+
+                    <!-- 🆕 BLOC CONTRÔLE MANUEL DU PASSAGE -->
+                    <div class="passage-control">
+                        <div class="passage-info">
+                            <i class="fas fa-hand-paper"></i>
+                            <span>Contrôle manuel : à vous de décider quand passer au candidat suivant.</span>
+                        </div>
+                        <div class="passage-actions">
+                            <button class="btn-next-candidat" id="nextCandidatBtn" disabled>
+                                <i class="fas fa-forward"></i> Passer au suivant
+                            </button>
+                            <button class="btn-clear-candidat" id="clearCandidatBtn" disabled>
+                                <i class="fas fa-stop"></i> Arrêter / Aucun candidat
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 🆕 DÉTAIL DES VOTES DU CANDIDAT EN COURS -->
+                    <div class="current-vote-detail" id="currentVoteDetail" style="display:none;">
+                        <div class="title">
+                            <span><i class="fas fa-vote-yea"></i> Votes du candidat en cours</span>
+                            <span class="progress-mini" id="currentVoteProgress">0 / 0</span>
+                        </div>
+                        <div id="currentVoteJuryList"></div>
+                    </div>
                 </div>
 
                 <div class="card alertes-section" id="alertesContainer">
@@ -548,12 +692,11 @@
 
         // Variables
         let cotationsData = {};
-        let previousCotations = {};
         let juryList = ['Jury 1', 'Jury 2', 'Jury 3'];
         let candidatsData = [];
         let matchsData = [];
         let candidatActuel = null;
-        let isProcessingAutoNext = false;
+        let matchActuel = null;
 
         // Éléments DOM
         const matchSelect = document.getElementById('matchSelect');
@@ -574,6 +717,11 @@
         const newJuryInput = document.getElementById('newJuryInput');
         const addJuryBtn = document.getElementById('addJuryBtn');
         const toast = document.getElementById('toast');
+        const nextCandidatBtn = document.getElementById('nextCandidatBtn');       // 🆕
+        const clearCandidatBtn = document.getElementById('clearCandidatBtn');     // 🆕
+        const currentVoteDetail = document.getElementById('currentVoteDetail');   // 🆕
+        const currentVoteProgress = document.getElementById('currentVoteProgress'); // 🆕
+        const currentVoteJuryList = document.getElementById('currentVoteJuryList'); // 🆕
         let notificationTimeout = null;
 
         function showToast(message, type = 'info') {
@@ -630,6 +778,9 @@
                     }
                 });
             });
+
+            // 🆕 Rafraîchir le détail des votes (liste jurys a peut-être changé)
+            mettreAJourDetailVotes();
         }
 
         addJuryBtn.addEventListener('click', function() {
@@ -720,96 +871,120 @@
             }
         }
 
-        // 🆕 PASSAGE AUTOMATIQUE (CORRIGÉ — utilise la constante MATCHS locale)
-        async function verifierEtPasserSuivant(candidatNom) {
-            if (!candidatNom) return;
-            if (isProcessingAutoNext) return;
+        // 🆕 PASSER MANUELLEMENT AU CANDIDAT SUIVANT DU MATCH
+        async function passerAuSuivant() {
+            if (!candidatActuel) {
+                showToast('⚠️ Aucun candidat en cours', 'error');
+                return;
+            }
+            const etatDoc = await db.collection('etat').doc('current').get();
+            if (!etatDoc.exists) return;
+            const etatData = etatDoc.data();
+            const matchId = etatData.matchId;
 
+            const matchData = MATCHS.find(m => m.id === parseInt(matchId));
+            if (!matchData) {
+                showToast('⚠️ Match introuvable', 'error');
+                return;
+            }
+
+            const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
+            const indexActuel = tousCandidats.indexOf(candidatActuel);
+
+            if (indexActuel === -1 || indexActuel + 1 >= tousCandidats.length) {
+                showToast('⚠️ Déjà au dernier candidat de ce match', 'warning');
+                return;
+            }
+
+            const prochain = tousCandidats[indexActuel + 1];
             try {
-                const doc = await db.collection('cotations').doc(candidatNom).get();
-                if (!doc.exists) return;
-
-                const data = doc.data();
-                let jurysAyantVote = 0;
-
-                juryList.forEach(jury => {
-                    if (data[jury] && data[jury].valide === true) {
-                        jurysAyantVote++;
-                    }
-                });
-
-                if (jurysAyantVote === juryList.length && juryList.length > 0) {
-                    isProcessingAutoNext = true;
-
-                    const etatDoc = await db.collection('etat').doc('current').get();
-                    if (!etatDoc.exists) {
-                        isProcessingAutoNext = false;
-                        return;
-                    }
-
-                    const etatData = etatDoc.data();
-                    const matchId = etatData.matchId;
-
-                    // ✅ CORRECTION : lecture dans la constante MATCHS locale au lieu de Firestore
-                    const matchData = MATCHS.find(m => m.id === parseInt(matchId));
-                    if (!matchData) {
-                        console.warn('⚠️ Match introuvable dans MATCHS:', matchId);
-                        isProcessingAutoNext = false;
-                        return;
-                    }
-
-                    const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
-                    const indexActuel = tousCandidats.indexOf(candidatNom);
-
-                    if (indexActuel === -1) {
-                        isProcessingAutoNext = false;
-                        return;
-                    }
-
-                    const prochainIndex = indexActuel + 1;
-                    if (prochainIndex >= tousCandidats.length) {
-                        showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
-                        isProcessingAutoNext = false;
-                        return;
-                    }
-
-                    const prochainCandidat = tousCandidats[prochainIndex];
-
-                    await db.collection('etat').doc('current').set({
-                        matchId: matchId,
-                        candidatNom: prochainCandidat,
-                        candidatTheme: matchData.theme,
-                        candidatRole: prochainCandidat === matchData.these ? 'Thèse' : 'Antithèse',
-                        candidatPhoto: '',
-                        status: 'en-cours',
-                        nombreJurys: juryList.length,
-                        timestamp: Date.now()
-                    }, { merge: true });
-
-                    candidatActuelEl.textContent = prochainCandidat;
-                    showToast(`🔄 Passage automatique à ${prochainCandidat} (tous les jurys ont voté)`, 'success');
-                    isProcessingAutoNext = false;
-                }
+                await db.collection('etat').doc('current').set({
+                    matchId: matchId,
+                    candidatNom: prochain,
+                    candidatTheme: matchData.theme,
+                    candidatRole: prochain === matchData.these ? 'Thèse' : 'Antithèse',
+                    candidatPhoto: '',
+                    status: 'en-cours',
+                    nombreJurys: juryList.length,
+                    timestamp: Date.now()
+                }, { merge: true });
+                candidatActuelEl.textContent = prochain;
+                showToast(`➡️ Passage manuel à "${prochain}"`, 'success');
             } catch (error) {
-                console.error('❌ Erreur vérification passage automatique:', error);
-                isProcessingAutoNext = false;
+                showToast('❌ Erreur: ' + error.message, 'error');
             }
         }
 
-        // 🆕 SURVEILLANCE DES COTATIONS POUR PASSAGE AUTO
-        function surveillerCotations() {
-            db.collection('cotations').onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'modified' || change.type === 'added') {
-                        const candidatNom = change.doc.id;
-                        setTimeout(() => {
-                            verifierEtPasserSuivant(candidatNom);
-                        }, 500);
-                    }
-                });
-            }, (error) => {
-                console.error('❌ Erreur surveillance cotations:', error);
+        // 🆕 ARRÊTER / AUCUN CANDIDAT
+        async function arreterCandidat() {
+            if (!confirm('Arrêter le candidat en cours ? Les jurys ne pourront plus voter.')) return;
+            try {
+                await db.collection('etat').doc('current').set({
+                    matchId: null,
+                    candidatNom: null,
+                    candidatTheme: '',
+                    candidatRole: '',
+                    candidatPhoto: '',
+                    status: 'attente',
+                    nombreJurys: juryList.length,
+                    timestamp: Date.now()
+                }, { merge: true });
+                candidatActuelEl.textContent = '-';
+                showToast('⏹️ Candidat arrêté', 'warning');
+            } catch (error) {
+                showToast('❌ Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // 🆕 DÉTAIL DES VOTES DU CANDIDAT EN COURS
+        function mettreAJourDetailVotes() {
+            if (!candidatActuel) {
+                currentVoteDetail.style.display = 'none';
+                nextCandidatBtn.disabled = true;
+                clearCandidatBtn.disabled = true;
+                return;
+            }
+
+            currentVoteDetail.style.display = 'block';
+            clearCandidatBtn.disabled = false;
+
+            // Vérifier s'il reste un candidat suivant dans le match
+            const matchData = MATCHS.find(m => m.id === parseInt(matchActuel));
+            if (matchData) {
+                const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
+                const indexActuel = tousCandidats.indexOf(candidatActuel);
+                nextCandidatBtn.disabled = !(indexActuel >= 0 && indexActuel + 1 < tousCandidats.length);
+            } else {
+                nextCandidatBtn.disabled = true;
+            }
+
+            const cotes = cotationsData[candidatActuel] || {};
+            let voted = 0;
+            let html = '';
+            juryList.forEach(j => {
+                const vote = cotes[j];
+                let cls = 'pending';
+                let note = '-';
+                if (vote && vote.valide === true) {
+                    cls = 'voted';
+                    note = `${(vote.total || 0).toFixed(1)} / 20`;
+                    voted++;
+                } else if (vote) {
+                    cls = 'draft';
+                    note = `${(vote.total || 0).toFixed(1)} / 20 (brouillon)`;
+                }
+                html += `
+                    <div class="jury-row ${cls}">
+                        <span class="j-name">${j}</span>
+                        <span class="j-note">${note}</span>
+                    </div>
+                `;
             });
+            if (!juryList.length) {
+                html = '<div style="color:#555;font-size:0.75rem;">Aucun jury enregistré</div>';
+            }
+            currentVoteJuryList.innerHTML = html;
+            currentVoteProgress.textContent = `${voted} / ${juryList.length}`;
         }
 
         // 👂 ÉCOUTEURS
@@ -818,7 +993,24 @@
                 if (doc.exists) {
                     const data = doc.data();
                     candidatActuel = data.candidatNom || null;
+                    matchActuel = data.matchId || null;
                     candidatActuelEl.textContent = candidatActuel || '-';
+
+                    // 🆕 Synchroniser le select match/candidat si possible
+                    if (matchActuel && matchSelect.value !== String(matchActuel)) {
+                        matchSelect.value = String(matchActuel);
+                        remplirCandidats(matchActuel);
+                    }
+                    if (candidatActuel && candidatSelect.value !== candidatActuel) {
+                        candidatSelect.value = candidatActuel;
+                    }
+
+                    mettreAJourDetailVotes();
+                } else {
+                    candidatActuel = null;
+                    matchActuel = null;
+                    candidatActuelEl.textContent = '-';
+                    mettreAJourDetailVotes();
                 }
             });
         }
@@ -840,6 +1032,7 @@
                 mettreAJourAffichageJurys();
                 mettreAJourResultats();
                 mettreAJourStatistiques();
+                mettreAJourDetailVotes();
             });
         }
 
@@ -851,6 +1044,7 @@
                 mettreAJourResultats();
                 mettreAJourStatistiques();
                 mettreAJourProgression();
+                mettreAJourDetailVotes();
             });
         }
 
@@ -1023,6 +1217,8 @@
         matchSelect.addEventListener('change', function() { remplirCandidats(this.value); });
         sendBtn.addEventListener('click', envoyerCandidat);
         exportBtn.addEventListener('click', exporterCSV);
+        nextCandidatBtn.addEventListener('click', passerAuSuivant);      // 🆕
+        clearCandidatBtn.addEventListener('click', arreterCandidat);     // 🆕
 
         // 🚀 INIT
         chargerMatchs();
@@ -1030,13 +1226,13 @@
         ecouterEtat();
         ecouterCotations();
         ecouterAlertes();
-        surveillerCotations();
 
-        showToast('✅ Centre de contrôle connecté (passage auto actif)', 'success');
+        showToast('✅ Centre de contrôle connecté (passage manuel)', 'success');
         console.log('🎛️ Centre de Contrôle - Éloquence en Scène');
         console.log('📊 Firebase configuré');
         console.log(`👥 ${juryList.length} jurys`);
-        console.log('🔄 Passage automatique activé (via constante MATCHS)');
+        console.log('⏸️ Passage automatique DÉSACTIVÉ — contrôle manuel actif');
+        console.log('🗳️ Détail des votes du candidat en cours affiché');
     </script>
 </body>
 </html>
