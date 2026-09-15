@@ -211,6 +211,50 @@
         }
         .jury-selector .info i { color: #d4af37; }
 
+        /* 🆕 BARRE DE PROGRESSION DES VOTES */
+        .vote-progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: #f8f8fa;
+            border-radius: 12px;
+            margin-top: 14px;
+            border: 1px solid #eeeef2;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #0a1628;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .vote-progress-bar .label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+        }
+        .vote-progress-bar .label i {
+            color: #d4af37;
+        }
+        .vote-progress-bar .counts {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .vote-progress-bar .counts .voted {
+            color: #10b981;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+        .vote-progress-bar .counts .separator {
+            color: #ccc;
+        }
+        .vote-progress-bar .counts .total {
+            color: #0a1628;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
         .criteria-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -487,7 +531,7 @@
                 <span class="info" id="selectedJuryInfo"><i class="fas fa-info-circle"></i> Sélectionnez votre nom</span>
             </div>
             <div style="font-size:0.7rem;color:#888;padding:10px 14px;background:#f8f8fa;border-radius:10px;margin-top:10px;border:1px solid #eeeef2;">
-                <i class="fas fa-shield-alt" style="color:#d4af37;"></i> Chaque jury vote individuellement. Sélectionnez votre nom pour commencer.
+                <i class="fas fa-shield-alt" style="color:#d4af37;"></i> Chaque jury vote individuellement. Votre nom est mémorisé automatiquement sur cet appareil.
             </div>
         </div>
 
@@ -500,7 +544,6 @@
                         <label>Maîtrise et compréhension du sujet</label>
                         <span class="max">/4</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="maitrise" min="0" max="4" step="0.5" value="" disabled>
                 </div>
                 
@@ -509,7 +552,6 @@
                         <label>Pertinence et solidité des arguments</label>
                         <span class="max">/5</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="arguments" min="0" max="5" step="0.5" value="" disabled>
                 </div>
                 
@@ -518,7 +560,6 @@
                         <label>Structure et cohérence du discours</label>
                         <span class="max">/3</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="structure" min="0" max="3" step="0.5" value="" disabled>
                 </div>
                 
@@ -527,7 +568,6 @@
                         <label>Éloquence et présence scénique</label>
                         <span class="max">/4</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="eloquence" min="0" max="4" step="0.5" value="" disabled>
                 </div>
                 
@@ -536,7 +576,6 @@
                         <label>Force de persuasion et impact</label>
                         <span class="max">/2</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="persuasion" min="0" max="2" step="0.5" value="" disabled>
                 </div>
                 
@@ -545,7 +584,6 @@
                         <label>Respect du temps et des consignes</label>
                         <span class="max">/2</span>
                     </div>
-                    <!-- 🔥 CHAMP VIDE AU LIEU DE 0 -->
                     <input type="number" id="temps" min="0" max="2" step="0.5" value="" disabled>
                 </div>
             </div>
@@ -555,7 +593,17 @@
                 <span class="value"><span id="totalScore">0</span><span class="sur"> /20</span></span>
             </div>
 
-            <div class="comment-area">
+            <!-- 🆕 BARRE DE PROGRESSION DES VOTES -->
+            <div class="vote-progress-bar">
+                <span class="label"><i class="fas fa-vote-yea"></i> Jurys ayant validé ce candidat</span>
+                <span class="counts">
+                    <span class="voted" id="votedCount">0</span>
+                    <span class="separator">/</span>
+                    <span class="total" id="totalJuryCount">0</span>
+                </span>
+            </div>
+
+            <div class="comment-area" style="margin-top:14px;">
                 <textarea id="commentaire" placeholder="Commentaire ou observation (optionnel)" disabled></textarea>
             </div>
 
@@ -591,7 +639,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🔥 DONNÉES DES 12 MATCHS (nécessaires pour le passage automatique)
+        // 🔥 DONNÉES DES 12 MATCHS
         const MATCHS = [
             { id: 1, theme: "Au Congo, devient-on réellement adulte à 18 ans ?",
                 these: "Joyce Aziza", antithese: "Béni Fungamali Ramazani" },
@@ -630,6 +678,10 @@
         let notificationTimeout = null;
         let aDejaVote = false;
         let candidatEnCours = null;
+        let unsubscribeCotationCandidat = null; // 🆕 pour la surveillance temps réel des votes du candidat
+
+        // 🆕 CLÉ DE STOCKAGE LOCAL
+        const STORAGE_KEY = 'eloquence_jury_name';
 
         // ÉLÉMENTS DOM
         const jurySelect = document.getElementById('jurySelect');
@@ -650,6 +702,8 @@
         const statusDot = document.getElementById('statusDot');
         const lastUpdate = document.getElementById('lastUpdate');
         const toast = document.getElementById('toast');
+        const votedCount = document.getElementById('votedCount');         // 🆕
+        const totalJuryCount = document.getElementById('totalJuryCount'); // 🆕
 
         // LES 6 CHAMPS DE NOTATION
         const maitrise = document.getElementById('maitrise');
@@ -682,7 +736,6 @@
             return total;
         }
 
-        // Activer les champs de notation
         function activerChamps() {
             allInputs.forEach(input => input.disabled = false);
             commentaire.disabled = false;
@@ -691,7 +744,6 @@
             problemeBtn.disabled = false;
         }
 
-        // Désactiver les champs de notation
         function desactiverChamps() {
             allInputs.forEach(input => input.disabled = true);
             commentaire.disabled = true;
@@ -700,7 +752,6 @@
             problemeBtn.disabled = false;
         }
 
-        // Bloquer après vote
         function bloquerApresVote() {
             allInputs.forEach(input => input.disabled = true);
             commentaire.disabled = true;
@@ -709,7 +760,6 @@
             problemeBtn.disabled = false;
         }
 
-        // Réinitialiser les champs (vides)
         function reinitialiserChamps() {
             allInputs.forEach(input => input.value = '');
             commentaire.value = '';
@@ -720,13 +770,12 @@
             mettreAJourStatut();
         }
 
-        // Écouter les changements
         allInputs.forEach(input => {
             input.addEventListener('input', () => {
                 let val = parseFloat(input.value);
                 const max = parseFloat(input.max);
                 if (input.value === '') {
-                    // Ne rien faire, champ vide
+                    // champ vide, OK
                 } else if (isNaN(val)) {
                     input.value = '';
                 } else if (val < 0) {
@@ -737,6 +786,41 @@
                 calculerTotal();
             });
         });
+
+        // ============================================================
+        // 🆕 BARRE DE PROGRESSION (X/Y jurys ont voté)
+        // ============================================================
+        function mettreAJourBarreProgression(voted, total) {
+            votedCount.textContent = voted;
+            totalJuryCount.textContent = total;
+        }
+
+        // 🆕 ÉCOUTE EN TEMPS RÉEL DU DOCUMENT DE COTATION DU CANDIDAT
+        function ecouterCotationCandidat(candidat) {
+            // On coupe l'écoute précédente
+            if (unsubscribeCotationCandidat) {
+                unsubscribeCotationCandidat();
+                unsubscribeCotationCandidat = null;
+            }
+            if (!candidat) {
+                mettreAJourBarreProgression(0, juryList.length);
+                return;
+            }
+            unsubscribeCotationCandidat = db.collection('cotations').doc(candidat).onSnapshot((doc) => {
+                let voted = 0;
+                if (doc.exists) {
+                    const data = doc.data();
+                    juryList.forEach(j => {
+                        if (data[j] && data[j].valide === true) {
+                            voted++;
+                        }
+                    });
+                }
+                mettreAJourBarreProgression(voted, juryList.length);
+            }, (error) => {
+                console.error('❌ Erreur écoute cotation candidat:', error);
+            });
+        }
 
         // ============================================================
         // LISTE DES JURYS
@@ -754,6 +838,8 @@
                     juryList = ['Jury 1'];
                 }
                 mettreAJourListeJurys();
+                // 🆕 Mise à jour du total sur la barre de progression
+                mettreAJourBarreProgression(parseInt(votedCount.textContent) || 0, juryList.length);
             }, (error) => {
                 console.error('❌ Erreur écoute jurys:', error);
                 juryList = ['Jury 1'];
@@ -770,16 +856,36 @@
                 opt.textContent = j;
                 jurySelect.appendChild(opt);
             });
-            if (juryList.includes(currentValue)) {
-                jurySelect.value = currentValue;
+
+            // 🆕 RESTAURATION AUTOMATIQUE DEPUIS localStorage
+            const savedJury = localStorage.getItem(STORAGE_KEY);
+            let valueToRestore = '';
+
+            if (currentValue && juryList.includes(currentValue)) {
+                valueToRestore = currentValue;
+            } else if (savedJury && juryList.includes(savedJury)) {
+                valueToRestore = savedJury;
+            }
+
+            if (valueToRestore) {
+                jurySelect.value = valueToRestore;
+                // Si le jury a changé par rapport à currentJury, on déclenche
+                if (currentJury !== valueToRestore) {
+                    currentJury = valueToRestore;
+                    aDejaVote = false;
+                    reinitialiserChamps();
+                    juryNameDisplay.textContent = currentJury;
+                    selectedJuryInfo.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> ${currentJury} <span style="color:#888;font-size:0.65rem;">(mémorisé)</span>`;
+                    if (currentCandidat) {
+                        chargerCotation(currentCandidat);
+                    }
+                }
             } else {
                 jurySelect.value = '';
             }
+
             juryCountInfo.textContent = `👥 ${juryList.length}`;
-            if (currentJury) {
-                juryNameDisplay.textContent = currentJury;
-                selectedJuryInfo.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> ${currentJury}`;
-            } else {
+            if (!currentJury) {
                 juryNameDisplay.textContent = 'Non sélectionné';
                 selectedJuryInfo.innerHTML = '<i class="fas fa-info-circle"></i> Sélectionnez votre nom';
             }
@@ -794,6 +900,8 @@
             reinitialiserChamps();
             
             if (currentJury) {
+                // 🆕 MÉMORISATION
+                localStorage.setItem(STORAGE_KEY, currentJury);
                 juryNameDisplay.textContent = currentJury;
                 selectedJuryInfo.innerHTML = `<i class="fas fa-check-circle" style="color:#10b981;"></i> ${currentJury}`;
                 showToast(`👤 Bienvenue ${currentJury}`, 'success');
@@ -801,6 +909,8 @@
                     chargerCotation(currentCandidat);
                 }
             } else {
+                // 🆕 SUPPRESSION DE LA MÉMOIRE SI DÉSÉLECTION
+                localStorage.removeItem(STORAGE_KEY);
                 juryNameDisplay.textContent = 'Non sélectionné';
                 selectedJuryInfo.innerHTML = '<i class="fas fa-info-circle"></i> Sélectionnez votre nom';
                 desactiverChamps();
@@ -823,6 +933,8 @@
                         hasVoted = false;
                         isDraft = false;
                         reinitialiserChamps();
+                        // 🆕 Nouvelle écoute de la cotation pour ce candidat
+                        ecouterCotationCandidat(nouveauCandidat);
                     }
 
                     currentCandidat = nouveauCandidat;
@@ -863,6 +975,7 @@
                         aDejaVote = false;
                         hasVoted = false;
                         isDraft = false;
+                        ecouterCotationCandidat(null);
                     }
                 }
             }, (error) => {
@@ -980,7 +1093,6 @@
 
             const total = calculerTotal();
             
-            // Récupérer les valeurs (si vides → 0)
             const maitriseVal = parseFloat(maitrise.value) || 0;
             const argumentsVal = parseFloat(argumentsField.value) || 0;
             const structureVal = parseFloat(structure.value) || 0;
@@ -1054,85 +1166,20 @@
         }
 
         // ============================================================
-        // PASSAGE AUTOMATIQUE (CORRIGÉ — utilise la constante MATCHS locale)
+        // 🆕 PASSAGE AUTOMATIQUE : DÉSACTIVÉ (neutralisé, code conservé)
         // ============================================================
         async function verifierEtPasserSuivant(candidatNom) {
-            if (!candidatNom) return;
-            
-            try {
-                const doc = await db.collection('cotations').doc(candidatNom).get();
-                if (!doc.exists) return;
-                
-                const data = doc.data();
-                let jurysAyantVote = 0;
-                
-                juryList.forEach(jury => {
-                    if (data[jury] && data[jury].valide === true) {
-                        jurysAyantVote++;
-                    }
-                });
-                
-                if (jurysAyantVote === juryList.length && juryList.length > 0) {
-                    const etatDoc = await db.collection('etat').doc('current').get();
-                    if (!etatDoc.exists) return;
-                    
-                    const etatData = etatDoc.data();
-                    const matchId = etatData.matchId;
-                    
-                    // ✅ CORRECTION : lecture dans la constante MATCHS locale au lieu de Firestore
-                    const matchData = MATCHS.find(m => m.id === parseInt(matchId));
-                    if (!matchData) {
-                        console.warn('⚠️ Match introuvable dans MATCHS:', matchId);
-                        return;
-                    }
-                    
-                    const tousCandidats = [matchData.these, matchData.antithese].filter(Boolean);
-                    const indexActuel = tousCandidats.indexOf(candidatNom);
-                    
-                    if (indexActuel === -1) return;
-                    
-                    const prochainIndex = indexActuel + 1;
-                    if (prochainIndex >= tousCandidats.length) {
-                        showToast('🎉 Tous les candidats de ce match ont été évalués !', 'success');
-                        return;
-                    }
-                    
-                    const prochainCandidat = tousCandidats[prochainIndex];
-                    
-                    await db.collection('etat').doc('current').set({
-                        matchId: matchId,
-                        candidatNom: prochainCandidat,
-                        candidatTheme: matchData.theme,
-                        candidatRole: prochainCandidat === matchData.these ? 'Thèse' : 'Antithèse',
-                        candidatPhoto: '',
-                        status: 'en-cours',
-                        nombreJurys: juryList.length,
-                        timestamp: Date.now()
-                    }, { merge: true });
-                    
-                    showToast(`🔄 Passage automatique à ${prochainCandidat}`, 'success');
-                }
-            } catch (error) {
-                console.error('❌ Erreur passage auto:', error);
-            }
+            // ❌ DÉSACTIVÉ : le Centre de Contrôle contrôle désormais le passage manuellement.
+            return;
         }
 
         // ============================================================
-        // SURVEILLANCE DES COTATIONS
+        // 🆕 SURVEILLANCE DES COTATIONS : ne déclenche plus le passage auto
         // ============================================================
         function surveillerCotations() {
-            db.collection('cotations').onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'modified' || change.type === 'added') {
-                        const candidatNom = change.doc.id;
-                        setTimeout(() => {
-                            verifierEtPasserSuivant(candidatNom);
-                        }, 500);
-                    }
-                });
-            }, (error) => {
-                console.error('❌ Erreur surveillance cotations:', error);
-            });
+            // Conservé pour compatibilité mais ne fait plus rien de bloquant.
+            // La barre de progression est mise à jour via ecouterCotationCandidat().
+            // Cette fonction reste vide pour éviter tout effet de bord.
         }
 
         // ============================================================
@@ -1148,13 +1195,15 @@
         ecouterJurys();
         ecouterEtat();
         surveillerCotations();
-        
-        showToast('✅ Jury connecté - Sélectionnez votre nom', 'success');
+
+        showToast('✅ Jury connecté', 'success');
         console.log('🏆 Jury Éloquence en Scène - Connecté à Firebase');
         console.log('📋 6 critères officiels chargés');
-        console.log('🔄 Passage automatique activé');
+        console.log('⏸️ Passage automatique DÉSACTIVÉ (contrôle manuel par le Centre)');
         console.log('🔒 Vote unique par candidat activé');
         console.log('📝 Champs vides par défaut');
+        console.log('💾 Nom du jury mémorisé automatiquement');
+        console.log('📊 Barre de progression "X/Y jurys" activée');
     </script>
 </body>
 </html>
