@@ -17,9 +17,11 @@
         .hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1628 0%, #1a3a6b 40%, #2a5a9e 70%, #4a8ac8 100%); z-index: -2; }
         .hero-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('IMG_1812.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.12; mix-blend-mode: overlay; }
         .hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(10, 22, 40, 0.6) 100%); }
-        .admin-nav { position: fixed; top: 30px; right: 30px; z-index: 100; display: flex; gap: 12px; }
-        .admin-btn, .download-btn { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 500; transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); font-size: 0.9rem; letter-spacing: 0.5px; }
-        .admin-btn:hover, .download-btn:hover { background: #ffffff; color: #1a3a6b; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .admin-nav { position: fixed; top: 30px; right: 30px; z-index: 100; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 60px); }
+        .admin-btn, .download-btn, .self-gen-btn { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 500; transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); font-size: 0.9rem; letter-spacing: 0.5px; }
+        .admin-btn:hover, .download-btn:hover, .self-gen-btn:hover { background: #ffffff; color: #1a3a6b; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .self-gen-btn { background: linear-gradient(135deg, #4a8ac8 0%, #1a3a6b 100%); border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 5px 20px rgba(74, 138, 200, 0.4); }
+        .self-gen-btn:hover { background: #ffffff; color: #1a3a6b; }
         .container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 2; }
         .invitation-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 48px; overflow: hidden; box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.15); opacity: 0; transform: translateY(60px); animation: cardAppear 1s ease forwards; }
         @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
@@ -91,6 +93,95 @@
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(16, 185, 129, 0.95); color: white; padding: 16px 32px; border-radius: 16px; font-weight: 500; z-index: 3000; opacity: 0; transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1); backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; max-width: 90%; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast.error { background: rgba(220, 38, 38, 0.95); }
+
+        /* ===== FORMULAIRE PUBLIC DE GÉNÉRATION ===== */
+        .self-gen-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            animation: cardAppear 1s ease forwards;
+        }
+        .self-gen-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .self-gen-card .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        .self-gen-card .subtitle i { color: #4a8ac8; }
+        .self-gen-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .self-gen-field label {
+            display: block;
+            color: #4a8ac8;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .self-gen-field input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .self-gen-field input:focus {
+            outline: none;
+            border-color: #4a8ac8;
+            background: rgba(74, 138, 200, 0.1);
+            box-shadow: 0 0 0 3px rgba(74, 138, 200, 0.2);
+        }
+        .self-gen-field input::placeholder { color: rgba(255,255,255,0.3); }
+        .self-gen-btn-submit {
+            background: linear-gradient(135deg, #4a8ac8 0%, #1a3a6b 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 20px rgba(74, 138, 200, 0.3);
+        }
+        .self-gen-btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(74, 138, 200, 0.5);
+            filter: brightness(1.1);
+        }
+        .self-gen-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .self-gen-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 15px;
+        }
         @media (max-width: 768px) {
             .container { padding: 30px 16px; }
             .card-body { padding: 30px 25px; }
@@ -98,8 +189,11 @@
             .guest-name-large { font-size: 1.6rem; }
             .card-header { padding: 35px 25px; }
             .map-container iframe { height: 220px; }
-            .admin-nav { top: 15px; right: 15px; flex-direction: column; gap: 8px; }
-            .admin-btn, .download-btn { padding: 8px 16px; font-size: 0.75rem; }
+            .admin-nav { top: 15px; right: 15px; flex-direction: column; gap: 8px; align-items: flex-end; }
+            .admin-btn, .download-btn, .self-gen-btn { padding: 8px 16px; font-size: 0.75rem; }
+            .self-gen-card { padding: 25px 20px; }
+            .self-gen-row { grid-template-columns: 1fr; gap: 15px; }
+            .self-gen-card h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -112,6 +206,9 @@
         <div class="loading-text">Préparation de votre invitation...</div>
     </div>
     <div class="admin-nav">
+        <button class="self-gen-btn" onclick="scrollToSelfGen()">
+            <i class="fas fa-wand-magic-sparkles"></i> Générer mon invitation
+        </button>
         <button class="download-btn" onclick="downloadInvitation()">
             <i class="fas fa-download"></i> Télécharger
         </button>
@@ -175,6 +272,29 @@
         </div>
     </div>
     <div class="container">
+
+        <!-- ===== FORMULAIRE PUBLIC : GÉNÉRER SON INVITATION ===== -->
+        <div class="self-gen-card" id="selfGenCard" style="display:none;">
+            <h2><i class="fas fa-wand-magic-sparkles" style="color:#4a8ac8;"></i> Générez votre invitation</h2>
+            <p class="subtitle">Entrez votre nom pour recevoir votre invitation personnalisée à la <strong>demi-finale</strong> d'Éloquence en Scène.</p>
+            <div class="self-gen-row">
+                <div class="self-gen-field">
+                    <label>Nom complet *</label>
+                    <input type="text" id="selfName" placeholder="Ex: Jean-Claude Mputu" autocomplete="name">
+                </div>
+                <div class="self-gen-field">
+                    <label>Numéro WhatsApp (facultatif)</label>
+                    <input type="tel" id="selfPhone" placeholder="Ex: 243812345678" autocomplete="tel">
+                </div>
+            </div>
+            <button class="self-gen-btn-submit" id="selfGenSubmit" onclick="generateSelfInvitation()">
+                <i class="fas fa-magic"></i> Créer mon invitation personnalisée
+            </button>
+            <p class="self-gen-note">
+                <i class="fas fa-lock"></i> Vos informations restent confidentielles et servent uniquement à votre invitation.
+            </p>
+        </div>
+
         <div class="invitation-card" id="invitationCard">
             <div class="card-header">
                 <div class="logo-accent">
@@ -227,20 +347,11 @@
     </div>
 
     <script type="module">
-        // ===== FIREBASE =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
         import {
-            getFirestore,
-            collection,
-            doc,
-            setDoc,
-            getDoc,
-            deleteDoc,
-            onSnapshot,
-            query,
-            orderBy,
-            serverTimestamp
+            getFirestore, collection, doc, setDoc, getDoc, deleteDoc,
+            onSnapshot, query, orderBy, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -257,10 +368,8 @@
         getAnalytics(app);
         const db = getFirestore(app);
 
-        // Collection Firestore : "invites_demifinale"
         const COLLECTION = 'invites_demifinale';
 
-        // Expose globalement pour les onclick
         window.__db = db;
         window.__collection = collection;
         window.__doc = doc;
@@ -274,85 +383,63 @@
         window.__COLLECTION = COLLECTION;
         window.__firebaseReady = true;
 
-        // Statut Firebase
         const statusEl = document.getElementById('firebaseStatus');
-        statusEl.classList.add('online');
-        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Base de données connectée — synchronisation temps réel active';
+        if (statusEl) {
+            statusEl.classList.add('online');
+            statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Base de données connectée — synchronisation temps réel active';
+        }
 
-        // Émettre un event pour initialiser après Firebase
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
     <script>
-        // ===== TOAST NOTIFICATION =====
+        // ===== TOAST =====
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = 'toast' + (isError ? ' error' : '');
             toast.classList.add('show');
             clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 5000);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 5000);
         }
 
         // ===== PARTICULES =====
         (function() {
             const canvas = document.getElementById('particles');
             const ctx = canvas.getContext('2d');
-            let width, height;
-            let particles = [];
+            let width, height, particles = [];
             const PARTICLE_COUNT = 80;
-
-            function resize() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resize);
-            resize();
-
+            function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize); resize();
             class Particle {
                 constructor() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
+                    this.x = Math.random() * width; this.y = Math.random() * height;
                     this.size = Math.random() * 2 + 0.5;
                     this.speedX = (Math.random() - 0.5) * 0.5;
                     this.speedY = (Math.random() - 0.5) * 0.5;
                     this.opacity = Math.random() * 0.5 + 0.2;
                 }
                 update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
+                    this.x += this.speedX; this.y += this.speedY;
                     if (this.x < 0 || this.x > width) this.speedX *= -1;
                     if (this.y < 0 || this.y > height) this.speedY *= -1;
                 }
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                    ctx.fill();
-                }
+                draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.fill(); }
             }
-
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push(new Particle());
-            }
-
+            for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
             function animateParticles() {
                 ctx.clearRect(0, 0, width, height);
                 particles.forEach(p => { p.update(); p.draw(); });
                 for (let i = 0; i < particles.length; i++) {
                     for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
+                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
                         const dist = Math.sqrt(dx*dx + dy*dy);
                         if (dist < 120) {
                             ctx.beginPath();
                             ctx.moveTo(particles[i].x, particles[i].y);
                             ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * (1 - dist/120)})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
+                            ctx.strokeStyle = `rgba(255,255,255,${0.08 * (1 - dist/120)})`;
+                            ctx.lineWidth = 0.5; ctx.stroke();
                         }
                     }
                 }
@@ -362,29 +449,21 @@
         })();
 
         // ===== UTILITAIRES =====
-        function generateId() {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-        }
+        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
 
-        // ===== QR CODE =====
         function generateQRCode(data) {
             const qrContainer = document.getElementById('qrcode');
             qrContainer.innerHTML = '';
             try {
                 new QRCode(qrContainer, {
                     text: data || 'https://eloquence-evenement.com/invitation',
-                    width: 180,
-                    height: 180,
-                    colorDark: '#0a1628',
-                    colorLight: '#ffffff',
+                    width: 180, height: 180,
+                    colorDark: '#0a1628', colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
-            } catch(e) {
-                qrContainer.innerHTML = '<p style="color:#4a8ac8;">QR Code</p>';
-            }
+            } catch(e) { qrContainer.innerHTML = '<p style="color:#4a8ac8;">QR Code</p>'; }
         }
 
-        // ===== AFFICHAGE INVITÉ =====
         function displayGuest(name) {
             const display = document.getElementById('guestNameDisplay');
             const salutationName = document.getElementById('salutationName');
@@ -398,13 +477,75 @@
             }
         }
 
-        // ===== URL PARAMÈTRES =====
         function getUrlParams() {
             const params = new URLSearchParams(window.location.search);
-            return {
-                guest: params.get('guest') || '',
-                id: params.get('id') || ''
-            };
+            return { guest: params.get('guest') || '', id: params.get('id') || '' };
+        }
+
+        // ===== SCROLL VERS LE FORMULAIRE PUBLIC =====
+        function scrollToSelfGen() {
+            const card = document.getElementById('selfGenCard');
+            card.style.display = 'block';
+            setTimeout(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => document.getElementById('selfName').focus(), 600);
+            }, 100);
+        }
+
+        // ===== GÉNÉRER SA PROPRE INVITATION (PUBLIC) =====
+        async function generateSelfInvitation() {
+            const nameInput = document.getElementById('selfName');
+            const phoneInput = document.getElementById('selfPhone');
+            const btn = document.getElementById('selfGenSubmit');
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (!name || name.length < 2) {
+                showToast('⚠️ Veuillez entrer votre nom complet', true);
+                nameInput.focus();
+                return;
+            }
+
+            if (!window.__firebaseReady) {
+                showToast('⚠️ Connexion en cours, réessayez dans un instant', true);
+                return;
+            }
+
+            // Anti-spam : limiter à 1 génération par navigateur (optionnel, commentez si non désiré)
+            if (localStorage.getItem('selfInviteGenerated')) {
+                const confirmed = confirm('Vous avez déjà généré une invitation depuis ce navigateur. Voulez-vous en créer une nouvelle ?');
+                if (!confirmed) return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création en cours...';
+
+            const id = generateId();
+
+            try {
+                await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
+                    id: id,
+                    name: name,
+                    phone: phone,
+                    confirmed: false,
+                    createdAt: window.__serverTimestamp(),
+                    createdBy: 'self'
+                });
+
+                localStorage.setItem('selfInviteGenerated', id);
+
+                // Rediriger vers l'invitation personnalisée
+                const url = `${window.location.origin}${window.location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
+                showToast('✅ Invitation créée ! Redirection...');
+
+                setTimeout(() => { window.location.href = url; }, 800);
+
+            } catch(e) {
+                console.error(e);
+                showToast('❌ Erreur lors de la création', true);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic"></i> Créer mon invitation personnalisée';
+            }
         }
 
         // ===== CHARGER INVITATION =====
@@ -412,10 +553,18 @@
             const params = getUrlParams();
             const guestName = params.guest || '';
             const inviteId = params.id || '';
+
+            // Si pas de params → afficher le formulaire public
+            if (!guestName && !inviteId) {
+                document.getElementById('selfGenCard').style.display = 'block';
+                displayGuest('');
+                generateQRCode('https://eloquence-evenement.com/invitation');
+                return;
+            }
+
             displayGuest(guestName);
             generateQRCode(`https://eloquence-evenement.com/invitation?id=${inviteId}&guest=${encodeURIComponent(guestName)}`);
 
-            // Vérifier si déjà confirmé dans Firestore
             if (inviteId && window.__firebaseReady) {
                 try {
                     const docRef = window.__doc(window.__db, window.__COLLECTION, inviteId);
@@ -426,15 +575,10 @@
                         btn.innerHTML = '✅ Présence déjà confirmée';
                         btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                     }
-                    // Marquer comme "vu"
                     if (snap.exists()) {
-                        await window.__setDoc(docRef, {
-                            lastViewed: window.__serverTimestamp()
-                        }, { merge: true });
+                        await window.__setDoc(docRef, { lastViewed: window.__serverTimestamp() }, { merge: true });
                     }
-                } catch(e) {
-                    console.warn('Erreur vérification:', e);
-                }
+                } catch(e) { console.warn('Erreur vérification:', e); }
             }
         }
 
@@ -443,7 +587,6 @@
             const btn = document.getElementById('confirmBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-
             const params = getUrlParams();
             const inviteId = params.id;
 
@@ -453,7 +596,6 @@
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
                 return;
             }
-
             if (!window.__firebaseReady) {
                 showToast('⚠️ Connexion à la base en cours, réessayez', true);
                 btn.disabled = false;
@@ -467,11 +609,8 @@
                 const guestName = params.guest || 'Invité';
 
                 if (!snap.exists()) {
-                    // Créer l'invité s'il n'existe pas
                     await window.__setDoc(docRef, {
-                        id: inviteId,
-                        name: guestName,
-                        phone: '',
+                        id: inviteId, name: guestName, phone: '',
                         confirmed: true,
                         confirmedAt: window.__serverTimestamp(),
                         createdAt: window.__serverTimestamp()
@@ -496,53 +635,33 @@
 
         // ===== ADMIN =====
         const ADMIN_PASSWORD = 'admin2026';
-
         function showAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminPassword').value = '';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('inviteResult').style.display = 'none';
         }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').style.display = 'none';
-        }
-
-        document.getElementById('adminModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAdminModal();
-        });
-
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+        document.getElementById('adminModal').addEventListener('click', function(e) { if (e.target === this) closeAdminModal(); });
         function checkAdminAccess() {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
                 document.getElementById('adminPanel').style.display = 'block';
                 startRealtimeListener();
-            } else {
-                showToast('❌ Code d\'accès incorrect', true);
-            }
+            } else { showToast('❌ Code d\'accès incorrect', true); }
         }
 
-        // ===== LISTENER TEMPS RÉEL =====
         let unsubscribeGuests = null;
-
         function startRealtimeListener() {
-            if (!window.__firebaseReady) {
-                setTimeout(startRealtimeListener, 500);
-                return;
-            }
-
+            if (!window.__firebaseReady) { setTimeout(startRealtimeListener, 500); return; }
             if (unsubscribeGuests) unsubscribeGuests();
-
             const q = window.__query(
                 window.__collection(window.__db, window.__COLLECTION),
                 window.__orderBy('createdAt', 'desc')
             );
-
             unsubscribeGuests = window.__onSnapshot(q, (snapshot) => {
                 const guests = [];
-                snapshot.forEach(docSnap => {
-                    guests.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                snapshot.forEach(docSnap => guests.push({ id: docSnap.id, ...docSnap.data() }));
                 renderGuestList(guests);
             }, (error) => {
                 console.error('Erreur listener:', error);
@@ -550,15 +669,12 @@
             });
         }
 
-        // ===== RENDU LISTE INVITÉS =====
         function renderGuestList(guests) {
             const listDiv = document.getElementById('guestList');
             const counterSpan = document.getElementById('totalInviteCount');
             const confirmedSpan = document.getElementById('confirmedCount');
-
             const total = guests.length;
             const confirmedCount = guests.filter(g => g.confirmed).length;
-
             counterSpan.innerHTML = `${total} <span>personne${total > 1 ? 's' : ''}</span>`;
             confirmedSpan.innerHTML = `${confirmedCount} <span>personne${confirmedCount > 1 ? 's' : ''}</span>`;
 
@@ -566,7 +682,6 @@
                 listDiv.innerHTML = '<p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Aucun invité pour le moment</p>';
                 return;
             }
-
             let html = '';
             guests.forEach(guest => {
                 const name = guest.name || 'Inconnu';
@@ -574,12 +689,12 @@
                 const confirmed = guest.confirmed || false;
                 const statusClass = confirmed ? 'status-confirmed' : 'status-pending';
                 const statusText = confirmed ? '✅ Confirmé' : '⏳ En attente';
-
+                const origin = guest.createdBy === 'self' ? '🖊️ Auto' : '👤 Admin';
                 html += `
                     <div class="guest-item">
                         <div>
                             <strong style="color:#fff;">${name}</strong>
-                            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${phone || 'Pas de numéro'}</div>
+                            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${phone || 'Pas de numéro'} • ${origin}</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                             <span class="${statusClass}">${statusText}</span>
@@ -589,165 +704,96 @@
                     </div>
                 `;
             });
-
             listDiv.innerHTML = html;
         }
 
-        // ===== SUPPRIMER INVITÉ =====
         async function deleteGuest(id) {
             if (!confirm('Supprimer définitivement cet invité ?')) return;
             try {
                 await window.__deleteDoc(window.__doc(window.__db, window.__COLLECTION, id));
                 showToast('🗑️ Invité supprimé');
-            } catch(e) {
-                console.error(e);
-                showToast('❌ Erreur lors de la suppression', true);
-            }
+            } catch(e) { console.error(e); showToast('❌ Erreur lors de la suppression', true); }
         }
 
-        // ===== VARIABLES POUR L'INVITATION GÉNÉRÉE =====
-        let lastGeneratedId = '';
-        let lastGeneratedName = '';
-        let lastGeneratedPhone = '';
-
-        // ===== GÉNÉRER INVITATION =====
+        // ===== ADMIN — GÉNÉRER =====
+        let lastGeneratedId = '', lastGeneratedName = '', lastGeneratedPhone = '';
         async function generateInvitation() {
             const name = document.getElementById('guestName').value.trim();
             const phone = document.getElementById('guestPhone').value.trim();
-
-            if (!name) {
-                showToast('⚠️ Veuillez entrer un nom', true);
-                return;
-            }
-
-            if (!window.__firebaseReady) {
-                showToast('⚠️ Connexion à la base en cours, réessayez', true);
-                return;
-            }
-
+            if (!name) { showToast('⚠️ Veuillez entrer un nom', true); return; }
+            if (!window.__firebaseReady) { showToast('⚠️ Connexion en cours, réessayez', true); return; }
             const id = generateId();
-
             try {
                 await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
-                    id: id,
-                    name: name,
-                    phone: phone,
+                    id: id, name: name, phone: phone,
                     confirmed: false,
                     createdAt: window.__serverTimestamp(),
                     createdBy: 'admin'
                 });
-
-                lastGeneratedId = id;
-                lastGeneratedName = name;
-                lastGeneratedPhone = phone;
-
+                lastGeneratedId = id; lastGeneratedName = name; lastGeneratedPhone = phone;
                 const url = `${window.location.origin}${window.location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
-                const resultDiv = document.getElementById('inviteResult');
-                resultDiv.style.display = 'block';
+                document.getElementById('inviteResult').style.display = 'block';
                 document.getElementById('inviteLinkDisplay').textContent = url;
-
                 showToast(`✅ Invitation générée pour ${name} !`);
                 document.getElementById('guestName').value = '';
                 document.getElementById('guestPhone').value = '';
-            } catch(e) {
-                console.error(e);
-                showToast('❌ Erreur lors de la génération', true);
-            }
+            } catch(e) { console.error(e); showToast('❌ Erreur lors de la génération', true); }
         }
 
-        // ===== COPIER LE LIEN =====
         function copyLink() {
             const link = document.getElementById('inviteLinkDisplay').textContent;
-            navigator.clipboard.writeText(link).then(() => {
-                showToast('📋 Lien copié dans le presse-papier !');
-            }).catch(() => {
+            navigator.clipboard.writeText(link).then(() => showToast('📋 Lien copié !'))
+            .catch(() => {
                 const range = document.createRange();
                 const selection = window.getSelection();
                 const el = document.getElementById('inviteLinkDisplay');
-                range.selectNode(el);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                document.execCommand('copy');
-                showToast('📋 Lien copié !');
+                range.selectNode(el); selection.removeAllRanges(); selection.addRange(range);
+                document.execCommand('copy'); showToast('📋 Lien copié !');
             });
         }
 
-        // ===== ENVOYER SUR WHATSAPP =====
         function sendWhatsApp() {
-            const phone = lastGeneratedPhone;
-            const name = lastGeneratedName;
+            const phone = lastGeneratedPhone, name = lastGeneratedName;
             const link = document.getElementById('inviteLinkDisplay').textContent;
-
-            if (!phone) {
-                showToast('⚠️ Aucun numéro de téléphone renseigné pour cet invité', true);
-                return;
-            }
-
-            const message = `🎤 *Invitation — Demi-finale Éloquence en Scène* 🎤\n\nBonjour Monsieur/ Madame ${name},\n\nNous avons le plaisir de vous inviter à la *demi-finale* de notre concours *"Éloquence en Scène"*.\n\n📅 Samedi 10 Octobre 2026\n⏰ 08h00 - 12h00\n📍 Silikin Village, Kinshasa\n\n🔗 *Votre invitation personnelle :*\n${link}\n\nMerci de confirmer votre présence via le lien ci-dessus.\n\nÀ très bientôt !`;
-
+            if (!phone) { showToast('⚠️ Aucun numéro renseigné', true); return; }
+            const message = `🎤 *Invitation — Demi-finale Éloquence en Scène* 🎤\n\nBonjour ${name},\n\nNous avons le plaisir de vous inviter à la *demi-finale* de notre concours *"Éloquence en Scène"*.\n\n📅 Samedi 10 Octobre 2026\n⏰ 08h00 - 12h00\n📍 Silikin Village, Kinshasa\n\n🔗 *Votre invitation personnelle :*\n${link}\n\nMerci de confirmer votre présence via le lien ci-dessus.\n\nÀ très bientôt !`;
             const encodedMessage = encodeURIComponent(message);
             const phoneClean = phone.replace(/[^0-9]/g, '');
-            const whatsappUrl = `https://wa.me/${phoneClean}?text=${encodedMessage}`;
-
-            window.open(whatsappUrl, '_blank');
+            window.open(`https://wa.me/${phoneClean}?text=${encodedMessage}`, '_blank');
             showToast(`💬 Message WhatsApp envoyé à ${name}`);
         }
 
-        // ===== TÉLÉCHARGER L'INVITATION =====
+        // ===== TÉLÉCHARGER =====
         async function downloadInvitation() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('show');
-
             try {
                 const card = document.getElementById('invitationCard');
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-
+                card.style.opacity = '1'; card.style.transform = 'translateY(0)';
                 const canvas = await html2canvas(card, {
-                    scale: 2,
-                    backgroundColor: '#0a1628',
-                    allowTaint: false,
-                    useCORS: true,
-                    logging: false
+                    scale: 2, backgroundColor: '#0a1628',
+                    allowTaint: false, useCORS: true, logging: false
                 });
-
                 const link = document.createElement('a');
                 link.download = 'invitation-eloquence-demifinale.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-
                 showToast('📥 Téléchargement terminé !');
-            } catch(e) {
-                console.error('Erreur téléchargement:', e);
-                showToast('❌ Erreur lors du téléchargement', true);
-            }
-
+            } catch(e) { console.error('Erreur téléchargement:', e); showToast('❌ Erreur lors du téléchargement', true); }
             overlay.classList.remove('show');
         }
 
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', () => {
             loadInvitation();
-
-            gsap.from('.logo-accent', {
-                scale: 0.5,
-                opacity: 0,
-                duration: 1,
-                ease: 'back.out(1.7)',
-                delay: 0.3
-            });
-
-            gsap.from('.badge-premium', {
-                y: -20,
-                opacity: 0,
-                duration: 0.8,
-                delay: 0.5,
-                ease: 'power2.out'
-            });
+            gsap.from('.logo-accent', { scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.3 });
+            gsap.from('.badge-premium', { y: -20, opacity: 0, duration: 0.8, delay: 0.5, ease: 'power2.out' });
         });
-
         document.getElementById('adminPassword').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') checkAdminAccess();
+        });
+        document.getElementById('selfPhone').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') generateSelfInvitation();
         });
     </script>
 </body>
