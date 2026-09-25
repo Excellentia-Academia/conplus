@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Éloquence en Scène | Invitation Officielle</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0e1a; min-height: 100vh; overflow-x: hidden; color: #fff; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1628 0%, #1a3a6b 40%, #2a5a9e 70%, #4a8ac8 100%); z-index: -2; }
+        .hero-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('IMG_1812.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.12; mix-blend-mode: overlay; }
+        .hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(10, 22, 40, 0.6) 100%); }
+        .admin-nav { position: fixed; top: 30px; right: 30px; z-index: 100; display: flex; gap: 12px; }
+        .admin-btn, .download-btn { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 500; transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); font-size: 0.9rem; letter-spacing: 0.5px; }
+        .admin-btn:hover, .download-btn:hover { background: #ffffff; color: #1a3a6b; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 2; }
+        .invitation-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 48px; overflow: hidden; box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.15); opacity: 0; transform: translateY(60px); animation: cardAppear 1s ease forwards; }
+        @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
+        .card-header { background: linear-gradient(135deg, rgba(10,22,40,0.9) 0%, rgba(26,58,107,0.9) 50%, rgba(74,138,200,0.9) 100%); padding: 50px 40px 40px; text-align: center; position: relative; border-bottom: 2px solid rgba(255,255,255,0.2); }
+        .card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, #ffffff, #4a8ac8, transparent); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .logo-accent { width: 100px; height: 100px; margin: 0 auto 25px; background: linear-gradient(135deg, #ffffff 0%, #4a8ac8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(74, 138, 200, 0.4); position: relative; z-index: 2; animation: pulseGlow 3s ease-in-out infinite; }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 10px 30px rgba(74, 138, 200, 0.4); } 50% { box-shadow: 0 10px 60px rgba(74, 138, 200, 0.8), 0 0 80px rgba(255,255,255,0.1); } }
+        .logo-accent i { font-size: 48px; color: #0a1628; }
+        .badge-premium { display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 6px 20px; border-radius: 40px; color: #ffffff; font-size: 0.75rem; font-weight: 500; letter-spacing: 2px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); position: relative; z-index: 2; }
+        h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 600; color: #fff; margin-bottom: 10px; letter-spacing: -0.02em; position: relative; z-index: 2; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+        .event-date { font-size: 1rem; color: rgba(255,255,255,0.9); letter-spacing: 1px; position: relative; z-index: 2; }
+        .card-body { padding: 50px; background: rgba(10,22,40,0.6); }
+        .invitation-letter { margin-bottom: 40px; }
+        .salutation { font-size: 1.2rem; font-weight: 500; color: #4a8ac8; margin-bottom: 25px; letter-spacing: 0.5px; }
+        .guest-name-large { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 30px; border-left: 3px solid #4a8ac8; padding-left: 20px; }
+        .guest-name-large strong { color: #4a8ac8; font-weight: 700; }
+        .invitation-text { font-size: 1rem; line-height: 1.8; color: rgba(255,255,255,0.85); margin-bottom: 30px; }
+        .invitation-text p { margin-bottom: 18px; }
+        .event-details { background: rgba(255,255,255,0.05); border-radius: 24px; padding: 25px; margin: 30px 0; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(5px); }
+        .event-details p { margin: 12px 0; display: flex; align-items: center; gap: 12px; font-size: 1rem; color: rgba(255,255,255,0.9); }
+        .event-details i { width: 28px; color: #4a8ac8; font-size: 1.2rem; }
+        .map-container { margin: 30px 0; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #000; }
+        .map-container iframe { width: 100%; height: 300px; border: 0; display: block; }
+        .map-link { text-align: center; margin-top: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+        .map-link a { color: #4a8ac8; text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; }
+        .map-link a:hover { color: #ffffff; }
+        .closing { margin-top: 35px; font-style: italic; color: rgba(255,255,255,0.7); border-top: 1px solid rgba(255,255,255,0.15); padding-top: 25px; }
+        .qr-section { background: rgba(255,255,255,0.05); border-radius: 24px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid rgba(255,255,255,0.15); }
+        .qr-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #4a8ac8; margin-bottom: 15px; }
+        #qrcode { display: flex; justify-content: center; margin: 20px 0; }
+        #qrcode canvas, #qrcode img { border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); background: white; padding: 8px; }
+        .qr-note { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 12px; }
+        .btn-confirm { background: linear-gradient(135deg, #4a8ac8 0%, #1a3a6b 100%); color: #ffffff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; box-shadow: 0 5px 20px rgba(74, 138, 200, 0.3); }
+        .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74, 138, 200, 0.5); filter: brightness(1.1); }
+        .btn-confirm:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
+        .btn-download-invite { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; }
+        .btn-download-invite:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4); filter: brightness(1.05); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
+        .modal-content { background: linear-gradient(135deg, #0f1a2e 0%, #0a1628 100%); border-radius: 32px; padding: 40px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); }
+        .modal-content h2 { color: #4a8ac8; margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; }
+        .password-input { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: white; margin: 15px 0; }
+        .generator-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; color: #4a8ac8; margin-bottom: 8px; font-size: 0.85rem; }
+        .input-group input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: white; }
+        .guest-list { margin-top: 20px; max-height: 350px; overflow-y: auto; }
+        .guest-item { background: rgba(255,255,255,0.03); padding: 15px; margin: 10px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .status-confirmed { color: #10b981; }
+        .status-pending { color: #f59e0b; }
+        .whatsapp-link { background: #25D366; color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; cursor: pointer; border: none; }
+        .btn-delete { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-size: 0.8rem; cursor: pointer; }
+        .btn-whatsapp-send { background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px; width: 100%; justify-content: center; margin-top: 15px; }
+        .btn-whatsapp-send:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .invite-link-display { background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 10px; font-size: 0.75rem; word-break: break-all; color: #4a8ac8; margin: 10px 0; border: 1px solid rgba(255,255,255,0.1); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; gap: 20px; }
+        .loading-overlay.show { display: flex; }
+        .loading-spinner { width: 60px; height: 60px; border: 4px solid rgba(74, 138, 200, 0.2); border-top: 4px solid #4a8ac8; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: #4a8ac8; font-size: 1.2rem; font-weight: 500; }
+        .invite-counter { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 18px 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .invite-counter .label { font-size: 0.85rem; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
+        .invite-counter .count { font-size: 1.4rem; font-weight: 700; color: #4a8ac8; }
+        .invite-counter .count span { font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.5); }
+        .invite-counter.confirmed .count { color: #10b981; }
+        .firebase-status { font-size: 0.7rem; text-align: center; margin-bottom: 15px; color: rgba(255,255,255,0.4); }
+        .firebase-status.online { color: #10b981; }
+        .firebase-status.offline { color: #f59e0b; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(16, 185, 129, 0.95); color: white; padding: 16px 32px; border-radius: 16px; font-weight: 500; z-index: 3000; opacity: 0; transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1); backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; max-width: 90%; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { background: rgba(220, 38, 38, 0.95); }
+        @media (max-width: 768px) {
+            .container { padding: 30px 16px; }
+            .card-body { padding: 30px 25px; }
+            h1 { font-size: 2.5rem; }
+            .guest-name-large { font-size: 1.6rem; }
+            .card-header { padding: 35px 25px; }
+            .map-container iframe { height: 220px; }
+            .admin-nav { top: 15px; right: 15px; flex-direction: column; gap: 8px; }
+            .admin-btn, .download-btn { padding: 8px 16px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-bg"></div>
+    <canvas id="particles"></canvas>
+    <div class="toast" id="toast"></div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Préparation de votre invitation...</div>
+    </div>
+    <div class="admin-nav">
+        <button class="download-btn" onclick="downloadInvitation()">
+            <i class="fas fa-download"></i> Télécharger
+        </button>
+        <button class="admin-btn" onclick="showAdminModal()">
+            <i class="fas fa-lock"></i> Espace Organisateur
+        </button>
+    </div>
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-crown"></i> Administration</h2>
+            <div class="firebase-status" id="firebaseStatus">
+                <i class="fas fa-circle-notch fa-spin"></i> Connexion à la base de données...
+            </div>
+            <input type="password" id="adminPassword" class="password-input" placeholder="Code d'accès">
+            <button class="btn-confirm" onclick="checkAdminAccess()" style="background:#4a8ac8; color:#fff;">
+                <i class="fas fa-unlock-alt"></i> Accéder
+            </button>
+            <div id="adminPanel" style="display:none; margin-top:30px">
+                <div class="generator-section">
+                    <h3><i class="fas fa-qrcode"></i> Générer une invitation</h3>
+                    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:15px;">
+                        Créez un lien unique, puis envoyez-le à l'invité via WhatsApp.
+                    </p>
+                    <div class="input-group">
+                        <label>Nom complet de l'invité *</label>
+                        <input type="text" id="guestName" placeholder="Ex: Jean-Claude Mputu">
+                    </div>
+                    <div class="input-group">
+                        <label>Numéro WhatsApp (avec indicatif)</label>
+                        <input type="tel" id="guestPhone" placeholder="Ex: 243812345678">
+                    </div>
+                    <button class="btn-confirm" onclick="generateInvitation()" style="background:#4a8ac8;">
+                        <i class="fas fa-magic"></i> Générer l'invitation
+                    </button>
+                    <div id="inviteResult" style="display:none; margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                            <span style="color:#4a8ac8; font-weight:600;"><i class="fas fa-link"></i> Lien d'invitation :</span>
+                            <button onclick="copyLink()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; padding:6px 14px; border-radius:8px; cursor:pointer; font-size:0.8rem;">
+                                <i class="fas fa-copy"></i> Copier
+                            </button>
+                        </div>
+                        <div class="invite-link-display" id="inviteLinkDisplay">https://...</div>
+                        <button class="btn-whatsapp-send" onclick="sendWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> Envoyer sur WhatsApp
+                        </button>
+                    </div>
+                </div>
+                <div class="invite-counter">
+                    <span class="label"><i class="fas fa-users"></i> Total invités générés</span>
+                    <span class="count" id="totalInviteCount">0 <span>personnes</span></span>
+                </div>
+                <div class="invite-counter confirmed">
+                    <span class="label"><i class="fas fa-check-circle"></i> Présences confirmées</span>
+                    <span class="count" id="confirmedCount">0 <span>personnes</span></span>
+                </div>
+                <h3><i class="fas fa-list"></i> Liste des invités <span style="font-size:0.7rem; color:rgba(255,255,255,0.4);">(temps réel)</span></h3>
+                <div id="guestList" class="guest-list">
+                    <p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Chargement...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="invitation-card" id="invitationCard">
+            <div class="card-header">
+                <div class="logo-accent">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+                <div class="badge-premium">★ INVITATION OFFICIELLE — DEMI-FINALE</div>
+                <h1>Éloquence en Scène</h1>
+                <div class="event-date">📅 Samedi 10 Octobre 2026 • 08h00 - 12h00</div>
+            </div>
+            <div class="card-body" id="invitationBody">
+                <div class="invitation-letter" id="invitationLetter">
+                    <div class="salutation" id="salutationText">Cher/Chère <span id="salutationName">Invité(e)</span>,</div>
+                    <div class="guest-name-large" id="guestNameDisplay">[Nom de l'invité]</div>
+                    <div class="invitation-text">
+                        <p>Nous avons le plaisir de vous inviter à la <strong>demi-finale</strong> de notre concours <strong>"Éloquence en Scène"</strong>, un événement d'exception dédié à l'art oratoire et à la célébration des talents.</p>
+                        <p>Venez vivre une expérience unique dans un cadre prestigieux, où l'éloquence et la convivialité se rencontrent.</p>
+                    </div>
+                    <div class="event-details">
+                        <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 10 Octobre 2026</p>
+                        <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 08h00 - 12h00</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
+                        <p><i class="fas fa-trophy"></i> <strong>Étape :</strong> Demi-finale</p>
+                    </div>
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.4489522506047!2d15.297256!3d-4.324837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a33140c1c2c2b%3A0x7c1c2c2b1a6a3314!2sKinshasa%2C%20R%C3%A9publique%20D%C3%A9mocratique%20du%20Congo!5e0!3m2!1sfr!2sfr!4v1712000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="map-link">
+                        <a href="https://maps.google.com/maps?q=Silikin+Village+Kinshasa" target="_blank">
+                            <i class="fas fa-directions"></i> Voir l'itinéraire sur Google Maps
+                        </a>
+                    </div>
+                    <div class="closing">
+                        <p>Dans l'attente de votre présence, nous vous prions d'agréer nos salutations distinguées.</p>
+                        <p style="margin-top: 10px; font-weight: 500; color: #4a8ac8;">— L'équipe Excellentia Academia</p>
+                    </div>
+                </div>
+                <div class="qr-section">
+                    <div class="qr-title"><i class="fas fa-qrcode"></i> Prime </div>
+                    <div id="qrcode"></div>
+                    <div class="qr-note"> Éloquence en scène — Demi-finale</div>
+                </div>
+                <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()">
+                    <i class="fas fa-check-circle"></i> Confirmer ma présence
+                </button>
+                <button class="btn-download-invite" onclick="downloadInvitation()">
+                    <i class="fas fa-download"></i> Télécharger mon invitation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== FIREBASE =====
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            setDoc,
+            getDoc,
+            deleteDoc,
+            onSnapshot,
+            query,
+            orderBy,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcg7lZWfD3B9NyjqewwPRgH8MM3h1wlhc",
+            authDomain: "fond-903c9.firebaseapp.com",
+            projectId: "fond-903c9",
+            storageBucket: "fond-903c9.firebasestorage.app",
+            messagingSenderId: "551417667967",
+            appId: "1:551417667967:web:21aa811c6cecf70cd7fa4a",
+            measurementId: "G-KD17CE3YZ1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Collection Firestore : "invites_demifinale"
+        const COLLECTION = 'invites_demifinale';
+
+        // Expose globalement pour les onclick
+        window.__db = db;
+        window.__collection = collection;
+        window.__doc = doc;
+        window.__setDoc = setDoc;
+        window.__getDoc = getDoc;
+        window.__deleteDoc = deleteDoc;
+        window.__onSnapshot = onSnapshot;
+        window.__query = query;
+        window.__orderBy = orderBy;
+        window.__serverTimestamp = serverTimestamp;
+        window.__COLLECTION = COLLECTION;
+        window.__firebaseReady = true;
+
+        // Statut Firebase
+        const statusEl = document.getElementById('firebaseStatus');
+        statusEl.classList.add('online');
+        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Base de données connectée — synchronisation temps réel active';
+
+        // Émettre un event pour initialiser après Firebase
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
+    <script>
+        // ===== TOAST NOTIFICATION =====
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        // ===== PARTICULES =====
+        (function() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            const PARTICLE_COUNT = 80;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(new Particle());
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * (1 - dist/120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        })();
+
+        // ===== UTILITAIRES =====
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        // ===== QR CODE =====
+        function generateQRCode(data) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            try {
+                new QRCode(qrContainer, {
+                    text: data || 'https://eloquence-evenement.com/invitation',
+                    width: 180,
+                    height: 180,
+                    colorDark: '#0a1628',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch(e) {
+                qrContainer.innerHTML = '<p style="color:#4a8ac8;">QR Code</p>';
+            }
+        }
+
+        // ===== AFFICHAGE INVITÉ =====
+        function displayGuest(name) {
+            const display = document.getElementById('guestNameDisplay');
+            const salutationName = document.getElementById('salutationName');
+            if (name && name.trim() !== '') {
+                const trimmedName = name.trim();
+                display.innerHTML = `<strong>${trimmedName}</strong>`;
+                salutationName.textContent = trimmedName;
+            } else {
+                display.innerHTML = '[Nom de l\'invité]';
+                salutationName.textContent = 'Invité(e)';
+            }
+        }
+
+        // ===== URL PARAMÈTRES =====
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                guest: params.get('guest') || '',
+                id: params.get('id') || ''
+            };
+        }
+
+        // ===== CHARGER INVITATION =====
+        async function loadInvitation() {
+            const params = getUrlParams();
+            const guestName = params.guest || '';
+            const inviteId = params.id || '';
+            displayGuest(guestName);
+            generateQRCode(`https://eloquence-evenement.com/invitation?id=${inviteId}&guest=${encodeURIComponent(guestName)}`);
+
+            // Vérifier si déjà confirmé dans Firestore
+            if (inviteId && window.__firebaseReady) {
+                try {
+                    const docRef = window.__doc(window.__db, window.__COLLECTION, inviteId);
+                    const snap = await window.__getDoc(docRef);
+                    if (snap.exists() && snap.data().confirmed) {
+                        const btn = document.getElementById('confirmBtn');
+                        btn.disabled = true;
+                        btn.innerHTML = '✅ Présence déjà confirmée';
+                        btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    }
+                    // Marquer comme "vu"
+                    if (snap.exists()) {
+                        await window.__setDoc(docRef, {
+                            lastViewed: window.__serverTimestamp()
+                        }, { merge: true });
+                    }
+                } catch(e) {
+                    console.warn('Erreur vérification:', e);
+                }
+            }
+        }
+
+        // ===== CONFIRMER PRÉSENCE =====
+        async function confirmPresence() {
+            const btn = document.getElementById('confirmBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+
+            const params = getUrlParams();
+            const inviteId = params.id;
+
+            if (!inviteId) {
+                showToast('⚠️ Identifiant d\'invitation manquant', true);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
+                return;
+            }
+
+            if (!window.__firebaseReady) {
+                showToast('⚠️ Connexion à la base en cours, réessayez', true);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
+                return;
+            }
+
+            try {
+                const docRef = window.__doc(window.__db, window.__COLLECTION, inviteId);
+                const snap = await window.__getDoc(docRef);
+                const guestName = params.guest || 'Invité';
+
+                if (!snap.exists()) {
+                    // Créer l'invité s'il n'existe pas
+                    await window.__setDoc(docRef, {
+                        id: inviteId,
+                        name: guestName,
+                        phone: '',
+                        confirmed: true,
+                        confirmedAt: window.__serverTimestamp(),
+                        createdAt: window.__serverTimestamp()
+                    });
+                } else {
+                    await window.__setDoc(docRef, {
+                        confirmed: true,
+                        confirmedAt: window.__serverTimestamp()
+                    }, { merge: true });
+                }
+
+                btn.innerHTML = '✅ Présence confirmée !';
+                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                showToast(`✅ Votre présence a été confirmée avec succès !`);
+            } catch(e) {
+                console.error(e);
+                showToast('❌ Erreur lors de la confirmation', true);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
+            }
+        }
+
+        // ===== ADMIN =====
+        const ADMIN_PASSWORD = 'admin2026';
+
+        function showAdminModal() {
+            document.getElementById('adminModal').style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('inviteResult').style.display = 'none';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        document.getElementById('adminModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAdminModal();
+        });
+
+        function checkAdminAccess() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminPanel').style.display = 'block';
+                startRealtimeListener();
+            } else {
+                showToast('❌ Code d\'accès incorrect', true);
+            }
+        }
+
+        // ===== LISTENER TEMPS RÉEL =====
+        let unsubscribeGuests = null;
+
+        function startRealtimeListener() {
+            if (!window.__firebaseReady) {
+                setTimeout(startRealtimeListener, 500);
+                return;
+            }
+
+            if (unsubscribeGuests) unsubscribeGuests();
+
+            const q = window.__query(
+                window.__collection(window.__db, window.__COLLECTION),
+                window.__orderBy('createdAt', 'desc')
+            );
+
+            unsubscribeGuests = window.__onSnapshot(q, (snapshot) => {
+                const guests = [];
+                snapshot.forEach(docSnap => {
+                    guests.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderGuestList(guests);
+            }, (error) => {
+                console.error('Erreur listener:', error);
+                showToast('⚠️ Erreur de synchronisation temps réel', true);
+            });
+        }
+
+        // ===== RENDU LISTE INVITÉS =====
+        function renderGuestList(guests) {
+            const listDiv = document.getElementById('guestList');
+            const counterSpan = document.getElementById('totalInviteCount');
+            const confirmedSpan = document.getElementById('confirmedCount');
+
+            const total = guests.length;
+            const confirmedCount = guests.filter(g => g.confirmed).length;
+
+            counterSpan.innerHTML = `${total} <span>personne${total > 1 ? 's' : ''}</span>`;
+            confirmedSpan.innerHTML = `${confirmedCount} <span>personne${confirmedCount > 1 ? 's' : ''}</span>`;
+
+            if (total === 0) {
+                listDiv.innerHTML = '<p style="color: rgba(255,255,255,0.3); text-align:center; padding:20px;">Aucun invité pour le moment</p>';
+                return;
+            }
+
+            let html = '';
+            guests.forEach(guest => {
+                const name = guest.name || 'Inconnu';
+                const phone = guest.phone || '';
+                const confirmed = guest.confirmed || false;
+                const statusClass = confirmed ? 'status-confirmed' : 'status-pending';
+                const statusText = confirmed ? '✅ Confirmé' : '⏳ En attente';
+
+                html += `
+                    <div class="guest-item">
+                        <div>
+                            <strong style="color:#fff;">${name}</strong>
+                            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${phone || 'Pas de numéro'}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span class="${statusClass}">${statusText}</span>
+                            ${phone ? `<a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
+                            <button class="btn-delete" onclick="deleteGuest('${guest.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listDiv.innerHTML = html;
+        }
+
+        // ===== SUPPRIMER INVITÉ =====
+        async function deleteGuest(id) {
+            if (!confirm('Supprimer définitivement cet invité ?')) return;
+            try {
+                await window.__deleteDoc(window.__doc(window.__db, window.__COLLECTION, id));
+                showToast('🗑️ Invité supprimé');
+            } catch(e) {
+                console.error(e);
+                showToast('❌ Erreur lors de la suppression', true);
+            }
+        }
+
+        // ===== VARIABLES POUR L'INVITATION GÉNÉRÉE =====
+        let lastGeneratedId = '';
+        let lastGeneratedName = '';
+        let lastGeneratedPhone = '';
+
+        // ===== GÉNÉRER INVITATION =====
+        async function generateInvitation() {
+            const name = document.getElementById('guestName').value.trim();
+            const phone = document.getElementById('guestPhone').value.trim();
+
+            if (!name) {
+                showToast('⚠️ Veuillez entrer un nom', true);
+                return;
+            }
+
+            if (!window.__firebaseReady) {
+                showToast('⚠️ Connexion à la base en cours, réessayez', true);
+                return;
+            }
+
+            const id = generateId();
+
+            try {
+                await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
+                    id: id,
+                    name: name,
+                    phone: phone,
+                    confirmed: false,
+                    createdAt: window.__serverTimestamp(),
+                    createdBy: 'admin'
+                });
+
+                lastGeneratedId = id;
+                lastGeneratedName = name;
+                lastGeneratedPhone = phone;
+
+                const url = `${window.location.origin}${window.location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
+                const resultDiv = document.getElementById('inviteResult');
+                resultDiv.style.display = 'block';
+                document.getElementById('inviteLinkDisplay').textContent = url;
+
+                showToast(`✅ Invitation générée pour ${name} !`);
+                document.getElementById('guestName').value = '';
+                document.getElementById('guestPhone').value = '';
+            } catch(e) {
+                console.error(e);
+                showToast('❌ Erreur lors de la génération', true);
+            }
+        }
+
+        // ===== COPIER LE LIEN =====
+        function copyLink() {
+            const link = document.getElementById('inviteLinkDisplay').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('📋 Lien copié dans le presse-papier !');
+            }).catch(() => {
+                const range = document.createRange();
+                const selection = window.getSelection();
+                const el = document.getElementById('inviteLinkDisplay');
+                range.selectNode(el);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                showToast('📋 Lien copié !');
+            });
+        }
+
+        // ===== ENVOYER SUR WHATSAPP =====
+        function sendWhatsApp() {
+            const phone = lastGeneratedPhone;
+            const name = lastGeneratedName;
+            const link = document.getElementById('inviteLinkDisplay').textContent;
+
+            if (!phone) {
+                showToast('⚠️ Aucun numéro de téléphone renseigné pour cet invité', true);
+                return;
+            }
+
+            const message = `🎤 *Invitation — Demi-finale Éloquence en Scène* 🎤\n\nBonjour Monsieur/ Madame ${name},\n\nNous avons le plaisir de vous inviter à la *demi-finale* de notre concours *"Éloquence en Scène"*.\n\n📅 Samedi 10 Octobre 2026\n⏰ 08h00 - 12h00\n📍 Silikin Village, Kinshasa\n\n🔗 *Votre invitation personnelle :*\n${link}\n\nMerci de confirmer votre présence via le lien ci-dessus.\n\nÀ très bientôt !`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const phoneClean = phone.replace(/[^0-9]/g, '');
+            const whatsappUrl = `https://wa.me/${phoneClean}?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+            showToast(`💬 Message WhatsApp envoyé à ${name}`);
+        }
+
+        // ===== TÉLÉCHARGER L'INVITATION =====
+        async function downloadInvitation() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('show');
+
+            try {
+                const card = document.getElementById('invitationCard');
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+
+                const canvas = await html2canvas(card, {
+                    scale: 2,
+                    backgroundColor: '#0a1628',
+                    allowTaint: false,
+                    useCORS: true,
+                    logging: false
+                });
+
+                const link = document.createElement('a');
+                link.download = 'invitation-eloquence-demifinale.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                showToast('📥 Téléchargement terminé !');
+            } catch(e) {
+                console.error('Erreur téléchargement:', e);
+                showToast('❌ Erreur lors du téléchargement', true);
+            }
+
+            overlay.classList.remove('show');
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInvitation();
+
+            gsap.from('.logo-accent', {
+                scale: 0.5,
+                opacity: 0,
+                duration: 1,
+                ease: 'back.out(1.7)',
+                delay: 0.3
+            });
+
+            gsap.from('.badge-premium', {
+                y: -20,
+                opacity: 0,
+                duration: 0.8,
+                delay: 0.5,
+                ease: 'power2.out'
+            });
+        });
+
+        document.getElementById('adminPassword').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') checkAdminAccess();
+        });
+    </script>
+</body>
+</html>
