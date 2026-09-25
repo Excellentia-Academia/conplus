@@ -28,8 +28,36 @@
         .card-header { background: linear-gradient(135deg, #ffffff 0%, #eaf1fa 50%, #d8e6f7 100%); padding: 50px 40px 40px; text-align: center; position: relative; border-bottom: 2px solid rgba(26,58,107,0.12); }
         .card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, #1a3a6b, #4a8ac8, transparent); animation: shimmer 3s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        /* ===== LOGO STRUCTURE ===== */
+        .structure-logo-wrap {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #ffffff;
+            border: 4px solid #ffffff;
+            box-shadow: 0 12px 35px rgba(26, 58, 107, 0.25), 0 0 0 2px rgba(74, 138, 200, 0.3);
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        .structure-logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 12px 35px rgba(26, 58, 107, 0.25), 0 0 0 2px rgba(74, 138, 200, 0.3); }
+            50% { box-shadow: 0 12px 45px rgba(74, 138, 200, 0.5), 0 0 0 4px rgba(74, 138, 200, 0.5); }
+        }
+
         .logo-accent { width: 100px; height: 100px; margin: 0 auto 25px; background: linear-gradient(135deg, #1a3a6b 0%, #4a8ac8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(26, 58, 107, 0.35); position: relative; z-index: 2; animation: pulseGlow 3s ease-in-out infinite; }
-        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 10px 30px rgba(26, 58, 107, 0.35); } 50% { box-shadow: 0 10px 60px rgba(74, 138, 200, 0.6), 0 0 80px rgba(74,138,200,0.15); } }
         .logo-accent i { font-size: 48px; color: #ffffff; }
         .badge-premium { display: inline-block; background: rgba(26,58,107,0.08); backdrop-filter: blur(8px); padding: 6px 20px; border-radius: 40px; color: #1a3a6b; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; border: 1px solid rgba(26,58,107,0.2); position: relative; z-index: 2; }
         h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; color: #1a3a6b; margin-bottom: 10px; letter-spacing: -0.02em; position: relative; z-index: 2; }
@@ -123,6 +151,7 @@
             .self-gen-card { padding: 25px 20px; }
             .self-gen-row { grid-template-columns: 1fr; gap: 15px; }
             .self-gen-card h2 { font-size: 1.5rem; }
+            .structure-logo-wrap { width: 90px; height: 90px; }
         }
     </style>
 </head>
@@ -226,6 +255,10 @@
 
         <div class="invitation-card" id="invitationCard">
             <div class="card-header">
+                <!-- ===== LOGO STRUCTURE IMG_1812.jpeg ===== -->
+                <div class="structure-logo-wrap">
+                    <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" crossorigin="anonymous">
+                </div>
                 <div class="logo-accent">
                     <i class="fas fa-microphone-alt"></i>
                 </div>
@@ -678,16 +711,74 @@
             });
         }
 
-        // ===== ENVOI WHATSAPP AVEC RAPPEL =====
+        // ============================================================
+        // ===== ENVOI WHATSAPP — AMÉLIORÉ ET FIABLE =================
+        // ============================================================
         function sendWhatsApp() {
-            const phone = lastGeneratedPhone, name = lastGeneratedName;
-            const link = document.getElementById('inviteLinkDisplay').textContent;
-            if (!phone) { showToast('⚠️ Aucun numéro renseigné', true); return; }
-            const message = `🎤 *RAPPEL — Éloquence en Scène (Demi-finale)* 🎤\n\nBonjour ${name},\n\nNous vous rappelons que la *demi-finale* de notre concours *"Éloquence en Scène"* aura lieu le :\n\n📅 *Samedi 10 Octobre 2026*\n⏰ 08h00 - 12h00\n📍 Silikin Village, Kinshasa\n\n✅ *Merci de confirmer votre présence* en cliquant sur le lien ci-dessous :\n\n🔗 ${link}\n\nVotre confirmation nous permettra de mieux vous accueillir.\n\nÀ très bientôt ! 🎙️\n— L'équipe Excellentia Academia`;
+            const phone = (lastGeneratedPhone || '').trim();
+            const name = (lastGeneratedName || '').trim();
+            const linkEl = document.getElementById('inviteLinkDisplay');
+            const link = linkEl ? linkEl.textContent.trim() : '';
+
+            // 1) Vérifications
+            if (!phone) {
+                showToast('⚠️ Aucun numéro WhatsApp renseigné pour cet invité', true);
+                return;
+            }
+            if (!name) {
+                showToast('⚠️ Aucun nom d\'invité généré. Générez d\'abord une invitation.', true);
+                return;
+            }
+            if (!link || !link.startsWith('http')) {
+                showToast('⚠️ Lien d\'invitation introuvable. Régénérez l\'invitation.', true);
+                return;
+            }
+
+            // 2) Nettoyage du numéro (retire +, espaces, tirets, parenthèses)
+            let phoneClean = phone.replace(/[^0-9]/g, '');
+            // Si le numéro commence par 0 et fait 10 chiffres (format local RDC), on ajoute l'indicatif 243
+            if (phoneClean.length === 10 && phoneClean.startsWith('0')) {
+                phoneClean = '243' + phoneClean.substring(1);
+            }
+
+            if (phoneClean.length < 8) {
+                showToast('⚠️ Numéro WhatsApp invalide. Vérifiez l\'indicatif.', true);
+                return;
+            }
+
+            // 3) Construction du message de RAPPEL
+            const message =
+`🎤 *RAPPEL — Éloquence en Scène (Demi-finale)* 🎤
+
+Bonjour ${name},
+
+Nous vous rappelons que la *demi-finale* de notre concours *"Éloquence en Scène"* aura lieu le :
+
+📅 *Samedi 10 Octobre 2026*
+⏰ 08h00 - 12h00
+📍 Silikin Village, Kinshasa
+
+✅ *Merci de confirmer votre présence* en cliquant sur le lien ci-dessous :
+
+🔗 ${link}
+
+Votre confirmation nous permettra de mieux vous accueillir.
+
+À très bientôt ! 🎙️
+— L'équipe Excellentia Academia`;
+
+            // 4) Encodage URL propre
             const encodedMessage = encodeURIComponent(message);
-            const phoneClean = phone.replace(/[^0-9]/g, '');
-            window.open(`https://wa.me/${phoneClean}?text=${encodedMessage}`, '_blank');
-            showToast(`💬 Rappel WhatsApp envoyé à ${name}`);
+            const waUrl = `https://wa.me/${phoneClean}?text=${encodedMessage}`;
+
+            // 5) Ouverture (fenêtre + fallback si popup bloquée)
+            const newWin = window.open(waUrl, '_blank');
+            if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+                // Popup bloquée → redirection directe
+                window.location.href = waUrl;
+            }
+
+            showToast(`💬 WhatsApp ouvert pour ${name} — envoyez le message !`);
         }
 
         // ===== TÉLÉCHARGER =====
@@ -713,8 +804,9 @@
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', () => {
             loadInvitation();
-            gsap.from('.logo-accent', { scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.3 });
-            gsap.from('.badge-premium', { y: -20, opacity: 0, duration: 0.8, delay: 0.5, ease: 'power2.out' });
+            gsap.from('.structure-logo-wrap', { scale: 0.4, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.2 });
+            gsap.from('.logo-accent', { scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.4 });
+            gsap.from('.badge-premium', { y: -20, opacity: 0, duration: 0.8, delay: 0.6, ease: 'power2.out' });
         });
         document.getElementById('adminPassword').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') checkAdminAccess();
