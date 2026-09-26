@@ -9,634 +9,107 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Inter', sans-serif; background: #f5f7fb; min-height: 100vh; overflow-x: hidden; color: #0a1628; }
 #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 .hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ffffff 0%, #eaf1fa 40%, #d8e6f7 70%, #c3daf3 100%); z-index: -2; }
 .hero-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('731c4eec-d210-4c20-8847-5fafe2c86618.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.12; mix-blend-mode: multiply; }
+.hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.7) 100%); }
 .admin-nav { position: fixed; top: 30px; right: 30px; z-index: 100; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 60px); }
 .admin-btn, .download-btn, .self-gen-btn { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(26,58,107,0.15); color: #1a3a6b; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.1); font-size: 0.9rem; box-shadow: 0 4px 15px rgba(26,58,107,0.08); }
-.admin-btn:hover, .download-btn:hover, .self-gen-btn:hover { background: #1a3a6b; color: #fff; transform: translateY(-2px); }
+.admin-btn:hover, .download-btn:hover, .self-gen-btn:hover { background: #1a3a6b; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(26,58,107,0.25); }
 .self-gen-btn { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; }
+.self-gen-btn:hover { background: #ffffff; color: #1a3a6b; }
 .container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 2; }
-.invitation-card { background: #fff; border-radius: 48px; overflow: hidden; box-shadow: 0 40px 60px -20px rgba(26,58,107,0.25); opacity: 0; transform: translateY(60px); animation: cardAppear 1s ease forwards; }
+.invitation-card { background: #fff; border-radius: 48px; overflow: hidden; box-shadow: 0 40px 60px -20px rgba(26,58,107,0.25), 0 0 0 1px rgba(26,58,107,0.06); opacity: 0; transform: translateY(60px); animation: cardAppear 1s ease forwards; }
 @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
-.card-header { background: linear-gradient(135deg,#fff 0%,#eaf1fa 50%,#d8e6f7 100%); padding: 50px 40px 40px; text-align: center; border-bottom: 2px solid rgba(26,58,107,0.12); }
-.structure-logo-wrap { width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; background: #fff; border: 4px solid #fff; box-shadow: 0 12px 35px rgba(26,58,107,0.25),0 0 0 2px rgba(74,138,200,0.3); }
-.structure-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.logo-accent { width: 100px; height: 100px; margin: 0 auto 25px; background: linear-gradient(135deg,#1a3a6b,#4a8ac8); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.card-header { background: linear-gradient(135deg,#fff 0%,#eaf1fa 50%,#d8e6f7 100%); padding: 50px 40px 40px; text-align: center; position: relative; border-bottom: 2px solid rgba(26,58,107,0.12); }
+.card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg,transparent,#1a3a6b,#4a8ac8,transparent); animation: shimmer 3s infinite; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.structure-logo-wrap { width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; background: #fff; border: 4px solid #fff; box-shadow: 0 12px 35px rgba(26,58,107,0.25),0 0 0 2px rgba(74,138,200,0.3); position: relative; z-index: 3; display: flex; align-items: center; justify-content: center; animation: pulseGlow 3s ease-in-out infinite; }
+.structure-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 12px 35px rgba(26,58,107,0.25),0 0 0 2px rgba(74,138,200,0.3); } 50% { box-shadow: 0 12px 45px rgba(74,138,200,0.5),0 0 0 4px rgba(74,138,200,0.5); } }
+.logo-accent { width: 100px; height: 100px; margin: 0 auto 25px; background: linear-gradient(135deg,#1a3a6b,#4a8ac8); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(26,58,107,0.35); position: relative; z-index: 2; animation: pulseGlow 3s ease-in-out infinite; }
 .logo-accent i { font-size: 48px; color: #fff; }
-.badge-premium { display: inline-block; background: rgba(26,58,107,0.08); padding: 6px 20px; border-radius: 40px; color: #1a3a6b; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; border: 1px solid rgba(26,58,107,0.2); }
-h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; color: #1a3a6b; margin-bottom: 10px; }
-.event-date { font-size: 1rem; color: #4a6a9b; font-weight: 500; }
+.badge-premium { display: inline-block; background: rgba(26,58,107,0.08); backdrop-filter: blur(8px); padding: 6px 20px; border-radius: 40px; color: #1a3a6b; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; border: 1px solid rgba(26,58,107,0.2); position: relative; z-index: 2; }
+h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; color: #1a3a6b; margin-bottom: 10px; letter-spacing: -0.02em; position: relative; z-index: 2; }
+.event-date { font-size: 1rem; color: #4a6a9b; letter-spacing: 1px; position: relative; z-index: 2; font-weight: 500; }
 .card-body { padding: 50px; background: #fff; }
-.salutation { font-size: 1.2rem; font-weight: 600; color: #1a3a6b; margin-bottom: 25px; }
-.guest-name-large { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #4a8ac8; margin-bottom: 30px; border-left: 3px solid #4a8ac8; padding-left: 20px; }
+.invitation-letter { margin-bottom: 40px; }
+.salutation { font-size: 1.2rem; font-weight: 600; color: #1a3a6b; margin-bottom: 25px; letter-spacing: 0.5px; }
+.guest-name-large { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #1a3a6b; margin-bottom: 30px; border-left: 3px solid #4a8ac8; padding-left: 20px; }
+.guest-name-large strong { color: #4a8ac8; font-weight: 700; }
 .invitation-text { font-size: 1rem; line-height: 1.8; color: #3a4a6b; margin-bottom: 30px; }
 .invitation-text p { margin-bottom: 18px; }
+.invitation-text strong { color: #1a3a6b; }
 .event-details { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 25px; margin: 30px 0; border: 1px solid rgba(26,58,107,0.1); }
-.event-details p { margin: 12px 0; display: flex; align-items: center; gap: 12px; color: #1a3a6b; font-weight: 500; }
+.event-details p { margin: 12px 0; display: flex; align-items: center; gap: 12px; font-size: 1rem; color: #1a3a6b; font-weight: 500; }
 .event-details i { width: 28px; color: #4a8ac8; font-size: 1.2rem; }
-.map-container { margin: 30px 0; border-radius: 24px; overflow: hidden; }
+.map-container { margin: 30px 0; border-radius: 24px; overflow: hidden; border: 1px solid rgba(26,58,107,0.12); background: #eaf1fa; box-shadow: 0 10px 30px rgba(26,58,107,0.08); }
 .map-container iframe { width: 100%; height: 300px; border: 0; display: block; }
+.map-link { text-align: center; margin-top: 12px; padding: 10px; background: #f5f9ff; border-radius: 12px; border: 1px solid rgba(26,58,107,0.08); }
+.map-link a { color: #1a3a6b; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
 .closing { margin-top: 35px; font-style: italic; color: #5a6a8b; border-top: 1px solid rgba(26,58,107,0.12); padding-top: 25px; }
-.qr-section { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 30px; margin: 30px 0; text-align: center; }
-.qr-title { font-size: 0.85rem; letter-spacing: 2px; color: #1a3a6b; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+.closing p:last-child { color: #1a3a6b !important; }
+.qr-section { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid rgba(26,58,107,0.1); }
+.qr-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #1a3a6b; font-weight: 700; margin-bottom: 15px; }
 #qrcode { display: flex; justify-content: center; margin: 20px 0; }
-#qrcode canvas, #qrcode img { border-radius: 16px; background: #fff; padding: 8px; }
-.btn-confirm { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; margin-top: 12px; }
-.btn-download-invite { background: linear-gradient(135deg,#10b981,#059669); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; margin-top: 12px; }
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,22,40,0.65); z-index: 1000; justify-content: center; align-items: center; }
-.modal-content { background: #fff; border-radius: 32px; padding: 40px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; }
-.password-input { width: 100%; padding: 14px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; margin: 15px 0; }
-.generator-section { background: #f5f9ff; border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+#qrcode canvas, #qrcode img { border-radius: 16px; box-shadow: 0 10px 30px rgba(26,58,107,0.15); background: white; padding: 8px; }
+.qr-note { font-size: 0.75rem; color: #6a7a9b; margin-top: 12px; font-weight: 500; }
+.btn-confirm { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; box-shadow: 0 5px 20px rgba(74,138,200,0.3); }
+.btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74,138,200,0.5); }
+.btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-download-invite { background: linear-gradient(135deg,#10b981,#059669); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; }
+.btn-download-invite:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(16,185,129,0.4); }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,22,40,0.65); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
+.modal-content { background: #fff; border-radius: 32px; padding: 40px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(26,58,107,0.1); box-shadow: 0 40px 80px rgba(26,58,107,0.3); }
+.modal-content h2 { color: #1a3a6b; margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; }
+.password-input { width: 100%; padding: 14px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; color: #1a3a6b; margin: 15px 0; font-family: 'Inter', sans-serif; }
+.generator-section { background: #f5f9ff; border-radius: 20px; padding: 25px; margin-bottom: 30px; border: 1px solid rgba(26,58,107,0.08); }
+.generator-section h3 { color: #1a3a6b; margin-bottom: 10px; }
 .input-group { margin-bottom: 20px; }
 .input-group label { display: block; color: #1a3a6b; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; }
-.input-group input { width: 100%; padding: 12px; background: #fff; border: 1px solid rgba(26,58,107,0.15); border-radius: 10px; }
-.btn-whatsapp-send { background: #25D366; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; }
-.invite-link-display { background: #f5f9ff; padding: 12px; border-radius: 10px; font-size: 0.75rem; word-break: break-all; margin: 10px 0; }
-.loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; gap: 20px; }
+.input-group input { width: 100%; padding: 12px; background: #fff; border: 1px solid rgba(26,58,107,0.15); border-radius: 10px; color: #1a3a6b; font-family: 'Inter', sans-serif; }
+.guest-list { margin-top: 20px; max-height: 350px; overflow-y: auto; }
+.guest-item { background: #f5f9ff; padding: 15px; margin: 10px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 1px solid rgba(26,58,107,0.08); }
+.guest-item strong { color: #1a3a6b !important; }
+.status-confirmed { color: #10b981; font-weight: 600; }
+.status-pending { color: #f59e0b; font-weight: 600; }
+.whatsapp-link { background: #25D366; color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; cursor: pointer; border: none; }
+.btn-delete { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-size: 0.8rem; cursor: pointer; }
+.btn-whatsapp-send { background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px; width: 100%; justify-content: center; margin-top: 15px; }
+.btn-whatsapp-send:hover { transform: scale(1.02); filter: brightness(1.1); }
+.invite-link-display { background: #f5f9ff; padding: 12px 16px; border-radius: 10px; font-size: 0.75rem; word-break: break-all; color: #1a3a6b; margin: 10px 0; border: 1px solid rgba(26,58,107,0.1); }
+.loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
 .loading-overlay.show { display: flex; }
 .loading-spinner { width: 60px; height: 60px; border: 4px solid rgba(26,58,107,0.15); border-top: 4px solid #1a3a6b; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(16,185,129,0.95); color: #fff; padding: 16px 32px; border-radius: 16px; z-index: 3000; opacity: 0; transition: all 0.5s; }
+.loading-text { color: #1a3a6b; font-size: 1.2rem; font-weight: 600; }
+.invite-counter { background: #f5f9ff; border-radius: 16px; padding: 18px 20px; margin-bottom: 15px; border: 1px solid rgba(26,58,107,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.invite-counter .label { font-size: 0.85rem; color: #4a6a9b; letter-spacing: 0.5px; font-weight: 500; }
+.invite-counter .count { font-size: 1.4rem; font-weight: 700; color: #1a3a6b; }
+.invite-counter .count span { font-size: 1rem; font-weight: 400; color: #6a7a9b; }
+.invite-counter.confirmed .count { color: #10b981; }
+.firebase-status { font-size: 0.7rem; text-align: center; margin-bottom: 15px; color: #6a7a9b; }
+.firebase-status.online { color: #10b981; font-weight: 600; }
+.firebase-status.offline { color: #f59e0b; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(16,185,129,0.95); color: #fff; padding: 16px 32px; border-radius: 16px; font-weight: 500; z-index: 3000; opacity: 0; transition: all 0.5s; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center; max-width: 90%; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.error { background: rgba(220,38,38,0.95); }
-.self-gen-card { background: #fff; border-radius: 32px; padding: 40px; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(26,58,107,0.1); }
-.self-gen-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #1a3a6b; text-align: center; margin-bottom: 10px; }
-.self-gen-card .subtitle { text-align: center; color: #5a6a8b; margin-bottom: 30px; }
+.self-gen-card { background: #fff; border-radius: 32px; padding: 40px; margin-bottom: 40px; border: 1px solid rgba(26,58,107,0.1); box-shadow: 0 20px 50px rgba(26,58,107,0.1); animation: cardAppear 1s ease forwards; }
+.self-gen-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #1a3a6b; margin-bottom: 10px; text-align: center; font-weight: 700; }
+.self-gen-card .subtitle { text-align: center; color: #5a6a8b; font-size: 0.9rem; margin-bottom: 30px; }
+.self-gen-card .subtitle strong { color: #1a3a6b; }
 .self-gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-.self-gen-field label { display: block; color: #1a3a6b; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-.self-gen-field input { width: 100%; padding: 14px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; }
-.self-gen-btn-submit { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; }
+.self-gen-field label { display: block; color: #1a3a6b; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.self-gen-field input { width: 100%; padding: 14px 16px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; color: #1a3a6b; font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+.self-gen-field input:focus { outline: none; border-color: #4a8ac8; background: #fff; box-shadow: 0 0 0 3px rgba(74,138,200,0.15); }
+.self-gen-btn-submit { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; box-shadow: 0 5px 20px rgba(74,138,200,0.3); }
+.self-gen-btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74,138,200,0.5); }
+.self-gen-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 .self-gen-note { text-align: center; font-size: 0.75rem; color: #8a9ab5; margin-top: 15px; }
-
-/* ============================================================= */
-/* ===== PDF AFFICHE — REPRODUCTION FIDÈLE DE L'IMAGE ======== */
-/* ============================================================= */
-.pdf-affiche {
-    width: 794px;
-    height: 1123px;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Inter', sans-serif;
-    background:
-        radial-gradient(ellipse 700px 500px at 20% 15%, rgba(255,255,255,0.95) 0%, rgba(250,245,230,0.75) 50%, rgba(240,232,210,0.95) 100%),
-        linear-gradient(135deg, #faf5e6 0%, #f5edd6 55%, #ede0c0 100%);
-}
-
-/* Arche italienne décorative en filigrane */
-.pdf-affiche::before {
-    content: '';
-    position: absolute;
-    top: -8%;
-    left: -12%;
-    width: 75%;
-    height: 130%;
-    background:
-        radial-gradient(ellipse at top center, transparent 58%, rgba(190,175,140,0.16) 59%, transparent 61%),
-        radial-gradient(ellipse at top center, transparent 48%, rgba(190,175,140,0.20) 49%, transparent 51%),
-        radial-gradient(ellipse at top center, transparent 38%, rgba(190,175,140,0.26) 39%, transparent 41%),
-        radial-gradient(ellipse at top center, transparent 28%, rgba(190,175,140,0.18) 29%, transparent 31%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* En-tête réseaux sociaux (haut droite) */
-.pdf-header-top {
-    position: absolute;
-    top: 26px;
-    right: 34px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #1a3a6b;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    z-index: 8;
-}
-.pdf-header-top i { color: #1a3a6b; font-size: 1rem; }
-
-/* ===== Textes verticaux (gauche et droite) ===== */
-.pdf-vertical-left {
-    position: absolute;
-    left: 26px;
-    top: 50%;
-    transform: translateY(-50%) rotate(-90deg);
-    transform-origin: center;
-    color: #2b6fc4;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 9px;
-    white-space: nowrap;
-    z-index: 6;
-}
-.pdf-vertical-right {
-    position: absolute;
-    right: 26px;
-    top: 50%;
-    transform: translateY(-50%) rotate(90deg);
-    transform-origin: center;
-    color: #2b6fc4;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 9px;
-    white-space: nowrap;
-    z-index: 6;
-}
-
-/* ===== Logo circulaire Excellentia (haut gauche) ===== */
-.pdf-mini-logo {
-    position: absolute;
-    top: 120px;
-    left: 90px;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 8px 25px rgba(212,175,55,0.3), 0 0 0 6px #e8c76a, 0 0 0 10px rgba(232,199,106,0.22);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    z-index: 7;
-}
-.pdf-mini-logo img { width: 100%; height: 100%; object-fit: cover; }
-
-/* ===== Grand titre "Demi-finale" en bleu ===== */
-.pdf-title {
-    position: absolute;
-    top: 290px;
-    left: 90px;
-    font-family: 'Anton', 'Oswald', sans-serif;
-    font-weight: 400;
-    color: #2b6fc4;
-    line-height: 0.88;
-    letter-spacing: -3px;
-    font-size: 8.5rem;
-    margin: 0;
-    z-index: 6;
-}
-.pdf-title .star {
-    font-size: 0.35em;
-    vertical-align: super;
-    margin-left: 10px;
-    color: #2b6fc4;
-    position: relative;
-    top: -0.7em;
-}
-
-/* ===== Trait bleu décoratif sous le titre ===== */
-.pdf-swoosh {
-    position: absolute;
-    top: 570px;
-    left: 90px;
-    width: 420px;
-    height: 30px;
-    z-index: 6;
-}
-.pdf-swoosh::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: #2b6fc4;
-    border-radius: 5px;
-    transform: rotate(-1.2deg);
-    clip-path: polygon(0 40%, 100% 0, 99% 60%, 1% 100%);
-}
-.pdf-swoosh::after {
-    content: '';
-    position: absolute;
-    top: 14px;
-    left: 55%;
-    width: 45%;
-    height: 5px;
-    background: #2b6fc4;
-    border-radius: 5px;
-    transform: rotate(-3deg);
-    clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 60%);
-}
-
-/* ===== Cadre pointillé "Eloquence en Scène" ===== */
-.pdf-tagline {
-    position: absolute;
-    top: 630px;
-    left: 90px;
-    width: 420px;
-    border: 2.5px dashed #2b6fc4;
-    color: #d63a2f;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 700;
-    font-size: 1.55rem;
-    padding: 8px 20px;
-    text-align: center;
-    letter-spacing: 0.5px;
-    background: rgba(255,255,255,0.4);
-    box-sizing: border-box;
-    z-index: 6;
-}
-
-/* ===== Cases date + lieu (côte à côte) ===== */
-.pdf-info-boxes {
-    position: absolute;
-    top: 715px;
-    left: 90px;
-    width: 420px;
-    display: flex;
-    gap: 18px;
-    z-index: 6;
-}
-.pdf-box {
-    flex: 1;
-    border: 2.5px solid #2b6fc4;
-    padding: 14px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 4px;
-    background: rgba(255,255,255,0.5);
-    box-sizing: border-box;
-}
-.pdf-box i {
-    color: #d63a2f;
-    font-size: 2rem;
-    margin-bottom: 2px;
-}
-.pdf-box .pdf-box-icon-wrap {
-    position: relative;
-    display: inline-block;
-}
-.pdf-box .pdf-clock-badge {
-    position: absolute;
-    bottom: -3px;
-    right: -12px;
-    background: #2b6fc4;
-    color: #fff;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    border: 3px solid #faf5e6;
-}
-.pdf-box .pdf-box-text {
-    color: #2b6fc4;
-    font-weight: 900;
-    font-family: 'Anton', 'Oswald', sans-serif;
-    font-size: 1.15rem;
-    letter-spacing: 0.6px;
-    line-height: 1.15;
-    text-transform: uppercase;
-}
-.pdf-box .pdf-box-text .red { color: #d63a2f; }
-
-/* ===== Ruban rouge "Accès sur invitation" ===== */
-.pdf-ribbon {
-    position: absolute;
-    top: 870px;
-    left: 90px;
-    width: 420px;
-    background: #d63a2f;
-    color: #fff;
-    font-family: 'Anton', 'Oswald', sans-serif;
-    font-size: 1.35rem;
-    font-weight: 400;
-    padding: 12px 20px;
-    text-align: center;
-    letter-spacing: 1.5px;
-    box-shadow: 0 6px 16px rgba(214,58,47,0.4);
-    clip-path: polygon(3% 0, 97% 0, 100% 50%, 97% 100%, 3% 100%, 0 50%);
-    box-sizing: border-box;
-    z-index: 6;
-}
-
-/* ============================================================= */
-/* ===== GRAND MICRO DORÉ VINTAGE (partie droite) ============= */
-/* ============================================================= */
-.pdf-micro-realistic {
-    position: absolute;
-    top: 130px;
-    right: -40px;
-    width: 470px;
-    height: 1050px;
-    z-index: 3;
-    pointer-events: none;
-}
-
-/* Corps du micro (capsule principale) */
-.pdf-micro-realistic .micro-body {
-    position: absolute;
-    top: 0;
-    left: 30px;
-    width: 400px;
-    height: 620px;
-    background: linear-gradient(140deg,
-        #f9e69a 0%, #efd27a 12%, #d9b845 28%,
-        #b8931c 45%, #a07d10 55%, #c9a531 68%,
-        #f0d264 80%, #d9b845 92%, #b8931c 100%);
-    border-radius: 50% 50% 42% 42% / 48% 48% 52% 52%;
-    box-shadow:
-        inset -35px -45px 80px rgba(70,45,0,0.55),
-        inset 30px 40px 70px rgba(255,245,200,0.9),
-        inset 0 0 60px rgba(180,140,20,0.4),
-        0 40px 80px rgba(70,45,0,0.4),
-        0 10px 30px rgba(120,90,0,0.5);
-}
-
-/* Grilles noires horizontales (repeating gradient) */
-.pdf-micro-realistic .micro-body::before {
-    content: '';
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    right: 10%;
-    bottom: 25%;
-    background:
-        repeating-linear-gradient(0deg,
-            transparent 0px, transparent 12px,
-            rgba(25,15,0,0.88) 12px, rgba(25,15,0,0.88) 19px,
-            transparent 19px, transparent 30px,
-            rgba(25,15,0,0.88) 30px, rgba(25,15,0,0.88) 37px);
-    border-radius: 45% 45% 30% 30% / 45% 45% 30% 30%;
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
-    z-index: 2;
-}
-
-/* Reflet métallique vertical */
-.pdf-micro-realistic .micro-body::after {
-    content: '';
-    position: absolute;
-    top: 5%;
-    left: 22%;
-    width: 18%;
-    height: 65%;
-    background: linear-gradient(180deg,
-        rgba(255,255,255,0.95) 0%,
-        rgba(255,255,255,0.5) 40%,
-        rgba(255,255,255,0.15) 70%,
-        transparent 100%);
-    border-radius: 50%;
-    filter: blur(8px);
-    z-index: 3;
-}
-
-/* Base du micro (support noir et doré) */
-.pdf-micro-realistic .micro-base {
-    position: absolute;
-    top: 580px;
-    left: 180px;
-    width: 100px;
-    height: 200px;
-    background: linear-gradient(90deg,
-        #1a1208 0%, #2a1e0a 20%, #4a3614 45%, #2a1e0a 70%, #1a1208 100%);
-    border-radius: 20px 20px 10px 10px;
-    box-shadow: inset -8px 0 15px rgba(0,0,0,0.7), inset 8px 0 15px rgba(180,140,20,0.3);
-    z-index: 2;
-}
-.pdf-micro-realistic .micro-base::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 15px;
-    width: 20px;
-    height: 180px;
-    background: linear-gradient(180deg, rgba(230,200,90,0.5), transparent 70%);
-    border-radius: 10px;
-    filter: blur(3px);
-}
-
-/* ===== MAIN DORÉE tenant le micro ===== */
-.pdf-micro-realistic .micro-hand {
-    position: absolute;
-    top: 540px;
-    left: 30px;
-    width: 420px;
-    height: 480px;
-    z-index: 5;
-}
-
-/* Poignet / paume */
-.pdf-micro-realistic .hand-palm {
-    position: absolute;
-    bottom: 0;
-    left: 40px;
-    width: 350px;
-    height: 280px;
-    background: linear-gradient(150deg,
-        #f9e69a 0%, #efd27a 15%, #d9b845 35%,
-        #b8931c 55%, #c9a531 75%, #f0d264 90%, #b8931c 100%);
-    border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
-    box-shadow:
-        inset -25px -30px 60px rgba(70,45,0,0.55),
-        inset 20px 25px 50px rgba(255,245,200,0.85),
-        0 25px 50px rgba(70,45,0,0.4);
-}
-
-/* Doigt 1 — pouce gauche */
-.pdf-micro-realistic .hand-finger-1 {
-    position: absolute;
-    top: 60px;
-    left: 20px;
-    width: 70px;
-    height: 200px;
-    background: linear-gradient(150deg,
-        #f9e69a 0%, #efd27a 20%, #d9b845 45%,
-        #b8931c 70%, #c9a531 90%, #f0d264 100%);
-    border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-    box-shadow:
-        inset -10px -12px 25px rgba(70,45,0,0.5),
-        inset 8px 10px 20px rgba(255,245,200,0.7),
-        0 8px 20px rgba(70,45,0,0.35);
-    transform: rotate(-25deg);
-    transform-origin: top center;
-}
-
-/* Doigt 2 — index */
-.pdf-micro-realistic .hand-finger-2 {
-    position: absolute;
-    top: 20px;
-    left: 110px;
-    width: 75px;
-    height: 220px;
-    background: linear-gradient(150deg,
-        #f9e69a 0%, #efd27a 20%, #d9b845 45%,
-        #b8931c 70%, #c9a531 90%, #f0d264 100%);
-    border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-    box-shadow:
-        inset -10px -12px 25px rgba(70,45,0,0.5),
-        inset 8px 10px 20px rgba(255,245,200,0.7),
-        0 8px 20px rgba(70,45,0,0.35);
-    transform: rotate(-8deg);
-    transform-origin: top center;
-}
-
-/* Doigt 3 — majeur */
-.pdf-micro-realistic .hand-finger-3 {
-    position: absolute;
-    top: 15px;
-    left: 195px;
-    width: 80px;
-    height: 235px;
-    background: linear-gradient(150deg,
-        #f9e69a 0%, #efd27a 20%, #d9b845 45%,
-        #b8931c 70%, #c9a531 90%, #f0d264 100%);
-    border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-    box-shadow:
-        inset -10px -12px 25px rgba(70,45,0,0.5),
-        inset 8px 10px 20px rgba(255,245,200,0.7),
-        0 8px 20px rgba(70,45,0,0.35);
-    transform: rotate(3deg);
-    transform-origin: top center;
-}
-
-/* Doigt 4 — annulaire */
-.pdf-micro-realistic .hand-finger-4 {
-    position: absolute;
-    top: 40px;
-    left: 285px;
-    width: 75px;
-    height: 210px;
-    background: linear-gradient(150deg,
-        #f9e69a 0%, #efd27a 20%, #d9b845 45%,
-        #b8931c 70%, #c9a531 90%, #f0d264 100%);
-    border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-    box-shadow:
-        inset -10px -12px 25px rgba(70,45,0,0.5),
-        inset 8px 10px 20px rgba(255,245,200,0.7),
-        0 8px 20px rgba(70,45,0,0.35);
-    transform: rotate(12deg);
-    transform-origin: top center;
-}
-
-/* Écharpe rouge sous le micro */
-.pdf-micro-realistic .micro-scarf {
-    position: absolute;
-    bottom: 30px;
-    left: -30px;
-    width: 500px;
-    height: 200px;
-    background: linear-gradient(160deg,
-        #a01810 0%, #c62a1e 20%, #d63a2f 45%,
-        #b3241a 70%, #8a0f08 100%);
-    border-radius: 55% 30% 20% 60% / 60% 50% 30% 50%;
-    box-shadow:
-        inset -20px -25px 50px rgba(60,0,0,0.6),
-        inset 15px 18px 35px rgba(255,120,100,0.25),
-        0 20px 45px rgba(60,0,0,0.45);
-    transform: rotate(-8deg);
-    z-index: 4;
-}
-
-/* ===== Bloc invité (par-dessus le bas du micro) ===== */
-.pdf-personal {
-    position: absolute;
-    top: 950px;
-    left: 60px;
-    right: 60px;
-    background: rgba(255,255,255,0.96);
-    border-radius: 18px;
-    padding: 16px 26px;
-    border: 2px solid rgba(43,111,196,0.35);
-    box-shadow: 0 12px 30px rgba(26,58,107,0.18);
-    text-align: center;
-    z-index: 10;
-}
-.pdf-personal .pdf-salutation {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #1a3a6b;
-    margin-bottom: 4px;
-}
-.pdf-personal .pdf-guest-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    color: #2b6fc4;
-    margin-bottom: 4px;
-    line-height: 1.1;
-}
-.pdf-personal .pdf-message {
-    font-size: 0.75rem;
-    line-height: 1.4;
-    color: #3a4a6b;
-}
-
-/* ===== QR code (bas droite) ===== */
-.pdf-qr {
-    position: absolute;
-    right: 50px;
-    bottom: 40px;
-    width: 150px;
-    background: rgba(255,255,255,0.96);
-    border-radius: 14px;
-    padding: 10px;
-    text-align: center;
-    border: 2px solid rgba(43,111,196,0.35);
-    box-shadow: 0 12px 30px rgba(26,58,107,0.2);
-    z-index: 11;
-}
-.pdf-qr .pdf-qr-title {
-    font-size: 0.55rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #1a3a6b;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-.pdf-qr canvas,
-.pdf-qr img {
-    border-radius: 6px;
-    background: #fff;
-    padding: 3px;
-    width: 110px !important;
-    height: 110px !important;
-}
-.pdf-qr .pdf-qr-note {
-    font-size: 0.5rem;
-    color: #6a7a9b;
-    margin-top: 4px;
-}
-
-/* ===== Info événement (bas gauche) ===== */
-.pdf-event-info {
-    position: absolute;
-    left: 50px;
-    bottom: 40px;
-    width: 440px;
-    background: rgba(255,255,255,0.96);
-    border-radius: 14px;
-    padding: 14px 18px;
-    border: 2px solid rgba(43,111,196,0.35);
-    box-shadow: 0 12px 30px rgba(26,58,107,0.2);
-    z-index: 11;
-}
-.pdf-event-info .pdf-event-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #1a3a6b;
-    font-weight: 600;
-    font-size: 0.8rem;
-    margin-bottom: 6px;
-}
-.pdf-event-info .pdf-event-row:last-child { margin-bottom: 0; }
-.pdf-event-info .pdf-event-row i {
-    color: #d63a2f;
-    width: 20px;
-    font-size: 0.95rem;
-    text-align: center;
-}
-.pdf-event-info .pdf-event-row span { color: #2b6fc4; }
-
 @media (max-width: 768px) {
     .container { padding: 30px 16px; }
     .card-body { padding: 30px 25px; }
@@ -648,7 +121,6 @@ h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700
     .admin-btn, .download-btn, .self-gen-btn { padding: 8px 16px; font-size: 0.75rem; }
     .self-gen-card { padding: 25px 20px; }
     .self-gen-row { grid-template-columns: 1fr; gap: 15px; }
-    .self-gen-card h2 { font-size: 1.5rem; }
     .structure-logo-wrap { width: 90px; height: 90px; }
 }
 </style>
@@ -669,106 +141,183 @@ h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700
 <div id="adminModal" class="modal">
     <div class="modal-content">
         <h2><i class="fas fa-crown"></i> Administration</h2>
-        <div class="firebase-status" id="firebaseStatus"><i class="fas fa-circle-notch fa-spin"></i> Connexion...</div>
+        <div class="firebase-status" id="firebaseStatus"><i class="fas fa-circle-notch fa-spin"></i> Connexion à la base de données...</div>
         <input type="password" id="adminPassword" class="password-input" placeholder="Code d'accès">
-        <button class="btn-confirm" onclick="checkAdminAccess()" style="background:#4a8ac8;">Accéder</button>
-        <div id="adminPanel" style="display:none; margin-top:30px">
+        <button class="btn-confirm" onclick="checkAdminAccess()" style="background:#4a8ac8;color:#fff;"><i class="fas fa-unlock-alt"></i> Accéder</button>
+        <div id="adminPanel" style="display:none;margin-top:30px">
             <div class="generator-section">
                 <h3><i class="fas fa-qrcode"></i> Générer une invitation</h3>
-                <div class="input-group"><label>Nom complet *</label><input type="text" id="guestName" placeholder="Ex: Jean-Claude Mputu"></div>
-                <div class="input-group"><label>Numéro WhatsApp</label><input type="tel" id="guestPhone" placeholder="Ex: 243812345678"></div>
-                <button class="btn-confirm" onclick="generateInvitation()" style="background:#4a8ac8;"><i class="fas fa-magic"></i> Générer</button>
-                <div id="inviteResult" style="display:none; margin-top:20px;">
+                <p style="font-size:0.8rem;color:#6a7a9b;margin-bottom:15px;">Créez un lien unique, puis envoyez-le à l'invité via WhatsApp.</p>
+                <div class="input-group"><label>Nom complet de l'invité *</label><input type="text" id="guestName" placeholder="Ex: Jean-Claude Mputu"></div>
+                <div class="input-group"><label>Numéro WhatsApp (avec indicatif)</label><input type="tel" id="guestPhone" placeholder="Ex: 243812345678"></div>
+                <button class="btn-confirm" onclick="generateInvitation()" style="background:#4a8ac8;"><i class="fas fa-magic"></i> Générer l'invitation</button>
+                <div id="inviteResult" style="display:none;margin-top:20px;padding:15px;background:#fff;border-radius:12px;border:1px solid rgba(26,58,107,0.1);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                        <span style="color:#1a3a6b;font-weight:600;"><i class="fas fa-link"></i> Lien d'invitation :</span>
+                        <button onclick="copyLink()" style="background:#f5f9ff;border:1px solid rgba(26,58,107,0.2);color:#1a3a6b;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:600;"><i class="fas fa-copy"></i> Copier</button>
+                    </div>
                     <div class="invite-link-display" id="inviteLinkDisplay">https://...</div>
                     <button class="btn-whatsapp-send" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Envoyer sur WhatsApp</button>
                 </div>
             </div>
-            <div id="guestList" style="margin-top:20px;"></div>
+            <div class="invite-counter"><span class="label"><i class="fas fa-users"></i> Total invités générés</span><span class="count" id="totalInviteCount">0 <span>personnes</span></span></div>
+            <div class="invite-counter confirmed"><span class="label"><i class="fas fa-check-circle"></i> Présences confirmées</span><span class="count" id="confirmedCount">0 <span>personnes</span></span></div>
+            <h3 style="color:#1a3a6b;"><i class="fas fa-list"></i> Liste des invités <span style="font-size:0.7rem;color:#8a9ab5;">(temps réel)</span></h3>
+            <div id="guestList" class="guest-list"><p style="color:#8a9ab5;text-align:center;padding:20px;">Chargement...</p></div>
         </div>
     </div>
 </div>
 <div class="container">
     <div class="self-gen-card" id="selfGenCard" style="display:none;">
         <h2><i class="fas fa-wand-magic-sparkles" style="color:#4a8ac8;"></i> Générez votre invitation</h2>
-        <p class="subtitle">Entrez votre nom pour votre invitation personnalisée.</p>
+        <p class="subtitle">Entrez votre nom pour recevoir votre invitation personnalisée à la <strong>demi-finale</strong> d'Éloquence en Scène.</p>
         <div class="self-gen-row">
-            <div class="self-gen-field"><label>Nom complet *</label><input type="text" id="selfName" placeholder="Ex: Jean-Claude Mputu"></div>
-            <div class="self-gen-field"><label>WhatsApp (facultatif)</label><input type="tel" id="selfPhone" placeholder="Ex: 243812345678"></div>
+            <div class="self-gen-field"><label>Nom complet *</label><input type="text" id="selfName" placeholder="Ex: Jean-Claude Mputu" autocomplete="name"></div>
+            <div class="self-gen-field"><label>Numéro WhatsApp (facultatif)</label><input type="tel" id="selfPhone" placeholder="Ex: 243812345678" autocomplete="tel"></div>
         </div>
-        <button class="self-gen-btn-submit" id="selfGenSubmit" onclick="generateSelfInvitation()"><i class="fas fa-magic"></i> Créer mon invitation</button>
-        <p class="self-gen-note"><i class="fas fa-lock"></i> Informations confidentielles.</p>
+        <button class="self-gen-btn-submit" id="selfGenSubmit" onclick="generateSelfInvitation()"><i class="fas fa-magic"></i> Créer mon invitation personnalisée</button>
+        <p class="self-gen-note"><i class="fas fa-lock"></i> Vos informations restent confidentielles et servent uniquement à votre invitation.</p>
     </div>
     <div class="invitation-card" id="invitationCard">
         <div class="card-header">
-            <div class="structure-logo-wrap"><img src="IMG_1812.jpeg" alt="Logo" crossorigin="anonymous"></div>
+            <div class="structure-logo-wrap"><img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" crossorigin="anonymous"></div>
             <div class="logo-accent"><i class="fas fa-microphone-alt"></i></div>
             <div class="badge-premium">★ INVITATION OFFICIELLE — DEMI-FINALE</div>
             <h1>Éloquence en Scène</h1>
             <div class="event-date">📅 Samedi 10 Octobre 2026 • 08h00 - 12h00</div>
         </div>
-        <div class="card-body">
-            <div class="salutation">Cher/Chère,</div>
-            <div class="guest-name-large" id="guestNameDisplay">[Nom de l'invité]</div>
-            <div class="invitation-text">
-                <p>Nous avons le plaisir de vous inviter à la <strong>demi-finale</strong> du concours <strong>"Éloquence en Scène"</strong>.</p>
-                <p>Venez vivre une expérience unique dans un cadre prestigieux.</p>
-            </div>
-            <div class="event-details">
-                <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 10 Octobre 2026</p>
-                <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 08h00 - 12h00</p>
-                <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
-            </div>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.4489522506047!2d15.297256!3d-4.324837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a33140c1c2c2b%3A0x7c1c2c2b1a6a3314!2sKinshasa!5e0!3m2!1sfr!2sfr!4v1712000000000" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-            <div class="closing">
-                <p>Dans l'attente de votre présence, veuillez agréer nos salutations distinguées.</p>
-                <p style="margin-top:10px;font-weight:600;color:#1a3a6b;">— L'équipe Excellentia Academia</p>
+        <div class="card-body" id="invitationBody">
+            <div class="invitation-letter">
+                <div class="salutation">Cher/Chère,</div>
+                <div class="guest-name-large" id="guestNameDisplay">[Nom de l'invité]</div>
+                <div class="invitation-text">
+                    <p>Nous avons le plaisir de vous inviter à la <strong>demi-finale</strong> de notre concours <strong>"Éloquence en Scène"</strong>, un événement d'exception dédié à l'art oratoire et à la célébration des talents.</p>
+                    <p>Venez vivre une expérience unique dans un cadre prestigieux, où l'éloquence et la convivialité se rencontrent.</p>
+                </div>
+                <div class="event-details">
+                    <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 10 Octobre 2026</p>
+                    <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 08h00 - 12h00</p>
+                    <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
+                    <p><i class="fas fa-trophy"></i> <strong>Étape :</strong> Demi-finale</p>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.4489522506047!2d15.297256!3d-4.324837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a33140c1c2c2b%3A0x7c1c2c2b1a6a3314!2sKinshasa!5e0!3m2!1sfr!2sfr!4v1712000000000" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="map-link"><a href="https://maps.google.com/maps?q=Silikin+Village+Kinshasa" target="_blank"><i class="fas fa-directions"></i> Voir l'itinéraire sur Google Maps</a></div>
+                <div class="closing">
+                    <p>Dans l'attente de votre présence, nous vous prions d'agréer nos salutations distinguées.</p>
+                    <p style="margin-top:10px;font-weight:600;color:#1a3a6b;">— L'équipe Excellentia Academia</p>
+                </div>
             </div>
             <div class="qr-section">
                 <div class="qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
                 <div id="qrcode"></div>
+                <div class="qr-note">Éloquence en scène — Demi-finale</div>
             </div>
             <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()"><i class="fas fa-check-circle"></i> Confirmer ma présence</button>
             <button class="btn-download-invite" onclick="downloadInvitation()"><i class="fas fa-download"></i> Télécharger mon invitation</button>
         </div>
     </div>
 </div>
+
+<!-- ============================================================
+     FIREBASE (intact)
+============================================================ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+import {
+    getFirestore, collection, doc, setDoc, getDoc, deleteDoc,
+    onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDcg7lZWfD3B9NyjqewwPRgH8MM3h1wlhc",
+    authDomain: "fond-903c9.firebaseapp.com",
+    projectId: "fond-903c9",
+    storageBucket: "fond-903c9.firebasestorage.app",
+    messagingSenderId: "551417667967",
+    appId: "1:551417667967:web:21aa811c6cecf70cd7fa4a",
+    measurementId: "G-KD17CE3YZ1"
+};
+
+const app = initializeApp(firebaseConfig);
+try { getAnalytics(app); } catch(e){}
+const db = getFirestore(app);
+const COLLECTION = 'invites_demifinale';
+
+window.__db = db;
+window.__collection = collection;
+window.__doc = doc;
+window.__setDoc = setDoc;
+window.__getDoc = getDoc;
+window.__deleteDoc = deleteDoc;
+window.__onSnapshot = onSnapshot;
+window.__query = query;
+window.__orderBy = orderBy;
+window.__serverTimestamp = serverTimestamp;
+window.__COLLECTION = COLLECTION;
+window.__firebaseReady = true;
+
+const statusEl = document.getElementById('firebaseStatus');
+if (statusEl) {
+    statusEl.classList.add('online');
+    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Base de données connectée — synchronisation temps réel active';
+}
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<!-- ============================================================
+     LOGIQUE PRINCIPALE
+============================================================ -->
 <script>
-// Toast
-function showToast(msg, isErr) {
+function showToast(msg, isErr = false) {
     const t = document.getElementById('toast');
-    t.textContent = msg; t.className = 'toast' + (isErr ? ' error' : ''); t.classList.add('show');
-    clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('show'), 5000);
+    t.textContent = msg;
+    t.className = 'toast' + (isErr ? ' error' : '');
+    t.classList.add('show');
+    clearTimeout(t._to);
+    t._to = setTimeout(() => t.classList.remove('show'), 5000);
 }
 
-// Particles
-(function(){
-    const c = document.getElementById('particles'), ctx = c.getContext('2d');
-    let w, h, ps = [];
-    function resize(){ w = c.width = innerWidth; h = c.height = innerHeight; }
+(function() {
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = canvas.width = innerWidth; height = canvas.height = innerHeight; }
     addEventListener('resize', resize); resize();
-    for (let i = 0; i < 80; i++) ps.push({ x: Math.random()*w, y: Math.random()*h, s: Math.random()*2+0.5, vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.5, o: Math.random()*0.4+0.15 });
-    function anim(){
-        ctx.clearRect(0,0,w,h);
-        ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x<0||p.x>w) p.vx*=-1; if (p.y<0||p.y>h) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fillStyle=`rgba(26,58,107,${p.o})`; ctx.fill(); });
+    class P {
+        constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.s = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.o = Math.random()*0.4+0.15; }
+        update() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>width) this.vx*=-1; if (this.y<0||this.y>height) this.vy*=-1; }
+        draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fillStyle = `rgba(26,58,107,${this.o})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 80; i++) particles.push(new P());
+    function anim() {
+        ctx.clearRect(0,0,width,height);
+        particles.forEach(p => { p.update(); p.draw(); });
         requestAnimationFrame(anim);
     }
     anim();
 })();
 
-function generateId(){ return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 
-function generateQRCode(data) {
-    const el = document.getElementById('qrcode');
-    el.innerHTML = '';
-    try { new QRCode(el, { text: data, width: 150, height: 150, colorDark: '#1a3a6b', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H }); }
-    catch(e) { el.innerHTML = ''; }
+function generateQRCodeInto(container, data) {
+    container.innerHTML = '';
+    try {
+        new QRCode(container, {
+            text: data || 'https://eloquence-evenement.com/invitation',
+            width: 150, height: 150,
+            colorDark: '#1a3a6b', colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } catch(e) { container.innerHTML = '<p style="color:#4a8ac8;">QR</p>'; }
 }
+function generateQRCode(data) { generateQRCodeInto(document.getElementById('qrcode'), data); }
 
 function displayGuest(name) {
     const el = document.getElementById('guestNameDisplay');
-    if (name && name.trim()) el.innerHTML = `<strong>${name.trim()}</strong>`;
+    if (name && name.trim() !== '') el.innerHTML = `<strong>${name.trim()}</strong>`;
     else el.innerHTML = '[Nom de l\'invité]';
 }
 
@@ -780,82 +329,213 @@ function getUrlParams() {
 function scrollToSelfGen() {
     const c = document.getElementById('selfGenCard');
     c.style.display = 'block';
-    setTimeout(() => c.scrollIntoView({ behavior: 'smooth' }), 100);
+    setTimeout(() => {
+        c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => document.getElementById('selfName').focus(), 600);
+    }, 100);
 }
 
 async function generateSelfInvitation() {
-    const name = document.getElementById('selfName').value.trim();
-    const phone = document.getElementById('selfPhone').value.trim();
+    const nameInput = document.getElementById('selfName');
+    const phoneInput = document.getElementById('selfPhone');
     const btn = document.getElementById('selfGenSubmit');
-    if (!name || name.length < 2) { showToast('⚠️ Entrez votre nom', true); return; }
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    if (!name || name.length < 2) { showToast('⚠️ Entrez votre nom complet', true); nameInput.focus(); return; }
+    if (!window.__firebaseReady) { showToast('⚠️ Connexion en cours...', true); return; }
+    if (localStorage.getItem('selfInviteGenerated')) {
+        if (!confirm('Vous avez déjà généré une invitation. En créer une nouvelle ?')) return;
+    }
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
     const id = generateId();
     try {
-        localStorage.setItem('selfInvite_' + id, JSON.stringify({ id, name, phone, confirmed: false }));
+        await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
+            id: id, name: name, phone: phone, confirmed: false,
+            createdAt: window.__serverTimestamp(), createdBy: 'self'
+        });
+        localStorage.setItem('selfInviteGenerated', id);
         const url = `${location.origin}${location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
-        showToast('✅ Invitation créée !');
+        showToast('✅ Invitation créée ! Redirection...');
         setTimeout(() => location.href = url, 800);
     } catch(e) {
-        showToast('❌ Erreur', true);
-        btn.disabled = false;
+        console.error(e); showToast('❌ Erreur', true);
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic"></i> Créer mon invitation personnalisée';
     }
 }
 
-function loadInvitation() {
+async function loadInvitation() {
     const p = getUrlParams();
-    displayGuest(p.guest);
-    if (p.id) generateQRCode(`https://eloquence-evenement.com/invitation?id=${p.id}`);
-    else {
+    const guestName = p.guest || '';
+    const inviteId = p.id || '';
+    if (!guestName && !inviteId) {
         document.getElementById('selfGenCard').style.display = 'block';
+        displayGuest('');
         generateQRCode('https://eloquence-evenement.com/invitation');
+        return;
+    }
+    displayGuest(guestName);
+    generateQRCode(`https://eloquence-evenement.com/invitation?id=${inviteId}&guest=${encodeURIComponent(guestName)}`);
+    if (inviteId && window.__firebaseReady) {
+        try {
+            const docRef = window.__doc(window.__db, window.__COLLECTION, inviteId);
+            const snap = await window.__getDoc(docRef);
+            if (snap.exists() && snap.data().confirmed) {
+                const btn = document.getElementById('confirmBtn');
+                btn.disabled = true;
+                btn.innerHTML = '✅ Présence déjà confirmée';
+                btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+            }
+            if (snap.exists()) await window.__setDoc(docRef, { lastViewed: window.__serverTimestamp() }, { merge: true });
+        } catch(e) { console.warn(e); }
     }
 }
 
-function confirmPresence() {
+async function confirmPresence() {
     const btn = document.getElementById('confirmBtn');
     btn.disabled = true;
-    btn.innerHTML = '✅ Présence confirmée !';
-    btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-    showToast('✅ Votre présence a été confirmée !');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+    const inviteId = getUrlParams().id;
+    if (!inviteId) { showToast('⚠️ ID manquant', true); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence'; return; }
+    if (!window.__firebaseReady) { showToast('⚠️ Connexion...', true); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence'; return; }
+    try {
+        const docRef = window.__doc(window.__db, window.__COLLECTION, inviteId);
+        const snap = await window.__getDoc(docRef);
+        const guestName = getUrlParams().guest || 'Invité';
+        if (!snap.exists()) {
+            await window.__setDoc(docRef, { id: inviteId, name: guestName, phone: '', confirmed: true, confirmedAt: window.__serverTimestamp(), createdAt: window.__serverTimestamp() });
+        } else {
+            await window.__setDoc(docRef, { confirmed: true, confirmedAt: window.__serverTimestamp() }, { merge: true });
+        }
+        btn.innerHTML = '✅ Présence confirmée !';
+        btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+        showToast('✅ Votre présence a été confirmée !');
+    } catch(e) {
+        console.error(e); showToast('❌ Erreur', true);
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer ma présence';
+    }
 }
 
-function showAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+const ADMIN_PASSWORD = 'admin2026';
+function showAdminModal() {
+    document.getElementById('adminModal').style.display = 'flex';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('inviteResult').style.display = 'none';
+}
 document.getElementById('adminModal').addEventListener('click', function(e){ if (e.target === this) this.style.display = 'none'; });
 function checkAdminAccess() {
-    if (document.getElementById('adminPassword').value === 'admin2026') {
+    if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
         document.getElementById('adminPanel').style.display = 'block';
+        startRealtimeListener();
     } else { showToast('❌ Code incorrect', true); }
 }
 
+let unsubscribeGuests = null;
+function startRealtimeListener() {
+    if (!window.__firebaseReady) { setTimeout(startRealtimeListener, 500); return; }
+    if (unsubscribeGuests) unsubscribeGuests();
+    const q = window.__query(window.__collection(window.__db, window.__COLLECTION), window.__orderBy('createdAt', 'desc'));
+    unsubscribeGuests = window.__onSnapshot(q, (snap) => {
+        const guests = [];
+        snap.forEach(d => guests.push({ id: d.id, ...d.data() }));
+        renderGuestList(guests);
+    }, (err) => { console.error(err); showToast('⚠️ Erreur sync', true); });
+}
+
+function renderGuestList(guests) {
+    const listDiv = document.getElementById('guestList');
+    const total = guests.length;
+    const confirmedCount = guests.filter(g => g.confirmed).length;
+    document.getElementById('totalInviteCount').innerHTML = `${total} <span>personne${total > 1 ? 's' : ''}</span>`;
+    document.getElementById('confirmedCount').innerHTML = `${confirmedCount} <span>personne${confirmedCount > 1 ? 's' : ''}</span>`;
+    if (total === 0) {
+        listDiv.innerHTML = '<p style="color:#8a9ab5;text-align:center;padding:20px;">Aucun invité pour le moment</p>';
+        return;
+    }
+    let html = '';
+    guests.forEach(g => {
+        const name = g.name || 'Inconnu';
+        const phone = g.phone || '';
+        const confirmed = g.confirmed || false;
+        const statusClass = confirmed ? 'status-confirmed' : 'status-pending';
+        const statusText = confirmed ? '✅ Confirmé' : '⏳ En attente';
+        const origin = g.createdBy === 'self' ? '🖊️ Auto' : '👤 Admin';
+        html += `
+            <div class="guest-item">
+                <div>
+                    <strong style="color:#1a3a6b;">${name}</strong>
+                    <div style="font-size:0.8rem;color:#6a7a9b;">${phone || 'Pas de numéro'} • ${origin}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <span class="${statusClass}">${statusText}</span>
+                    ${phone ? `<a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>` : ''}
+                    <button class="btn-delete" onclick="deleteGuest('${g.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+    });
+    listDiv.innerHTML = html;
+}
+
+async function deleteGuest(id) {
+    if (!confirm('Supprimer cet invité ?')) return;
+    try {
+        await window.__deleteDoc(window.__doc(window.__db, window.__COLLECTION, id));
+        showToast('🗑️ Invité supprimé');
+    } catch(e) { showToast('❌ Erreur', true); }
+}
+
+let lastGeneratedName = '', lastGeneratedPhone = '';
 async function generateInvitation() {
     const name = document.getElementById('guestName').value.trim();
     const phone = document.getElementById('guestPhone').value.trim();
     if (!name) { showToast('⚠️ Nom requis', true); return; }
+    if (!window.__firebaseReady) { showToast('⚠️ Connexion...', true); return; }
     const id = generateId();
-    localStorage.setItem('selfInvite_' + id, JSON.stringify({ id, name, phone, confirmed: false }));
-    const url = `${location.origin}${location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
-    document.getElementById('inviteResult').style.display = 'block';
-    document.getElementById('inviteLinkDisplay').textContent = url;
-    document.getElementById('inviteLinkDisplay').dataset.url = url;
-    document.getElementById('inviteLinkDisplay').dataset.name = name;
-    document.getElementById('inviteLinkDisplay').dataset.phone = phone;
-    showToast(`✅ Invitation pour ${name}`);
+    try {
+        await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
+            id: id, name: name, phone: phone, confirmed: false,
+            createdAt: window.__serverTimestamp(), createdBy: 'admin'
+        });
+        lastGeneratedName = name;
+        lastGeneratedPhone = phone;
+        const url = `${location.origin}${location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
+        document.getElementById('inviteResult').style.display = 'block';
+        document.getElementById('inviteLinkDisplay').textContent = url;
+        showToast(`✅ Invitation générée pour ${name} !`);
+        document.getElementById('guestName').value = '';
+        document.getElementById('guestPhone').value = '';
+    } catch(e) { console.error(e); showToast('❌ Erreur', true); }
+}
+
+function copyLink() {
+    const link = document.getElementById('inviteLinkDisplay').textContent;
+    navigator.clipboard.writeText(link).then(() => showToast('📋 Lien copié !'))
+    .catch(() => {
+        const r = document.createRange();
+        const s = getSelection();
+        const el = document.getElementById('inviteLinkDisplay');
+        r.selectNode(el); s.removeAllRanges(); s.addRange(r);
+        document.execCommand('copy'); showToast('📋 Lien copié !');
+    });
 }
 
 function sendWhatsApp() {
-    const el = document.getElementById('inviteLinkDisplay');
-    const url = el.dataset.url; const name = el.dataset.name; const phone = el.dataset.phone;
-    if (!url || !name) { showToast('⚠️ Générez d\'abord', true); return; }
-    let p = (phone || '').replace(/[^0-9]/g,'');
+    const phone = (lastGeneratedPhone || '').trim();
+    const name = (lastGeneratedName || '').trim();
+    const link = document.getElementById('inviteLinkDisplay').textContent.trim();
+    if (!phone) { showToast('⚠️ Numéro manquant', true); return; }
+    if (!name) { showToast('⚠️ Nom manquant', true); return; }
+    if (!link || !link.startsWith('http')) { showToast('⚠️ Lien invalide', true); return; }
+    let p = phone.replace(/[^0-9]/g,'');
     if (p.length === 10 && p.startsWith('0')) p = '243' + p.substring(1);
     if (p.length < 8) { showToast('⚠️ Numéro invalide', true); return; }
-    const msg = `🎤 *RAPPEL — Éloquence en Scène*\n\nBonjour ${name},\n\n📅 Samedi 10 Octobre 2026\n⏰ 08h00 - 12h00\n📍 Silikin Village\n\n✅ Confirmez votre présence :\n🔗 ${url}\n\n— Excellentia Academia`;
+    const msg = `🎤 *RAPPEL — Éloquence en Scène (Demi-finale)* 🎤\n\nBonjour ${name},\n\nNous vous rappelons que la *demi-finale* de notre concours *"Éloquence en Scène"* aura lieu le :\n\n📅 *Samedi 10 Octobre 2026*\n⏰ 08h00 - 12h00\n📍 Silikin Village, Kinshasa\n\n✅ *Merci de confirmer votre présence* en cliquant sur le lien ci-dessous :\n\n🔗 ${link}\n\nVotre confirmation nous permettra de mieux vous accueillir.\n\nÀ très bientôt ! 🎙️\n— L'équipe Excellentia Academia`;
     window.open(`https://wa.me/${p}?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast(`💬 WhatsApp ouvert`);
+    showToast(`💬 WhatsApp ouvert pour ${name}`);
 }
 
 // ============================================================
-// PDF — REPRODUCTION DE L'AFFICHE
+// PDF — AFFICHE EN IMAGE + BANDEAU BLANC EN BAS
 // ============================================================
 function buildPdfAffiche(guestName) {
     const qrCanvas = document.querySelector('#qrcode canvas');
@@ -869,93 +549,30 @@ function buildPdfAffiche(guestName) {
     wrapper.style.zIndex = '-1';
 
     wrapper.innerHTML = `
-        <div class="pdf-affiche" id="pdfAffiche">
-            <div class="pdf-header-top">
-                <i class="fab fa-facebook"></i>
-                <i class="fab fa-instagram"></i>
-                <i class="fab fa-tiktok"></i>
-                <span>EXCELLENTIA ACADEMIA</span>
-            </div>
+        <div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Inter',sans-serif;background:#faf5e6;">
+            <!-- AFFICHE ENTIÈRE (100% fidèle) -->
+            <img src="731c4eec-d210-4c20-8847-5fafe2c86618.jpeg" alt="Affiche"
+                crossorigin="anonymous"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;">
 
-            <div class="pdf-vertical-left">CONCOURS D'ÉLOQUENCE</div>
-            <div class="pdf-vertical-right">CONCOURS D'ÉLOQUENCE</div>
-
-            <div class="pdf-mini-logo">
-                <img src="IMG_1812.jpeg" alt="Logo" crossorigin="anonymous">
-            </div>
-
-            <div class="pdf-title">
-                Demi-<br>finale<span class="star">★</span>
-            </div>
-
-            <div class="pdf-swoosh"></div>
-
-            <div class="pdf-tagline">Eloquence en Scène</div>
-
-            <div class="pdf-info-boxes">
-                <div class="pdf-box">
-                    <div class="pdf-box-icon-wrap">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="pdf-clock-badge"><i class="fas fa-clock" style="font-size:0.6rem;"></i></span>
+            <!-- BANDEAU BLANC EN BAS -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.97);padding:16px 28px 20px 28px;border-top:3px solid #2b6fc4;z-index:10;display:flex;align-items:center;gap:18px;box-shadow:0 -8px 25px rgba(26,58,107,0.15);">
+                <div style="flex:1;">
+                    <div style="font-size:0.82rem;font-weight:600;color:#1a3a6b;margin-bottom:4px;letter-spacing:0.5px;">Cher/Chère,</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:700;color:#2b6fc4;line-height:1.1;margin-bottom:6px;">${displayName}</div>
+                    <div style="font-size:0.7rem;color:#3a4a6b;line-height:1.4;">
+                        Nous avons le plaisir de vous convier à la <strong>demi-finale</strong><br>
+                        du concours <strong>« Éloquence en Scène »</strong>.
                     </div>
-                    <div class="pdf-box-text">
-                        SAMEDI<br>
-                        <span class="red">10 OCT.</span><br>
-                        À 8H00'
+                    <div style="margin-top:8px;display:flex;gap:16px;font-size:0.68rem;color:#2b6fc4;font-weight:600;">
+                        <span><i class="fas fa-calendar-alt" style="color:#d63a2f;margin-right:4px;"></i>10 Oct. 2026</span>
+                        <span><i class="fas fa-map-marker-alt" style="color:#d63a2f;margin-right:4px;"></i>Silikin Village</span>
                     </div>
                 </div>
-                <div class="pdf-box">
-                    <i class="fas fa-map-marker-alt" style="font-size:2.2rem;"></i>
-                    <div class="pdf-box-text">
-                        SILIKIN<br>
-                        <span class="red">VILLAGE</span>
-                    </div>
+                <div style="width:110px;text-align:center;padding:8px;background:#fff;border-radius:10px;border:2px solid rgba(43,111,196,0.3);">
+                    <div style="font-size:0.5rem;text-transform:uppercase;letter-spacing:1.5px;color:#1a3a6b;font-weight:700;margin-bottom:4px;">Demi-finale</div>
+                    ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR" style="width:80px;height:80px;border-radius:4px;">` : ''}
                 </div>
-            </div>
-
-            <div class="pdf-ribbon">Accès sur invitation</div>
-
-            <!-- MICRO DORÉ + MAIN + ÉCHARPE -->
-            <div class="pdf-micro-realistic">
-                <div class="micro-scarf"></div>
-                <div class="micro-body"></div>
-                <div class="micro-base"></div>
-                <div class="micro-hand">
-                    <div class="hand-finger-1"></div>
-                    <div class="hand-finger-2"></div>
-                    <div class="hand-finger-3"></div>
-                    <div class="hand-finger-4"></div>
-                    <div class="hand-palm"></div>
-                </div>
-            </div>
-
-            <!-- BLOC INVITÉ -->
-            <div class="pdf-personal">
-                <div class="pdf-salutation">Cher/Chère,</div>
-                <div class="pdf-guest-name">${displayName}</div>
-                <div class="pdf-message">
-                    Nous avons le plaisir de vous convier à la <strong>demi-finale</strong> du concours <strong>« Éloquence en Scène »</strong>.<br>
-                    Votre présence sera un honneur.
-                </div>
-            </div>
-
-            <!-- INFOS ÉVÉNEMENT -->
-            <div class="pdf-event-info">
-                <div class="pdf-event-row">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Samedi 10 Octobre 2026 • 08h00 - 12h00</span>
-                </div>
-                <div class="pdf-event-row">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Silikin Village, Kinshasa</span>
-                </div>
-            </div>
-
-            <!-- QR CODE -->
-            <div class="pdf-qr">
-                <div class="pdf-qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
-                ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR">` : ''}
-                <div class="pdf-qr-note">Éloquence en scène</div>
             </div>
         </div>
     `;
@@ -968,14 +585,16 @@ async function downloadInvitation() {
     overlay.classList.add('show');
     const params = getUrlParams();
     const wrapper = buildPdfAffiche(params.guest || '');
-    const affiche = wrapper.querySelector('#pdfAffiche');
+    const affiche = wrapper.firstElementChild;
+
     await new Promise(r => setTimeout(r, 900));
+
     try {
         const canvas = await html2canvas(affiche, {
             scale: 2,
             backgroundColor: '#faf5e6',
-            useCORS: true,
             allowTaint: false,
+            useCORS: true,
             logging: false,
             width: affiche.offsetWidth,
             height: affiche.offsetHeight,
@@ -986,7 +605,7 @@ async function downloadInvitation() {
         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
         pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
         pdf.save('invitation-eloquence-demifinale.pdf');
-        showToast('📥 PDF téléchargé !');
+        showToast('📥 Invitation PDF téléchargée !');
     } catch(e) {
         console.error(e);
         showToast('❌ Erreur téléchargement', true);
@@ -996,7 +615,14 @@ async function downloadInvitation() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadInvitation);
+document.addEventListener('DOMContentLoaded', () => {
+    loadInvitation();
+    gsap.from('.structure-logo-wrap', { scale: 0.4, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.2 });
+    gsap.from('.logo-accent', { scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.4 });
+    gsap.from('.badge-premium', { y: -20, opacity: 0, duration: 0.8, delay: 0.6, ease: 'power2.out' });
+});
+document.getElementById('adminPassword').addEventListener('keyup', e => { if (e.key === 'Enter') checkAdminAccess(); });
+document.getElementById('selfPhone').addEventListener('keyup', e => { if (e.key === 'Enter') generateSelfInvitation(); });
 </script>
 </body>
 </html>
