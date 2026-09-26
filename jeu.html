@@ -50,7 +50,8 @@ h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700
 .map-container { margin: 30px 0; border-radius: 24px; overflow: hidden; border: 1px solid rgba(26,58,107,0.12); background: #eaf1fa; box-shadow: 0 10px 30px rgba(26,58,107,0.08); }
 .map-container iframe { width: 100%; height: 300px; border: 0; display: block; }
 .map-link { text-align: center; margin-top: 12px; padding: 10px; background: #f5f9ff; border-radius: 12px; border: 1px solid rgba(26,58,107,0.08); }
-.map-link a { color: #1a3a6b; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+.map-link a { color: #1a3a6b; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; }
+.map-link a:hover { color: #4a8ac8; }
 .closing { margin-top: 35px; font-style: italic; color: #5a6a8b; border-top: 1px solid rgba(26,58,107,0.12); padding-top: 25px; }
 .closing p:last-child { color: #1a3a6b !important; }
 .qr-section { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid rgba(26,58,107,0.1); }
@@ -221,7 +222,7 @@ h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700
 </div>
 
 <!-- ============================================================
-     FIREBASE (intact)
+     FIREBASE
 ============================================================ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -535,7 +536,7 @@ function sendWhatsApp() {
 }
 
 // ============================================================
-// PDF — AFFICHE EN IMAGE + BANDEAU BLANC EN BAS
+// PDF — AFFICHE + BANDEAU BLANC LISIBLE (sans répétition date)
 // ============================================================
 function buildPdfAffiche(guestName) {
     const qrCanvas = document.querySelector('#qrcode canvas');
@@ -555,23 +556,23 @@ function buildPdfAffiche(guestName) {
                 crossorigin="anonymous"
                 style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;">
 
-            <!-- BANDEAU BLANC EN BAS -->
-            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.97);padding:16px 28px 20px 28px;border-top:3px solid #2b6fc4;z-index:10;display:flex;align-items:center;gap:18px;box-shadow:0 -8px 25px rgba(26,58,107,0.15);">
+            <!-- BANDEAU BLANC EN BAS — GRAND ET LISIBLE, SANS DATE RÉPÉTÉE -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#ffffff;padding:26px 36px 28px 36px;border-top:5px solid #2b6fc4;z-index:10;display:flex;align-items:center;gap:26px;box-shadow:0 -10px 30px rgba(26,58,107,0.22);">
+
+                <!-- Bloc nom + message (gauche) -->
                 <div style="flex:1;">
-                    <div style="font-size:0.82rem;font-weight:600;color:#1a3a6b;margin-bottom:4px;letter-spacing:0.5px;">Cher/Chère,</div>
-                    <div style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:700;color:#2b6fc4;line-height:1.1;margin-bottom:6px;">${displayName}</div>
-                    <div style="font-size:0.7rem;color:#3a4a6b;line-height:1.4;">
-                        Nous avons le plaisir de vous convier à la <strong>demi-finale</strong><br>
-                        du concours <strong>« Éloquence en Scène »</strong>.
-                    </div>
-                    <div style="margin-top:8px;display:flex;gap:16px;font-size:0.68rem;color:#2b6fc4;font-weight:600;">
-                        <span><i class="fas fa-calendar-alt" style="color:#d63a2f;margin-right:4px;"></i>10 Oct. 2026</span>
-                        <span><i class="fas fa-map-marker-alt" style="color:#d63a2f;margin-right:4px;"></i>Silikin Village</span>
+                    <div style="font-size:0.9rem;font-weight:700;color:#1a3a6b;margin-bottom:6px;letter-spacing:1.2px;text-transform:uppercase;">Cher/Chère,</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:700;color:#2b6fc4;line-height:1.05;margin-bottom:12px;">${displayName}</div>
+                    <div style="font-size:0.85rem;color:#1a3a6b;line-height:1.55;font-weight:500;">
+                        Nous avons le plaisir de vous convier à la <strong style="color:#1a3a6b;">demi-finale</strong><br>
+                        du concours <strong style="color:#1a3a6b;">« Éloquence en Scène »</strong>.
                     </div>
                 </div>
-                <div style="width:110px;text-align:center;padding:8px;background:#fff;border-radius:10px;border:2px solid rgba(43,111,196,0.3);">
-                    <div style="font-size:0.5rem;text-transform:uppercase;letter-spacing:1.5px;color:#1a3a6b;font-weight:700;margin-bottom:4px;">Demi-finale</div>
-                    ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR" style="width:80px;height:80px;border-radius:4px;">` : ''}
+
+                <!-- QR Code (droite) -->
+                <div style="width:135px;text-align:center;padding:12px;background:#f5f9ff;border-radius:14px;border:2px solid rgba(43,111,196,0.4);">
+                    <div style="font-size:0.58rem;text-transform:uppercase;letter-spacing:1.8px;color:#1a3a6b;font-weight:700;margin-bottom:8px;">Demi-finale</div>
+                    ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR" style="width:100px;height:100px;border-radius:4px;">` : ''}
                 </div>
             </div>
         </div>
