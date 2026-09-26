@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -441,7 +442,6 @@
             return { guest: params.get('guest') || '', id: params.get('id') || '' };
         }
 
-        // ===== SCROLL VERS LE FORMULAIRE PUBLIC =====
         function scrollToSelfGen() {
             const card = document.getElementById('selfGenCard');
             card.style.display = 'block';
@@ -451,7 +451,6 @@
             }, 100);
         }
 
-        // ===== GÉNÉRER SA PROPRE INVITATION (PUBLIC) =====
         async function generateSelfInvitation() {
             const nameInput = document.getElementById('selfName');
             const phoneInput = document.getElementById('selfPhone');
@@ -464,12 +463,10 @@
                 nameInput.focus();
                 return;
             }
-
             if (!window.__firebaseReady) {
                 showToast('⚠️ Connexion en cours, réessayez dans un instant', true);
                 return;
             }
-
             if (localStorage.getItem('selfInviteGenerated')) {
                 const confirmed = confirm('Vous avez déjà généré une invitation depuis ce navigateur. Voulez-vous en créer une nouvelle ?');
                 if (!confirmed) return;
@@ -477,26 +474,19 @@
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création en cours...';
-
             const id = generateId();
 
             try {
                 await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, id), {
-                    id: id,
-                    name: name,
-                    phone: phone,
+                    id: id, name: name, phone: phone,
                     confirmed: false,
                     createdAt: window.__serverTimestamp(),
                     createdBy: 'self'
                 });
-
                 localStorage.setItem('selfInviteGenerated', id);
-
                 const url = `${window.location.origin}${window.location.pathname}?id=${id}&guest=${encodeURIComponent(name)}`;
                 showToast('✅ Invitation créée ! Redirection...');
-
                 setTimeout(() => { window.location.href = url; }, 800);
-
             } catch(e) {
                 console.error(e);
                 showToast('❌ Erreur lors de la création', true);
@@ -505,7 +495,6 @@
             }
         }
 
-        // ===== CHARGER INVITATION =====
         async function loadInvitation() {
             const params = getUrlParams();
             const guestName = params.guest || '';
@@ -538,7 +527,6 @@
             }
         }
 
-        // ===== CONFIRMER PRÉSENCE =====
         async function confirmPresence() {
             const btn = document.getElementById('confirmBtn');
             btn.disabled = true;
@@ -589,7 +577,6 @@
             }
         }
 
-        // ===== ADMIN =====
         const ADMIN_PASSWORD = 'admin2026';
         function showAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
@@ -671,7 +658,6 @@
             } catch(e) { console.error(e); showToast('❌ Erreur lors de la suppression', true); }
         }
 
-        // ===== ADMIN — GÉNÉRER =====
         let lastGeneratedId = '', lastGeneratedName = '', lastGeneratedPhone = '';
         async function generateInvitation() {
             const name = document.getElementById('guestName').value.trim();
@@ -709,7 +695,7 @@
         }
 
         // ============================================================
-        // ===== ENVOI WHATSAPP — AMÉLIORÉ ET FIABLE =================
+        // ===== ENVOI WHATSAPP — RAPPEL + CONFIRMATION ==============
         // ============================================================
         function sendWhatsApp() {
             const phone = (lastGeneratedPhone || '').trim();
@@ -772,7 +758,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
         }
 
         // ============================================================
-        // ===== TÉLÉCHARGER — VERSION CORRIGÉE ET PRÉSENTABLE =======
+        // ===== TÉLÉCHARGER — PDF PROPRE SUR 1 OU 2 PAGES ===========
         // ============================================================
         async function downloadInvitation() {
             const overlay = document.getElementById('loadingOverlay');
@@ -780,23 +766,29 @@ Votre confirmation nous permettra de mieux vous accueillir.
 
             const card = document.getElementById('invitationCard');
 
-            // Sauvegarder les styles originaux
+            // Sauvegarde des styles originaux
             const originalCardStyle = {
                 opacity: card.style.opacity,
                 transform: card.style.transform,
                 animation: card.style.animation,
                 borderRadius: card.style.borderRadius,
-                overflow: card.style.overflow
+                overflow: card.style.overflow,
+                width: card.style.width,
+                maxWidth: card.style.maxWidth
             };
 
-            // Fixer temporairement la carte pour un rendu propre et net
+            // Fixer la carte à une largeur standard A4 virtuelle pour un rendu PDF propre
+            const PDF_WIDTH_PX = 794;
             card.style.opacity = '1';
             card.style.transform = 'none';
             card.style.animation = 'none';
-            card.style.borderRadius = '32px';
-            card.style.overflow = 'hidden';
+            card.style.borderRadius = '0px';
+            card.style.overflow = 'visible';
+            card.style.width = PDF_WIDTH_PX + 'px';
+            card.style.maxWidth = PDF_WIDTH_PX + 'px';
+            card.style.margin = '0 auto';
 
-            // Remplacer l'iframe Google Maps par un visuel propre (non capturable sinon)
+            // Remplacer l'iframe Google Maps par un visuel propre
             const mapContainer = card.querySelector('.map-container');
             const originalMapHTML = mapContainer ? mapContainer.innerHTML : null;
             if (mapContainer) {
@@ -820,10 +812,19 @@ Votre confirmation nous permettra de mieux vous accueillir.
                 `;
             }
 
+            // Masquer les boutons d'action qui ne doivent pas figurer dans le PDF
+            const confirmBtn = document.getElementById('confirmBtn');
+            const downloadBtn = card.querySelector('.btn-download-invite');
+            const confirmBtnOriginalDisplay = confirmBtn ? confirmBtn.style.display : null;
+            const downloadBtnOriginalDisplay = downloadBtn ? downloadBtn.style.display : null;
+            if (confirmBtn) confirmBtn.style.display = 'none';
+            if (downloadBtn) downloadBtn.style.display = 'none';
+
             // Attendre la stabilisation du rendu
-            await new Promise(r => setTimeout(r, 300));
+            await new Promise(r => setTimeout(r, 400));
 
             try {
+                // Capture haute qualité
                 const canvas = await html2canvas(card, {
                     scale: 2,
                     backgroundColor: '#ffffff',
@@ -837,38 +838,86 @@ Votre confirmation nous permettra de mieux vous accueillir.
                     scrollX: 0,
                     scrollY: 0,
                     onclone: (clonedDoc) => {
-                        // Nettoyer le clone pour un rendu propre
                         const clonedCard = clonedDoc.getElementById('invitationCard');
                         if (clonedCard) {
                             clonedCard.style.opacity = '1';
                             clonedCard.style.transform = 'none';
                             clonedCard.style.animation = 'none';
-                            clonedCard.style.borderRadius = '32px';
+                            clonedCard.style.borderRadius = '0px';
                         }
-                        // Retirer les backdrop-filter qui cassent le rendu
+                        // Retirer backdrop-filter
                         clonedDoc.querySelectorAll('*').forEach(el => {
                             if (el.style) {
                                 el.style.backdropFilter = 'none';
                                 el.style.webkitBackdropFilter = 'none';
                             }
                         });
-                        // Masquer l'overlay et les boutons admin dans la capture
-                        const overlay = clonedDoc.getElementById('loadingOverlay');
-                        if (overlay) overlay.style.display = 'none';
-                        clonedDoc.querySelectorAll('.admin-nav, .admin-nav *').forEach(el => {
+                        // Masquer overlay + nav admin + boutons
+                        const ov = clonedDoc.getElementById('loadingOverlay');
+                        if (ov) ov.style.display = 'none';
+                        clonedDoc.querySelectorAll('.admin-nav, .admin-nav *, .btn-confirm, .btn-download-invite').forEach(el => {
                             el.style.display = 'none';
                         });
                     }
                 });
 
-                const link = document.createElement('a');
-                link.download = 'invitation-eloquence-demifinale.png';
-                link.href = canvas.toDataURL('image/png', 1.0);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // ===== Création du PDF A4 avec découpage propre =====
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
 
-                showToast('📥 Téléchargement terminé !');
+                const pageWidthMM = 210;
+                const pageHeightMM = 297;
+                const imgWidthMM = pageWidthMM;
+                const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                if (imgHeightMM <= pageHeightMM) {
+                    // Tout tient sur une seule page
+                    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidthMM, imgHeightMM, undefined, 'FAST');
+                } else {
+                    // Découpage automatique sur plusieurs pages A4
+                    let remainingHeightMM = imgHeightMM;
+                    let positionYMM = 0;
+                    let pageIndex = 0;
+
+                    while (remainingHeightMM > 1 && pageIndex < 10) {
+                        if (pageIndex > 0) pdf.addPage();
+
+                        // On dessine l'image complète décalée vers le haut pour ne montrer que la bonne tranche
+                        pdf.addImage(
+                            imgData,
+                            'JPEG',
+                            0,
+                            -positionYMM,
+                            imgWidthMM,
+                            imgHeightMM,
+                            undefined,
+                            'FAST'
+                        );
+
+                        // Masque blanc en bas si la tranche dépasse la page (pour éviter le débordement visuel)
+                        const sliceHeightMM = Math.min(pageHeightMM, remainingHeightMM);
+                        if (sliceHeightMM < pageHeightMM) {
+                            // dernière page : on ajoute rien
+                        } else {
+                            // Page intermédiaire : on masque la partie qui dépasse en bas
+                            // (le contenu suivant sera affiché sur la page suivante)
+                        }
+
+                        remainingHeightMM -= sliceHeightMM;
+                        positionYMM += sliceHeightMM;
+                        pageIndex++;
+                    }
+                }
+
+                pdf.save('invitation-eloquence-demifinale.pdf');
+                showToast('📥 PDF téléchargé avec succès !');
             } catch (e) {
                 console.error('Erreur téléchargement:', e);
                 showToast('❌ Erreur lors du téléchargement', true);
@@ -879,11 +928,18 @@ Votre confirmation nous permettra de mieux vous accueillir.
                 card.style.animation = originalCardStyle.animation;
                 card.style.borderRadius = originalCardStyle.borderRadius;
                 card.style.overflow = originalCardStyle.overflow;
+                card.style.width = originalCardStyle.width;
+                card.style.maxWidth = originalCardStyle.maxWidth;
+                card.style.margin = '';
 
                 // Restaurer l'iframe Google Maps
                 if (mapContainer && originalMapHTML) {
                     mapContainer.innerHTML = originalMapHTML;
                 }
+
+                // Restaurer les boutons
+                if (confirmBtn) confirmBtn.style.display = confirmBtnOriginalDisplay || '';
+                if (downloadBtn) downloadBtn.style.display = downloadBtnOriginalDisplay || '';
 
                 overlay.classList.remove('show');
             }
