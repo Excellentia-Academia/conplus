@@ -9,222 +9,70 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&family=Great+Vibes&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh; overflow-x: hidden; color: #0a1628; }
-
-/* ============ FOND DE PAGE ============ */
+body { font-family: 'Inter', sans-serif; background: #f5f7fb; min-height: 100vh; overflow-x: hidden; color: #0a1628; }
 #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-.hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1e4a 0%, #1a3a6b 40%, #2b5aa8 70%, #1a3a6b 100%); z-index: -2; }
-.hero-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('731c4eec-d210-4c20-8847-5fafe2c86618.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.08; mix-blend-mode: overlay; }
-.hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(10, 30, 74, 0.6) 100%); }
-
-/* ============ NAV ============ */
+.hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ffffff 0%, #eaf1fa 40%, #d8e6f7 70%, #c3daf3 100%); z-index: -2; }
+.hero-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('731c4eec-d210-4c20-8847-5fafe2c86618.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.12; mix-blend-mode: multiply; }
+.hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.7) 100%); }
 .admin-nav { position: fixed; top: 30px; right: 30px; z-index: 100; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 60px); }
-.admin-btn, .download-btn, .self-gen-btn { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border: 1px solid rgba(212,175,55,0.4); color: #1a3a6b; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.1); font-size: 0.9rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(10,30,74,0.2); }
-.admin-btn:hover, .download-btn:hover, .self-gen-btn:hover { background: #d4af37; color: #0a1628; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.4); }
-.self-gen-btn { background: linear-gradient(135deg, #d4af37 0%, #b8931c 100%); color: #0a1628; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
+.admin-btn, .download-btn, .self-gen-btn { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(26,58,107,0.15); color: #1a3a6b; padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.1); font-size: 0.9rem; box-shadow: 0 4px 15px rgba(26,58,107,0.08); }
+.admin-btn:hover, .download-btn:hover, .self-gen-btn:hover { background: #1a3a6b; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(26,58,107,0.25); }
+.self-gen-btn { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; }
 .self-gen-btn:hover { background: #ffffff; color: #1a3a6b; }
-
-/* ============ CONTENEUR ============ */
-.container { max-width: 900px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 2; }
-
-/* ============ FORMULAIRE PUBLIC ============ */
-.self-gen-card { background: #ffffff; border-radius: 32px; padding: 40px; margin-bottom: 40px; border: 2px solid rgba(212,175,55,0.3); box-shadow: 0 20px 50px rgba(10,30,74,0.3); animation: cardAppear 1s ease forwards; }
-.self-gen-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #1a3a6b; margin-bottom: 10px; text-align: center; font-weight: 700; }
-.self-gen-card .subtitle { text-align: center; color: #5a6a8b; font-size: 0.9rem; margin-bottom: 30px; }
-.self-gen-card .subtitle strong { color: #1a3a6b; }
-.self-gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-.self-gen-field label { display: block; color: #1a3a6b; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-.self-gen-field input { width: 100%; padding: 14px 16px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; color: #1a3a6b; font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
-.self-gen-field input:focus { outline: none; border-color: #d4af37; background: #ffffff; box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
-.self-gen-btn-submit { background: linear-gradient(135deg, #d4af37 0%, #b8931c 100%); color: #0a1628; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
-.self-gen-btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(212,175,55,0.6); }
-.self-gen-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-.self-gen-note { text-align: center; font-size: 0.75rem; color: #8a9ab5; margin-top: 15px; }
-
-/* ============================================================ */
-/* ===== INVITATION VIP — STYLE FORMELLE (visible sur page) === */
-/* ============================================================ */
-.invitation-vip {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    aspect-ratio: 794 / 1123;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Inter', sans-serif;
-    background:
-        radial-gradient(ellipse 600px 500px at 15% 25%, rgba(120,180,255,0.45) 0%, transparent 60%),
-        radial-gradient(ellipse 500px 400px at 85% 75%, rgba(100,160,240,0.4) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 600px at 50% 50%, rgba(60,130,220,0.35) 0%, transparent 70%),
-        linear-gradient(135deg, #0a1e4a 0%, #1a3a6b 35%, #2b5aa8 60%, #1a3a6b 85%, #0a1e4a 100%);
-    box-shadow: 0 30px 80px rgba(10,30,74,0.5);
-    border-radius: 8px;
-    opacity: 0;
-    transform: translateY(60px);
-    animation: cardAppear 1s ease forwards;
-    animation-delay: 0.2s;
-}
+.container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 2; }
+.invitation-card { background: #fff; border-radius: 48px; overflow: hidden; box-shadow: 0 40px 60px -20px rgba(26,58,107,0.25), 0 0 0 1px rgba(26,58,107,0.06); opacity: 0; transform: translateY(60px); animation: cardAppear 1s ease forwards; }
 @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
-.invitation-vip::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(2px 2px at 20% 15%, rgba(255,255,255,0.7), transparent),
-        radial-gradient(1px 1px at 40% 30%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(2px 2px at 70% 20%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 85% 45%, rgba(255,255,255,0.4), transparent),
-        radial-gradient(2px 2px at 15% 70%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 55% 85%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(2px 2px at 90% 90%, rgba(255,255,255,0.5), transparent);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* ===== Décorations dorées en coins ===== */
-.deco-corner { position: absolute; width: 140px; height: 140px; z-index: 4; pointer-events: none; }
-.deco-corner svg { width: 100%; height: 100%; }
-.deco-tl { top: 20px; left: 20px; }
-.deco-tr { top: 20px; right: 20px; transform: scaleX(-1); }
-.deco-bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
-.deco-br { bottom: 20px; right: 20px; transform: scale(-1,-1); }
-
-/* ===== Logo Excellentia ===== */
-.vip-logo {
-    position: absolute;
-    top: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 8px 25px rgba(212,175,55,0.5), 0 0 0 3px #e8c76a, 0 0 0 6px rgba(232,199,106,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    z-index: 6;
-}
-.vip-logo img { width: 100%; height: 100%; object-fit: cover; }
-
-/* ===== CADRE BLANC CENTRAL ===== */
-.vip-frame {
-    position: absolute;
-    top: 125px;
-    left: 45px;
-    right: 45px;
-    bottom: 45px;
-    background: #ffffff;
-    border-radius: 6px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 2px rgba(212,175,55,0.4);
-    z-index: 3;
-    padding: 40px 45px 30px 45px;
-    overflow: hidden;
-}
-.vip-frame::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #b8931c 0%, #f0d264 25%, #d4af37 50%, #f0d264 75%, #b8931c 100%);
-}
-
-/* ===== Sceau VIP ===== */
-.vip-seal { position: absolute; top: -15px; right: 30px; width: 90px; height: 120px; z-index: 7; }
-.vip-seal-circle {
-    width: 85px; height: 85px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #f7e18c 0%, #e8c76a 30%, #d4af37 55%, #b8931c 100%);
-    box-shadow: inset -6px -8px 15px rgba(120,80,0,0.5), inset 5px 6px 12px rgba(255,240,180,0.8), 0 8px 20px rgba(212,175,55,0.6);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; border: 3px solid #ffffff; margin: 0 auto;
-}
-.vip-seal-circle::before { content: ''; position: absolute; inset: 6px; border: 2px dashed rgba(120,80,0,0.4); border-radius: 50%; }
-.vip-seal-text { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.4rem; color: #6b4a05; text-shadow: 0 1px 0 rgba(255,255,255,0.5); letter-spacing: 1px; }
-.vip-seal-ribbon { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 45px; height: 35px; display: flex; gap: 3px; }
-.vip-seal-ribbon span { flex: 1; background: linear-gradient(180deg, #d4af37 0%, #b8931c 100%); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%); }
-
-/* ===== Titre script ===== */
-.vip-title { font-family: 'Great Vibes', cursive; font-size: 3.6rem; color: #0a1628; text-align: center; margin-bottom: 5px; line-height: 1; position: relative; z-index: 5; }
-.vip-title-line { width: 100%; height: 1.5px; background: #0a1628; margin: 12px 0 20px 0; }
-
-/* ===== Contenu formel ===== */
-.vip-content { text-align: center; position: relative; z-index: 5; }
-.vip-content .vip-dots { color: #0a1628; font-size: 1rem; letter-spacing: 3px; margin-bottom: 16px; font-weight: 900; }
-.vip-content .vip-org { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 12px; }
-.vip-content .vip-org .blue { color: #1a3a6b; }
-.vip-content .vip-org .red { color: #d63a2f; }
-.vip-content .vip-paragraph { font-size: 0.85rem; line-height: 1.6; color: #0a1628; font-weight: 500; margin-bottom: 10px; }
-.vip-content .vip-paragraph .blue-bold { color: #1a3a6b; font-weight: 700; }
-
-.vip-guest-block {
-    margin: 16px auto;
-    padding: 12px 22px;
-    background: linear-gradient(135deg, #f5f9ff 0%, #eaf1fa 100%);
-    border-left: 4px solid #d4af37;
-    border-right: 4px solid #d4af37;
-    display: inline-block;
-    min-width: 300px;
-    box-shadow: 0 4px 15px rgba(26,58,107,0.08);
-}
-.vip-guest-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #6a7a9b; margin-bottom: 5px; font-weight: 600; }
-.vip-guest-name { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 700; color: #1a3a6b; line-height: 1.1; }
-
-.vip-divider { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 18px 0; }
-.vip-divider .dots { font-size: 0.65rem; color: #6a7a9b; letter-spacing: 6px; flex: 1; max-width: 180px; }
-.vip-divider .quote { font-size: 2.2rem; color: #0a1628; line-height: 0.8; font-family: 'Playfair Display', serif; font-weight: 900; }
-
-.vip-posters { display: flex; gap: 12px; justify-content: center; margin: 18px 0 15px 0; position: relative; }
-.vip-posters::before { content: '📌'; position: absolute; top: -12px; left: 22%; font-size: 1.3rem; z-index: 2; }
-.vip-posters::after { content: '📌'; position: absolute; top: -12px; right: 22%; font-size: 1.3rem; z-index: 2; }
-.vip-poster { width: 180px; height: 240px; border-radius: 6px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.25); background: #1a3a6b; position: relative; }
-.vip-poster img { width: 100%; height: 100%; object-fit: cover; }
-
-.vip-confirm-band {
-    margin-top: 16px;
-    padding: 12px 20px;
-    background: #0a1628;
-    color: #ffffff;
-    text-align: center;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    border-radius: 4px;
-    border-top: 3px solid #d4af37;
-}
-.vip-confirm-band strong { color: #f0d264; font-weight: 700; }
-
-.vip-footer { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.75); font-size: 0.65rem; letter-spacing: 2px; z-index: 6; font-weight: 500; }
-
-/* ============ QR SECTION ============ */
-.qr-section { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 25px; margin: 30px 0; text-align: center; border: 1px solid rgba(26,58,107,0.1); }
+.card-header { background: linear-gradient(135deg,#fff 0%,#eaf1fa 50%,#d8e6f7 100%); padding: 50px 40px 40px; text-align: center; position: relative; border-bottom: 2px solid rgba(26,58,107,0.12); }
+.card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg,transparent,#1a3a6b,#4a8ac8,transparent); animation: shimmer 3s infinite; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.structure-logo-wrap { width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden; background: #fff; border: 4px solid #fff; box-shadow: 0 12px 35px rgba(26,58,107,0.25),0 0 0 2px rgba(74,138,200,0.3); position: relative; z-index: 3; display: flex; align-items: center; justify-content: center; animation: pulseGlow 3s ease-in-out infinite; }
+.structure-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 12px 35px rgba(26,58,107,0.25),0 0 0 2px rgba(74,138,200,0.3); } 50% { box-shadow: 0 12px 45px rgba(74,138,200,0.5),0 0 0 4px rgba(74,138,200,0.5); } }
+.logo-accent { width: 100px; height: 100px; margin: 0 auto 25px; background: linear-gradient(135deg,#1a3a6b,#4a8ac8); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(26,58,107,0.35); position: relative; z-index: 2; animation: pulseGlow 3s ease-in-out infinite; }
+.logo-accent i { font-size: 48px; color: #fff; }
+.badge-premium { display: inline-block; background: rgba(26,58,107,0.08); backdrop-filter: blur(8px); padding: 6px 20px; border-radius: 40px; color: #1a3a6b; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; border: 1px solid rgba(26,58,107,0.2); position: relative; z-index: 2; }
+h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; color: #1a3a6b; margin-bottom: 10px; letter-spacing: -0.02em; position: relative; z-index: 2; }
+.event-date { font-size: 1rem; color: #4a6a9b; letter-spacing: 1px; position: relative; z-index: 2; font-weight: 500; }
+.card-body { padding: 50px; background: #fff; }
+.invitation-letter { margin-bottom: 40px; }
+.salutation { font-size: 1.2rem; font-weight: 600; color: #1a3a6b; margin-bottom: 25px; letter-spacing: 0.5px; }
+.guest-name-large { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #1a3a6b; margin-bottom: 30px; border-left: 3px solid #4a8ac8; padding-left: 20px; }
+.guest-name-large strong { color: #4a8ac8; font-weight: 700; }
+.invitation-text { font-size: 1rem; line-height: 1.8; color: #3a4a6b; margin-bottom: 30px; }
+.invitation-text p { margin-bottom: 18px; }
+.invitation-text strong { color: #1a3a6b; }
+.event-details { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 25px; margin: 30px 0; border: 1px solid rgba(26,58,107,0.1); }
+.event-details p { margin: 12px 0; display: flex; align-items: center; gap: 12px; font-size: 1rem; color: #1a3a6b; font-weight: 500; }
+.event-details i { width: 28px; color: #4a8ac8; font-size: 1.2rem; }
+.map-container { margin: 30px 0; border-radius: 24px; overflow: hidden; border: 1px solid rgba(26,58,107,0.12); background: #eaf1fa; box-shadow: 0 10px 30px rgba(26,58,107,0.08); }
+.map-container iframe { width: 100%; height: 300px; border: 0; display: block; }
+.map-link { text-align: center; margin-top: 12px; padding: 10px; background: #f5f9ff; border-radius: 12px; border: 1px solid rgba(26,58,107,0.08); }
+.map-link a { color: #1a3a6b; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; }
+.map-link a:hover { color: #4a8ac8; }
+.closing { margin-top: 35px; font-style: italic; color: #5a6a8b; border-top: 1px solid rgba(26,58,107,0.12); padding-top: 25px; }
+.closing p:last-child { color: #1a3a6b !important; }
+.qr-section { background: linear-gradient(135deg,#f5f9ff,#eaf1fa); border-radius: 24px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid rgba(26,58,107,0.1); }
 .qr-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #1a3a6b; font-weight: 700; margin-bottom: 15px; }
-#qrcode { display: flex; justify-content: center; margin: 15px 0; }
+#qrcode { display: flex; justify-content: center; margin: 20px 0; }
 #qrcode canvas, #qrcode img { border-radius: 16px; box-shadow: 0 10px 30px rgba(26,58,107,0.15); background: white; padding: 8px; }
 .qr-note { font-size: 0.75rem; color: #6a7a9b; margin-top: 12px; font-weight: 500; }
-
-/* ============ BOUTONS PAGE ============ */
-.action-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
-.btn-confirm { background: linear-gradient(135deg, #4a8ac8 0%, #1a3a6b 100%); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; box-shadow: 0 5px 20px rgba(74,138,200,0.3); }
+.btn-confirm { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; box-shadow: 0 5px 20px rgba(74,138,200,0.3); }
 .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74,138,200,0.5); }
 .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.btn-download-invite { background: linear-gradient(135deg, #d4af37 0%, #b8931c 100%); color: #0a1628; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
-.btn-download-invite:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(212,175,55,0.6); }
-
-/* ============ MODAL ADMIN ============ */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,22,40,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
-.modal-content { background: #ffffff; border-radius: 32px; padding: 40px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; border: 2px solid rgba(212,175,55,0.3); box-shadow: 0 40px 80px rgba(10,30,74,0.5); }
+.btn-download-invite { background: linear-gradient(135deg,#10b981,#059669); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; margin-top: 12px; }
+.btn-download-invite:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(16,185,129,0.4); }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,22,40,0.65); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
+.modal-content { background: #fff; border-radius: 32px; padding: 40px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(26,58,107,0.1); box-shadow: 0 40px 80px rgba(26,58,107,0.3); }
 .modal-content h2 { color: #1a3a6b; margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; }
 .password-input { width: 100%; padding: 14px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; color: #1a3a6b; margin: 15px 0; font-family: 'Inter', sans-serif; }
 .generator-section { background: #f5f9ff; border-radius: 20px; padding: 25px; margin-bottom: 30px; border: 1px solid rgba(26,58,107,0.08); }
 .generator-section h3 { color: #1a3a6b; margin-bottom: 10px; }
 .input-group { margin-bottom: 20px; }
 .input-group label { display: block; color: #1a3a6b; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; }
-.input-group input { width: 100%; padding: 12px; background: #ffffff; border: 1px solid rgba(26,58,107,0.15); border-radius: 10px; color: #1a3a6b; font-family: 'Inter', sans-serif; }
+.input-group input { width: 100%; padding: 12px; background: #fff; border: 1px solid rgba(26,58,107,0.15); border-radius: 10px; color: #1a3a6b; font-family: 'Inter', sans-serif; }
 .guest-list { margin-top: 20px; max-height: 350px; overflow-y: auto; }
 .guest-item { background: #f5f9ff; padding: 15px; margin: 10px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border: 1px solid rgba(26,58,107,0.08); }
 .guest-item strong { color: #1a3a6b !important; }
@@ -232,9 +80,14 @@ body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh;
 .status-pending { color: #f59e0b; font-weight: 600; }
 .whatsapp-link { background: #25D366; color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.8rem; cursor: pointer; border: none; }
 .btn-delete { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-size: 0.8rem; cursor: pointer; }
-.btn-whatsapp-send { background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; width: 100%; justify-content: center; margin-top: 15px; }
+.btn-whatsapp-send { background: #25D366; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px; width: 100%; justify-content: center; margin-top: 15px; }
 .btn-whatsapp-send:hover { transform: scale(1.02); filter: brightness(1.1); }
 .invite-link-display { background: #f5f9ff; padding: 12px 16px; border-radius: 10px; font-size: 0.75rem; word-break: break-all; color: #1a3a6b; margin: 10px 0; border: 1px solid rgba(26,58,107,0.1); }
+.loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
+.loading-overlay.show { display: flex; }
+.loading-spinner { width: 60px; height: 60px; border: 4px solid rgba(26,58,107,0.15); border-top: 4px solid #1a3a6b; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: #1a3a6b; font-size: 1.2rem; font-weight: 600; }
 .invite-counter { background: #f5f9ff; border-radius: 16px; padding: 18px 20px; margin-bottom: 15px; border: 1px solid rgba(26,58,107,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .invite-counter .label { font-size: 0.85rem; color: #4a6a9b; letter-spacing: 0.5px; font-weight: 500; }
 .invite-counter .count { font-size: 1.4rem; font-weight: 700; color: #1a3a6b; }
@@ -243,30 +96,33 @@ body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh;
 .firebase-status { font-size: 0.7rem; text-align: center; margin-bottom: 15px; color: #6a7a9b; }
 .firebase-status.online { color: #10b981; font-weight: 600; }
 .firebase-status.offline { color: #f59e0b; }
-
-/* ============ LOADING + TOAST ============ */
-.loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
-.loading-overlay.show { display: flex; }
-.loading-spinner { width: 60px; height: 60px; border: 4px solid rgba(212,175,55,0.2); border-top: 4px solid #d4af37; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: #1a3a6b; font-size: 1.2rem; font-weight: 600; }
 .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(16,185,129,0.95); color: #fff; padding: 16px 32px; border-radius: 16px; font-weight: 500; z-index: 3000; opacity: 0; transition: all 0.5s; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center; max-width: 90%; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.error { background: rgba(220,38,38,0.95); }
-
+.self-gen-card { background: #fff; border-radius: 32px; padding: 40px; margin-bottom: 40px; border: 1px solid rgba(26,58,107,0.1); box-shadow: 0 20px 50px rgba(26,58,107,0.1); animation: cardAppear 1s ease forwards; }
+.self-gen-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #1a3a6b; margin-bottom: 10px; text-align: center; font-weight: 700; }
+.self-gen-card .subtitle { text-align: center; color: #5a6a8b; font-size: 0.9rem; margin-bottom: 30px; }
+.self-gen-card .subtitle strong { color: #1a3a6b; }
+.self-gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+.self-gen-field label { display: block; color: #1a3a6b; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.self-gen-field input { width: 100%; padding: 14px 16px; background: #f5f9ff; border: 1px solid rgba(26,58,107,0.15); border-radius: 12px; color: #1a3a6b; font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+.self-gen-field input:focus { outline: none; border-color: #4a8ac8; background: #fff; box-shadow: 0 0 0 3px rgba(74,138,200,0.15); }
+.self-gen-btn-submit { background: linear-gradient(135deg,#4a8ac8,#1a3a6b); color: #fff; border: none; padding: 18px 40px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.4s ease; display: inline-flex; align-items: center; gap: 12px; width: 100%; justify-content: center; letter-spacing: 0.5px; box-shadow: 0 5px 20px rgba(74,138,200,0.3); }
+.self-gen-btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74,138,200,0.5); }
+.self-gen-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.self-gen-note { text-align: center; font-size: 0.75rem; color: #8a9ab5; margin-top: 15px; }
 @media (max-width: 768px) {
     .container { padding: 30px 16px; }
-    .vip-title { font-size: 2.6rem; }
-    .vip-frame { padding: 30px 25px 25px 25px; top: 110px; left: 25px; right: 25px; bottom: 30px; }
-    .vip-logo { width: 70px; height: 70px; top: 20px; }
-    .deco-corner { width: 90px; height: 90px; }
-    .vip-poster { width: 130px; height: 175px; }
-    .vip-guest-name { font-size: 1.4rem; }
-    .vip-content .vip-paragraph { font-size: 0.75rem; }
-    .self-gen-row { grid-template-columns: 1fr; gap: 15px; }
-    .self-gen-card { padding: 25px 20px; }
+    .card-body { padding: 30px 25px; }
+    h1 { font-size: 2.5rem; }
+    .guest-name-large { font-size: 1.6rem; }
+    .card-header { padding: 35px 25px; }
+    .map-container iframe { height: 220px; }
     .admin-nav { top: 15px; right: 15px; flex-direction: column; gap: 8px; align-items: flex-end; }
     .admin-btn, .download-btn, .self-gen-btn { padding: 8px 16px; font-size: 0.75rem; }
+    .self-gen-card { padding: 25px 20px; }
+    .self-gen-row { grid-template-columns: 1fr; gap: 15px; }
+    .structure-logo-wrap { width: 90px; height: 90px; }
 }
 </style>
 </head>
@@ -278,15 +134,11 @@ body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh;
     <div class="loading-spinner"></div>
     <div class="loading-text">Préparation de votre invitation...</div>
 </div>
-
-<!-- NAVIGATION -->
 <div class="admin-nav">
     <button class="self-gen-btn" onclick="scrollToSelfGen()"><i class="fas fa-wand-magic-sparkles"></i> Générer mon invitation</button>
     <button class="download-btn" onclick="downloadInvitation()"><i class="fas fa-download"></i> Télécharger</button>
     <button class="admin-btn" onclick="showAdminModal()"><i class="fas fa-lock"></i> Espace Organisateur</button>
 </div>
-
-<!-- MODAL ADMIN -->
 <div id="adminModal" class="modal">
     <div class="modal-content">
         <h2><i class="fas fa-crown"></i> Administration</h2>
@@ -316,12 +168,9 @@ body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh;
         </div>
     </div>
 </div>
-
 <div class="container">
-
-    <!-- FORMULAIRE PUBLIC -->
     <div class="self-gen-card" id="selfGenCard" style="display:none;">
-        <h2><i class="fas fa-wand-magic-sparkles" style="color:#d4af37;"></i> Générez votre invitation</h2>
+        <h2><i class="fas fa-wand-magic-sparkles" style="color:#4a8ac8;"></i> Générez votre invitation</h2>
         <p class="subtitle">Entrez votre nom pour recevoir votre invitation personnalisée à la <strong>demi-finale</strong> d'Éloquence en Scène.</p>
         <div class="self-gen-row">
             <div class="self-gen-field"><label>Nom complet *</label><input type="text" id="selfName" placeholder="Ex: Jean-Claude Mputu" autocomplete="name"></div>
@@ -330,115 +179,51 @@ body { font-family: 'Inter', sans-serif; background: #e8eef5; min-height: 100vh;
         <button class="self-gen-btn-submit" id="selfGenSubmit" onclick="generateSelfInvitation()"><i class="fas fa-magic"></i> Créer mon invitation personnalisée</button>
         <p class="self-gen-note"><i class="fas fa-lock"></i> Vos informations restent confidentielles et servent uniquement à votre invitation.</p>
     </div>
-
-    <!-- ============ INVITATION VIP FORMELLE ============ -->
-    <div class="invitation-vip" id="invitationVIP">
-        <!-- Décorations dorées en coins -->
-        <div class="deco-corner deco-tl">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-                <circle cx="32" cy="8" r="2" fill="#e8c76a"/>
-                <circle cx="8" cy="32" r="2" fill="#e8c76a"/>
-            </svg>
+    <div class="invitation-card" id="invitationCard">
+        <div class="card-header">
+            <div class="structure-logo-wrap"><img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" crossorigin="anonymous"></div>
+            <div class="logo-accent"><i class="fas fa-microphone-alt"></i></div>
+            <div class="badge-premium">★ INVITATION OFFICIELLE — DEMI-FINALE</div>
+            <h1>Éloquence en Scène</h1>
+            <div class="event-date">📅 Samedi 10 Octobre 2026 • 08h00 - 12h00</div>
         </div>
-        <div class="deco-corner deco-tr">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-            </svg>
-        </div>
-        <div class="deco-corner deco-bl">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-            </svg>
-        </div>
-        <div class="deco-corner deco-br">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-            </svg>
-        </div>
-
-        <!-- Logo Excellentia -->
-        <div class="vip-logo">
-            <img src="IMG_1812.jpeg" alt="Logo Excellentia" crossorigin="anonymous">
-        </div>
-
-        <!-- CADRE BLANC -->
-        <div class="vip-frame">
-            <!-- Sceau VIP -->
-            <div class="vip-seal">
-                <div class="vip-seal-circle"><span class="vip-seal-text">VIP</span></div>
-                <div class="vip-seal-ribbon"><span></span><span></span></div>
-            </div>
-
-            <!-- Titre -->
-            <div class="vip-title">Invitation</div>
-            <div class="vip-title-line"></div>
-
-            <!-- Contenu formel -->
-            <div class="vip-content">
-                <div class="vip-dots">••••••••••••••••••••••</div>
-                <div class="vip-org"><span class="blue">EXCELLENTIA</span> <span class="red">ACADEMIA</span></div>
-
-                <p class="vip-paragraph">
-                    est honorée de vous convier en tant qu'invité<br>
-                    d'Honneur à la <strong>Demi-finale</strong> du Concours
-                </p>
-                <p class="vip-paragraph"><strong class="blue-bold">« Éloquence en Scène »</strong></p>
-
-                <div class="vip-guest-block">
-                    <div class="vip-guest-label">Invité d'Honneur</div>
-                    <div class="vip-guest-name" id="guestNameDisplay">[Nom de l'invité]</div>
+        <div class="card-body" id="invitationBody">
+            <div class="invitation-letter">
+                <div class="salutation">Cher/Chère,</div>
+                <div class="guest-name-large" id="guestNameDisplay">[Nom de l'invité]</div>
+                <div class="invitation-text">
+                    <p>Nous avons le plaisir de vous inviter à la <strong>demi-finale</strong> de notre concours <strong>"Éloquence en Scène"</strong>, un événement d'exception dédié à l'art oratoire et à la célébration des talents.</p>
+                    <p>Venez vivre une expérience unique dans un cadre prestigieux, où l'éloquence et la convivialité se rencontrent.</p>
                 </div>
-
-                <p class="vip-paragraph"><strong>Date :</strong> Samedi <strong class="blue-bold">10 Octobre 2026</strong></p>
-                <p class="vip-paragraph"><strong>Heure :</strong> <strong class="blue-bold">08h00 – 12h00</strong></p>
-                <p class="vip-paragraph"><strong>Lieu :</strong> <strong class="blue-bold">Silikin Village, Kinshasa</strong></p>
-                <p class="vip-paragraph" style="margin-top:14px;"><strong>Au programme :</strong> Prestations oratoires des finalistes,<br>délibération du jury et moment de réseautage.</p>
-                <p class="vip-paragraph">Votre présence donnera tout son prestige à cet<br>événement dédié à la puissance de la parole.</p>
-                <p class="vip-paragraph">Nous espérons sincèrement vous y compter.</p>
-
-                <div class="vip-divider">
-                    <span class="dots">••••••••••</span>
-                    <span class="quote">"</span>
-                    <span class="dots">••••••••••</span>
+                <div class="event-details">
+                    <p><i class="fas fa-calendar-alt"></i> <strong>Date :</strong> Samedi 10 Octobre 2026</p>
+                    <p><i class="fas fa-clock"></i> <strong>Heure :</strong> 08h00 - 12h00</p>
+                    <p><i class="fas fa-map-marker-alt"></i> <strong>Lieu :</strong> Silikin Village, Kinshasa</p>
+                    <p><i class="fas fa-trophy"></i> <strong>Étape :</strong> Demi-finale</p>
                 </div>
-
-                <div class="vip-posters">
-                    <div class="vip-poster"><img src="731c4eec-d210-4c20-8847-5fafe2c86618.jpeg" alt="Affiche" crossorigin="anonymous"></div>
-                    <div class="vip-poster"><img src="731c4eec-d210-4c20-8847-5fafe2c86618.jpeg" alt="Affiche" crossorigin="anonymous"></div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3978.4489522506047!2d15.297256!3d-4.324837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a6a33140c1c2c2b%3A0x7c1c2c2b1a6a3314!2sKinshasa!5e0!3m2!1sfr!2sfr!4v1712000000000" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="map-link"><a href="https://maps.google.com/maps?q=Silikin+Village+Kinshasa" target="_blank"><i class="fas fa-directions"></i> Voir l'itinéraire sur Google Maps</a></div>
+                <div class="closing">
+                    <p>Dans l'attente de votre présence, nous vous prions d'agréer nos salutations distinguées.</p>
+                    <p style="margin-top:10px;font-weight:600;color:#1a3a6b;">— L'équipe Excellentia Academia</p>
                 </div>
             </div>
-
-            <div class="vip-confirm-band">Pour confirmation : <strong>+243 835 913 472</strong></div>
+            <div class="qr-section">
+                <div class="qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
+                <div id="qrcode"></div>
+                <div class="qr-note">Éloquence en scène — Demi-finale</div>
+            </div>
+            <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()"><i class="fas fa-check-circle"></i> Confirmer ma présence</button>
+            <button class="btn-download-invite" onclick="downloadInvitation()"><i class="fas fa-download"></i> Télécharger mon invitation</button>
         </div>
-
-        <div class="vip-footer">EXCELLENTIA ACADEMIA • ÉLOQUENCE EN SCÈNE 2026</div>
     </div>
-
-    <!-- QR CODE -->
-    <div class="qr-section">
-        <div class="qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
-        <div id="qrcode"></div>
-        <div class="qr-note">Éloquence en scène — Demi-finale</div>
-    </div>
-
-    <!-- BOUTONS -->
-    <div class="action-buttons">
-        <button class="btn-confirm" id="confirmBtn" onclick="confirmPresence()"><i class="fas fa-check-circle"></i> Confirmer ma présence</button>
-        <button class="btn-download-invite" onclick="downloadInvitation()"><i class="fas fa-download"></i> Télécharger mon invitation (PDF)</button>
-    </div>
-
 </div>
 
-<!-- ============ FIREBASE ============ -->
+<!-- ============================================================
+     FIREBASE
+============================================================ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
@@ -483,7 +268,9 @@ if (statusEl) {
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
 
-<!-- ============ LOGIQUE ============ -->
+<!-- ============================================================
+     LOGIQUE PRINCIPALE
+============================================================ -->
 <script>
 function showToast(msg, isErr = false) {
     const t = document.getElementById('toast');
@@ -501,9 +288,9 @@ function showToast(msg, isErr = false) {
     function resize() { width = canvas.width = innerWidth; height = canvas.height = innerHeight; }
     addEventListener('resize', resize); resize();
     class P {
-        constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.s = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.o = Math.random()*0.5+0.2; }
+        constructor() { this.x = Math.random()*width; this.y = Math.random()*height; this.s = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.o = Math.random()*0.4+0.15; }
         update() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>width) this.vx*=-1; if (this.y<0||this.y>height) this.vy*=-1; }
-        draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fillStyle = `rgba(212,175,55,${this.o})`; ctx.fill(); }
+        draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fillStyle = `rgba(26,58,107,${this.o})`; ctx.fill(); }
     }
     for (let i = 0; i < 80; i++) particles.push(new P());
     function anim() {
@@ -531,7 +318,7 @@ function generateQRCode(data) { generateQRCodeInto(document.getElementById('qrco
 
 function displayGuest(name) {
     const el = document.getElementById('guestNameDisplay');
-    if (name && name.trim() !== '') el.innerHTML = name.trim();
+    if (name && name.trim() !== '') el.innerHTML = `<strong>${name.trim()}</strong>`;
     else el.innerHTML = '[Nom de l\'invité]';
 }
 
@@ -749,9 +536,9 @@ function sendWhatsApp() {
 }
 
 // ============================================================
-// PDF — INVITATION VIP FORMELLE
+// PDF — AFFICHE + BANDEAU BLANC LISIBLE (sans répétition date)
 // ============================================================
-function buildPdfInvitation(guestName) {
+function buildPdfAffiche(guestName) {
     const qrCanvas = document.querySelector('#qrcode canvas');
     const qrDataUrl = qrCanvas ? qrCanvas.toDataURL('image/png') : '';
     const displayName = (guestName && guestName.trim()) ? guestName.trim() : '[Nom de l\'invité]';
@@ -763,128 +550,30 @@ function buildPdfInvitation(guestName) {
     wrapper.style.zIndex = '-1';
 
     wrapper.innerHTML = `
-        <div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Inter',sans-serif;
-            background:
-                radial-gradient(ellipse 600px 500px at 15% 25%, rgba(120,180,255,0.45) 0%, transparent 60%),
-                radial-gradient(ellipse 500px 400px at 85% 75%, rgba(100,160,240,0.4) 0%, transparent 60%),
-                radial-gradient(ellipse 800px 600px at 50% 50%, rgba(60,130,220,0.35) 0%, transparent 70%),
-                linear-gradient(135deg, #0a1e4a 0%, #1a3a6b 35%, #2b5aa8 60%, #1a3a6b 85%, #0a1e4a 100%);
-        ">
-            <!-- Décorations dorées en coins -->
-            <div style="position:absolute;width:140px;height:140px;top:20px;left:20px;z-index:4;">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                    <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                    <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-                    <circle cx="32" cy="8" r="2" fill="#e8c76a"/>
-                    <circle cx="8" cy="32" r="2" fill="#e8c76a"/>
-                </svg>
-            </div>
-            <div style="position:absolute;width:140px;height:140px;top:20px;right:20px;transform:scaleX(-1);z-index:4;">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                    <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                    <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-                </svg>
-            </div>
-            <div style="position:absolute;width:140px;height:140px;bottom:20px;left:20px;transform:scaleY(-1);z-index:4;">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                    <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                    <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-                </svg>
-            </div>
-            <div style="position:absolute;width:140px;height:140px;bottom:20px;right:20px;transform:scale(-1,-1);z-index:4;">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5,5 Q20,5 25,15 Q28,22 20,26 Q12,30 15,40 M5,5 L5,40 M5,5 L40,5 M15,15 Q30,15 35,25" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.9"/>
-                    <circle cx="10" cy="10" r="3" fill="#d4af37"/>
-                    <circle cx="20" cy="20" r="2" fill="#e8c76a"/>
-                </svg>
-            </div>
+        <div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Inter',sans-serif;background:#faf5e6;">
+            <!-- AFFICHE ENTIÈRE (100% fidèle) -->
+            <img src="731c4eec-d210-4c20-8847-5fafe2c86618.jpeg" alt="Affiche"
+                crossorigin="anonymous"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;">
 
-            <!-- Logo Excellentia -->
-            <div style="position:absolute;top:25px;left:50%;transform:translateX(-50%);width:90px;height:90px;border-radius:50%;background:#fff;box-shadow:0 8px 25px rgba(212,175,55,0.5),0 0 0 3px #e8c76a,0 0 0 6px rgba(232,199,106,0.3);display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:6;">
-                <img src="IMG_1812.jpeg" alt="Logo" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;">
-            </div>
+            <!-- BANDEAU BLANC EN BAS — GRAND ET LISIBLE, SANS DATE RÉPÉTÉE -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#ffffff;padding:26px 36px 28px 36px;border-top:5px solid #2b6fc4;z-index:10;display:flex;align-items:center;gap:26px;box-shadow:0 -10px 30px rgba(26,58,107,0.22);">
 
-            <!-- CADRE BLANC -->
-            <div style="position:absolute;top:125px;left:45px;right:45px;bottom:45px;background:#fff;border-radius:6px;box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 0 2px rgba(212,175,55,0.4);z-index:3;padding:40px 45px 30px 45px;overflow:hidden;">
-                <div style="position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#b8931c 0%,#f0d264 25%,#d4af37 50%,#f0d264 75%,#b8931c 100%);"></div>
-
-                <!-- Sceau VIP -->
-                <div style="position:absolute;top:-15px;right:30px;width:90px;height:120px;z-index:7;">
-                    <div style="width:85px;height:85px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#f7e18c 0%,#e8c76a 30%,#d4af37 55%,#b8931c 100%);box-shadow:inset -6px -8px 15px rgba(120,80,0,0.5),inset 5px 6px 12px rgba(255,240,180,0.8),0 8px 20px rgba(212,175,55,0.6);display:flex;align-items:center;justify-content:center;position:relative;border:3px solid #fff;margin:0 auto;">
-                        <span style="font-family:'Playfair Display',serif;font-weight:900;font-size:1.4rem;color:#6b4a05;letter-spacing:1px;">VIP</span>
-                    </div>
-                    <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:45px;height:35px;display:flex;gap:3px;">
-                        <span style="flex:1;background:linear-gradient(180deg,#d4af37 0%,#b8931c 100%);clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%);"></span>
-                        <span style="flex:1;background:linear-gradient(180deg,#d4af37 0%,#b8931c 100%);clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%);"></span>
+                <!-- Bloc nom + message (gauche) -->
+                <div style="flex:1;">
+                    <div style="font-size:0.9rem;font-weight:700;color:#1a3a6b;margin-bottom:6px;letter-spacing:1.2px;text-transform:uppercase;">Cher/Chère,</div>
+                    <div style="font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:700;color:#2b6fc4;line-height:1.05;margin-bottom:12px;">${displayName}</div>
+                    <div style="font-size:0.85rem;color:#1a3a6b;line-height:1.55;font-weight:500;">
+                        Nous avons le plaisir de vous convier à la <strong style="color:#1a3a6b;">demi-finale</strong><br>
+                        du concours <strong style="color:#1a3a6b;">« Éloquence en Scène »</strong>.
                     </div>
                 </div>
 
-                <!-- Titre -->
-                <div style="font-family:'Great Vibes',cursive;font-size:3.6rem;color:#0a1628;text-align:center;margin-bottom:5px;line-height:1;position:relative;z-index:5;">Invitation</div>
-                <div style="width:100%;height:1.5px;background:#0a1628;margin:12px 0 20px 0;"></div>
-
-                <!-- Contenu -->
-                <div style="text-align:center;position:relative;z-index:5;">
-                    <div style="color:#0a1628;font-size:1rem;letter-spacing:3px;margin-bottom:16px;font-weight:900;">••••••••••••••••••••••</div>
-                    <div style="font-weight:900;font-size:1rem;letter-spacing:0.5px;margin-bottom:12px;">
-                        <span style="color:#1a3a6b;">EXCELLENTIA</span> <span style="color:#d63a2f;">ACADEMIA</span>
-                    </div>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        est honorée de vous convier en tant qu'invité<br>d'Honneur à la <strong>Demi-finale</strong> du Concours
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        <strong style="color:#1a3a6b;font-weight:700;">« Éloquence en Scène »</strong>
-                    </p>
-
-                    <div style="margin:16px auto;padding:12px 22px;background:linear-gradient(135deg,#f5f9ff 0%,#eaf1fa 100%);border-left:4px solid #d4af37;border-right:4px solid #d4af37;display:inline-block;min-width:300px;box-shadow:0 4px 15px rgba(26,58,107,0.08);">
-                        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:#6a7a9b;margin-bottom:5px;font-weight:600;">Invité d'Honneur</div>
-                        <div style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:#1a3a6b;line-height:1.1;">${displayName}</div>
-                    </div>
-
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        <strong>Date :</strong> Samedi <strong style="color:#1a3a6b;font-weight:700;">10 Octobre 2026</strong>
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        <strong>Heure :</strong> <strong style="color:#1a3a6b;font-weight:700;">08h00 – 12h00</strong>
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        <strong>Lieu :</strong> <strong style="color:#1a3a6b;font-weight:700;">Silikin Village, Kinshasa</strong>
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-top:14px;margin-bottom:10px;">
-                        <strong>Au programme :</strong> Prestations oratoires des finalistes,<br>délibération du jury et moment de réseautage.
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        Votre présence donnera tout son prestige à cet<br>événement dédié à la puissance de la parole.
-                    </p>
-                    <p style="font-size:0.85rem;line-height:1.6;color:#0a1628;font-weight:500;margin-bottom:10px;">
-                        Nous espérons sincèrement vous y compter.
-                    </p>
-
-                    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin:18px 0;">
-                        <span style="font-size:0.65rem;color:#6a7a9b;letter-spacing:6px;flex:1;max-width:180px;">••••••••••</span>
-                        <span style="font-size:2.2rem;color:#0a1628;line-height:0.8;font-family:'Playfair Display',serif;font-weight:900;">"</span>
-                        <span style="font-size:0.65rem;color:#6a7a9b;letter-spacing:6px;flex:1;max-width:180px;">••••••••••</span>
-                    </div>
-
-                    <!-- QR CODE (remplace les 2 mini-affiches pour gain de place) -->
-                    <div style="display:flex;justify-content:center;margin:15px 0;">
-                        <div style="padding:12px;background:#f5f9ff;border:2px solid rgba(212,175,55,0.4);border-radius:8px;text-align:center;">
-                            <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:2px;color:#1a3a6b;font-weight:700;margin-bottom:6px;">Demi-finale</div>
-                            ${qrDataUrl ? `<img src="${qrDataUrl}" style="width:110px;height:110px;border-radius:4px;display:block;" alt="QR">` : ''}
-                        </div>
-                    </div>
+                <!-- QR Code (droite) -->
+                <div style="width:135px;text-align:center;padding:12px;background:#f5f9ff;border-radius:14px;border:2px solid rgba(43,111,196,0.4);">
+                    <div style="font-size:0.58rem;text-transform:uppercase;letter-spacing:1.8px;color:#1a3a6b;font-weight:700;margin-bottom:8px;">Demi-finale</div>
+                    ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR" style="width:100px;height:100px;border-radius:4px;">` : ''}
                 </div>
-
-                <div style="margin-top:16px;padding:12px 20px;background:#0a1628;color:#fff;text-align:center;font-size:0.85rem;font-weight:600;letter-spacing:0.5px;border-radius:4px;border-top:3px solid #d4af37;">
-                    Pour confirmation : <strong style="color:#f0d264;font-weight:700;">+243 835 913 472</strong>
-                </div>
-            </div>
-
-            <div style="position:absolute;bottom:15px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.75);font-size:0.65rem;letter-spacing:2px;z-index:6;font-weight:500;">
-                EXCELLENTIA ACADEMIA • ÉLOQUENCE EN SCÈNE 2026
             </div>
         </div>
     `;
@@ -896,22 +585,22 @@ async function downloadInvitation() {
     const overlay = document.getElementById('loadingOverlay');
     overlay.classList.add('show');
     const params = getUrlParams();
-    const wrapper = buildPdfInvitation(params.guest || '');
-    const invitation = wrapper.firstElementChild;
+    const wrapper = buildPdfAffiche(params.guest || '');
+    const affiche = wrapper.firstElementChild;
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 900));
 
     try {
-        const canvas = await html2canvas(invitation, {
+        const canvas = await html2canvas(affiche, {
             scale: 2,
-            backgroundColor: '#0a1e4a',
+            backgroundColor: '#faf5e6',
             allowTaint: false,
             useCORS: true,
             logging: false,
-            width: invitation.offsetWidth,
-            height: invitation.offsetHeight,
-            windowWidth: invitation.offsetWidth,
-            windowHeight: invitation.offsetHeight
+            width: affiche.offsetWidth,
+            height: affiche.offsetHeight,
+            windowWidth: affiche.offsetWidth,
+            windowHeight: affiche.offsetHeight
         });
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
@@ -929,8 +618,9 @@ async function downloadInvitation() {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadInvitation();
-    gsap.from('.vip-logo', { scale: 0.4, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.3 });
-    gsap.from('.vip-title', { y: -20, opacity: 0, duration: 0.8, delay: 0.5, ease: 'power2.out' });
+    gsap.from('.structure-logo-wrap', { scale: 0.4, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.2 });
+    gsap.from('.logo-accent', { scale: 0.5, opacity: 0, duration: 1, ease: 'back.out(1.7)', delay: 0.4 });
+    gsap.from('.badge-premium', { y: -20, opacity: 0, duration: 0.8, delay: 0.6, ease: 'power2.out' });
 });
 document.getElementById('adminPassword').addEventListener('keyup', e => { if (e.key === 'Enter') checkAdminAccess(); });
 document.getElementById('selfPhone').addEventListener('keyup', e => { if (e.key === 'Enter') generateSelfInvitation(); });
