@@ -141,11 +141,11 @@
         .self-gen-note { text-align: center; font-size: 0.75rem; color: #8a9ab5; margin-top: 15px; }
 
         /* ============================================================= */
-        /* ===== STYLE DE L'AFFICHE PDF (UNE SEULE PAGE A4) ============ */
+        /* ===== STYLE DE L'AFFICHE PDF (1 SEULE PAGE A4) ============ */
         /* ============================================================= */
         .pdf-affiche {
             width: 794px;
-            height: 1123px; /* Ratio A4 exact - 1 seule page */
+            height: 1123px;
             background: linear-gradient(135deg, #faf5e6 0%, #f5edd6 50%, #ede0c0 100%);
             position: relative;
             font-family: 'Inter', sans-serif;
@@ -165,7 +165,6 @@
                 radial-gradient(ellipse at top center, transparent 35%, rgba(200,185,150,0.35) 36%, transparent 38%);
             pointer-events: none;
         }
-        /* Filet doré décoratif en haut */
         .pdf-affiche::after {
             content: '';
             position: absolute;
@@ -192,8 +191,6 @@
             color: #1a3a6b;
             font-size: 0.9rem;
         }
-        /* ===== SUPPRESSION DES TEXTES VERTICAUX "CONCOURS D'ÉLOQUENCE" ===== */
-        /* Les classes .pdf-vertical-left et .pdf-vertical-right ont été retirées */
 
         .pdf-content {
             position: relative;
@@ -308,7 +305,7 @@
         }
         .pdf-box .pdf-box-text .red { color: #d63a2f; }
 
-        /* ===== RUBAN "INVITÉ D'HONNEUR" (anciennement "Accès sur invitation") ===== */
+        /* ===== RUBAN "INVITÉ D'HONNEUR" ===== */
         .pdf-ribbon {
             background: linear-gradient(135deg, #d4af37 0%, #b8931c 100%);
             color: #ffffff;
@@ -344,91 +341,22 @@
             border-width: 14px 0 14px 16px;
             border-color: transparent transparent transparent #d4af37;
         }
-        .pdf-micro {
+
+        /* ============================================================ */
+        /* ===== IMAGE DE L'AFFICHE (remplace l'ancien micro CSS) ===== */
+        /* ============================================================ */
+        .pdf-affiche-img {
             position: absolute;
-            top: 8%;
-            right: 3%;
-            width: 340px;
-            height: 480px;
-            background: linear-gradient(135deg, #f5d76e 0%, #d4af37 25%, #b8941f 50%, #f0c948 75%, #d4af37 100%);
-            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-            box-shadow:
-                inset -18px -25px 50px rgba(120, 80, 0, 0.4),
-                inset 18px 18px 35px rgba(255, 240, 180, 0.6),
-                0 25px 55px rgba(120, 80, 0, 0.35);
+            top: 60px;
+            right: 20px;
+            width: 380px;
+            height: auto;
+            max-height: 900px;
+            object-fit: contain;
             z-index: 2;
+            filter: drop-shadow(0 15px 35px rgba(120, 80, 0, 0.3));
         }
-        .pdf-micro::before {
-            content: '';
-            position: absolute;
-            top: 12%;
-            left: 15%;
-            right: 15%;
-            bottom: 30%;
-            background:
-                repeating-linear-gradient(0deg,
-                    transparent 0px, transparent 8px,
-                    rgba(60, 40, 0, 0.55) 8px, rgba(60, 40, 0, 0.55) 12px);
-            border-radius: 40% 40% 30% 30% / 40% 40% 30% 30%;
-        }
-        .pdf-micro::after {
-            content: '';
-            position: absolute;
-            top: 8%;
-            left: 18%;
-            width: 25%;
-            height: 55%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, transparent 100%);
-            border-radius: 50%;
-            filter: blur(8px);
-        }
-        .pdf-hand {
-            position: absolute;
-            bottom: 5%;
-            right: 4%;
-            width: 340px;
-            height: 320px;
-            background: linear-gradient(135deg, #f0c948 0%, #d4af37 40%, #b8941f 100%);
-            border-radius: 40% 50% 45% 55% / 50% 45% 55% 50%;
-            box-shadow:
-                inset -14px -20px 35px rgba(120, 80, 0, 0.4),
-                inset 12px 14px 28px rgba(255, 240, 180, 0.6),
-                0 18px 40px rgba(120, 80, 0, 0.4);
-            z-index: 3;
-        }
-        .pdf-hand::before {
-            content: '';
-            position: absolute;
-            top: 5%;
-            left: 8%;
-            width: 42%;
-            height: 30%;
-            background: linear-gradient(135deg, #f5d76e 0%, #d4af37 60%, #b8941f 100%);
-            border-radius: 50% 50% 40% 40%;
-            box-shadow: inset -6px -10px 18px rgba(120,80,0,0.35);
-        }
-        .pdf-hand::after {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 12%;
-            width: 38%;
-            height: 28%;
-            background: linear-gradient(135deg, #f5d76e 0%, #d4af37 60%, #b8941f 100%);
-            border-radius: 50% 50% 40% 40%;
-            box-shadow: inset -6px -10px 18px rgba(120,80,0,0.35);
-        }
-        .pdf-scarf {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 480px;
-            height: 130px;
-            background: linear-gradient(160deg, #b3241a 0%, #d63a2f 40%, #a01810 100%);
-            border-radius: 60% 0 0 0 / 100% 0 0 0;
-            box-shadow: inset 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 4;
-        }
+
         .pdf-personal {
             position: relative;
             z-index: 5;
@@ -711,7 +639,6 @@
     </script>
 
     <script>
-        // ===== TOAST =====
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -786,8 +713,7 @@
         function displayGuest(name) {
             const display = document.getElementById('guestNameDisplay');
             if (name && name.trim() !== '') {
-                const trimmedName = name.trim();
-                display.innerHTML = `<strong>${trimmedName}</strong>`;
+                display.innerHTML = `<strong>${name.trim()}</strong>`;
             } else {
                 display.innerHTML = '[Nom de l\'invité]';
             }
@@ -1045,7 +971,7 @@
                 const range = document.createRange();
                 const selection = window.getSelection();
                 const el = document.getElementById('inviteLinkDisplay');
-                range.selectNode(el); selection.removeAllRanges(); selection.addRange(range);
+                range.selectNode(el); selection.removeAllRanges(); selection.addRange(el);
                 document.execCommand('copy'); showToast('📋 Lien copié !');
             });
         }
@@ -1101,12 +1027,8 @@ Votre confirmation nous permettra de mieux vous accueillir.
         // ===== CONSTRUCTION DE L'AFFICHE PDF (1 SEULE PAGE) ========
         // ============================================================
         function buildPdfAffiche(guestName) {
-            const params = getUrlParams();
-            const inviteId = params.id || '';
-
             const qrCanvas = document.querySelector('#qrcode canvas');
             const qrDataUrl = qrCanvas ? qrCanvas.toDataURL('image/png') : '';
-
             const displayName = (guestName && guestName.trim()) ? guestName.trim() : '[Nom de l\'invité]';
 
             const wrapper = document.createElement('div');
@@ -1117,7 +1039,6 @@ Votre confirmation nous permettra de mieux vous accueillir.
 
             wrapper.innerHTML = `
                 <div class="pdf-affiche" id="pdfAffiche">
-                    <!-- Header réseaux sociaux -->
                     <div class="pdf-header-top">
                         <i class="fab fa-facebook"></i>
                         <i class="fab fa-instagram"></i>
@@ -1125,12 +1046,8 @@ Votre confirmation nous permettra de mieux vous accueillir.
                         <span>EXCELLENTIA ACADEMIA</span>
                     </div>
 
-                    <!-- Textes verticaux SUPPRIMÉS (plus de "CONCOURS D'ÉLOQUENCE") -->
-
-                    <!-- Micro + main + écharpe -->
-                    <div class="pdf-micro"></div>
-                    <div class="pdf-hand"></div>
-                    <div class="pdf-scarf"></div>
+                    <!-- ===== IMAGE AFFICHE (remplace le micro CSS) ===== -->
+                    <img src="IMG_6496.jpeg" alt="Affiche" class="pdf-affiche-img" crossorigin="anonymous">
 
                     <!-- Contenu texte à gauche -->
                     <div class="pdf-content">
@@ -1162,7 +1079,6 @@ Votre confirmation nous permettra de mieux vous accueillir.
                                 </div>
                             </div>
                         </div>
-                        <!-- Ruban doré : "INVITÉ D'HONNEUR" (anciennement Accès sur invitation) -->
                         <div class="pdf-ribbon">INVITÉ D'HONNEUR</div>
                     </div>
 
@@ -1202,7 +1118,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
             const wrapper = buildPdfAffiche(guestName);
             const affiche = wrapper.querySelector('#pdfAffiche');
 
-            await new Promise(r => setTimeout(r, 700));
+            await new Promise(r => setTimeout(r, 900));
 
             try {
                 const canvas = await html2canvas(affiche, {
@@ -1225,13 +1141,10 @@ Votre confirmation nous permettra de mieux vous accueillir.
                     compress: true
                 });
 
-                // ===== UNE SEULE PAGE : on force le tout sur 1 page A4 =====
                 const pageWidthMM = 210;
                 const pageHeightMM = 297;
-
                 const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-                // On ajuste l'image pour qu'elle tienne sur UNE page A4
                 pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMM, pageHeightMM, undefined, 'FAST');
 
                 pdf.save('invitation-eloquence-demifinale.pdf');
