@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Playfair+Display:wght@400;700;900&family=Anton&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f5f7fb; min-height: 100vh; overflow-x: hidden; color: #0a1628; }
@@ -46,12 +46,7 @@
             justify-content: center;
             animation: pulseGlow 3s ease-in-out infinite;
         }
-        .structure-logo-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+        .structure-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 12px 35px rgba(26, 58, 107, 0.25), 0 0 0 2px rgba(74, 138, 200, 0.3); }
             50% { box-shadow: 0 12px 45px rgba(74, 138, 200, 0.5), 0 0 0 4px rgba(74, 138, 200, 0.5); }
@@ -180,101 +175,133 @@
             align-items: center;
             gap: 10px;
             color: #1a3a6b;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.8px;
             position: relative;
             z-index: 3;
-            padding: 40px 40px 0 40px;
+            padding: 25px 35px 0 35px;
         }
         .pdf-header-top i {
             color: #1a3a6b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .pdf-content {
             position: relative;
             z-index: 3;
-            padding: 40px 50px 40px 70px;
-            width: 70%;
+            padding: 20px 45px 20px 60px;
+            width: 65%;
         }
+
         .pdf-mini-logo {
-            width: 90px;
-            height: 90px;
+            width: 95px;
+            height: 95px;
             border-radius: 50%;
             background: #ffffff;
-            box-shadow: 0 6px 20px rgba(26,58,107,0.2), 0 0 0 3px #d4af37;
+            box-shadow:
+                0 6px 20px rgba(212,175,55,0.4),
+                0 0 0 4px #e8c76a,
+                0 0 0 8px rgba(232,199,106,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .pdf-mini-logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
         .pdf-title {
             font-family: 'Anton', 'Inter', sans-serif;
             font-weight: 400;
             color: #2b6fc4;
             line-height: 0.9;
-            letter-spacing: -1px;
-            font-size: 5.5rem;
-            margin-bottom: 8px;
+            letter-spacing: -2px;
+            font-size: 6rem;
+            margin-bottom: 0;
+            text-transform: none;
         }
-        .pdf-title .star { font-size: 0.65em; vertical-align: middle; margin-left: 8px; }
+        .pdf-title .star {
+            font-size: 0.5em;
+            vertical-align: super;
+            margin-left: 10px;
+            color: #2b6fc4;
+            position: relative;
+            top: -0.2em;
+        }
+
         .pdf-swoosh {
-            width: 150px;
+            position: relative;
+            width: 320px;
+            height: 22px;
+            margin-top: 2px;
+            margin-bottom: 22px;
+        }
+        .pdf-swoosh::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 4px;
             background: #2b6fc4;
             border-radius: 4px;
-            position: relative;
-            margin: 6px 0 30px 0;
+            transform: rotate(-1deg);
+            clip-path: polygon(0 40%, 100% 0, 99% 60%, 1% 100%);
         }
         .pdf-swoosh::after {
             content: '';
             position: absolute;
-            right: -16px;
-            top: 5px;
-            width: 22px;
-            height: 3px;
+            top: 11px;
+            left: 55%;
+            width: 45%;
+            height: 4px;
             background: #2b6fc4;
-            border-radius: 3px;
-            transform: rotate(-8deg);
+            border-radius: 4px;
+            transform: rotate(-3deg);
+            clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 60%);
         }
+
         .pdf-tagline {
             display: inline-block;
-            border: 2px dashed #d63a2f;
+            border: 2.5px dashed #2b6fc4;
             color: #d63a2f;
+            font-family: 'Cormorant Garamond', serif;
             font-weight: 700;
-            font-size: 1.15rem;
-            padding: 8px 24px;
-            margin-bottom: 26px;
-            letter-spacing: 0.5px;
-            background: rgba(255,255,255,0.35);
+            font-size: 1.5rem;
+            padding: 8px 26px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.4);
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
         }
+
         .pdf-info-boxes {
             display: flex;
             gap: 14px;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
         .pdf-box {
-            border: 2px solid #2b6fc4;
-            padding: 14px 16px;
+            flex: 1;
+            border: 2.5px solid #2b6fc4;
+            padding: 12px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 4px;
-            background: rgba(255,255,255,0.35);
-            min-width: 130px;
+            background: rgba(255,255,255,0.45);
         }
         .pdf-box i {
             color: #d63a2f;
-            font-size: 1.7rem;
-            margin-bottom: 4px;
+            font-size: 1.9rem;
+            margin-bottom: 3px;
         }
         .pdf-box .pdf-box-icon-wrap {
             position: relative;
@@ -282,13 +309,13 @@
         }
         .pdf-box .pdf-clock-badge {
             position: absolute;
-            bottom: -4px;
+            bottom: -3px;
             right: -10px;
             background: #2b6fc4;
             color: #fff;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -297,28 +324,27 @@
         }
         .pdf-box .pdf-box-text {
             color: #2b6fc4;
-            font-weight: 800;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
+            font-weight: 900;
+            font-family: 'Anton', 'Inter', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.6px;
+            line-height: 1.1;
             text-transform: uppercase;
         }
         .pdf-box .pdf-box-text .red { color: #d63a2f; }
 
-        /* ===== RUBAN "INVITÉ D'HONNEUR" ===== */
         .pdf-ribbon {
-            background: linear-gradient(135deg, #d4af37 0%, #b8931c 100%);
+            background: #d63a2f;
             color: #ffffff;
-            font-weight: 800;
-            font-size: 1.05rem;
-            padding: 12px 32px;
+            font-family: 'Anton', 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 1.15rem;
+            padding: 10px 32px;
             text-align: center;
-            letter-spacing: 2.5px;
+            letter-spacing: 1.5px;
             display: inline-block;
             position: relative;
-            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
-            border-top: 1px solid rgba(255,255,255,0.4);
-            border-bottom: 1px solid rgba(0,0,0,0.15);
+            box-shadow: 0 6px 16px rgba(214, 58, 47, 0.4);
             text-transform: uppercase;
         }
         .pdf-ribbon::before,
@@ -332,97 +358,103 @@
             border-style: solid;
         }
         .pdf-ribbon::before {
-            left: -16px;
-            border-width: 14px 16px 14px 0;
-            border-color: transparent #d4af37 transparent transparent;
+            left: -14px;
+            border-width: 12px 14px 12px 0;
+            border-color: transparent #d63a2f transparent transparent;
         }
         .pdf-ribbon::after {
-            right: -16px;
-            border-width: 14px 0 14px 16px;
-            border-color: transparent transparent transparent #d4af37;
+            right: -14px;
+            border-width: 12px 0 12px 14px;
+            border-color: transparent transparent transparent #d63a2f;
         }
 
-        /* ============================================================ */
-        /* ===== IMAGE DE L'AFFICHE (remplace l'ancien micro CSS) ===== */
-        /* ============================================================ */
         .pdf-affiche-img {
             position: absolute;
-            top: 60px;
-            right: 20px;
+            top: 130px;
+            right: -10px;
             width: 380px;
             height: auto;
-            max-height: 900px;
+            max-height: 750px;
             object-fit: contain;
             z-index: 2;
-            filter: drop-shadow(0 15px 35px rgba(120, 80, 0, 0.3));
+            filter: drop-shadow(0 20px 45px rgba(120, 80, 0, 0.35));
         }
 
         .pdf-personal {
-            position: relative;
+            position: absolute;
+            bottom: 175px;
+            left: 55px;
+            right: 55px;
             z-index: 5;
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 25px 40px;
-            margin: 20px 40px 0 40px;
-            box-shadow: 0 15px 40px rgba(26,58,107,0.15), 0 0 0 2px rgba(212,175,55,0.3);
+            background: rgba(255,255,255,0.97);
+            border-radius: 18px;
+            padding: 18px 30px;
+            box-shadow: 0 12px 35px rgba(26,58,107,0.18), 0 0 0 2px rgba(212,175,55,0.35);
             border: 1px solid rgba(212,175,55,0.4);
             text-align: center;
         }
         .pdf-personal .pdf-salutation {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: #1a3a6b;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
         .pdf-personal .pdf-guest-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: 700;
             color: #2b6fc4;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             letter-spacing: -0.5px;
+            line-height: 1.05;
         }
         .pdf-personal .pdf-message {
-            font-size: 0.85rem;
-            line-height: 1.5;
+            font-size: 0.75rem;
+            line-height: 1.4;
             color: #1a3a6b;
             font-weight: 500;
         }
+
         .pdf-qr {
-            position: relative;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 5;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 18px;
-            margin: 20px 40px 25px 40px;
-            box-shadow: 0 15px 40px rgba(26,58,107,0.15), 0 0 0 2px rgba(212,175,55,0.3);
+            background: rgba(255,255,255,0.97);
+            border-radius: 14px;
+            padding: 10px 16px;
+            box-shadow: 0 12px 35px rgba(26,58,107,0.18), 0 0 0 2px rgba(212,175,55,0.35);
             border: 1px solid rgba(212,175,55,0.4);
             text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .pdf-qr .pdf-qr-title {
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.8px;
             color: #1a3a6b;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
+            text-align: left;
+        }
+        .pdf-qr .pdf-qr-note {
+            font-size: 0.55rem;
+            color: #6a7a9b;
+            font-weight: 500;
+            text-align: left;
         }
         .pdf-qr canvas,
         .pdf-qr img {
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(26,58,107,0.15);
+            border-radius: 8px;
             background: #ffffff;
-            padding: 4px;
-            width: 130px !important;
-            height: 130px !important;
-        }
-        .pdf-qr .pdf-qr-note {
-            font-size: 0.7rem;
-            color: #6a7a9b;
-            margin-top: 8px;
-            font-weight: 500;
+            padding: 3px;
+            width: 85px !important;
+            height: 85px !important;
         }
 
         @media (max-width: 768px) {
@@ -971,7 +1003,7 @@
                 const range = document.createRange();
                 const selection = window.getSelection();
                 const el = document.getElementById('inviteLinkDisplay');
-                range.selectNode(el); selection.removeAllRanges(); selection.addRange(el);
+                range.selectNode(el); selection.removeAllRanges(); selection.addRange(range);
                 document.execCommand('copy'); showToast('📋 Lien copié !');
             });
         }
@@ -1046,10 +1078,10 @@ Votre confirmation nous permettra de mieux vous accueillir.
                         <span>EXCELLENTIA ACADEMIA</span>
                     </div>
 
-                    <!-- ===== IMAGE AFFICHE (remplace le micro CSS) ===== -->
-                    <img src="IMG_6496.jpeg" alt="Affiche" class="pdf-affiche-img" crossorigin="anonymous">
+                    <!-- Image micro doré -->
+                    <img src="IMG_6496.jpeg" alt="Micro doré" class="pdf-affiche-img" crossorigin="anonymous">
 
-                    <!-- Contenu texte à gauche -->
+                    <!-- Contenu texte -->
                     <div class="pdf-content">
                         <div class="pdf-mini-logo">
                             <img src="IMG_1812.jpeg" alt="Logo" crossorigin="anonymous">
@@ -1063,7 +1095,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
                             <div class="pdf-box">
                                 <div class="pdf-box-icon-wrap">
                                     <i class="fas fa-calendar-alt"></i>
-                                    <span class="pdf-clock-badge"><i class="fas fa-clock" style="font-size:0.5rem;"></i></span>
+                                    <span class="pdf-clock-badge"><i class="fas fa-clock" style="font-size:0.55rem;"></i></span>
                                 </div>
                                 <div class="pdf-box-text">
                                     SAMEDI<br>
@@ -1072,7 +1104,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
                                 </div>
                             </div>
                             <div class="pdf-box">
-                                <i class="fas fa-map-marker-alt" style="font-size:1.9rem;"></i>
+                                <i class="fas fa-map-marker-alt" style="font-size:2rem;"></i>
                                 <div class="pdf-box-text">
                                     SILIKIN<br>
                                     <span class="red">VILLAGE</span>
@@ -1082,7 +1114,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
                         <div class="pdf-ribbon">INVITÉ D'HONNEUR</div>
                     </div>
 
-                    <!-- Bloc personnalisé (nom de l'invité) -->
+                    <!-- Bloc nom de l'invité -->
                     <div class="pdf-personal">
                         <div class="pdf-salutation">Cher/Chère,</div>
                         <div class="pdf-guest-name">${displayName}</div>
@@ -1094,9 +1126,11 @@ Votre confirmation nous permettra de mieux vous accueillir.
 
                     <!-- QR code -->
                     <div class="pdf-qr">
-                        <div class="pdf-qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
                         ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR Code">` : ''}
-                        <div class="pdf-qr-note">Éloquence en scène — Demi-finale</div>
+                        <div>
+                            <div class="pdf-qr-title"><i class="fas fa-qrcode"></i> Demi-finale</div>
+                            <div class="pdf-qr-note">Éloquence en scène</div>
+                        </div>
                     </div>
                 </div>
             `;
