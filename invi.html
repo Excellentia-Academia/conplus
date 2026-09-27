@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Cormorant+Garamond:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f5f7fb; min-height: 100vh; overflow-x: hidden; color: #0a1628; }
@@ -30,29 +30,14 @@
         .card-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, #1a3a6b, #4a8ac8, transparent); animation: shimmer 3s infinite; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-        /* ===== LOGO STRUCTURE ===== */
         .structure-logo-wrap {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #ffffff;
-            border: 4px solid #ffffff;
+            width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; overflow: hidden;
+            background: #ffffff; border: 4px solid #ffffff;
             box-shadow: 0 12px 35px rgba(26, 58, 107, 0.25), 0 0 0 2px rgba(74, 138, 200, 0.3);
-            position: relative;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; z-index: 3; display: flex; align-items: center; justify-content: center;
             animation: pulseGlow 3s ease-in-out infinite;
         }
-        .structure-logo-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+        .structure-logo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 12px 35px rgba(26, 58, 107, 0.25), 0 0 0 2px rgba(74, 138, 200, 0.3); }
             50% { box-shadow: 0 12px 45px rgba(74, 138, 200, 0.5), 0 0 0 4px rgba(74, 138, 200, 0.5); }
@@ -140,6 +125,322 @@
         .self-gen-btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(74, 138, 200, 0.5); filter: brightness(1.05); }
         .self-gen-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .self-gen-note { text-align: center; font-size: 0.75rem; color: #8a9ab5; margin-top: 15px; }
+
+        /* ============================================================= */
+        /* ===== STYLE DE L'AFFICHE PDF (1 SEULE PAGE A4) ============ */
+        /* ============================================================= */
+        .pdf-affiche {
+            width: 794px;
+            height: 1123px;
+            background: url('fond_affiche.jpg') center center / cover no-repeat;
+            position: relative;
+            font-family: 'Inter', sans-serif;
+            color: #2b6fc4;
+            overflow: hidden;
+        }
+        .pdf-affiche::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #b8931c 0%, #f0d264 25%, #d4af37 50%, #f0d264 75%, #b8931c 100%);
+            z-index: 10;
+        }
+
+        .pdf-header-top {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            color: #1a3a6b;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            position: relative;
+            z-index: 3;
+            padding: 28px 38px 0 38px;
+        }
+        .pdf-header-top i {
+            color: #1a3a6b;
+            font-size: 0.95rem;
+        }
+
+        .pdf-content {
+            position: relative;
+            z-index: 3;
+            padding: 22px 50px 20px 65px;
+            width: 65%;
+        }
+
+        .pdf-mini-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow:
+                0 6px 20px rgba(212,175,55,0.4),
+                0 0 0 4px #e8c76a,
+                0 0 0 8px rgba(232,199,106,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+        .pdf-mini-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pdf-title {
+            font-family: 'Anton', 'Inter', sans-serif;
+            font-weight: 400;
+            color: #2b6fc4;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            font-size: 6.2rem;
+            margin-bottom: 0;
+            text-transform: none;
+        }
+        .pdf-title .star {
+            font-size: 0.5em;
+            vertical-align: super;
+            margin-left: 10px;
+            color: #2b6fc4;
+            position: relative;
+            top: -0.2em;
+        }
+
+        .pdf-swoosh {
+            position: relative;
+            width: 340px;
+            height: 24px;
+            margin-top: 4px;
+            margin-bottom: 24px;
+        }
+        .pdf-swoosh::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #2b6fc4;
+            border-radius: 4px;
+            transform: rotate(-1deg);
+            clip-path: polygon(0 40%, 100% 0, 99% 60%, 1% 100%);
+        }
+        .pdf-swoosh::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 55%;
+            width: 45%;
+            height: 4px;
+            background: #2b6fc4;
+            border-radius: 4px;
+            transform: rotate(-3deg);
+            clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 60%);
+        }
+
+        .pdf-tagline {
+            display: inline-block;
+            border: 2.5px dashed #2b6fc4;
+            color: #d63a2f;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            padding: 10px 30px;
+            margin-bottom: 22px;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.55);
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* ===== CASES DATE + LIEU EMBELLIES ===== */
+        .pdf-info-boxes {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .pdf-box {
+            flex: 1;
+            border: 2.5px solid #2b6fc4;
+            border-radius: 12px;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 100%);
+            box-shadow: 0 6px 18px rgba(43,111,196,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+            position: relative;
+            overflow: hidden;
+        }
+        .pdf-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #b8931c 0%, #f0d264 50%, #b8931c 100%);
+        }
+        .pdf-box i {
+            color: #d63a2f;
+            font-size: 2.4rem;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 3px 6px rgba(214,58,47,0.3));
+        }
+        .pdf-box .pdf-box-icon-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .pdf-box .pdf-clock-badge {
+            position: absolute;
+            bottom: -3px;
+            right: -12px;
+            background: #2b6fc4;
+            color: #fff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            border: 3px solid #ffffff;
+            box-shadow: 0 3px 8px rgba(43,111,196,0.4);
+        }
+        .pdf-box .pdf-box-text {
+            color: #2b6fc4;
+            font-weight: 900;
+            font-family: 'Anton', 'Inter', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            line-height: 1.15;
+            text-transform: uppercase;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+        .pdf-box .pdf-box-text .red { color: #d63a2f; }
+
+        /* ===== RUBAN "INVITÉ D'HONNEUR" ===== */
+        .pdf-ribbon {
+            display: block;
+            width: 100%;
+            background: #d63a2f;
+            color: #ffffff;
+            font-family: 'Anton', 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 1.05rem;
+            padding: 8px 20px;
+            text-align: center;
+            letter-spacing: 1.8px;
+            position: relative;
+            box-shadow: 0 6px 16px rgba(214, 58, 47, 0.4);
+            text-transform: uppercase;
+            box-sizing: border-box;
+            clip-path: polygon(2.5% 0, 97.5% 0, 100% 50%, 97.5% 100%, 2.5% 100%, 0 50%);
+        }
+        .pdf-ribbon::before,
+        .pdf-ribbon::after {
+            display: none;
+        }
+
+        .pdf-affiche-img {
+            position: absolute;
+            top: 140px;
+            right: -15px;
+            width: 380px;
+            height: auto;
+            max-height: 700px;
+            object-fit: contain;
+            z-index: 2;
+            filter: drop-shadow(0 20px 45px rgba(120, 80, 0, 0.35));
+        }
+
+        /* ===== BLOC NOM INVITÉ ===== */
+        .pdf-personal {
+            position: absolute;
+            bottom: 150px;
+            left: 55px;
+            right: 55px;
+            z-index: 5;
+            background: rgba(255,255,255,0.98);
+            border-radius: 20px;
+            padding: 22px 38px;
+            box-shadow: 0 15px 40px rgba(26,58,107,0.2), 0 0 0 2px rgba(212,175,55,0.4);
+            border: 1px solid rgba(212,175,55,0.5);
+            text-align: center;
+        }
+        .pdf-personal .pdf-salutation {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a3a6b;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .pdf-personal .pdf-guest-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #2b6fc4;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+        .pdf-personal .pdf-message {
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: #1a3a6b;
+            font-weight: 500;
+        }
+
+        /* ===== QR CODE — à droite, à cheval sur la bande rouge ===== */
+        .pdf-qr {
+            position: absolute;
+            bottom: 8px;
+            right: 40px;
+            z-index: 12;
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            border: none;
+            text-align: center;
+            display: block;
+        }
+        .pdf-qr canvas,
+        .pdf-qr img {
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 5px;
+            width: 110px !important;
+            height: 110px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.35), 0 0 0 3px #ffffff, 0 0 0 5px rgba(212,175,55,0.7);
+        }
+
+        /* ===== PETIT RUBAN ROUGE EN BAS ===== */
+        .pdf-bottom-band {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            background: #d63a2f;
+            z-index: 8;
+            box-shadow: 0 -4px 12px rgba(214, 58, 47, 0.35);
+        }
+        .pdf-bottom-band::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #b8931c 0%, #f0d264 50%, #b8931c 100%);
+        }
+
         @media (max-width: 768px) {
             .container { padding: 30px 16px; }
             .card-body { padding: 30px 25px; }
@@ -232,7 +533,6 @@
     </div>
     <div class="container">
 
-        <!-- ===== FORMULAIRE PUBLIC : GÉNÉRER SON INVITATION ===== -->
         <div class="self-gen-card" id="selfGenCard" style="display:none;">
             <h2><i class="fas fa-wand-magic-sparkles" style="color:#4a8ac8;"></i> Générez votre invitation</h2>
             <p class="subtitle">Entrez votre nom pour recevoir votre invitation personnalisée à la <strong>demi-finale</strong> d'Éloquence en Scène.</p>
@@ -256,7 +556,6 @@
 
         <div class="invitation-card" id="invitationCard">
             <div class="card-header">
-                <!-- ===== LOGO STRUCTURE IMG_1812.jpeg ===== -->
                 <div class="structure-logo-wrap">
                     <img src="IMG_1812.jpeg" alt="Logo Excellentia Academia" crossorigin="anonymous">
                 </div>
@@ -356,7 +655,6 @@
     </script>
 
     <script>
-        // ===== TOAST =====
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -366,7 +664,6 @@
             toast._timeout = setTimeout(() => toast.classList.remove('show'), 5000);
         }
 
-        // ===== PARTICULES =====
         (function() {
             const canvas = document.getElementById('particles');
             const ctx = canvas.getContext('2d');
@@ -411,27 +708,28 @@
             animateParticles();
         })();
 
-        // ===== UTILITAIRES =====
         function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
 
-        function generateQRCode(data) {
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = '';
+        function generateQRCodeInto(container, data) {
+            container.innerHTML = '';
             try {
-                new QRCode(qrContainer, {
+                new QRCode(container, {
                     text: data || 'https://eloquence-evenement.com/invitation',
                     width: 180, height: 180,
                     colorDark: '#1a3a6b', colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
-            } catch(e) { qrContainer.innerHTML = '<p style="color:#4a8ac8;">QR Code</p>'; }
+            } catch(e) { container.innerHTML = '<p style="color:#4a8ac8;">QR Code</p>'; }
+        }
+
+        function generateQRCode(data) {
+            generateQRCodeInto(document.getElementById('qrcode'), data);
         }
 
         function displayGuest(name) {
             const display = document.getElementById('guestNameDisplay');
             if (name && name.trim() !== '') {
-                const trimmedName = name.trim();
-                display.innerHTML = `<strong>${trimmedName}</strong>`;
+                display.innerHTML = `<strong>${name.trim()}</strong>`;
             } else {
                 display.innerHTML = '[Nom de l\'invité]';
             }
@@ -694,37 +992,21 @@
             });
         }
 
-        // ============================================================
-        // ===== ENVOI WHATSAPP — RAPPEL + CONFIRMATION ==============
-        // ============================================================
         function sendWhatsApp() {
             const phone = (lastGeneratedPhone || '').trim();
             const name = (lastGeneratedName || '').trim();
             const linkEl = document.getElementById('inviteLinkDisplay');
             const link = linkEl ? linkEl.textContent.trim() : '';
 
-            if (!phone) {
-                showToast('⚠️ Aucun numéro WhatsApp renseigné pour cet invité', true);
-                return;
-            }
-            if (!name) {
-                showToast('⚠️ Aucun nom d\'invité généré. Générez d\'abord une invitation.', true);
-                return;
-            }
-            if (!link || !link.startsWith('http')) {
-                showToast('⚠️ Lien d\'invitation introuvable. Régénérez l\'invitation.', true);
-                return;
-            }
+            if (!phone) { showToast('⚠️ Aucun numéro WhatsApp renseigné pour cet invité', true); return; }
+            if (!name) { showToast('⚠️ Aucun nom d\'invité généré. Générez d\'abord une invitation.', true); return; }
+            if (!link || !link.startsWith('http')) { showToast('⚠️ Lien d\'invitation introuvable. Régénérez l\'invitation.', true); return; }
 
             let phoneClean = phone.replace(/[^0-9]/g, '');
             if (phoneClean.length === 10 && phoneClean.startsWith('0')) {
                 phoneClean = '243' + phoneClean.substring(1);
             }
-
-            if (phoneClean.length < 8) {
-                showToast('⚠️ Numéro WhatsApp invalide. Vérifiez l\'indicatif.', true);
-                return;
-            }
+            if (phoneClean.length < 8) { showToast('⚠️ Numéro WhatsApp invalide. Vérifiez l\'indicatif.', true); return; }
 
             const message =
 `🎤 *RAPPEL — Éloquence en Scène (Demi-finale)* 🎤
@@ -758,110 +1040,116 @@ Votre confirmation nous permettra de mieux vous accueillir.
         }
 
         // ============================================================
-        // ===== TÉLÉCHARGER — PDF PROPRE SUR 1 OU 2 PAGES ===========
+        // ===== CONSTRUCTION DE L'AFFICHE PDF (1 SEULE PAGE) ========
+        // ============================================================
+        function buildPdfAffiche(guestName) {
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            const qrDataUrl = qrCanvas ? qrCanvas.toDataURL('image/png') : '';
+            const displayName = (guestName && guestName.trim()) ? guestName.trim() : '[Nom de l\'invité]';
+
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'fixed';
+            wrapper.style.left = '-99999px';
+            wrapper.style.top = '0';
+            wrapper.style.zIndex = '-1';
+
+            wrapper.innerHTML = `
+                <div class="pdf-affiche" id="pdfAffiche">
+                    <div class="pdf-header-top">
+                        <i class="fab fa-facebook"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-tiktok"></i>
+                        <span>EXCELLENTIA ACADEMIA</span>
+                    </div>
+
+                    <!-- Image micro doré -->
+                    <img src="IMG_6496.jpeg" alt="Micro doré" class="pdf-affiche-img" crossorigin="anonymous">
+
+                    <!-- Contenu texte -->
+                    <div class="pdf-content">
+                        <div class="pdf-mini-logo">
+                            <img src="IMG_1812.jpeg" alt="Logo" crossorigin="anonymous">
+                        </div>
+                        <div class="pdf-title">
+                            Demi-<br>finale<span class="star">★</span>
+                        </div>
+                        <div class="pdf-swoosh"></div>
+                        <div class="pdf-tagline">Eloquence en Scène</div>
+                        <div class="pdf-info-boxes">
+                            <div class="pdf-box">
+                                <div class="pdf-box-icon-wrap">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span class="pdf-clock-badge"><i class="fas fa-clock" style="font-size:0.7rem;"></i></span>
+                                </div>
+                                <div class="pdf-box-text">
+                                    SAMEDI<br>
+                                    <span class="red">10 OCT.</span><br>
+                                    À 8H00'
+                                </div>
+                            </div>
+                            <div class="pdf-box">
+                                <i class="fas fa-map-marker-alt" style="font-size:2.5rem;"></i>
+                                <div class="pdf-box-text">
+                                    SILIKIN<br>
+                                    <span class="red">VILLAGE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pdf-ribbon">INVITÉ D'HONNEUR</div>
+                    </div>
+
+                    <!-- Bloc nom de l'invité -->
+                    <div class="pdf-personal">
+                        <div class="pdf-salutation">Cher/Chère,</div>
+                        <div class="pdf-guest-name">${displayName}</div>
+                        <div class="pdf-message">
+                            Nous avons le plaisir de vous convier à la <strong>demi-finale</strong> du concours <strong>« Éloquence en Scène »</strong>.<br>
+                            Votre présence sera un honneur.
+                        </div>
+                    </div>
+
+                    <!-- QR code simple en bas à droite, à cheval sur la bande rouge -->
+                    <div class="pdf-qr">
+                        ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR Code">` : ''}
+                    </div>
+
+                    <!-- Petit ruban rouge en bas -->
+                    <div class="pdf-bottom-band"></div>
+                </div>
+            `;
+
+            document.body.appendChild(wrapper);
+            return wrapper;
+        }
+
+        // ============================================================
+        // ===== TÉLÉCHARGER — PDF 1 SEULE PAGE A4 ===================
         // ============================================================
         async function downloadInvitation() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.classList.add('show');
 
-            const card = document.getElementById('invitationCard');
+            const params = getUrlParams();
+            const guestName = params.guest || '';
 
-            // Sauvegarde des styles originaux
-            const originalCardStyle = {
-                opacity: card.style.opacity,
-                transform: card.style.transform,
-                animation: card.style.animation,
-                borderRadius: card.style.borderRadius,
-                overflow: card.style.overflow,
-                width: card.style.width,
-                maxWidth: card.style.maxWidth
-            };
+            const wrapper = buildPdfAffiche(guestName);
+            const affiche = wrapper.querySelector('#pdfAffiche');
 
-            // Fixer la carte à une largeur standard A4 virtuelle pour un rendu PDF propre
-            const PDF_WIDTH_PX = 794;
-            card.style.opacity = '1';
-            card.style.transform = 'none';
-            card.style.animation = 'none';
-            card.style.borderRadius = '0px';
-            card.style.overflow = 'visible';
-            card.style.width = PDF_WIDTH_PX + 'px';
-            card.style.maxWidth = PDF_WIDTH_PX + 'px';
-            card.style.margin = '0 auto';
-
-            // Remplacer l'iframe Google Maps par un visuel propre
-            const mapContainer = card.querySelector('.map-container');
-            const originalMapHTML = mapContainer ? mapContainer.innerHTML : null;
-            if (mapContainer) {
-                mapContainer.innerHTML = `
-                    <div style="
-                        width:100%;
-                        height:220px;
-                        background: linear-gradient(135deg, #eaf1fa 0%, #d8e6f7 100%);
-                        display:flex;
-                        flex-direction:column;
-                        align-items:center;
-                        justify-content:center;
-                        gap:8px;
-                        color:#1a3a6b;
-                        font-family:'Inter',sans-serif;
-                    ">
-                        <i class="fas fa-map-marked-alt" style="font-size:2.5rem;color:#4a8ac8;"></i>
-                        <div style="font-weight:700;font-size:1rem;letter-spacing:1px;">SILIKIN VILLAGE</div>
-                        <div style="font-size:0.8rem;color:#4a6a9b;">Kinshasa, RDC</div>
-                    </div>
-                `;
-            }
-
-            // Masquer les boutons d'action qui ne doivent pas figurer dans le PDF
-            const confirmBtn = document.getElementById('confirmBtn');
-            const downloadBtn = card.querySelector('.btn-download-invite');
-            const confirmBtnOriginalDisplay = confirmBtn ? confirmBtn.style.display : null;
-            const downloadBtnOriginalDisplay = downloadBtn ? downloadBtn.style.display : null;
-            if (confirmBtn) confirmBtn.style.display = 'none';
-            if (downloadBtn) downloadBtn.style.display = 'none';
-
-            // Attendre la stabilisation du rendu
-            await new Promise(r => setTimeout(r, 400));
+            await new Promise(r => setTimeout(r, 1000));
 
             try {
-                // Capture haute qualité
-                const canvas = await html2canvas(card, {
+                const canvas = await html2canvas(affiche, {
                     scale: 2,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#faf5e6',
                     allowTaint: false,
                     useCORS: true,
                     logging: false,
-                    width: card.offsetWidth,
-                    height: card.offsetHeight,
-                    windowWidth: card.offsetWidth,
-                    windowHeight: card.offsetHeight,
-                    scrollX: 0,
-                    scrollY: 0,
-                    onclone: (clonedDoc) => {
-                        const clonedCard = clonedDoc.getElementById('invitationCard');
-                        if (clonedCard) {
-                            clonedCard.style.opacity = '1';
-                            clonedCard.style.transform = 'none';
-                            clonedCard.style.animation = 'none';
-                            clonedCard.style.borderRadius = '0px';
-                        }
-                        // Retirer backdrop-filter
-                        clonedDoc.querySelectorAll('*').forEach(el => {
-                            if (el.style) {
-                                el.style.backdropFilter = 'none';
-                                el.style.webkitBackdropFilter = 'none';
-                            }
-                        });
-                        // Masquer overlay + nav admin + boutons
-                        const ov = clonedDoc.getElementById('loadingOverlay');
-                        if (ov) ov.style.display = 'none';
-                        clonedDoc.querySelectorAll('.admin-nav, .admin-nav *, .btn-confirm, .btn-download-invite').forEach(el => {
-                            el.style.display = 'none';
-                        });
-                    }
+                    width: affiche.offsetWidth,
+                    height: affiche.offsetHeight,
+                    windowWidth: affiche.offsetWidth,
+                    windowHeight: affiche.offsetHeight
                 });
 
-                // ===== Création du PDF A4 avec découpage propre =====
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({
                     orientation: 'portrait',
@@ -872,75 +1160,17 @@ Votre confirmation nous permettra de mieux vous accueillir.
 
                 const pageWidthMM = 210;
                 const pageHeightMM = 297;
-                const imgWidthMM = pageWidthMM;
-                const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
-
                 const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-                if (imgHeightMM <= pageHeightMM) {
-                    // Tout tient sur une seule page
-                    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidthMM, imgHeightMM, undefined, 'FAST');
-                } else {
-                    // Découpage automatique sur plusieurs pages A4
-                    let remainingHeightMM = imgHeightMM;
-                    let positionYMM = 0;
-                    let pageIndex = 0;
-
-                    while (remainingHeightMM > 1 && pageIndex < 10) {
-                        if (pageIndex > 0) pdf.addPage();
-
-                        // On dessine l'image complète décalée vers le haut pour ne montrer que la bonne tranche
-                        pdf.addImage(
-                            imgData,
-                            'JPEG',
-                            0,
-                            -positionYMM,
-                            imgWidthMM,
-                            imgHeightMM,
-                            undefined,
-                            'FAST'
-                        );
-
-                        // Masque blanc en bas si la tranche dépasse la page (pour éviter le débordement visuel)
-                        const sliceHeightMM = Math.min(pageHeightMM, remainingHeightMM);
-                        if (sliceHeightMM < pageHeightMM) {
-                            // dernière page : on ajoute rien
-                        } else {
-                            // Page intermédiaire : on masque la partie qui dépasse en bas
-                            // (le contenu suivant sera affiché sur la page suivante)
-                        }
-
-                        remainingHeightMM -= sliceHeightMM;
-                        positionYMM += sliceHeightMM;
-                        pageIndex++;
-                    }
-                }
+                pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMM, pageHeightMM, undefined, 'FAST');
 
                 pdf.save('invitation-eloquence-demifinale.pdf');
-                showToast('📥 PDF téléchargé avec succès !');
+                showToast('📥 Invitation PDF téléchargée !');
             } catch (e) {
                 console.error('Erreur téléchargement:', e);
                 showToast('❌ Erreur lors du téléchargement', true);
             } finally {
-                // Restaurer les styles originaux
-                card.style.opacity = originalCardStyle.opacity;
-                card.style.transform = originalCardStyle.transform;
-                card.style.animation = originalCardStyle.animation;
-                card.style.borderRadius = originalCardStyle.borderRadius;
-                card.style.overflow = originalCardStyle.overflow;
-                card.style.width = originalCardStyle.width;
-                card.style.maxWidth = originalCardStyle.maxWidth;
-                card.style.margin = '';
-
-                // Restaurer l'iframe Google Maps
-                if (mapContainer && originalMapHTML) {
-                    mapContainer.innerHTML = originalMapHTML;
-                }
-
-                // Restaurer les boutons
-                if (confirmBtn) confirmBtn.style.display = confirmBtnOriginalDisplay || '';
-                if (downloadBtn) downloadBtn.style.display = downloadBtnOriginalDisplay || '';
-
+                if (wrapper && wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
                 overlay.classList.remove('show');
             }
         }
