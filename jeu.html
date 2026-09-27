@@ -132,24 +132,11 @@
         .pdf-affiche {
             width: 794px;
             height: 1123px;
-            background: linear-gradient(135deg, #faf5e6 0%, #f5edd6 50%, #ede0c0 100%);
+            background: url('fond_affiche.jpg') center center / cover no-repeat;
             position: relative;
             font-family: 'Inter', sans-serif;
             color: #2b6fc4;
             overflow: hidden;
-        }
-        .pdf-affiche::before {
-            content: '';
-            position: absolute;
-            top: -10%;
-            left: -15%;
-            width: 90%;
-            height: 130%;
-            background:
-                radial-gradient(ellipse at top center, transparent 55%, rgba(200,185,150,0.15) 56%, transparent 58%),
-                radial-gradient(ellipse at top center, transparent 45%, rgba(200,185,150,0.25) 46%, transparent 48%),
-                radial-gradient(ellipse at top center, transparent 35%, rgba(200,185,150,0.35) 36%, transparent 38%);
-            pointer-events: none;
         }
         .pdf-affiche::after {
             content: '';
@@ -267,7 +254,7 @@
             padding: 10px 30px;
             margin-bottom: 22px;
             letter-spacing: 1px;
-            background: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.55);
             width: 100%;
             text-align: center;
             box-sizing: border-box;
@@ -287,7 +274,7 @@
             align-items: center;
             text-align: center;
             gap: 6px;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.6);
         }
         .pdf-box i {
             color: #d63a2f;
@@ -324,7 +311,7 @@
         }
         .pdf-box .pdf-box-text .red { color: #d63a2f; }
 
-        /* ===== RUBAN "INVITÉ D'HONNEUR" — PLEINE LARGEUR, CENTRÉ ===== */
+        /* ===== RUBAN "INVITÉ D'HONNEUR" — PLUS COMPACT ===== */
         .pdf-ribbon {
             display: block;
             width: 100%;
@@ -332,10 +319,10 @@
             color: #ffffff;
             font-family: 'Anton', 'Inter', sans-serif;
             font-weight: 400;
-            font-size: 1.1rem;
-            padding: 12px 20px;
+            font-size: 1.05rem;
+            padding: 8px 20px;      /* ← réduit de 12px à 8px */
             text-align: center;
-            letter-spacing: 2px;
+            letter-spacing: 1.8px;
             position: relative;
             box-shadow: 0 6px 16px rgba(214, 58, 47, 0.4);
             text-transform: uppercase;
@@ -1131,7 +1118,7 @@ Votre confirmation nous permettra de mieux vous accueillir.
             const wrapper = buildPdfAffiche(guestName);
             const affiche = wrapper.querySelector('#pdfAffiche');
 
-            await new Promise(r => setTimeout(r, 900));
+            await new Promise(r => setTimeout(r, 1000));
 
             try {
                 const canvas = await html2canvas(affiche, {
