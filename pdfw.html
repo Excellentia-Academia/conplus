@@ -28,11 +28,8 @@
     --text-muted: #8b98ab;
     --text-dim: #5a6a82;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Inter', sans-serif;
     background: var(--bg-0);
@@ -42,22 +39,15 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* ============ FOND ANIMÉ ============ */
   .bg-layer {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
+    position: fixed; inset: 0; z-index: -2;
     background:
       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 209, 102, 0.06) 0%, transparent 60%),
       radial-gradient(ellipse 60% 40% at 20% 100%, rgba(0, 229, 255, 0.04) 0%, transparent 60%),
       linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
   }
-
   .bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
+    position: fixed; inset: 0; z-index: -1;
     background-image:
       linear-gradient(rgba(255, 209, 102, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 209, 102, 0.03) 1px, transparent 1px);
@@ -65,821 +55,454 @@
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   }
-
   #particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
-  /* ============ HEADER ============ */
   .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
     background: rgba(7, 11, 20, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
-
   .top-bar-inner {
-    max-width: 1280px;
-    margin: 0 auto;
+    max-width: 1280px; margin: 0 auto;
     padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
   }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .brand { display: flex; align-items: center; gap: 12px; }
   .brand-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 44px; height: 44px; border-radius: 12px;
     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 20px rgba(255, 209, 102, 0.3);
   }
-
-  .brand-icon i {
-    font-size: 22px;
-    color: var(--bg-0);
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-  }
-
+  .brand-icon i { font-size: 22px; color: var(--bg-0); }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
   .brand-text .top {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.15rem;
-    letter-spacing: 2px;
-    color: var(--gold);
+    font-size: 1.15rem; letter-spacing: 2px; color: var(--gold);
   }
-
   .brand-text .bottom {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 600;
+    font-size: 0.7rem; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
   }
-
   .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     padding: 8px 16px;
     background: rgba(0, 230, 118, 0.08);
     border: 1px solid rgba(0, 230, 118, 0.25);
     border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--green);
-    letter-spacing: 0.5px;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--green); letter-spacing: 0.5px;
   }
-
   .status-pill .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 8px; height: 8px; border-radius: 50%;
     background: var(--green);
     box-shadow: 0 0 12px var(--green);
     animation: pulseDot 2s infinite;
   }
-
+  .status-pill.offline { background: rgba(255,77,77,0.08); border-color: rgba(255,77,77,0.25); color: var(--red); }
+  .status-pill.offline .dot { background: var(--red); box-shadow: 0 0 12px var(--red); }
   @keyframes pulseDot {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.85); }
   }
-
   .btn-download-top {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 20px;
     background: transparent;
     border: 1px solid var(--border-light);
-    color: var(--text);
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s;
+    color: var(--text); border-radius: 10px;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.25s;
     font-family: 'Inter', sans-serif;
   }
-
   .btn-download-top:hover {
-    background: var(--bg-3);
-    border-color: var(--gold);
-    color: var(--gold);
+    background: var(--bg-3); border-color: var(--gold); color: var(--gold);
   }
 
-  /* ============ HERO ============ */
   .hero {
-    max-width: 1280px;
-    margin: 0 auto;
+    max-width: 1280px; margin: 0 auto;
     padding: 70px 24px 40px;
-    text-align: center;
-    position: relative;
+    text-align: center; position: relative;
   }
-
   .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    display: inline-flex; align-items: center; gap: 10px;
     padding: 8px 20px;
     background: rgba(255, 209, 102, 0.08);
     border: 1px solid rgba(255, 209, 102, 0.25);
     border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-    text-transform: uppercase;
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--gold); letter-spacing: 3px;
+    margin-bottom: 24px; text-transform: uppercase;
   }
-
-  .hero-badge i { font-size: 0.85rem; }
-
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(3rem, 9vw, 6.5rem);
-    line-height: 0.9;
-    letter-spacing: 2px;
-    color: #ffffff;
-    margin-bottom: 16px;
-    text-transform: uppercase;
+    line-height: 0.9; letter-spacing: 2px;
+    color: #ffffff; margin-bottom: 16px; text-transform: uppercase;
   }
-
   .hero-title .gold {
     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 50%, var(--gold-dark) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
+    -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
   .hero-sub {
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    max-width: 620px;
-    margin: 0 auto 40px;
-    font-weight: 400;
+    font-size: 1.05rem; color: var(--text-muted);
+    max-width: 620px; margin: 0 auto 40px; font-weight: 400;
   }
 
-  /* ============ COMPTEUR ============ */
   .stats-row {
-    max-width: 900px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 0 24px;
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 0 24px;
   }
-
-  @media (max-width: 640px) {
-    .stats-row { grid-template-columns: 1fr; }
-  }
-
+  @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr; } }
   .stat-card {
     background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px 24px;
-    position: relative;
-    overflow: hidden;
+    border-radius: 16px; padding: 20px 24px;
+    position: relative; overflow: hidden;
   }
-
   .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: 0.5;
   }
-
   .stat-label {
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 0.7rem; color: var(--text-dim);
+    letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 8px;
   }
-
   .stat-value {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.6rem;
-    letter-spacing: 1px;
-    color: var(--text);
-    line-height: 1;
+    font-size: 2.6rem; letter-spacing: 1px;
+    color: var(--text); line-height: 1;
   }
-
   .stat-value .total { font-size: 1.3rem; color: var(--text-dim); }
-
   .stat-value.gold { color: var(--gold); }
   .stat-value.green { color: var(--green); }
 
-  /* ============ SECTION INSCRIPTION ============ */
-  .section {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
-
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-
+  .section { max-width: 1280px; margin: 0 auto; padding: 40px 24px; }
+  .section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
   .section-head .num {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--gold);
+    font-size: 0.75rem; color: var(--gold);
     padding: 4px 10px;
     background: rgba(255, 209, 102, 0.08);
     border: 1px solid rgba(255, 209, 102, 0.25);
-    border-radius: 6px;
-    font-weight: 700;
+    border-radius: 6px; font-weight: 700;
   }
-
   .section-head h2 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--text);
-    font-weight: 400;
+    font-size: 1.8rem; letter-spacing: 2px;
+    color: var(--text); font-weight: 400;
   }
-
   .section-head .line {
-    flex: 1;
-    height: 1px;
+    flex: 1; height: 1px;
     background: linear-gradient(90deg, var(--border), transparent);
   }
 
   .inscription-card {
     background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
-    position: relative;
-    overflow: hidden;
+    border-radius: 20px; padding: 32px;
+    position: relative; overflow: hidden;
   }
-
   .inscription-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(circle at top right, rgba(255, 209, 102, 0.05) 0%, transparent 60%);
     pointer-events: none;
   }
-
   .inscription-info {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
+    display: flex; align-items: flex-start; gap: 14px;
     padding: 16px 20px;
     background: rgba(0, 229, 255, 0.04);
     border: 1px solid rgba(0, 229, 255, 0.15);
-    border-radius: 12px;
-    margin-bottom: 24px;
-    position: relative;
-    z-index: 1;
+    border-radius: 12px; margin-bottom: 24px;
+    position: relative; z-index: 1;
   }
-
-  .inscription-info i {
-    color: var(--cyan);
-    font-size: 1.1rem;
-    margin-top: 2px;
-  }
-
-  .inscription-info p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
+  .inscription-info i { color: var(--cyan); font-size: 1.1rem; margin-top: 2px; }
+  .inscription-info p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
   .inscription-info strong { color: var(--gold); }
 
-  .input-row {
-    display: flex;
-    gap: 12px;
-    position: relative;
-    z-index: 1;
-  }
-
-  @media (max-width: 640px) {
-    .input-row { flex-direction: column; }
-  }
-
+  .input-row { display: flex; gap: 12px; position: relative; z-index: 1; }
+  @media (max-width: 640px) { .input-row { flex-direction: column; } }
   #nomInput {
-    flex: 1;
-    padding: 18px 22px;
+    flex: 1; padding: 18px 22px;
     background: var(--bg-0);
     border: 2px solid var(--border);
     border-radius: 12px;
     font-size: 1.05rem;
     font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 3px;
+    font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 3px;
     transition: all 0.25s;
   }
-
   #nomInput::placeholder {
-    color: var(--text-dim);
-    font-weight: 400;
-    letter-spacing: 1px;
+    color: var(--text-dim); font-weight: 400; letter-spacing: 1px;
   }
-
   #nomInput:focus {
-    outline: none;
-    border-color: var(--gold);
+    outline: none; border-color: var(--gold);
     background: var(--bg-1);
     box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.1);
   }
-
-  #nomInput:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
+  #nomInput:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-validate {
     padding: 18px 36px;
     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 100%);
-    color: var(--bg-0);
-    border: none;
+    color: var(--bg-0); border: none;
     border-radius: 12px;
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.25s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    font-size: 0.95rem; font-weight: 800;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.25s;
+    display: inline-flex; align-items: center; gap: 10px;
     box-shadow: 0 8px 24px rgba(255, 209, 102, 0.25);
   }
-
   .btn-validate:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 14px 36px rgba(255, 209, 102, 0.4);
   }
-
   .btn-validate:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+    opacity: 0.4; cursor: not-allowed;
+    transform: none; box-shadow: none;
   }
-
   .feedback {
-    margin-top: 16px;
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: none;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    z-index: 1;
+    margin-top: 16px; padding: 14px 20px;
+    border-radius: 12px; font-size: 0.9rem; font-weight: 600;
+    display: none; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
   }
-
   .feedback.show { display: flex; animation: slideDown 0.4s ease; }
-
   @keyframes slideDown {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   .feedback.success {
     background: rgba(0, 230, 118, 0.1);
-    border: 1px solid rgba(0, 230, 118, 0.3);
-    color: var(--green);
+    border: 1px solid rgba(0, 230, 118, 0.3); color: var(--green);
   }
-
   .feedback.error {
     background: rgba(255, 77, 77, 0.1);
-    border: 1px solid rgba(255, 77, 77, 0.3);
-    color: var(--red);
+    border: 1px solid rgba(255, 77, 77, 0.3); color: var(--red);
   }
-
   .feedback.info {
     background: rgba(0, 229, 255, 0.1);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    color: var(--cyan);
+    border: 1px solid rgba(0, 229, 255, 0.3); color: var(--cyan);
   }
 
-  /* ============ PODIUM ============ */
-  .podium-section {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
-
-  .podium {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 20px;
-    align-items: end;
-    margin-top: 20px;
-  }
-
+  .podium { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 20px; align-items: end; margin-top: 20px; }
   @media (max-width: 640px) {
     .podium { grid-template-columns: 1fr; gap: 16px; }
     .podium .place-1 { order: -1; }
   }
-
   .podium-card {
     background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+    border-radius: 20px; padding: 28px 20px;
+    text-align: center; position: relative;
+    overflow: hidden; transition: transform 0.3s ease;
   }
-
   .podium-card:hover { transform: translateY(-4px); }
-
   .podium-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   }
-
-  .podium-card.place-1 { padding: 40px 20px; border-color: rgba(255, 209, 102, 0.4); box-shadow: 0 20px 50px rgba(255, 209, 102, 0.1); }
+  .podium-card.place-1 {
+    padding: 40px 20px;
+    border-color: rgba(255, 209, 102, 0.4);
+    box-shadow: 0 20px 50px rgba(255, 209, 102, 0.1);
+  }
   .podium-card.place-1::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
   .podium-card.place-2::before { background: linear-gradient(90deg, transparent, var(--silver), transparent); }
   .podium-card.place-3::before { background: linear-gradient(90deg, transparent, var(--bronze), transparent); }
-
   .podium-rank {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 50%;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    font-weight: 400;
+    font-size: 1.6rem; letter-spacing: 1px;
+    margin-bottom: 16px; font-weight: 400;
   }
-
   .place-1 .podium-rank {
     background: linear-gradient(135deg, var(--gold), var(--gold-2));
     color: var(--bg-0);
     box-shadow: 0 8px 24px rgba(255, 209, 102, 0.4);
     animation: crownGlow 3s infinite;
   }
-
   @keyframes crownGlow {
     0%, 100% { box-shadow: 0 8px 24px rgba(255, 209, 102, 0.4); }
     50% { box-shadow: 0 8px 32px rgba(255, 209, 102, 0.7); }
   }
-
-  .place-2 .podium-rank {
-    background: linear-gradient(135deg, #e6edf3, var(--silver));
-    color: var(--bg-0);
-  }
-
-  .place-3 .podium-rank {
-    background: linear-gradient(135deg, var(--bronze), #a0522d);
-    color: #fff;
-  }
-
-  .podium-medal {
-    font-size: 2rem;
-    margin-bottom: 8px;
-  }
-
+  .place-2 .podium-rank { background: linear-gradient(135deg, #e6edf3, var(--silver)); color: var(--bg-0); }
+  .place-3 .podium-rank { background: linear-gradient(135deg, var(--bronze), #a0522d); color: #fff; }
+  .podium-medal { font-size: 2rem; margin-bottom: 8px; }
   .podium-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 2px;
-    color: #fff;
-    margin-bottom: 6px;
-    word-break: break-word;
+    font-size: 1.6rem; letter-spacing: 2px;
+    color: #fff; margin-bottom: 6px; word-break: break-word;
   }
-
   .place-1 .podium-name { font-size: 2rem; color: var(--gold); }
-
   .podium-label {
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 700;
+    font-size: 0.7rem; color: var(--text-dim);
+    letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
   }
 
-  /* ============ TABLEAU CLASSEMENT ============ */
   .ranking-table-wrap {
     background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
+    border-radius: 20px; overflow: hidden; position: relative;
   }
-
   .ranking-table-wrap::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
-
   .table-header {
-    display: grid;
-    grid-template-columns: 80px 1fr 140px;
+    display: grid; grid-template-columns: 80px 1fr 140px;
     padding: 18px 28px;
     background: var(--bg-3);
     border-bottom: 1px solid var(--border);
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 800;
+    font-size: 0.7rem; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 800;
     color: var(--text-dim);
   }
-
   @media (max-width: 640px) {
     .table-header { grid-template-columns: 60px 1fr 90px; padding: 14px 16px; }
   }
-
   .ranking-row {
-    display: grid;
-    grid-template-columns: 80px 1fr 140px;
-    padding: 18px 28px;
-    align-items: center;
+    display: grid; grid-template-columns: 80px 1fr 140px;
+    padding: 18px 28px; align-items: center;
     border-bottom: 1px solid var(--border);
-    transition: background 0.2s;
-    position: relative;
+    transition: background 0.2s; position: relative;
   }
-
   @media (max-width: 640px) {
     .ranking-row { grid-template-columns: 60px 1fr 90px; padding: 14px 16px; }
   }
-
   .ranking-row:last-child { border-bottom: none; }
   .ranking-row:hover { background: rgba(255, 209, 102, 0.02); }
-
-  .ranking-row.highlight {
-    background: rgba(255, 209, 102, 0.06);
-  }
-
+  .ranking-row.highlight { background: rgba(255, 209, 102, 0.06); }
   .ranking-row.highlight::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
     background: var(--gold);
   }
-
   .rank-position {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: var(--text-dim);
-    letter-spacing: 1px;
+    font-size: 1.8rem; color: var(--text-dim); letter-spacing: 1px;
   }
-
   .rank-position.gold { color: var(--gold); }
   .rank-position.silver { color: var(--silver); }
   .rank-position.bronze { color: var(--bronze); }
-
   .rank-name {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 2px;
-    word-break: break-word;
+    font-size: 1rem; font-weight: 700;
+    color: var(--text); letter-spacing: 2px; word-break: break-word;
   }
-
-  .rank-row.highlight .rank-name { color: var(--gold); }
-
+  .ranking-row.highlight .rank-name { color: var(--gold); }
   .rank-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 0.7rem; font-weight: 800;
+    letter-spacing: 1.5px; text-transform: uppercase;
     justify-self: end;
   }
+  .badge-gold { background: rgba(255, 209, 102, 0.12); color: var(--gold); border: 1px solid rgba(255, 209, 102, 0.3); }
+  .badge-silver { background: rgba(201, 209, 217, 0.1); color: var(--silver); border: 1px solid rgba(201, 209, 217, 0.25); }
+  .badge-bronze { background: rgba(205, 127, 50, 0.1); color: var(--bronze); border: 1px solid rgba(205, 127, 50, 0.3); }
+  .badge-default { background: rgba(139, 152, 171, 0.08); color: var(--text-muted); border: 1px solid var(--border); }
 
-  .badge-gold {
-    background: rgba(255, 209, 102, 0.12);
-    color: var(--gold);
-    border: 1px solid rgba(255, 209, 102, 0.3);
-  }
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+  .empty-state i { font-size: 2.5rem; color: var(--border-light); margin-bottom: 16px; display: block; }
+  .empty-state p { font-size: 0.95rem; letter-spacing: 1px; }
 
-  .badge-silver {
-    background: rgba(201, 209, 217, 0.1);
-    color: var(--silver);
-    border: 1px solid rgba(201, 209, 217, 0.25);
-  }
-
-  .badge-bronze {
-    background: rgba(205, 127, 50, 0.1);
-    color: var(--bronze);
-    border: 1px solid rgba(205, 127, 50, 0.3);
-  }
-
-  .badge-default {
-    background: rgba(139, 152, 171, 0.08);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-  }
-
-  /* ============ ÉTAT VIDE ============ */
-  .empty-state {
-    text-align: center;
-    padding: 60px 24px;
-    color: var(--text-dim);
-  }
-
-  .empty-state i {
-    font-size: 2.5rem;
-    color: var(--border-light);
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .empty-state p {
-    font-size: 0.95rem;
-    letter-spacing: 1px;
-  }
-
-  /* ============ LOADER / TIRAGE ============ */
   .drawing-overlay {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(7, 11, 20, 0.95);
     backdrop-filter: blur(10px);
-    z-index: 999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 24px;
+    z-index: 999; display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 24px;
   }
-
   .drawing-overlay.show { display: flex; animation: fadeIn 0.4s; }
-
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
   .drawing-spinner {
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     border: 3px solid var(--border);
     border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
+    border-radius: 50%; animation: spin 0.9s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .drawing-text {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 4px;
-    color: var(--gold);
-    text-align: center;
+    font-size: 2rem; letter-spacing: 4px;
+    color: var(--gold); text-align: center;
   }
-
   .drawing-sub {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-    margin-top: -12px;
+    font-size: 0.85rem; color: var(--text-muted);
+    letter-spacing: 1px; margin-top: -12px;
   }
 
-  /* ============ BANNIÈRE DÉLIBÉRATION ============ */
   .delib-banner {
     background: linear-gradient(135deg, rgba(255, 209, 102, 0.1), rgba(255, 209, 102, 0.03));
     border: 1px solid rgba(255, 209, 102, 0.3);
-    border-radius: 16px;
-    padding: 24px 28px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
+    border-radius: 16px; padding: 24px 28px;
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 24px; position: relative; overflow: hidden;
   }
-
   .delib-banner::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255, 209, 102, 0.05), transparent);
     animation: shimmer 3s infinite;
   }
-
   @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
   }
-
   .delib-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
+    width: 56px; height: 56px; border-radius: 14px;
     background: linear-gradient(135deg, var(--gold), var(--gold-2));
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     box-shadow: 0 8px 24px rgba(255, 209, 102, 0.3);
   }
-
   .delib-icon i { font-size: 1.5rem; color: var(--bg-0); }
-
   .delib-text { position: relative; z-index: 1; }
-
   .delib-text h3 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin-bottom: 4px;
-    font-weight: 400;
+    font-size: 1.4rem; letter-spacing: 2px;
+    color: var(--gold); margin-bottom: 4px; font-weight: 400;
   }
+  .delib-text p { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.5px; }
 
-  .delib-text p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-  }
-
-  /* ============ FOOTER ============ */
   footer {
-    text-align: center;
-    padding: 40px 24px;
+    text-align: center; padding: 40px 24px;
     border-top: 1px solid var(--border);
-    margin-top: 60px;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    margin-top: 60px; color: var(--text-dim);
+    font-size: 0.8rem; letter-spacing: 1px;
   }
-
   footer .footer-brand {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 3px;
-    color: var(--gold);
-    margin-bottom: 8px;
+    font-size: 1.1rem; letter-spacing: 3px;
+    color: var(--gold); margin-bottom: 8px;
   }
 
-  /* ============ TOAST ============ */
   .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
+    position: fixed; bottom: 30px; left: 50%;
     transform: translateX(-50%) translateY(120px);
     background: var(--bg-2);
     border: 1px solid var(--border-light);
-    color: var(--text);
-    padding: 16px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    z-index: 3000;
+    color: var(--text); padding: 16px 28px;
+    border-radius: 12px; font-weight: 600;
+    font-size: 0.9rem; z-index: 3000;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     max-width: 90%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
   }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast i { font-size: 1.1rem; }
   .toast.success { border-color: rgba(0, 230, 118, 0.4); color: var(--green); }
   .toast.error { border-color: rgba(255, 77, 77, 0.4); color: var(--red); }
@@ -891,17 +514,14 @@
 <div class="bg-layer"></div>
 <div class="bg-grid"></div>
 <canvas id="particles"></canvas>
-
 <div class="toast" id="toast"></div>
 
-<!-- OVERLAY DE TIRAGE AU SORT -->
 <div class="drawing-overlay" id="drawingOverlay">
   <div class="drawing-spinner"></div>
   <div class="drawing-text">Tirage au sort en cours</div>
   <div class="drawing-sub">Attribution aléatoire des positions...</div>
 </div>
 
-<!-- HEADER -->
 <header class="top-bar">
   <div class="top-bar-inner">
     <div class="brand">
@@ -911,11 +531,10 @@
         <span class="bottom">Finale — Ordre de passage</span>
       </div>
     </div>
-
     <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-      <div class="status-pill">
+      <div class="status-pill" id="statusPill">
         <span class="dot"></span>
-        <span id="liveStatus">EN DIRECT</span>
+        <span id="liveStatus">Connexion...</span>
       </div>
       <button class="btn-download-top" onclick="downloadClassement()">
         <i class="fas fa-download"></i> PDF
@@ -924,7 +543,6 @@
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-badge">
     <i class="fas fa-star"></i>
@@ -940,7 +558,6 @@
   </p>
 </section>
 
-<!-- STATS -->
 <div class="stats-row">
   <div class="stat-card">
     <div class="stat-label">Candidats inscrits</div>
@@ -956,7 +573,6 @@
   </div>
 </div>
 
-<!-- INSCRIPTION -->
 <section class="section">
   <div class="section-head">
     <span class="num">01</span>
@@ -972,26 +588,22 @@
         Une seule inscription par candidat. Le tirage au sort se lance <strong>automatiquement</strong> dès que les 10 candidats sont inscrits.
       </p>
     </div>
-
     <div class="input-row">
       <input type="text" id="nomInput" placeholder="ENTREZ VOTRE NOM" autocomplete="off" spellcheck="false" maxlength="30">
       <button class="btn-validate" id="btnValider">
         <i class="fas fa-check"></i> VALIDER
       </button>
     </div>
-
     <div class="feedback" id="feedback"></div>
   </div>
 </section>
 
-<!-- PODIUM -->
-<section class="podium-section" id="podiumSection" style="display:none;">
+<section class="section" id="podiumSection" style="display:none;">
   <div class="section-head">
     <span class="num">02</span>
     <h2>PODIUM</h2>
     <div class="line"></div>
   </div>
-
   <div class="podium">
     <div class="podium-card place-2" id="podium2">
       <div class="podium-rank">2</div>
@@ -1014,14 +626,12 @@
   </div>
 </section>
 
-<!-- TABLEAU CLASSEMENT -->
 <section class="section" id="rankingSection" style="display:none;">
   <div class="section-head">
     <span class="num">03</span>
     <h2>CLASSEMENT COMPLET</h2>
     <div class="line"></div>
   </div>
-
   <div class="delib-banner" id="delibBanner">
     <div class="delib-icon"><i class="fas fa-shuffle"></i></div>
     <div class="delib-text">
@@ -1029,7 +639,6 @@
       <p>L'ordre de passage ci-dessous a été attribué de manière 100% aléatoire. Classement officiel et définitif.</p>
     </div>
   </div>
-
   <div class="ranking-table-wrap">
     <div class="table-header">
       <div>Position</div>
@@ -1040,14 +649,12 @@
   </div>
 </section>
 
-<!-- ÉTAT VIDE / EN ATTENTE -->
 <section class="section" id="waitingSection">
   <div class="section-head">
     <span class="num">02</span>
     <h2>CLASSEMENT</h2>
     <div class="line"></div>
   </div>
-
   <div class="ranking-table-wrap">
     <div class="empty-state">
       <i class="fas fa-hourglass-half"></i>
@@ -1056,20 +663,20 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-brand">CONCOURS INTERUNIVERSITAIRE</div>
   <p>© 2026 — Système de classement officiel · Tirage au sort transparent</p>
 </footer>
 
-<!-- FIREBASE SDK -->
+<!-- ============================================================
+     FIREBASE - Configuration et initialisation
+     ============================================================ -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
     getFirestore, collection, doc, setDoc, getDoc, deleteDoc,
     onSnapshot, query, orderBy, serverTimestamp, getDocs
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDcg7lZWfD3B9NyjqewwPRgH8MM3h1wlhc",
@@ -1077,33 +684,40 @@
     projectId: "fond-903c9",
     storageBucket: "fond-903c9.firebasestorage.app",
     messagingSenderId: "551417667967",
-    appId: "1:551417667967:web:21aa811c6cecf70cd7fa4a",
-    measurementId: "G-KD17CE3YZ1"
+    appId: "1:551417667967:web:21aa811c6cecf70cd7fa4a"
   };
 
-  const app = initializeApp(firebaseConfig);
-  getAnalytics(app);
-  const db = getFirestore(app);
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  const COLLECTION = 'classement_finale_v2';
+    window.__db = db;
+    window.__collection = collection;
+    window.__doc = doc;
+    window.__setDoc = setDoc;
+    window.__getDoc = getDoc;
+    window.__deleteDoc = deleteDoc;
+    window.__onSnapshot = onSnapshot;
+    window.__query = query;
+    window.__orderBy = orderBy;
+    window.__serverTimestamp = serverTimestamp;
+    window.__getDocs = getDocs;
+    window.__COLLECTION = 'classement_finale_v2';
+    window.__firebaseReady = true;
 
-  window.__db = db;
-  window.__collection = collection;
-  window.__doc = doc;
-  window.__setDoc = setDoc;
-  window.__getDoc = getDoc;
-  window.__deleteDoc = deleteDoc;
-  window.__onSnapshot = onSnapshot;
-  window.__query = query;
-  window.__orderBy = orderBy;
-  window.__serverTimestamp = serverTimestamp;
-  window.__getDocs = getDocs;
-  window.__COLLECTION = COLLECTION;
-  window.__firebaseReady = true;
-
-  window.dispatchEvent(new Event('firebase-ready'));
+    console.log('✅ Firebase initialisé');
+    window.dispatchEvent(new Event('firebase-ready'));
+  } catch (e) {
+    console.error('❌ Erreur Firebase:', e);
+    window.__firebaseReady = false;
+    window.__firebaseError = e.message;
+    window.dispatchEvent(new Event('firebase-error'));
+  }
 </script>
 
+<!-- ============================================================
+     LOGIQUE DE L'APPLICATION
+     ============================================================ -->
 <script>
 // ============================================================
 // LISTE OFFICIELLE DES 10 CANDIDATS QUALIFIÉS
@@ -1121,12 +735,12 @@ const CANDIDATS_AUTORISES = [
   "CHRISTIAN"
 ];
 
-let classement = [];       // [{ nom, position, timestamp }]
+let classement = [];
 let tirageEffectue = false;
 let tirageEnCours = false;
 
 // ============================================================
-// TOAST
+// UI HELPERS
 // ============================================================
 function showToast(msg, type = 'info') {
   const t = document.getElementById('toast');
@@ -1138,9 +752,6 @@ function showToast(msg, type = 'info') {
   t._t = setTimeout(() => t.classList.remove('show'), 4000);
 }
 
-// ============================================================
-// FEEDBACK
-// ============================================================
 function showFeedback(msg, type = 'info') {
   const fb = document.getElementById('feedback');
   const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
@@ -1148,6 +759,17 @@ function showFeedback(msg, type = 'info') {
   fb.className = 'feedback show ' + type;
   clearTimeout(fb._t);
   fb._t = setTimeout(() => fb.classList.remove('show'), 6000);
+}
+
+function setStatus(online, text) {
+  const pill = document.getElementById('statusPill');
+  const label = document.getElementById('liveStatus');
+  if (online) {
+    pill.classList.remove('offline');
+  } else {
+    pill.classList.add('offline');
+  }
+  label.textContent = text;
 }
 
 // ============================================================
@@ -1162,7 +784,7 @@ function isAuthorized(name) {
 }
 
 // ============================================================
-// TIRAGE AU SORT (FISHER-YATES)
+// TIRAGE AU SORT (Fisher-Yates)
 // ============================================================
 function shuffleArray(arr) {
   const a = [...arr];
@@ -1174,10 +796,10 @@ function shuffleArray(arr) {
 }
 
 // ============================================================
-// ENREGISTRER UN CANDIDAT (nom + timestamp, sans position)
+// ENREGISTRER UN CANDIDAT
 // ============================================================
 async function saveCandidat(nom) {
-  if (!window.__firebaseReady) return false;
+  if (!window.__firebaseReady) return { ok: false, error: 'Firebase non prêt' };
   try {
     const docId = nom.replace(/\s+/g, '_').toLowerCase();
     await window.__setDoc(window.__doc(window.__db, window.__COLLECTION, docId), {
@@ -1185,15 +807,15 @@ async function saveCandidat(nom) {
       timestamp: window.__serverTimestamp(),
       dateInscription: new Date().toISOString()
     });
-    return true;
+    return { ok: true };
   } catch (e) {
     console.error('Erreur Firebase:', e);
-    return false;
+    return { ok: false, error: e.message };
   }
 }
 
 // ============================================================
-// VÉRIFIER LE NOMBRE DE CANDIDATS DANS FIREBASE
+// COMPTER LES CANDIDATS
 // ============================================================
 async function countCandidats() {
   if (!window.__firebaseReady) return 0;
@@ -1209,16 +831,14 @@ async function countCandidats() {
 }
 
 // ============================================================
-// LANCER LE TIRAGE AU SORT (dès que 10 candidats)
+// LANCER LE TIRAGE AU SORT
 // ============================================================
 async function lancerTirage() {
   if (tirageEnCours) return;
   tirageEnCours = true;
 
-  // Afficher l'overlay
   document.getElementById('drawingOverlay').classList.add('show');
 
-  // Récupérer tous les candidats depuis Firebase
   const snap = await window.__getDocs(window.__collection(window.__db, window.__COLLECTION));
   const candidats = [];
   snap.forEach(d => {
@@ -1234,13 +854,12 @@ async function lancerTirage() {
     return;
   }
 
-  // 🎲 MÉLANGE ALÉATOIRE (Fisher-Yates)
+  // 🎲 MÉLANGE ALÉATOIRE
   const melange = shuffleArray(candidats);
 
   // Simulation visuelle (3 secondes)
   await new Promise(r => setTimeout(r, 3000));
 
-  // Attribuer les positions dans l'ordre mélangé
   const updates = melange.map((c, index) => {
     const docId = c.nom.replace(/\s+/g, '_').toLowerCase();
     return window.__setDoc(window.__doc(window.__db, window.__COLLECTION, docId), {
@@ -1251,7 +870,6 @@ async function lancerTirage() {
     }, { merge: true });
   });
 
-  // Marquer le tirage comme effectué
   updates.push(window.__setDoc(window.__doc(window.__db, window.__COLLECTION, '_tirage_status'), {
     effectue: true,
     dateTirage: window.__serverTimestamp()
@@ -1259,10 +877,10 @@ async function lancerTirage() {
 
   try {
     await Promise.all(updates);
-    showToast('🎲 Tirage au sort effectué ! Le classement est officiel.', 'success');
+    showToast('🎲 Tirage au sort effectué ! Classement officiel.', 'success');
   } catch (e) {
     console.error(e);
-    showToast('Erreur lors du tirage', 'error');
+    showToast('Erreur lors du tirage: ' + e.message, 'error');
   }
 
   document.getElementById('drawingOverlay').classList.remove('show');
@@ -1274,13 +892,18 @@ async function lancerTirage() {
 // ============================================================
 async function validerCandidat() {
   const input = document.getElementById('nomInput');
-  const nom = normalize(input.value);
+
+  if (!window.__firebaseReady) {
+    showFeedback('Connexion à Firebase en cours... Patientez un instant.', 'error');
+    return;
+  }
 
   if (tirageEffectue) {
     showFeedback('Le tirage a déjà été effectué. Les inscriptions sont closes.', 'error');
-    showToast('Inscriptions closes', 'error');
     return;
   }
+
+  const nom = normalize(input.value);
 
   if (!nom) {
     showFeedback('Veuillez entrer votre nom.', 'error');
@@ -1293,36 +916,32 @@ async function validerCandidat() {
     return;
   }
 
-  // Vérifier si déjà inscrit (localStorage)
   if (localStorage.getItem('candidatInscrit_v2') === nom) {
     showFeedback(`Vous êtes déjà inscrit(e) en tant que "${nom}".`, 'error');
-    showToast('Vous êtes déjà inscrit(e)', 'error');
     return;
   }
 
-  // Vérifier si déjà dans Firebase
   const docId = nom.replace(/\s+/g, '_').toLowerCase();
-  const existing = await window.__getDoc(window.__doc(window.__db, window.__COLLECTION, docId));
-  if (existing.exists()) {
-    showFeedback(`Le candidat "${nom}" est déjà inscrit.`, 'error');
-    showToast('Ce candidat est déjà inscrit', 'error');
-    // Mémoriser pour éviter de retenter
-    localStorage.setItem('candidatInscrit_v2', nom);
-    return;
+  try {
+    const existing = await window.__getDoc(window.__doc(window.__db, window.__COLLECTION, docId));
+    if (existing.exists()) {
+      localStorage.setItem('candidatInscrit_v2', nom);
+      showFeedback(`Le candidat "${nom}" est déjà inscrit.`, 'error');
+      return;
+    }
+  } catch (e) {
+    console.error('Erreur vérification:', e);
   }
 
-  // Compter les inscrits
   const count = await countCandidats();
   if (count >= 10) {
     showFeedback('Toutes les places sont prises.', 'error');
-    showToast('Inscriptions closes', 'error');
     return;
   }
 
-  // Enregistrer
-  const ok = await saveCandidat(nom);
-  if (!ok) {
-    showFeedback('Erreur de connexion. Réessayez.', 'error');
+  const res = await saveCandidat(nom);
+  if (!res.ok) {
+    showFeedback('Erreur lors de l\'inscription : ' + (res.error || 'inconnue'), 'error');
     return;
   }
 
@@ -1333,16 +952,14 @@ async function validerCandidat() {
   showFeedback(`Inscription réussie ! ${nom}, attendez le tirage au sort.`, 'success');
   showToast(`✅ ${nom} inscrit(e)`, 'success');
 
-  // Vérifier si on doit lancer le tirage
   const newCount = await countCandidats();
-  if (newCount >= 10 && !tirageEffectue) {
-    // Petit délai pour laisser tout le monde voir la 10e inscription
+  if (newCount >= 10 && !tirageEffectue && !tirageEnCours) {
     setTimeout(() => { lancerTirage(); }, 1500);
   }
 }
 
 // ============================================================
-// RENDU DE L'INTERFACE
+// RENDU
 // ============================================================
 function getBadgeClass(pos) {
   if (pos === 1) return 'badge-gold';
@@ -1350,14 +967,12 @@ function getBadgeClass(pos) {
   if (pos === 3) return 'badge-bronze';
   return 'badge-default';
 }
-
 function getBadgeText(pos) {
   if (pos === 1) return '🥇 1er';
   if (pos === 2) return '🥈 2e';
   if (pos === 3) return '🥉 3e';
-  return `${pos}e`;
+  return pos + 'e';
 }
-
 function getPositionClass(pos) {
   if (pos === 1) return 'gold';
   if (pos === 2) return 'silver';
@@ -1369,7 +984,6 @@ function render() {
   const count = classement.length;
   const remaining = Math.max(0, 10 - count);
 
-  // Stats
   document.getElementById('statCount').textContent = count;
   document.getElementById('statRemaining').textContent = remaining;
 
@@ -1385,15 +999,6 @@ function render() {
     statStatus.style.color = 'var(--text)';
   }
 
-  // Live status
-  const liveStatus = document.getElementById('liveStatus');
-  if (tirageEffectue) {
-    liveStatus.textContent = 'CLASSEMENT OFFICIEL';
-  } else {
-    liveStatus.textContent = 'EN DIRECT';
-  }
-
-  // Afficher les sections
   const podiumSection = document.getElementById('podiumSection');
   const rankingSection = document.getElementById('rankingSection');
   const waitingSection = document.getElementById('waitingSection');
@@ -1404,22 +1009,24 @@ function render() {
     waitingSection.style.display = 'none';
     renderPodium();
     renderRanking();
+    setStatus(true, 'CLASSEMENT OFFICIEL');
   } else {
     podiumSection.style.display = 'none';
     rankingSection.style.display = 'none';
     waitingSection.style.display = 'block';
 
-    // Désactiver l'input si les 10 sont inscrits (tirage en cours)
     const input = document.getElementById('nomInput');
     const btn = document.getElementById('btnValider');
     if (count >= 10) {
       input.disabled = true;
       btn.disabled = true;
       input.placeholder = 'INSCRIPTIONS CLOSES';
+      setStatus(true, 'TIRAGE EN COURS');
     } else {
       input.disabled = false;
       btn.disabled = false;
       input.placeholder = 'ENTREZ VOTRE NOM';
+      setStatus(true, 'EN DIRECT');
     }
   }
 }
@@ -1434,7 +1041,6 @@ function renderPodium() {
 function renderRanking() {
   const sorted = [...classement].sort((a, b) => a.position - b.position);
   const body = document.getElementById('rankingBody');
-
   body.innerHTML = sorted.map(c => `
     <div class="ranking-row ${c.position <= 3 ? 'highlight' : ''}">
       <div class="rank-position ${getPositionClass(c.position)}">${c.position}</div>
@@ -1445,15 +1051,18 @@ function renderRanking() {
 }
 
 // ============================================================
-// ÉCOUTE TEMPS RÉEL FIREBASE
+// ÉCOUTE TEMPS RÉEL
 // ============================================================
 function startRealtimeListener() {
-  if (!window.__firebaseReady) { setTimeout(startRealtimeListener, 500); return; }
+  if (!window.__firebaseReady) {
+    setStatus(false, 'Hors ligne');
+    setTimeout(startRealtimeListener, 1000);
+    return;
+  }
 
-  const q = window.__query(
-    window.__collection(window.__db, window.__COLLECTION),
-    window.__orderBy('timestamp', 'asc')
-  );
+  setStatus(true, 'Connexion...');
+
+  const q = window.__query(window.__collection(window.__db, window.__COLLECTION));
 
   window.__onSnapshot(q, (snapshot) => {
     const items = [];
@@ -1473,20 +1082,18 @@ function startRealtimeListener() {
     });
 
     tirageEffectue = tirageFromDb;
-
-    // Si le tirage est effectué, on trie par position, sinon par timestamp
     classement = items;
 
     render();
 
-    // 🔥 DÉCLENCHEUR AUTOMATIQUE : si 10 candidats et pas encore de tirage
     if (items.length >= 10 && !tirageFromDb && !tirageEnCours) {
-      console.log('🎲 10 candidats détectés → lancement du tirage automatique');
+      console.log('🎲 10 candidats détectés → tirage automatique');
       lancerTirage();
     }
   }, (error) => {
-    console.error('Erreur listener:', error);
-    showToast('Erreur de synchronisation', 'error');
+    console.error('❌ Erreur listener:', error);
+    setStatus(false, 'Erreur connexion');
+    showToast('Erreur de connexion Firestore : ' + error.message, 'error');
   });
 }
 
@@ -1498,20 +1105,15 @@ async function downloadClassement() {
     showToast('Le classement n\'est pas encore disponible', 'error');
     return;
   }
-
   try {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    // Header sombre
     pdf.setFillColor(10, 22, 40);
     pdf.rect(0, 0, 210, 55, 'F');
-
-    // Ligne dorée
     pdf.setFillColor(255, 209, 102);
     pdf.rect(0, 55, 210, 1, 'F');
 
-    // Titre
     pdf.setTextColor(255, 209, 102);
     pdf.setFontSize(24);
     pdf.setFont('helvetica', 'bold');
@@ -1526,7 +1128,6 @@ async function downloadClassement() {
     pdf.setTextColor(139, 152, 171);
     pdf.text('Tirage au sort · ' + new Date().toLocaleString('fr-FR'), 105, 46, { align: 'center' });
 
-    // Top 3
     const sorted = [...classement].sort((a, b) => a.position - b.position);
     let y = 80;
 
@@ -1541,21 +1142,18 @@ async function downloadClassement() {
     const colors = [[255, 209, 102], [201, 209, 217], [205, 127, 50]];
 
     top3.forEach((c, i) => {
-     , pdf.setFillColor(...colors[i]);
-      171 pdf.);
-roundedRect(20, y, 40, 14, 3, 3, 'F');
-      pdf   .setTextColor(10, 22,  pdf40);
+      pdf.setFillColor(...colors[i]);
+      pdf.roundedRect(20, y, 40, 14, 3, 3, 'F');
+      pdf.setTextColor(10, 22, 40);
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       pdf.text(medals[i], 40, y + 10, { align: 'center' });
-
       pdf.setTextColor(10, 22, 40);
       pdf.setFontSize(14);
       pdf.text(c.nom, 70, y + 10);
       y += 20;
     });
 
-    // Tableau complet
     y += 10;
     pdf.setTextColor(10, 22, 40);
     pdf.setFontSize(14);
@@ -1587,14 +1185,15 @@ roundedRect(20, y, 40, 14, 3, 3, 'F');
     });
 
     pdf.setFontSize(9);
-    pdf.setTextColor(139, 152.setFont('helvetica', 'italic');
+    pdf.setTextColor(139, 152, 171);
+    pdf.setFont('helvetica', 'italic');
     pdf.text('Document officiel — Tirage au sort transparent', 105, 285, { align: 'center' });
 
     pdf.save('classement-officiel-finale.pdf');
     showToast('PDF téléchargé !', 'success');
   } catch (e) {
     console.error(e);
-    showToast('Erreur téléchargement', 'error');
+    showToast('Erreur téléchargement: ' + e.message, 'error');
   }
 }
 
@@ -1666,10 +1265,22 @@ document.addEventListener('DOMContentLoaded', () => {
     this.value = this.value.toUpperCase();
   });
 
-  // Démarrer l'écoute temps réel
-  startRealtimeListener();
+  // Démarrer après Firebase ready
+  window.addEventListener('firebase-ready', () => {
+    console.log('✅ Firebase ready, démarrage listener');
+    startRealtimeListener();
+  });
 
-  // Animations GSAP
+  window.addEventListener('firebase-error', () => {
+    setStatus(false, 'Hors ligne');
+    showFeedback('Impossible de se connecter à Firebase. Vérifiez votre connexion.', 'error');
+  });
+
+  // Si Firebase était déjà prêt (module chargé avant DOMContentLoaded)
+  if (window.__firebaseReady) {
+    startRealtimeListener();
+  }
+
   gsap.from('.hero-badge', { y: -20, opacity: 0, duration: 0.8, ease: 'power2.out' });
   gsap.from('.hero-title', { y: 30, opacity: 0, duration: 1, delay: 0.15, ease: 'power3.out' });
   gsap.from('.hero-sub', { y: 20, opacity: 0, duration: 0.8, delay: 0.35, ease: 'power2.out' });
