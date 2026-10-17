@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏆 Éloquence en Scène · Finale Genocost</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
+    <!-- Google Fonts (Poppins & Playfair pour le côté solennel) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+                   CSS COMPLET — THÈME FINALE GENOCOST
+                   ============================================================ */
+
+        :root {
+            --gold: #d4af37;
+            --gold-light: #fdf5c9;
+            --gold-dark: #997a18;
+            --blue-deep: #060913;
+            --blue-mid: #0f172a;
+            --blue-soft: #1e293b;
+            --star-white: #f8fafc;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --white: #f1f5f9;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --gold-glow: rgba(212, 175, 55, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--blue-deep);
+            color: var(--white);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(88, 28, 135, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #0b1120 0%, #060913 100%);
+            background-attachment: fixed;
+        }
+
+        /* ---- ÉTOILES & PARTICULES DORÉES ---- */
+        .stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .stars-bg .star {
+            position: absolute;
+            border-radius: 50%;
+            animation: twinkle 5s infinite alternate ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.3); }
+            100% { opacity: 0.2; transform: scale(1); }
+        }
+
+        /* ---- SCROLLBAR ---- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0e18; }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+        /* ============================================================
+                   BANNIÈRE GENOCOST (Hommage)
+                   ============================================================ */
+        .genocost-banner {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 5;
+            padding: 18px 20px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.08), transparent);
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            animation: fadeInDown 1s ease forwards;
+        }
+
+        .genocost-banner i {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--gold-glow));
+        }
+
+        .genocost-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .genocost-banner p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================================
+                   HEADER
+                   ============================================================ */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 35px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 100px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(212, 175, 55, 0.03);
+            position: sticky;
+            top: 15px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--gold);
+            filter: drop-shadow(0 0 15px var(--gold-glow));
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #fff, var(--gold-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--gold-light);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(212, 175, 55, 0.08);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .header-badge i { font-size: 0.8rem; color: var(--gold); }
+
+        .search-bar { position: relative; }
+
+        .search-bar input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px 12px 44px;
+            border-radius: 60px;
+            color: var(--white);
+            font-size: 0.9rem;
+            width: 280px;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-bar input::placeholder { color: #64748b; }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+            background: rgba(0, 0, 0, 0.5);
+            width: 320px;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 18px; top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gold-light);
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            margin-left: 10px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reset-btn:hover { background: rgba(212, 175, 55, 0.2); }
+        .reset-btn.visible { display: inline-flex; }
+
+        /* ============================================================
+                   HERO & RÈGLES
+                   ============================================================ */
+        .hero {
+            text-align: center;
+            padding: 20px 15px 30px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            text-shadow: 0 0 60px rgba(212, 175, 55, 0.2);
+            line-height: 1.1;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-top: 10px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Règles de la finale */
+        .rules-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .rule-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .rule-badge:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .rule-badge i {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+
+        /* ============================================================
+                   GRILLE DES PRESTATIONS
+                   ============================================================ */
+        #matchGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 30px;
+            max-width: 1450px;
+            margin: 20px auto 0;
+            padding: 10px 0 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- CARTE PRESTATION ---- */
+        .match-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 30px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        /* Effet lumineux au survol */
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.3;
+            transition: var(--transition);
+        }
+
+        .match-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.05);
+            background: rgba(20, 30, 55, 0.85);
+        }
+
+        .match-card:hover::before { opacity: 1; }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .candidate-position {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .candidate-position i { font-size: 0.9rem; }
+
+        .time-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .time-badge i { color: var(--gold); }
+
+        .candidate-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .candidate-name i {
+            font-size: 1.2rem;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+
+        /* Le Sujet */
+        .sujet-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 3px solid var(--gold);
+            position: relative;
+        }
+
+        .sujet-box::before {
+            content: '“';
+            position: absolute;
+            top: 5px; left: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: rgba(212, 175, 55, 0.1);
+            line-height: 1;
+        }
+
+        .sujet-text {
+            font-size: 1rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+            font-style: italic;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+                   MESSAGE AUCUN RÉSULTAT
+                   ============================================================ */
+        .no-result {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            color: #475569;
+        }
+
+        .no-result i {
+            font-size: 3.5rem;
+            color: rgba(212, 175, 55, 0.2);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .no-result p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* ============================================================
+                   ANIMATIONS
+                   ============================================================ */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ============================================================
+                   FOOTER
+                   ============================================================ */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 40px 10px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #64748b;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer .footer-gold {
+            color: var(--gold);
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        footer .small {
+            font-size: 0.7rem;
+            color: #334155;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        footer .social-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        footer .social-links a {
+            color: #475569;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        footer .social-links a:hover {
+            color: var(--gold);
+            transform: translateY(-3px);
+            filter: drop-shadow(0 0 10px var(--gold-glow));
+        }
+
+        /* ============================================================
+                   RESPONSIVE
+                   ============================================================ */
+        @media (max-width: 1024px) {
+            #matchGrid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+            .hero h1 { font-size: 2.8rem; }
+        }
+
+        @media (max-width: 820px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                border-radius: 30px;
+                padding: 20px;
+                top: 10px;
+            }
+            .logo { font-size: 1.4rem; }
+            .search-bar input { width: 100%; max-width: 400px; }
+            .search-bar input:focus { width: 100%; max-width: 400px; }
+            .reset-btn { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero .subtitle { letter-spacing: 4px; }
+            .rules-container { flex-direction: column; align-items: center; gap: 10px; }
+            .rule-badge { width: 100%; max-width: 350px; justify-content: center; }
+            #matchGrid { grid-template-columns: 1fr; gap: 20px; }
+            .match-card { padding: 24px 20px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            header { padding: 15px; }
+            .genocost-banner h2 { font-size: 1.1rem; }
+            .genocost-banner p { font-size: 0.7rem; letter-spacing: 1px; }
+            .hero h1 { font-size: 1.8rem; }
+            .candidate-name { font-size: 1.3rem; }
+            .sujet-text { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ÉTOILES ANIMÉES -->
+    <div class="stars-bg" id="starsBg"></div>
+
+    <!-- BANNIÈRE GENOCOST -->
+    <div class="genocost-banner">
+        <i class="fas fa-dove"></i>
+        <h2>Finale — En Hommage aux Victimes de la Guerre</h2>
+        <p>Organisée dans le cadre du Genocost · Pour que la mémoire ne s'éteigne jamais</p>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-microphone-alt"></i>
+            <span>Éloquence en Scène</span>
+        </div>
+        <div class="header-badge">
+            <i class="fas fa-crown"></i> Finale · Genocost
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Rechercher un candidat..." autocomplete="off" />
+            <button class="reset-btn" id="resetBtn">
+                <i class="fas fa-times"></i> Effacer
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO & RÈGLES -->
+    <section class="hero">
+        <h1>La Grande Finale</h1>
+        <div class="subtitle">✦ Prestations d'Éloquence ✦</div>
+        
+        <div class="rules-container">
+            <div class="rule-badge">
+                <i class="fas fa-clock"></i> 8 minutes par candidat
+            </div>
+            <div class="rule-badge">
+                <i class="fas fa-balance-scale"></i> Pas de thèse / antithèse
+            </div>
+            <div class="rule-badge">
+                <i class="fas fa-heart"></i> Sujets liés au devoir de mémoire
+            </div>
+        </div>
+    </section>
+
+    <!-- GRILLE DES PRESTATIONS -->
+    <main id="matchGrid"></main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p class="footer-gold">✦ Éloquence en Scène · Finale Genocost ✦</p>
+        <p class="small">En hommage à toutes les victimes · Que la parole libère et que la mémoire demeure.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================================
+        // GÉNÉRATION DES ÉTOILES
+        // ============================================================
+        (function generateStars() {
+            const container = document.getElementById('starsBg');
+            const starCount = 150;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                // Mélange d'étoiles blanches et dorées
+                const isGold = Math.random() > 0.7;
+                star.style.background = isGold ? '#d4af37' : '#ffffff';
+                star.style.boxShadow = '0 0 ' + (size * 4) + 'px ' + star.style.background;
+                
+                container.appendChild(star);
+            }
+        })();
+
+        // ============================================================
+        // DONNÉES DE LA FINALE (Ordre de passage officiel)
+        // ============================================================
+        const matchs = [
+            {
+                numero: 1,
+                candidat: "Exaucé MIKILA",
+                sujet: "Il y a des territoires que l’on perd sur les cartes, et d’autres que l’on abandonne lorsqu’on cesse de s’en souvenir."
+            },
+            {
+                numero: 2,
+                candidat: "Henock BOLEFO",
+                sujet: "Mourir à l’angle mort du monde."
+            },
+            {
+                numero: 3,
+                candidat: "Mersei KANEMEKA",
+                sujet: "Quand l’inhumanité devient une habitude, à quel moment l’humanité devient-elle une exception ?"
+            },
+            {
+                numero: 4,
+                candidat: "Joyce AZIZA",
+                sujet: "Lorsque la violence déshumanise, aimer devient-il un acte de résistance ?"
+            },
+            {
+                numero: 5,
+                candidat: "Christian MBO",
+                sujet: "Une paix qui demande aux victimes d’oublier est-elle une paix, ou une seconde injustice ?"
+            },
+            {
+                numero: 6,
+                candidat: "Furah KIPATA",
+                sujet: "Peut-on être condamné à réparer les fautes d’une histoire dont on n’a pas écrit les premières pages ?"
+            },
+            {
+                numero: 7,
+                candidat: "Brineige MASSAMBA",
+                sujet: "Que répondrons-nous à nos enfants lorsqu’ils nous demanderont ce que nous avons fait pour les victimes du Congo ?"
+            },
+            {
+                numero: 8,
+                candidat: "Gremis FLEVIA",
+                sujet: "Le Congo transmettra-t-il à sa postérité une mémoire de souffrance ou une promesse de paix ?"
+            },
+            {
+                numero: 9,
+                candidat: "Joyce EKE-SHOMBA",
+                sujet: "Peut-on être innocent des crimes que l’on ne commet pas, mais dont on bénéficie ?"
+            },
+            {
+                numero: 10,
+                candidat: "Amerack MAVINGA",
+                sujet: "Nos richesses ont traversé les frontières ; nos douleurs, elles, attendent encore leur visa."
+            }
+        ];
+
+        // ============================================================
+        // RENDU DES CARTES
+        // ============================================================
+        const grid = document.getElementById('matchGrid');
+        const searchInput = document.getElementById('searchInput');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function renderMatchs(filter = '') {
+            const term = filter.trim().toLowerCase();
+            let html = '';
+            let visibleCount = 0;
+
+            matchs.forEach((m, index) => {
+                const matchText = `prestation ${m.numero} ${m.candidat} ${m.sujet} finale genocost`.toLowerCase();
+                if (term && !matchText.includes(term)) return;
+
+                visibleCount++;
+                const delay = (index * 0.1).toFixed(2);
+
+                html += `
+                    <article class="match-card" style="animation-delay: ${delay}s;">
+                        <div class="match-header">
+                            <div class="candidate-position">
+                                <i class="fas fa-star"></i> Passage N° ${m.numero}
+                            </div>
+                            <div class="time-badge">
+                                <i class="fas fa-hourglass-half"></i> 8 min
+                            </div>
+                        </div>
+                        
+                        <div class="candidate-name">
+                            <i class="fas fa-user-tie"></i> ${m.candidat}
+                        </div>
+                        
+                        <div class="sujet-box">
+                            <div class="sujet-text">${m.sujet}</div>
+                        </div>
+                    </article>
+                `;
+            });
+
+            if (visibleCount === 0) {
+                html = `
+                    <div class="no-result">
+                        <i class="fas fa-search-minus"></i>
+                        <p>Aucun candidat ne correspond à votre recherche.</p>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // INITIALISATION
+        renderMatchs();
+
+        // RECHERCHE
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            renderMatchs(val);
+            resetBtn.classList.toggle('visible', val.trim().length > 0);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            renderMatchs();
+            resetBtn.classList.remove('visible');
+            searchInput.focus();
+        });
+
+        // ÉCHAP POUR EFFACER
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchInput.value.trim().length > 0) {
+                searchInput.value = '';
+                renderMatchs();
+                resetBtn.classList.remove('visible');
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>
