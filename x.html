@@ -116,7 +116,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .table tbody tr{transition:background .15s}
 .table tbody tr:hover td{background:#fdf6f7}
 
-/* Ligne de détail dépliable */
 .detail-row td{padding:0!important;border-bottom:2px solid var(--red-professional)!important;background:#fff8f9!important}
 .detail-content{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
 .detail-block{display:flex;flex-direction:column;gap:8px}
@@ -373,7 +372,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="card-header"><h2>Ajouter un KA</h2></div>
         <form id="formAjoutKA">
           <div class="form-row">
-            <div class="form-group"><label for="newNom">Nom complet du KA</label><input type="text" id="newNom" required placeholder="Ex : Kabasele Amina"></div>
+            <div class="form-group"><label for="newNom">Nom complet du KA</label><input type="text" id="newNom" required placeholder="Ex : K. Amina KABASELE"></div>
             <div class="form-group"><label for="newVoyage">Voyage</label><select id="newVoyage" required><option value="">— Choisir —</option><option value="1">1er Voyage</option><option value="2">2ème Voyage</option><option value="3">3ème Voyage</option><option value="4">4ème Voyage</option></select></div>
           </div>
           <button type="submit" class="btn btn-primary">Ajouter le KA</button>
@@ -475,7 +474,7 @@ let cacheDatesSpeciales = {};
 let cacheVoyagesValides = {};
 let selectionCourante = {};
 let voyageSelectionnee = 1;
-let kaOuvert = null; // id du KA dont le détail est ouvert dans le classement
+let kaOuvert = null;
 
 const aujourdhuiISO = aujourdhui();
 
@@ -581,7 +580,11 @@ function renderKaListeVoyage(){
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
-  container.innerHTML = kasVoyage.map(ka => {
+  // Séparation Kizito / Anuarite
+  const kizito = kasVoyage.filter(k => k.nom.startsWith('K.'));
+  const anuarite = kasVoyage.filter(k => k.nom.startsWith('A.'));
+
+  const renderRow = (ka) => {
     let alert3 = false;
     let compteur = 0, maxCompteur = 0;
     dims.forEach(d => {
@@ -604,7 +607,19 @@ function renderKaListeVoyage(){
         <label class="status-choice blanc"><input type="radio" name="status-${ka.id}" value="excuse" ${val==='excuse'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','excuse')"><span class="status-label">Abs. signalée</span></label>
       </div>
     </div>`;
-  }).join('');
+  };
+
+  let html = '';
+  if(kizito.length){
+    html += `<h3 style="font-size:1rem;color:var(--primary);margin:6px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--red-professional);text-transform:uppercase;letter-spacing:1.5px">Kizito (K.)</h3>`;
+    html += kizito.map(renderRow).join('');
+  }
+  if(anuarite.length){
+    html += `<h3 style="font-size:1rem;color:var(--primary);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--secondary);text-transform:uppercase;letter-spacing:1.5px">Anuarite (A.)</h3>`;
+    html += anuarite.map(renderRow).join('');
+  }
+
+  container.innerHTML = html;
 
   updateCount();
 
@@ -774,7 +789,6 @@ function calculerStats(){
   }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
 }
 
-// Calcule les dates détaillées pour un KA
 function calculerDetailsKA(kaId){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
   const details = {present:[], absent:[], excuse:[]};
@@ -788,7 +802,6 @@ function calculerDetailsKA(kaId){
   return details;
 }
 
-// Basculer l'ouverture d'un KA
 window.toggleDetailKA = function(kaId){
   kaOuvert = (kaOuvert === kaId) ? null : kaId;
   renderClassement(document.getElementById('searchKA')?.value || '');
@@ -1069,14 +1082,106 @@ window.exportCSV = exportCSV;
 window.exportJSON = exportJSON;
 window.sha256 = sha256;
 
+/* ============================================================
+   LISTE DES KA (format : K./A. + prénom en minuscules + NOM en MAJUSCULES)
+   ============================================================ */
 const KA_TEST = [
-  {nom:"Kabasele Amina", voyage:1},{nom:"Mbala Josué", voyage:1},{nom:"Nsimba Grâce", voyage:1},{nom:"Lukusa David", voyage:1},{nom:"Tshibangu Esther", voyage:1},
-  {nom:"Mbuyi Rachel", voyage:2},{nom:"Ilunga Patrick", voyage:2},{nom:"Kasongo Sarah", voyage:2},{nom:"Mukendi Daniel", voyage:2},{nom:"Ngoy Béatrice", voyage:2},
-  {nom:"Kabongo Samuel", voyage:3},{nom:"Muteba Rebecca", voyage:3},{nom:"Kalala Jonathan", voyage:3},{nom:"Ntumba Dorcas", voyage:3},{nom:"Beya Michael", voyage:3},
-  {nom:"Mwanza Prisca", voyage:4},{nom:"Kanku Emmanuel", voyage:4},{nom:"Lubaki Naomi", voyage:4},{nom:"Kalonji Benjamin", voyage:4},{nom:"Mpiana Ruth", voyage:4}
+  // ===== 2ème Voyage =====
+  // Kizito
+  {nom:"K. Nicolas BABALE", voyage:2},
+  {nom:"K. Joseph BABALE", voyage:2},
+  {nom:"K. John MUYAMBA", voyage:2},
+  {nom:"K. Junior KIKAKEDI", voyage:2},
+  {nom:"K. Dianna MULUNDA", voyage:2},
+  {nom:"K. Didier NLANDU J.", voyage:2},
+  {nom:"K. Jules MANZAMBI", voyage:2},
+  {nom:"K. Rachlin MIDO", voyage:2},
+  {nom:"K. Antoine MBONGU", voyage:2},
+  {nom:"K. Bruno TUBWINGE", voyage:2},
+  {nom:"K. Vismy SAIDI", voyage:2},
+  {nom:"K. Gervais LENGWA", voyage:2},
+  {nom:"K. Israel NSILU", voyage:2},
+  // Anuarite
+  {nom:"A. Patricia MUTHU", voyage:2},
+  {nom:"A. Viviane RAMAZANI", voyage:2},
+  {nom:"A. Vanessa MASIKA", voyage:2},
+  {nom:"A. Divine MWIKA", voyage:2},
+  {nom:"A. Maria LUEMBA", voyage:2},
+  {nom:"A. Enya MBANGALA", voyage:2},
+  {nom:"A. Angelique NDERI", voyage:2},
+  {nom:"A. Maria MAVINGA", voyage:2},
+  {nom:"A. Norianna KASAKWA", voyage:2},
+  {nom:"A. Bienveillance KIALA", voyage:2},
+  {nom:"A. Helena NKEMBI", voyage:2},
+  {nom:"A. Maria KANAMBAKI", voyage:2},
+  {nom:"A. Gode MIDO", voyage:2},
+  {nom:"A. Perla BELAWO", voyage:2},
+  {nom:"A. Nicole TSHIBANGU", voyage:2},
+  {nom:"A. Parfaite LENGWA", voyage:2},
+  {nom:"A. Eliana WADIPOYI", voyage:2},
+  {nom:"A. Noella MBELA", voyage:2},
+  {nom:"A. Espoire SINGA", voyage:2},
+  {nom:"A. Lajoie SINGA", voyage:2},
+  {nom:"A. Kersene TSHIBANGU", voyage:2},
+  {nom:"A. Clémence SAFARI", voyage:2},
+  {nom:"A. Glorianna BELEMO", voyage:2},
+  {nom:"A. Merveille MIANDA", voyage:2},
+  {nom:"A. Consolate SAIDI", voyage:2},
+
+  // ===== 3ème Voyage =====
+  // Kizito
+  {nom:"K. Moïse SINGA", voyage:3},
+  {nom:"K. Credo SINGA", voyage:3},
+  {nom:"K. David LUBO", voyage:3},
+  {nom:"K. Daniel DIPONGO", voyage:3},
+  {nom:"K. David MAYADILA", voyage:3},
+  {nom:"K. Marcelo ONAKUDU", voyage:3},
+  {nom:"K. Jervie SHUTSHA", voyage:3},
+  {nom:"K. Dieu Merci KABONGO", voyage:3},
+  {nom:"K. Messi LENGWA", voyage:3},
+  {nom:"K. Matthieu MUTANGALA", voyage:3},
+  {nom:"K. Dave KIPELEKA", voyage:3},
+  // Anuarite
+  {nom:"A. Triomphe BOKIKA", voyage:3},
+  {nom:"A. Claudia MADIDISH", voyage:3},
+  {nom:"A. Phideline KIKETA", voyage:3},
+  {nom:"A. Phongella IMANA", voyage:3},
+  {nom:"A. Helena MAKABA", voyage:3},
+  {nom:"A. Nestolla RAMAZANI", voyage:3},
+  {nom:"A. Valerie NDAMBA", voyage:3},
+  {nom:"A. Emilie KIKA", voyage:3},
+  {nom:"A. Nestivie BOTOKO", voyage:3},
+  {nom:"A. Abigael LUMEYA", voyage:3},
+  {nom:"A. Claudine PEMBE", voyage:3},
+  {nom:"A. Hortance MBONDA", voyage:3},
+  {nom:"A. Larose BOTULU", voyage:3},
+  {nom:"A. Lumiere KOTOBA", voyage:3},
+  {nom:"A. Marta BINJA", voyage:3},
+  {nom:"A. Lajoie TSHIBOLA", voyage:3},
+
+  // ===== 4ème Voyage =====
+  // Kizito
+  {nom:"K. Marcel KILOMBO", voyage:4},
+  {nom:"K. Jeremie AKILI", voyage:4},
+  {nom:"K. Josaphat LUZOLO", voyage:4},
+  {nom:"K. Winner SAIDI", voyage:4},
+  {nom:"K. Grael MUYISI", voyage:4},
+  // Anuarite
+  {nom:"A. Bienfait MADIDISHI", voyage:4},
+  {nom:"A. Aubaine SINGA", voyage:4},
+  {nom:"A. Thérèse KAPINGA", voyage:4},
+  {nom:"A. Hélène MBELE", voyage:4},
+  {nom:"A. Ruth IBANGA", voyage:4},
+  {nom:"A. Immaculée MALONGA", voyage:4},
+  {nom:"A. Chancelvie MOLOKO", voyage:4},
+  {nom:"A. Hermelie MUYUKU", voyage:4},
+  {nom:"A. Nana KIALA", voyage:4},
+  {nom:"A. Ben Alicia MOLOKO", voyage:4},
+  {nom:"A. Winnie MONGILA", voyage:4},
+  {nom:"A. Marie-Fortune KAWE", voyage:4}
 ];
 
-const SEED_KEY = 'ka_seed_v1';
+const SEED_KEY = 'ka_seed_v2';
 
 async function seedKA(){
   if(localStorage.getItem(SEED_KEY) === 'done') return;
