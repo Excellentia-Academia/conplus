@@ -8,32 +8,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  /* NOUVELLE PALETTE ROUGE PROFESSIONNELLE */
-  --primary:#5c0a1a;          /* Rouge très foncé / Bordeaux profond */
-  --primary-light:#8b1327;    /* Rouge profond */
-  --primary-mid:#6e0e1f;      /* Intermédiaire */
-  --secondary:#f5a623;        /* Doré (inchangé) */
-  --secondary-light:#ffc857;  /* Doré clair (inchangé) */
-  --red-professional:#b91c2e; /* Rouge vif professionnel */
-  --red-light:#e63946;
-  --red-dark:#4a0512;
-  
-  --bg:#fbf6f6;               /* Fond très légèrement rosé pour s'harmoniser */
-  --surface:#fff;
-  --text:#1a0a0f;             /* Texte très légèrement bordeaux */
-  --muted:#7a5c62;
-  --border:#ecd5d8;
-  --success:#0f9d58;
-  --success-light:#e6f7ee;
-  --danger:#c8102e;
-  --danger-light:#fce8e6;
-  --warning:#e65100;
-  --warning-light:#fff3e0;
-  
-  --radius:14px;
-  --shadow-sm:0 1px 3px rgba(92,10,26,.08);
-  --shadow:0 4px 16px rgba(92,10,26,.08);
-  --shadow-lg:0 12px 32px rgba(92,10,26,.14);
+  --primary:#5c0a1a;--primary-light:#8b1327;--primary-mid:#6e0e1f;
+  --secondary:#f5a623;--secondary-light:#ffc857;
+  --red-professional:#b91c2e;--red-light:#e63946;--red-dark:#4a0512;
+  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
+  --border:#ecd5d8;--success:#0f9d58;--success-light:#e6f7ee;
+  --danger:#c8102e;--danger-light:#fce8e6;
+  --warning:#e65100;--warning-light:#fff3e0;
+  --radius:14px;--shadow-sm:0 1px 3px rgba(92,10,26,.08);
+  --shadow:0 4px 16px rgba(92,10,26,.08);--shadow-lg:0 12px 32px rgba(92,10,26,.14);
   --shadow-xl:0 24px 48px rgba(92,10,26,.2);
   --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
   --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
@@ -47,17 +30,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .center{text-align:center}
 .muted{color:var(--muted);font-size:.9rem}
 
-/* ===== LOGO (Image) ===== */
-.logo-img{
-  width:56px;height:56px;
-  object-fit:contain;
-  border-radius:50%;
-  background:#fff;
-  padding:3px;
-  box-shadow:0 4px 14px rgba(200,16,46,.35);
-  flex-shrink:0;
-  transition:transform .3s;
-}
+.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
 .logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
 .logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
 .logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary-light)}
@@ -143,6 +116,30 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .table tbody tr{transition:background .15s}
 .table tbody tr:hover td{background:#fdf6f7}
 
+/* Ligne de détail dépliable */
+.detail-row td{padding:0!important;border-bottom:2px solid var(--red-professional)!important;background:#fff8f9!important}
+.detail-content{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.detail-block{display:flex;flex-direction:column;gap:8px}
+.detail-block-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px}
+.detail-block-title .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.detail-block.present .detail-block-title{color:var(--success)}
+.detail-block.present .dot{background:var(--success)}
+.detail-block.absent .detail-block-title{color:var(--danger)}
+.detail-block.absent .dot{background:var(--danger)}
+.detail-block.excuse .detail-block-title{color:#f59e0b}
+.detail-block.excuse .dot{background:#f59e0b}
+.detail-dates{display:flex;flex-wrap:wrap;gap:8px}
+.detail-date{padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.detail-block.present .detail-date{background:var(--success-light);color:var(--success);border:1.5px solid var(--success)}
+.detail-block.absent .detail-date{background:var(--danger-light);color:var(--danger);border:1.5px solid var(--danger)}
+.detail-block.excuse .detail-date{background:var(--warning-light);color:#b45309;border:1.5px solid #f59e0b}
+.detail-empty{font-size:.82rem;color:var(--muted);font-style:italic}
+
+.nom-ka-cliquable{cursor:pointer;transition:color .2s;display:inline-flex;align-items:center;gap:6px}
+.nom-ka-cliquable:hover{color:var(--red-professional)}
+.nom-ka-cliquable::after{content:'▼';font-size:.65rem;opacity:.5;transition:transform .2s;display:inline-block}
+.nom-ka-cliquable.open::after{transform:rotate(180deg);opacity:1;color:var(--red-professional)}
+
 .date-banner{background:var(--grad-primary);color:#fff;padding:24px 28px;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow-lg);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden}
 .date-banner::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--grad-gold)}
 .date-banner .db-left .db-label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;opacity:.75;font-weight:600}
@@ -226,7 +223,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .dim-item .dim-status.cancelled{background:var(--danger-light);color:var(--danger)}
 .dim-item .dim-actions{display:flex;gap:8px}
 
-/* Responsive */
 @media(max-width:700px){
   .ka-row{grid-template-columns:1fr;gap:18px;padding:16px}
   .status-choices{gap:20px;justify-content:space-around;width:100%}
@@ -237,14 +233,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   .voyage-tabs{padding:6px}
   .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
   .logo-img{width:48px;height:48px}
+  .detail-content{padding:16px}
 }
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     PAGE PUBLIQUE
-     ============================================================ -->
 <div id="pagePublique">
   <header class="header">
     <div class="container header-inner">
@@ -289,9 +283,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   <footer class="footer"><div class="container"><p><img src="IMG_6726.png" alt="Logo" class="footer-logo"> © 2026 Groupe KA — Salamu-Amani</p></div></footer>
 </div>
 
-<!-- ============================================================
-     LOGIN COMMISSION SECRÉTARIAT
-     ============================================================ -->
 <div id="loginScreen" class="login-screen hidden">
   <div class="login-card">
     <div class="logo center"><img src="IMG_6726.png" alt="Logo" class="logo-img"></div>
@@ -306,9 +297,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   </div>
 </div>
 
-<!-- ============================================================
-     DASHBOARD COMMISSION SECRÉTARIAT
-     ============================================================ -->
 <div id="dashboard" class="hidden">
   <header class="header">
     <div class="container header-inner">
@@ -453,6 +441,9 @@ function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return dateToI
 function formatDateFr(iso){
   return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
+function formatDateCourte(iso){
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+}
 function nomJour(iso){
   const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
   return jours[new Date(iso+"T00:00:00").getDay()];
@@ -484,6 +475,7 @@ let cacheDatesSpeciales = {};
 let cacheVoyagesValides = {};
 let selectionCourante = {};
 let voyageSelectionnee = 1;
+let kaOuvert = null; // id du KA dont le détail est ouvert dans le classement
 
 const aujourdhuiISO = aujourdhui();
 
@@ -715,6 +707,7 @@ function deconnexion(){
   detruireSession();
   document.getElementById('dashboard').classList.add('hidden');
   document.getElementById('pagePublique').classList.remove('hidden');
+  kaOuvert = null;
 }
 
 let charts = {};
@@ -781,19 +774,65 @@ function calculerStats(){
   }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
 }
 
+// Calcule les dates détaillées pour un KA
+function calculerDetailsKA(kaId){
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
+  const details = {present:[], absent:[], excuse:[]};
+  dims.forEach(d => {
+    const p = cachePresences[d] || {};
+    const s = p[kaId];
+    if(s === "present") details.present.push(d);
+    else if(s === "absent") details.absent.push(d);
+    else if(s === "excuse") details.excuse.push(d);
+  });
+  return details;
+}
+
+// Basculer l'ouverture d'un KA
+window.toggleDetailKA = function(kaId){
+  kaOuvert = (kaOuvert === kaId) ? null : kaId;
+  renderClassement(document.getElementById('searchKA')?.value || '');
+};
+
+function construireDetail(details){
+  const renderBlock = (titre, dates, cls) => {
+    if(dates.length === 0) return '';
+    return `<div class="detail-block ${cls}">
+      <div class="detail-block-title"><span class="dot"></span>${titre} (${dates.length})</div>
+      <div class="detail-dates">${dates.map(d => `<span class="detail-date">${formatDateCourte(d)}</span>`).join('')}</div>
+    </div>`;
+  };
+  const blocks = [
+    renderBlock('Présent', details.present, 'present'),
+    renderBlock('Absent', details.absent, 'absent'),
+    renderBlock('Absence signalée', details.excuse, 'excuse')
+  ].filter(Boolean).join('');
+  if(!blocks) return '<div class="detail-content"><p class="detail-empty">Aucune donnée enregistrée pour ce KA.</p></div>';
+  return `<div class="detail-content">${blocks}</div>`;
+}
+
 function renderClassement(filtre=''){
   const tbody = document.querySelector('#tableClassement tbody');
   const data = calculerStats().filter(k => k.nom.toLowerCase().includes(filtre.toLowerCase()));
   if(data.length === 0){ tbody.innerHTML='<tr><td colspan="8" class="center muted" style="padding:20px">Aucun KA.</td></tr>'; return; }
   tbody.innerHTML = data.map((k,i) => {
     const cls = k.taux>=75?'success':(k.taux>=50?'warning':'danger');
-    return `<tr>
-      <td><strong>${i+1}</strong></td><td><strong>${esc(k.nom)}</strong></td><td>${CONFIG.VOYAGES[k.voyage]}</td>
+    const ouvert = kaOuvert === k.id;
+    const rowMain = `<tr>
+      <td><strong>${i+1}</strong></td>
+      <td><strong class="nom-ka-cliquable ${ouvert?'open':''}" onclick="toggleDetailKA('${k.id}')">${esc(k.nom)}</strong></td>
+      <td>${CONFIG.VOYAGES[k.voyage]}</td>
       <td>${k.messe}</td><td>${k.activite}</td>
       <td><span style="color:var(--red-professional);font-weight:700">${k.absent}</span></td>
       <td><span style="color:#f59e0b;font-weight:700">${k.excuse}</span></td>
       <td><span style="background:var(--${cls}-light);color:var(--${cls});padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">${k.taux}%</span></td>
     </tr>`;
+    let rowDetail = '';
+    if(ouvert){
+      const details = calculerDetailsKA(k.id);
+      rowDetail = `<tr class="detail-row"><td colspan="8">${construireDetail(details)}</td></tr>`;
+    }
+    return rowMain + rowDetail;
   }).join('');
 }
 
