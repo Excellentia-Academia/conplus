@@ -93,11 +93,19 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .tab-content.active{display:block}
 
 .voyage-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm);flex-wrap:wrap}
-.voyage-tab{flex:1;min-width:140px;background:none;border:none;padding:14px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
+.voyage-tab{flex:1;min-width:140px;background:none;border:none;padding:14px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
 .voyage-tab:hover{color:var(--primary);background:rgba(42,63,143,.06)}
 .voyage-tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(15,27,76,.25)}
 .voyage-tab .count{display:inline-block;background:rgba(42,63,143,.1);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
 .voyage-tab.active .count{background:rgba(255,255,255,.25);color:#fff}
+
+/* Voyage validé : onglet vert avec ✓ */
+.voyage-tab.validated{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);color:var(--success);border:2px solid var(--success)}
+.voyage-tab.validated .count{background:var(--success);color:#fff}
+.voyage-tab.validated::after{content:'✓';position:absolute;top:6px;right:10px;font-weight:900;color:var(--success);font-size:1rem}
+.voyage-tab.validated.active{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(15,157,88,.4)}
+.voyage-tab.validated.active::after{color:#fff}
+.voyage-tab.validated.active .count{background:rgba(255,255,255,.25);color:#fff}
 
 .table-wrap{overflow-x:auto;border-radius:12px}
 .table{width:100%;border-collapse:collapse;font-size:.88rem}
@@ -304,7 +312,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-dates" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Programmer une activité à une date précise</h2></div>
-        <p class="muted" style="margin-bottom:16px">Tous les dimanches jusqu'au 31 décembre 2040 sont déjà programmés automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
+        <p class="muted" style="margin-bottom:16px">Tous les dimanches jusqu'au 31 décembre 2100 sont déjà programmés automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
         <form id="formAjoutDate">
           <div class="form-row">
             <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
@@ -316,7 +324,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div id="ajoutDateMessage" class="message"></div>
       </div>
       <div class="card">
-        <div class="card-header"><h2>Toutes les séances programmées (jusqu'à 2040)</h2></div>
+        <div class="card-header"><h2>Toutes les séances programmées (jusqu'à 2100)</h2></div>
         <div id="dimList" class="dim-list"></div>
       </div>
     </div>
@@ -373,7 +381,7 @@ const CONFIG = {
   CODE_ANNULATION: "2K27",
   CODE_SUPPRESSION: "20K7",
   VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
-  DATE_FIN: "2200-12-31"
+  DATE_FIN: "2100-12-31"
 };
 
 async function sha256(s){
@@ -398,7 +406,7 @@ function afficherMessage(id,msg,type){
   setTimeout(()=>{el.className='message';},5000);
 }
 
-// Génère TOUS les dimanches jusqu'à 2040
+// Génère TOUS les dimanches jusqu'à 2100
 function genererDimanches(){
   const dimanches = [];
   const d = new Date(); d.setHours(0,0,0,0);
@@ -459,7 +467,6 @@ function ecouterVoyagesValides(cb){
   });
 }
 
-// Statut du jour (global)
 function statutDuJour(){
   const special = cacheDatesSpeciales[aujourdhuiISO];
   const estDimanche = new Date(aujourdhuiISO+"T00:00:00").getDay() === 0;
@@ -471,13 +478,11 @@ function statutDuJour(){
   return {ouvert:false, raison:"FERMÉ", detail:"La saisie n'est ouverte que le dimanche, ou lorsqu'une activité est programmée."};
 }
 
-// Voyage validé pour une date donnée ?
 function estVoyageValide(date, voyage){
   const v = cacheVoyagesValides[date];
   return v && v[voyage] === true;
 }
 
-// ========= RENDU =========
 function renderBanniere(){
   const statut = statutDuJour();
   document.getElementById('dbDate').textContent = formatDateFr(aujourdhuiISO);
@@ -499,8 +504,12 @@ function renderBanniere(){
 function updateVoyageTabCounts(){
   [1,2,3,4].forEach(v => {
     const count = cacheKAs.filter(k => k.voyage === v).length;
-    const span = document.querySelector(`.voyage-tab[data-voyage="${v}"] .count`);
+    const tab = document.querySelector(`.voyage-tab[data-voyage="${v}"]`);
+    if(!tab) return;
+    const span = tab.querySelector('.count');
     if(span) span.textContent = count;
+    if(estVoyageValide(aujourdhuiISO, v)) tab.classList.add('validated');
+    else tab.classList.remove('validated');
   });
 }
 
@@ -552,7 +561,7 @@ function renderKaListeVoyage(){
 
   const btn = document.getElementById('btnValider');
   if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
-  else if(dejaValide){ btn.disabled = true; btn.textContent = "🔒 Voyage déjà validé"; }
+  else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
   else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
@@ -764,7 +773,6 @@ function statutDate(d){
 
 function renderDates(){
   const container = document.getElementById('dimList');
-  // Toutes les dates : dimanches auto jusqu'à 2040 + dates spéciales
   const datesSet = new Set(DIMANCHES_AUTO);
   Object.keys(cacheDatesSpeciales).forEach(d => datesSet.add(d));
   const dates = Array.from(datesSet).sort();
