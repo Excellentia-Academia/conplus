@@ -122,9 +122,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .db-status.closed{background:var(--danger);color:#fff}
 .db-status.special{background:var(--grad-gold);color:var(--primary)}
 
-/* Espace pour éviter que la barre sticky cache le dernier KA */
-#kaListeVoyage{padding-bottom:20px;margin-bottom:160px}
-
 .ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-bottom:14px;transition:all .25s}
 .ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(42,63,143,.1)}
 .ka-row.absence-alert{border-color:var(--danger);background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
@@ -150,7 +147,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .status-choice.rouge .status-label{color:var(--danger)}
 .status-choice.blanc .status-label{color:#f59e0b}
 
-.validation-bar{position:sticky;bottom:16px;background:var(--surface);padding:20px 24px;margin-top:24px;border-radius:14px;box-shadow:var(--shadow-xl);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary);z-index:50}
+/* ========== MODIFICATION 1 : barre non figée, défile normalement ========== */
+.validation-bar{background:var(--surface);padding:20px 24px;margin-top:24px;border-radius:14px;box-shadow:var(--shadow-lg);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary)}
 .validation-bar .info-validation{font-weight:600;font-size:.95rem;color:var(--primary)}
 .validation-bar .info-validation span{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:12px;font-weight:800}
 
@@ -202,7 +200,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   .date-banner .db-left .db-date{font-size:1.4rem}
   .voyage-tabs{padding:6px}
   .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
-  #kaListeVoyage{margin-bottom:200px}
 }
 </style>
 </head>
@@ -394,10 +391,6 @@ async function sha256(s){
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
 
-/* ============================================================
-   IMPORTANT : Date en LOCAL (pas UTC) pour éviter le décalage
-   de fuseau horaire (ex: dimanche qui devient samedi)
-   ============================================================ */
 function dateToISO(d){
   const y = d.getFullYear();
   const m = String(d.getMonth()+1).padStart(2,'0');
@@ -419,11 +412,10 @@ function afficherMessage(id,msg,type){
   setTimeout(()=>{el.className='message';},5000);
 }
 
-// Génère tous les dimanches en LOCAL (getDay() === 0)
 function genererDimanches(){
   const dimanches = [];
   const d = new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - d.getDay()); // recule au dimanche local
+  d.setDate(d.getDate() - d.getDay());
   const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
   while(d <= fin){
     if(d.getDay() === 0) dimanches.push(dateToISO(d));
@@ -601,7 +593,6 @@ async function validerVoyageCourant(){
 
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
 
-  // OBLIGATION : tous les KA du voyage doivent avoir un statut
   const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
   if(nonCoches.length > 0){
     return afficherMessage('validationMessage',
