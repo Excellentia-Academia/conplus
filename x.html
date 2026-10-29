@@ -369,7 +369,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     </div>
     <div id="tab-ajoutKA" class="tab-content">
       <div class="card">
-        <div class="card-header"><h2>Ajouter un KA</h2></div>
+        <div class="card-header"><h2>Charger la liste officielle des KA</h2></div>
+        <p class="muted" style="margin-bottom:16px">Si des KA officiels ne sont pas encore dans le système (nouveau groupe, Firebase vide, mise à jour...), cliquez sur ce bouton. Les KA déjà présents ne seront pas dupliqués. Seuls les manquants seront ajoutés.</p>
+        <button class="btn btn-success" onclick="chargerKAOfficiels()">📥 Charger tous les KA officiels</button>
+        <div id="chargementMessage" class="message"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Ajouter un KA manuellement</h2></div>
         <form id="formAjoutKA">
           <div class="form-row">
             <div class="form-group"><label for="newNom">Nom complet du KA</label><input type="text" id="newNom" required placeholder="Ex : K. Amina KABASELE"></div>
@@ -451,7 +457,7 @@ function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
   if(!el) return;
   el.textContent=msg; el.className='message show '+type;
-  setTimeout(()=>{el.className='message';},5000);
+  setTimeout(()=>{el.className='message';},8000);
 }
 
 function genererDimanches(){
@@ -580,7 +586,6 @@ function renderKaListeVoyage(){
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
-  // Séparation Kizito / Anuarite
   const kizito = kasVoyage.filter(k => k.nom.startsWith('K.'));
   const anuarite = kasVoyage.filter(k => k.nom.startsWith('A.'));
 
@@ -1083,11 +1088,10 @@ window.exportJSON = exportJSON;
 window.sha256 = sha256;
 
 /* ============================================================
-   LISTE DES KA (format : K./A. + prénom en minuscules + NOM en MAJUSCULES)
+   LISTE COMPLÈTE DES KA OFFICIELS
    ============================================================ */
 const KA_TEST = [
   // ===== 2ème Voyage =====
-  // Kizito
   {nom:"K. Nicolas BABALE", voyage:2},
   {nom:"K. Joseph BABALE", voyage:2},
   {nom:"K. John MUYAMBA", voyage:2},
@@ -1101,7 +1105,6 @@ const KA_TEST = [
   {nom:"K. Vismy SAIDI", voyage:2},
   {nom:"K. Gervais LENGWA", voyage:2},
   {nom:"K. Israel NSILU", voyage:2},
-  // Anuarite
   {nom:"A. Patricia MUTHU", voyage:2},
   {nom:"A. Viviane RAMAZANI", voyage:2},
   {nom:"A. Vanessa MASIKA", voyage:2},
@@ -1129,7 +1132,6 @@ const KA_TEST = [
   {nom:"A. Consolate SAIDI", voyage:2},
 
   // ===== 3ème Voyage =====
-  // Kizito
   {nom:"K. Moïse SINGA", voyage:3},
   {nom:"K. Credo SINGA", voyage:3},
   {nom:"K. David LUBO", voyage:3},
@@ -1141,7 +1143,6 @@ const KA_TEST = [
   {nom:"K. Messi LENGWA", voyage:3},
   {nom:"K. Matthieu MUTANGALA", voyage:3},
   {nom:"K. Dave KIPELEKA", voyage:3},
-  // Anuarite
   {nom:"A. Triomphe BOKIKA", voyage:3},
   {nom:"A. Claudia MADIDISH", voyage:3},
   {nom:"A. Phideline KIKETA", voyage:3},
@@ -1160,13 +1161,11 @@ const KA_TEST = [
   {nom:"A. Lajoie TSHIBOLA", voyage:3},
 
   // ===== 4ème Voyage =====
-  // Kizito
   {nom:"K. Marcel KILOMBO", voyage:4},
   {nom:"K. Jeremie AKILI", voyage:4},
   {nom:"K. Josaphat LUZOLO", voyage:4},
   {nom:"K. Winner SAIDI", voyage:4},
   {nom:"K. Grael MUYISI", voyage:4},
-  // Anuarite
   {nom:"A. Bienfait MADIDISHI", voyage:4},
   {nom:"A. Aubaine SINGA", voyage:4},
   {nom:"A. Thérèse KAPINGA", voyage:4},
@@ -1181,19 +1180,27 @@ const KA_TEST = [
   {nom:"A. Marie-Fortune KAWE", voyage:4}
 ];
 
-const SEED_KEY = 'ka_seed_v2';
-
-async function seedKA(){
-  if(localStorage.getItem(SEED_KEY) === 'done') return;
-  if(cacheKAs.length > 0){ localStorage.setItem(SEED_KEY, 'done'); return; }
-  try{
-    for(const k of KA_TEST){
+/* ============================================================
+   BOUTON MANUEL : charger TOUS les KA officiels
+   Ajoute uniquement ceux qui manquent (pas de doublon)
+   ============================================================ */
+window.chargerKAOfficiels = async function(){
+  const msg = document.getElementById('chargementMessage');
+  msg.textContent = "Chargement en cours...";
+  msg.className = 'message show warning';
+  let ajoutes = 0, dejaPresents = 0, erreurs = 0;
+  for(const k of KA_TEST){
+    const existe = cacheKAs.some(x => norm(x.nom) === norm(k.nom));
+    if(existe){ dejaPresents++; continue; }
+    try{
       const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
       await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
-    }
-    localStorage.setItem(SEED_KEY, 'done');
-  }catch(e){ console.log("Seed:", e.message); }
-}
+      ajoutes++;
+    } catch(e){ erreurs++; console.log("Erreur :", k.nom, e.message); }
+  }
+  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
+  msg.className = 'message show success';
+};
 
 function rafraichirTempsReel(){
   renderBanniere();
@@ -1202,7 +1209,6 @@ function rafraichirTempsReel(){
 
 function init(){
   ecouterKAs(async ()=>{
-    if(cacheKAs.length === 0 && localStorage.getItem(SEED_KEY) !== 'done') await seedKA();
     rafraichirTempsReel();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   });
