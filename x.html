@@ -92,6 +92,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .tab-content{display:none}
 .tab-content.active{display:block}
 
+.voyage-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm);flex-wrap:wrap}
+.voyage-tab{flex:1;min-width:140px;background:none;border:none;padding:14px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
+.voyage-tab:hover{color:var(--primary);background:rgba(42,63,143,.06)}
+.voyage-tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(15,27,76,.25)}
+.voyage-tab .count{display:inline-block;background:rgba(42,63,143,.1);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
+.voyage-tab.active .count{background:rgba(255,255,255,.25);color:#fff}
+
 .table-wrap{overflow-x:auto;border-radius:12px}
 .table{width:100%;border-collapse:collapse;font-size:.88rem}
 .table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;white-space:nowrap;font-size:.82rem;text-transform:uppercase}
@@ -99,7 +106,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .table tbody tr{transition:background .15s}
 .table tbody tr:hover td{background:#f5f8ff}
 
-/* BANDEAU DATE DU JOUR (temps réel) */
 .date-banner{background:var(--grad-primary);color:#fff;padding:24px 28px;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow-lg);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .date-banner .db-left .db-label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;opacity:.75;font-weight:600}
 .date-banner .db-left .db-date{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
@@ -107,20 +113,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .db-status{padding:10px 20px;border-radius:24px;font-weight:700;font-size:.85rem;letter-spacing:.5px;text-transform:uppercase}
 .db-status.open{background:var(--success);color:#fff}
 .db-status.closed{background:var(--danger);color:#fff}
-.db-status.locked{background:#4a5568;color:#fff}
 .db-status.special{background:var(--grad-gold);color:var(--primary)}
 
-/* SECTION VOYAGE */
-.voyage-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;border:1px solid rgba(226,232,240,.6)}
-.voyage-header{background:linear-gradient(135deg,#f8fafd 0%,#eef2f9 100%);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border);cursor:pointer;transition:background .2s}
-.voyage-header:hover{background:linear-gradient(135deg,#eef2f9 0%,#e0e7f3 100%)}
-.voyage-header h3{font-size:1.15rem;margin:0;display:flex;align-items:center;gap:12px}
-.voyage-header .voyage-count{background:var(--grad-gold);color:var(--primary);padding:4px 14px;border-radius:14px;font-weight:800;font-size:.85rem}
-.voyage-header .chevron{font-size:1.2rem;color:var(--muted);transition:transform .25s}
-.voyage-header.collapsed .chevron{transform:rotate(-90deg)}
-.voyage-body{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
-
-.ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);transition:all .25s}
+.ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-bottom:14px;transition:all .25s}
 .ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(42,63,143,.1)}
 .ka-row.absence-alert{border-color:var(--danger);background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
 .ka-info .ka-nom{font-weight:700;font-size:1.05rem;color:var(--text);display:block;margin-bottom:4px}
@@ -195,6 +190,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   .hero h1{font-size:1.9rem}
   .date-banner{padding:18px}
   .date-banner .db-left .db-date{font-size:1.4rem}
+  .voyage-tabs{padding:6px}
+  .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
 }
 </style>
 </head>
@@ -207,9 +204,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <nav class="nav"><button class="btn btn-ghost" onclick="ouvrirLogin()">Espace Secrétariat</button></nav>
     </div>
   </header>
-  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Cochez le statut de chaque KA, puis validez en une seule fois</p></div></section>
+  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez les statuts, puis validez</p></div></section>
   <section class="section"><div class="container">
-    <!-- BANDEAU DATE EN TEMPS RÉEL -->
     <div class="date-banner" id="dateBanner">
       <div class="db-left">
         <div class="db-label">Séance du jour</div>
@@ -222,13 +218,19 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 
     <div class="card">
       <div class="card-header">
-        <h2>Liste des KA par voyage</h2>
-        <div><button class="btn btn-outline btn-sm" onclick="toutPresent()">Tout présent</button> <button class="btn btn-outline btn-sm" onclick="toutReinitialiser()">Réinitialiser</button></div>
+        <h2>Liste de présence</h2>
+        <button class="btn btn-outline btn-sm" onclick="reinitialiserVoyage()">Réinitialiser ce voyage</button>
       </div>
-      <div id="kaListeVoyages"></div>
+      <div class="voyage-tabs" id="voyageTabs">
+        <button class="voyage-tab active" data-voyage="1">1er Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="2">2ème Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="3">3ème Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="4">4ème Voyage <span class="count">0</span></button>
+      </div>
+      <div id="kaListeVoyage"></div>
       <div class="validation-bar" id="validationBar">
-        <div class="info-validation"><span id="countChecked">0</span> / <span id="countTotal">0</span> KA cochés</div>
-        <button class="btn btn-success" id="btnValider" onclick="validerToutesPresences()">✓ Valider toutes les présences</button>
+        <div class="info-validation"><span id="countChecked">0</span> / <span id="countTotal">0</span> KA cochés (ce voyage)</div>
+        <button class="btn btn-success" id="btnValider" onclick="validerVoyageCourant()">✓ Valider ce voyage</button>
       </div>
       <div id="validationMessage" class="message"></div>
     </div>
@@ -302,7 +304,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-dates" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Programmer une activité à une date précise</h2></div>
-        <p class="muted" style="margin-bottom:16px">Ajoutez une date spéciale (activité, événement) qui ouvrira la saisie ce jour-là, peu importe le jour de la semaine.</p>
+        <p class="muted" style="margin-bottom:16px">Tous les dimanches jusqu'au 31 décembre 2040 sont déjà programmés automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
         <form id="formAjoutDate">
           <div class="form-row">
             <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
@@ -314,7 +316,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div id="ajoutDateMessage" class="message"></div>
       </div>
       <div class="card">
-        <div class="card-header"><h2>Toutes les séances programmées</h2></div>
+        <div class="card-header"><h2>Toutes les séances programmées (jusqu'à 2040)</h2></div>
         <div id="dimList" class="dim-list"></div>
       </div>
     </div>
@@ -348,7 +350,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -369,7 +371,9 @@ const CONFIG = {
   SESSION_KEY: "ka_session",
   SESSION_DUREE: 60*60*1000,
   CODE_ANNULATION: "2K27",
-  VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"}
+  CODE_SUPPRESSION: "20K7",
+  VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
+  DATE_FIN: "2040-12-31"
 };
 
 async function sha256(s){
@@ -389,15 +393,32 @@ function nomJour(iso){
 }
 function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
+  if(!el) return;
   el.textContent=msg; el.className='message show '+type;
   setTimeout(()=>{el.className='message';},5000);
 }
+
+// Génère TOUS les dimanches jusqu'à 2040
+function genererDimanches(){
+  const dimanches = [];
+  const d = new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - d.getDay());
+  const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
+  while(d <= fin){
+    if(d.getDay() === 0) dimanches.push(d.toISOString().slice(0,10));
+    d.setDate(d.getDate()+7);
+  }
+  return dimanches;
+}
+const DIMANCHES_AUTO = genererDimanches();
 
 let cacheKAs = [];
 let cachePresences = {};
 let cacheDatesAnnulees = {};
 let cacheDatesSpeciales = {};
+let cacheVoyagesValides = {};
 let selectionCourante = {};
+let voyageSelectionnee = 1;
 
 const aujourdhuiISO = aujourdhui();
 
@@ -430,18 +451,30 @@ function ecouterDatesSpeciales(cb){
     if(cb) cb();
   });
 }
+function ecouterVoyagesValides(cb){
+  onSnapshot(collection(db,"voyagesValides"), snap => {
+    cacheVoyagesValides = {};
+    snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
 
-// ========= LOGIQUE D'OUVERTURE DU JOUR =========
+// Statut du jour (global)
 function statutDuJour(){
   const special = cacheDatesSpeciales[aujourdhuiISO];
   const estDimanche = new Date(aujourdhuiISO+"T00:00:00").getDay() === 0;
   const annule = cacheDatesAnnulees[aujourdhuiISO];
-  const dejaValide = cachePresences[aujourdhuiISO] && Object.keys(cachePresences[aujourdhuiISO]).length > 0;
 
-  if(annule) return {ouvert:false, raison:"ANNULÉ", detail:"Cette séance a été annulée par le secrétariat.", locked:false};
-  if(dejaValide) return {ouvert:false, raison:"VERROUILLÉ", detail:"La liste a déjà été validée. Plus de modification possible.", locked:true};
-  if(estDimanche || special) return {ouvert:true, raison: special ? (special.type === 'activite' ? 'ACTIVITÉ' : 'ÉVÉNEMENT') : "DIMANCHE", detail: special && special.libelle ? special.libelle : "", locked:false};
-  return {ouvert:false, raison:"FERMÉ", detail:"La liste n'est ouverte que le dimanche, ou lorsqu'une activité est programmée.", locked:false};
+  if(annule) return {ouvert:false, raison:"ANNULÉ", detail:"Cette séance a été annulée par le secrétariat."};
+  if(estDimanche) return {ouvert:true, raison:"DIMANCHE", detail:""};
+  if(special) return {ouvert:true, raison: special.type === 'activite' ? "ACTIVITÉ" : "ÉVÉNEMENT", detail: special.libelle || ""};
+  return {ouvert:false, raison:"FERMÉ", detail:"La saisie n'est ouverte que le dimanche, ou lorsqu'une activité est programmée."};
+}
+
+// Voyage validé pour une date donnée ?
+function estVoyageValide(date, voyage){
+  const v = cacheVoyagesValides[date];
+  return v && v[voyage] === true;
 }
 
 // ========= RENDU =========
@@ -451,104 +484,130 @@ function renderBanniere(){
   document.getElementById('dbTime').textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   const st = document.getElementById('dbStatus');
   st.textContent = statut.raison;
-  st.className = 'db-status ' + (statut.locked ? 'locked' : (statut.ouvert ? (statut.raison === 'DIMANCHE' ? 'open' : 'special') : 'closed'));
+  st.className = 'db-status ' + (statut.ouvert ? (statut.raison === 'DIMANCHE' ? 'open' : 'special') : 'closed');
 
   const dm = document.getElementById('dateMessage');
   if(!statut.ouvert){
     dm.textContent = statut.detail;
-    dm.className = 'message show ' + (statut.locked ? 'warning' : 'error');
+    dm.className = 'message show error';
   } else {
-    dm.textContent = "✓ Saisie ouverte : " + statut.detail;
+    dm.textContent = "✓ Saisie ouverte : " + (statut.detail || statut.raison);
     dm.className = 'message show success';
   }
 }
 
-function renderKaListe(){
-  const container = document.getElementById('kaListeVoyages');
-  if(cacheKAs.length === 0){
-    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA. Ajoutez-en via le secrétariat.</p>';
+function updateVoyageTabCounts(){
+  [1,2,3,4].forEach(v => {
+    const count = cacheKAs.filter(k => k.voyage === v).length;
+    const span = document.querySelector(`.voyage-tab[data-voyage="${v}"] .count`);
+    if(span) span.textContent = count;
+  });
+}
+
+function renderKaListeVoyage(){
+  updateVoyageTabCounts();
+  const container = document.getElementById('kaListeVoyage');
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+
+  if(kasVoyage.length === 0){
+    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage.</p>';
+    document.getElementById('countChecked').textContent = 0;
     document.getElementById('countTotal').textContent = 0;
     return;
   }
+
   const statut = statutDuJour();
+  const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
   const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = !statut.ouvert ? 'disabled' : '';
+  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
 
-  // Grouper par voyage
-  const parVoyage = {1:[],2:[],3:[],4:[]};
-  cacheKAs.forEach(k => { if(parVoyage[k.voyage]) parVoyage[k.voyage].push(k); });
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
-  let html = '';
-  [1,2,3,4].forEach(v => {
-    const liste = parVoyage[v];
-    if(liste.length === 0) return;
-    html += `<div class="voyage-section">
-      <div class="voyage-header" onclick="toggleVoyage(this)">
-        <h3>${CONFIG.VOYAGES[v]} <span class="voyage-count">${liste.length} KA</span></h3>
-        <span class="chevron">▼</span>
-      </div>
-      <div class="voyage-body">`;
-    liste.forEach(ka => {
-      const val = selectionCourante[ka.id] || existant[ka.id] || "";
-      html += `<div class="ka-row">
-        <div class="ka-info">
-          <span class="ka-nom">${esc(ka.nom)}</span>
-        </div>
-        <div class="status-choices">
-          <label class="status-choice vert"><input type="radio" name="status-${ka.id}" value="present" ${val==='present'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','present')"><span class="status-label">Présent</span></label>
-          <label class="status-choice rouge"><input type="radio" name="status-${ka.id}" value="absent" ${val==='absent'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','absent')"><span class="status-label">Absent</span></label>
-          <label class="status-choice blanc"><input type="radio" name="status-${ka.id}" value="excuse" ${val==='excuse'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','excuse')"><span class="status-label">Abs. signalée</span></label>
-        </div>
-      </div>`;
+  container.innerHTML = kasVoyage.map(ka => {
+    let alert3 = false;
+    let compteur = 0, maxCompteur = 0;
+    dims.forEach(d => {
+      const p = cachePresences[d] || {};
+      if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
+      else if(p[ka.id]) compteur = 0;
     });
-    html += `</div></div>`;
-  });
-  container.innerHTML = html;
+    if(maxCompteur >= 3) alert3 = true;
 
-  document.getElementById('countTotal').textContent = cacheKAs.length;
+    const val = selectionCourante[ka.id] || existant[ka.id] || "";
+
+    return `<div class="ka-row ${alert3?'absence-alert':''}">
+      <div class="ka-info">
+        <span class="ka-nom">${esc(ka.nom)}</span>
+        ${alert3?'<span class="alert-3">⚠️ 3 absences successives</span>':''}
+      </div>
+      <div class="status-choices">
+        <label class="status-choice vert"><input type="radio" name="status-${ka.id}" value="present" ${val==='present'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','present')"><span class="status-label">Présent</span></label>
+        <label class="status-choice rouge"><input type="radio" name="status-${ka.id}" value="absent" ${val==='absent'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','absent')"><span class="status-label">Absent</span></label>
+        <label class="status-choice blanc"><input type="radio" name="status-${ka.id}" value="excuse" ${val==='excuse'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','excuse')"><span class="status-label">Abs. signalée</span></label>
+      </div>
+    </div>`;
+  }).join('');
+
   updateCount();
 
-  // Désactiver le bouton si fermé ou déjà validé
   const btn = document.getElementById('btnValider');
-  if(!statut.ouvert){ btn.disabled = true; btn.textContent = statut.locked ? "🔒 Séance déjà validée" : "🔒 Saisie fermée"; }
-  else { btn.disabled = false; btn.textContent = "✓ Valider toutes les présences"; }
+  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  else if(dejaValide){ btn.disabled = true; btn.textContent = "🔒 Voyage déjà validé"; }
+  else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
-function toggleVoyage(header){
-  header.classList.toggle('collapsed');
-  const body = header.nextElementSibling;
-  body.style.display = body.style.display === 'none' ? 'flex' : 'none';
+function setStatus(id, val){
+  const statut = statutDuJour();
+  if(!statut.ouvert) return;
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
+  selectionCourante[id] = val;
+  updateCount();
 }
 
-function setStatus(id, val){ selectionCourante[id] = val; updateCount(); }
-function updateCount(){ document.getElementById('countChecked').textContent = Object.keys(selectionCourante).length; }
+function updateCount(){
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+  const checked = kasVoyage.filter(k => selectionCourante[k.id]).length;
+  document.getElementById('countChecked').textContent = checked;
+  document.getElementById('countTotal').textContent = kasVoyage.length;
+}
 
-async function validerToutesPresences(){
+async function validerVoyageCourant(){
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
-  if(Object.keys(selectionCourante).length === 0) return afficherMessage('validationMessage',"Cochez au moins un KA.",'error');
-  if(cachePresences[aujourdhuiISO] && Object.keys(cachePresences[aujourdhuiISO]).length > 0)
-    return afficherMessage('validationMessage',"Cette séance a déjà été validée.",'error');
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
+    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
+
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+  const selectionFiltree = {};
+  kasVoyage.forEach(k => {
+    if(selectionCourante[k.id]) selectionFiltree[k.id] = selectionCourante[k.id];
+  });
+
+  if(Object.keys(selectionFiltree).length === 0)
+    return afficherMessage('validationMessage',"Cochez au moins un KA de ce voyage.",'error');
+
   try {
-    await setDoc(doc(db,"presences",aujourdhuiISO), selectionCourante);
-    afficherMessage('validationMessage',"✓ Présences validées définitivement. La séance est maintenant verrouillée.",'success');
-    selectionCourante = {};
+    const existing = cachePresences[aujourdhuiISO] || {};
+    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionFiltree});
+    await setDoc(doc(db,"voyagesValides",aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
+    kasVoyage.forEach(k => delete selectionCourante[k.id]);
+    afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
+    updateCount();
+    renderKaListeVoyage();
   } catch(e){
     afficherMessage('validationMessage',"Erreur : "+e.message,'error');
   }
 }
 
-function toutPresent(){
+function reinitialiserVoyage(){
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
-  cacheKAs.forEach(k => selectionCourante[k.id] = "present");
-  renderKaListe();
-}
-function toutReinitialiser(){
-  const statut = statutDuJour();
-  if(!statut.ouvert) return;
-  selectionCourante = {};
-  renderKaListe();
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
+    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+  kasVoyage.forEach(k => delete selectionCourante[k.id]);
+  renderKaListeVoyage();
+  afficherMessage('validationMessage',"✓ Sélection réinitialisée pour ce voyage.",'success');
 }
 
 function ouvrirLogin(){ document.getElementById('pagePublique').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
@@ -671,7 +730,6 @@ function renderClassement(filtre=''){
     </tr>`;
   }).join('');
 }
-document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
 
 function renderVoyages(){
   const grid = document.getElementById('gridVoyages');
@@ -692,38 +750,40 @@ function renderVoyages(){
   }).join('');
 }
 
-function renderDates(){
-  // Afficher les 7 prochains jours + les dates spéciales
-  const container = document.getElementById('dimList');
-  const jours = [];
-  const start = new Date(); start.setHours(0,0,0,0);
-  for(let i=0;i<14;i++){
-    const d = new Date(start); d.setDate(start.getDate()+i);
-    jours.push(d.toISOString().slice(0,10));
-  }
-  Object.keys(cacheDatesSpeciales).forEach(d => { if(!jours.includes(d)) jours.push(d); });
-  jours.sort();
+function statutDate(d){
+  if(cacheDatesAnnulees[d]) return {label:"ANNULÉ", class:"cancelled"};
+  const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
+  const special = cacheDatesSpeciales[d];
+  if(!isDimanche && !special) return {label:"FERMÉ", class:"cancelled"};
+  const vv = cacheVoyagesValides[d] || {};
+  const nbValides = Object.keys(vv).filter(k => vv[k] === true).length;
+  if(nbValides === 4) return {label:"VALIDÉ", class:"active"};
+  if(nbValides > 0) return {label:`${nbValides}/4 VALIDÉ`, class:"active"};
+  return {label:"OUVERT", class:"active"};
+}
 
-  container.innerHTML = jours.map(d => {
+function renderDates(){
+  const container = document.getElementById('dimList');
+  // Toutes les dates : dimanches auto jusqu'à 2040 + dates spéciales
+  const datesSet = new Set(DIMANCHES_AUTO);
+  Object.keys(cacheDatesSpeciales).forEach(d => datesSet.add(d));
+  const dates = Array.from(datesSet).sort();
+
+  container.innerHTML = dates.map(d => {
     const annule = cacheDatesAnnulees[d];
     const special = cacheDatesSpeciales[d];
     const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
-    const valide = cachePresences[d] && Object.keys(cachePresences[d]).length > 0;
     let typeLabel, typeClass;
     if(special){ typeLabel = special.type === 'activite' ? 'ACTIVITÉ' : 'ÉVÉNEMENT'; typeClass = 'special'; }
     else if(isDimanche){ typeLabel = 'DIMANCHE'; typeClass = ''; }
-    else { typeLabel = 'JOUR NORMAL'; typeClass = ''; }
+    else { typeLabel = 'JOUR'; typeClass = ''; }
 
-    let statusLabel, statusClass;
-    if(annule){ statusLabel = 'ANNULÉ'; statusClass = 'cancelled'; }
-    else if(valide){ statusLabel = 'VALIDÉ'; statusClass = 'active'; }
-    else if(isDimanche || special){ statusLabel = 'OUVERT'; statusClass = 'active'; }
-    else { statusLabel = 'FERMÉ'; statusClass = 'cancelled'; }
+    const st = statutDate(d);
 
     return `<div class="dim-item ${special?'special':''}">
       <div class="dim-date">${formatDateFr(d)}${special && special.libelle ? ' — '+esc(special.libelle) : ''}</div>
       <span class="dim-type ${typeClass}">${typeLabel}</span>
-      <span class="dim-status ${statusClass}">${statusLabel}</span>
+      <span class="dim-status ${st.class}">${st.label}</span>
       <div class="dim-actions">
         ${annule ? `<button class="btn btn-success btn-sm" onclick="reactiverDate('${d}')">Réactiver</button>`
                  : `<button class="btn btn-danger btn-sm" onclick="annulerDate('${d}')">Annuler</button>`}
@@ -764,24 +824,23 @@ function renderListeKASecretariat(){
   let html = '';
   [1,2,3,4].forEach(v => {
     if(parVoyage[v].length === 0) return;
-    html += `<div class="voyage-section">
-      <div class="voyage-header" style="cursor:default">
-        <h3>${CONFIG.VOYAGES[v]} <span class="voyage-count">${parVoyage[v].length} KA</span></h3>
-      </div>
-      <div class="voyage-body">`;
+    html += `<div style="margin-bottom:22px">
+      <h3 style="font-size:1.05rem;margin-bottom:12px;color:var(--primary);border-bottom:2px solid var(--border);padding-bottom:8px">${CONFIG.VOYAGES[v]} <span style="background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.75rem;margin-left:8px">${parVoyage[v].length}</span></h3>`;
     parVoyage[v].forEach(k => {
       html += `<div class="ka-row">
         <div class="ka-info"><span class="ka-nom">${esc(k.nom)}</span></div>
         <button class="btn btn-danger btn-sm" onclick="supprimerKA('${k.id}')">Supprimer</button>
       </div>`;
     });
-    html += `</div></div>`;
+    html += `</div>`;
   });
   container.innerHTML = html;
 }
 
 async function supprimerKA(id){
-  if(!confirm("Supprimer ce KA ?")) return;
+  const code = prompt("Code de suppression requis :");
+  if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
+  if(!confirm("Supprimer définitivement ce KA ?")) return;
   await deleteDoc(doc(db,"kas",id));
 }
 
@@ -811,8 +870,10 @@ function renderHistorique(){
       else if(s==="absent") absents++;
       else if(s==="excuse") excuses++;
     });
+    const vv = cacheVoyagesValides[d] || {};
+    const nbV = Object.keys(vv).filter(k => vv[k] === true).length;
     return `<div class="hist-item">
-      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'<span style="color:var(--danger)">[ANNULÉ]</span>':''}</div>
+      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'<span style="color:var(--danger)">[ANNULÉ]</span>':''} <span style="background:var(--primary);color:#fff;padding:2px 10px;border-radius:10px;font-size:.7rem;margin-left:8px">${nbV}/4 voyages validés</span></div>
       <div class="hist-stats"><span style="color:var(--success)">✓ ${presents} présents</span><span style="color:var(--danger)">✗ ${absents} absents</span><span style="color:#f59e0b">⚠ ${excuses} signalés</span></div>
     </div>`;
   }).join('');
@@ -864,6 +925,17 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
+document.querySelectorAll('.voyage-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.voyage-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    voyageSelectionnee = Number(tab.dataset.voyage);
+    renderKaListeVoyage();
+  });
+});
+
+document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
+
 function exportCSV(){
   const stats = calculerStats();
   let csv = "Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
@@ -871,7 +943,7 @@ function exportCSV(){
   telecharger(csv,`groupe-ka-${new Date().toISOString().slice(0,10)}.csv`,'text/csv');
 }
 function exportJSON(){
-  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, exporte:new Date().toISOString()};
+  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
   telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${new Date().toISOString().slice(0,10)}.json`,'application/json');
 }
 function telecharger(c,nom,type){
@@ -883,9 +955,8 @@ window.ouvrirLogin = ouvrirLogin;
 window.fermerLogin = fermerLogin;
 window.deconnexion = deconnexion;
 window.setStatus = setStatus;
-window.toutPresent = toutPresent;
-window.toutReinitialiser = toutReinitialiser;
-window.validerToutesPresences = validerToutesPresences;
+window.reinitialiserVoyage = reinitialiserVoyage;
+window.validerVoyageCourant = validerVoyageCourant;
 window.supprimerKA = supprimerKA;
 window.annulerDate = annulerDate;
 window.reactiverDate = reactiverDate;
@@ -893,7 +964,6 @@ window.supprimerDateSpecial = supprimerDateSpecial;
 window.exportCSV = exportCSV;
 window.exportJSON = exportJSON;
 window.sha256 = sha256;
-window.toggleVoyage = toggleVoyage;
 
 const KA_TEST = [
   {nom:"Kabasele Amina", voyage:1},{nom:"Mbala Josué", voyage:1},{nom:"Nsimba Grâce", voyage:1},{nom:"Lukusa David", voyage:1},{nom:"Tshibangu Esther", voyage:1},
@@ -902,27 +972,28 @@ const KA_TEST = [
   {nom:"Mwanza Prisca", voyage:4},{nom:"Kanku Emmanuel", voyage:4},{nom:"Lubaki Naomi", voyage:4},{nom:"Kalonji Benjamin", voyage:4},{nom:"Mpiana Ruth", voyage:4}
 ];
 
+const SEED_KEY = 'ka_seed_v1';
+
 async function seedKA(){
-  const check = sessionStorage.getItem('ka_seeded');
-  if(check) return;
-  if(cacheKAs.length > 0){ sessionStorage.setItem('ka_seeded','1'); return; }
+  if(localStorage.getItem(SEED_KEY) === 'done') return;
+  if(cacheKAs.length > 0){ localStorage.setItem(SEED_KEY, 'done'); return; }
   try{
     for(const k of KA_TEST){
       const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
       await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
     }
-    sessionStorage.setItem('ka_seeded','1');
+    localStorage.setItem(SEED_KEY, 'done');
   }catch(e){ console.log("Seed:", e.message); }
 }
 
 function rafraichirTempsReel(){
   renderBanniere();
-  renderKaListe();
+  renderKaListeVoyage();
 }
 
 function init(){
   ecouterKAs(async ()=>{
-    if(cacheKAs.length === 0 && !sessionStorage.getItem('ka_seeded')) await seedKA();
+    if(cacheKAs.length === 0 && localStorage.getItem(SEED_KEY) !== 'done') await seedKA();
     rafraichirTempsReel();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   });
@@ -938,14 +1009,18 @@ function init(){
     rafraichirTempsReel();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   });
+  ecouterVoyagesValides(()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     chargerDashboard();
   }
-  // Horloge temps réel
   setInterval(()=>{
-    document.getElementById('dbTime').textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const el = document.getElementById('dbTime');
+    if(el) el.textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }, 1000);
 }
 init();
