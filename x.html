@@ -4,163 +4,195 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Groupe KA — Registre de Présence</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --primary:#1a237e;--primary-light:#3949ab;--secondary:#ffb300;
-  --bg:#f5f7fa;--surface:#fff;--text:#1c1c1c;--muted:#6b7280;
-  --border:#e5e7eb;--success:#2e7d32;--success-light:#e8f5e9;
-  --danger:#c62828;--danger-light:#ffebee;
+  --primary:#0f1b4c;--primary-light:#2a3f8f;--primary-mid:#1a2b6b;
+  --secondary:#f5a623;--secondary-light:#ffc857;
+  --bg:#eef2f9;--surface:#fff;--text:#0e1428;--muted:#64748b;
+  --border:#e2e8f0;--success:#0f9d58;--success-light:#e6f7ee;
+  --danger:#d93025;--danger-light:#fce8e6;
   --warning:#e65100;--warning-light:#fff3e0;
-  --radius:12px;--shadow:0 2px 8px rgba(0,0,0,.06);--shadow-lg:0 8px 24px rgba(0,0,0,.10);
+  --radius:14px;--shadow-sm:0 1px 3px rgba(15,27,76,.08);
+  --shadow:0 4px 16px rgba(15,27,76,.08);--shadow-lg:0 12px 32px rgba(15,27,76,.14);
+  --shadow-xl:0 24px 48px rgba(15,27,76,.18);
+  --grad-primary:linear-gradient(135deg,#0f1b4c 0%,#1a2b6b 50%,#2a3f8f 100%);
+  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
-h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
-.container{max-width:1300px;margin:0 auto;padding:0 20px}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacing:-.02em}
+.container{max-width:1320px;margin:0 auto;padding:0 24px}
 .hidden{display:none!important}
 .center{text-align:center}
 .muted{color:var(--muted);font-size:.9rem}
-.hint{color:var(--muted);font-size:.8rem;display:block;margin-top:4px}
 
-.header{background:var(--primary);color:#fff;padding:16px 0;box-shadow:var(--shadow)}
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(15,27,76,.25);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-mark{background:var(--secondary);color:var(--primary);font-weight:700;font-size:1.2rem;padding:8px 12px;border-radius:8px;letter-spacing:1px}
-.logo-text strong{display:block;font-size:1.1rem}
-.logo-text small{opacity:.8;font-size:.75rem}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-mark{background:var(--grad-gold);color:var(--primary);font-weight:800;font-size:1.25rem;padding:10px 14px;border-radius:10px;letter-spacing:1.5px;box-shadow:0 4px 12px rgba(245,166,35,.4);font-family:'Playfair Display',serif}
+.logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px}
+.logo-text small{opacity:.75;font-size:.72rem;letter-spacing:2px;text-transform:uppercase}
 .nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.btn{display:inline-block;padding:10px 18px;border-radius:8px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:.2s;text-decoration:none;text-align:center}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-light);transform:translateY(-1px)}
-.btn-success{background:var(--success);color:#fff}
-.btn-success:hover{background:#1b5e20;transform:translateY(-1px)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:hover{background:#8e0000}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-decoration:none;letter-spacing:.3px}
+.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(15,27,76,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,27,76,.35)}
+.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.35)}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,157,88,.4)}
+.btn-danger{background:linear-gradient(135deg,#d93025 0%,#f04d3f 100%);color:#fff;box-shadow:0 4px 14px rgba(217,48,37,.3)}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(217,48,37,.35)}
 .btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
-.btn-outline:hover{background:var(--secondary);color:var(--primary)}
-.btn-block{width:100%;display:block}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-sm{padding:6px 12px;font-size:.8rem}
+.btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent;box-shadow:0 4px 14px rgba(245,166,35,.35)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-block{width:100%;justify-content:center}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
 
-.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;padding:40px 0;text-align:center}
-.hero h1{color:#fff;font-size:2rem;margin-bottom:8px}
-.hero-sub{font-size:1rem;opacity:.9}
+.hero{background:var(--grad-primary);color:#fff;padding:70px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 60%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(42,63,143,.4) 0%,transparent 60%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero h1{color:#fff;font-size:2.8rem;margin-bottom:12px;font-weight:900;letter-spacing:-.03em}
+.hero-sub{font-size:1.15rem;opacity:.85;font-weight:400;letter-spacing:.3px}
 
-.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
-.card-header{margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.card-header h2{font-size:1.3rem}
-.section{padding:30px 0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid rgba(226,232,240,.6);transition:box-shadow .3s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-header{margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.card-header h2{font-size:1.4rem;font-weight:700}
+.section{padding:36px 0}
 
-.form-group{margin-bottom:18px}
-.form-group label{display:block;font-weight:600;margin-bottom:6px;font-size:.9rem}
-.form-group input,.form-group select{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:1rem;transition:.2s;background:#fff}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary);letter-spacing:.2px}
+.form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(42,63,143,.12)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
 
-.message{margin-top:16px;padding:12px 16px;border-radius:8px;font-weight:500;display:none}
+.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .message.show{display:block}
 .message.success{background:var(--success-light);color:var(--success);border-left:4px solid var(--success)}
 .message.error{background:var(--danger-light);color:var(--danger);border-left:4px solid var(--danger)}
 .message.warning{background:var(--warning-light);color:var(--warning);border-left:4px solid var(--warning)}
 
-.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--secondary)}
-.stat-value{font-size:2rem;font-weight:700;color:var(--primary);font-family:'Playfair Display',serif}
-.stat-label{color:var(--muted);font-size:.85rem;margin-top:4px}
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;border:none;transition:transform .3s,box-shadow .3s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
+.stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
+.stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
 
-.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;border-bottom:2px solid var(--border)}
-.tab{background:none;border:none;padding:12px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s}
-.tab:hover{color:var(--primary)}
-.tab.active{color:var(--primary);border-bottom-color:var(--secondary)}
-.tab-content{display:none}
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
+.tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;letter-spacing:.2px}
+.tab:hover{color:var(--primary);background:rgba(42,63,143,.06)}
+.tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(15,27,76,.25)}
+.tab-content{display:none;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .tab-content.active{display:block}
 
-.table-wrap{overflow-x:auto}
-.table{width:100%;border-collapse:collapse;font-size:.9rem}
-.table th{background:var(--primary);color:#fff;padding:12px;text-align:left;font-weight:600;white-space:nowrap}
-.table td{padding:12px;border-bottom:1px solid var(--border)}
-.table tr:hover td{background:#f0f2f8}
+.table-wrap{overflow-x:auto;border-radius:12px}
+.table{width:100%;border-collapse:collapse;font-size:.88rem}
+.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;white-space:nowrap;letter-spacing:.4px;font-size:.82rem;text-transform:uppercase}
+.table th:first-child{border-radius:10px 0 0 0}
+.table th:last-child{border-radius:0 10px 0 0}
+.table td{padding:14px 12px;border-bottom:1px solid var(--border)}
+.table tbody tr{transition:background .15s}
+.table tbody tr:hover td{background:#f5f8ff}
 
-.date-selector{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:10px}
-.date-selector label{font-weight:600}
-.date-selector select,.date-selector input{padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem;background:#fff}
-.date-selector select:focus,.date-selector input:focus{outline:none;border-color:var(--primary)}
-.date-selector .badge-date{background:var(--primary);color:#fff;padding:8px 16px;border-radius:20px;font-weight:600;font-size:.9rem}
+.date-selector{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:18px 22px;background:linear-gradient(135deg,#f8fafd 0%,#eef2f9 100%);border-radius:12px;border:1px solid var(--border)}
+.date-selector label{font-weight:600;color:var(--primary)}
+.date-selector select,.date-selector input{padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.95rem;background:#fff;transition:all .2s;min-width:240px}
+.date-selector select:focus,.date-selector input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(42,63,143,.12)}
+.date-selector .badge-date{background:var(--grad-primary);color:#fff;padding:10px 20px;border-radius:24px;font-weight:700;font-size:.88rem;box-shadow:0 4px 12px rgba(15,27,76,.25);letter-spacing:.3px}
 
 .ka-liste{display:flex;flex-direction:column;gap:14px}
-.ka-row{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:18px 22px;background:var(--surface);border-radius:10px;border:2px solid var(--border);transition:.2s}
-.ka-row:hover{border-color:var(--primary-light)}
-.ka-row.absence-alert{border-color:var(--danger);background:#fff5f5}
-.ka-info .ka-nom{font-weight:700;font-size:1.05rem;color:var(--text);display:block;margin-bottom:4px}
-.ka-info .ka-voyage{font-size:.8rem;background:var(--primary);color:#fff;padding:2px 10px;border-radius:12px;display:inline-block}
-.ka-info .alert-3{font-size:.8rem;color:var(--danger);font-weight:700;margin-top:4px;display:block}
+.ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:20px 24px;background:var(--surface);border-radius:12px;border:2px solid var(--border);transition:all .25s}
+.ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(42,63,143,.1);transform:translateY(-1px)}
+.ka-row.absence-alert{border-color:var(--danger);background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
+.ka-info .ka-nom{font-weight:700;font-size:1.05rem;color:var(--text);display:block;margin-bottom:6px;letter-spacing:-.01em}
+.ka-info .ka-voyage{font-size:.75rem;background:var(--grad-primary);color:#fff;padding:3px 12px;border-radius:14px;display:inline-block;font-weight:600;letter-spacing:.4px}
+.ka-info .alert-3{font-size:.82rem;color:var(--danger);font-weight:700;margin-top:6px;display:block}
 
-.status-choices{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
-.status-choice{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none}
-.status-choice input[type="radio"]{appearance:none;-webkit-appearance:none;width:38px;height:38px;border-radius:50%;border:3px solid var(--border);cursor:pointer;transition:.2s;position:relative;display:flex;align-items:center;justify-content:center}
-.status-choice input[type="radio"]:hover{transform:scale(1.1)}
-.status-choice input[type="radio"]:checked::after{content:'';width:20px;height:20px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.status-choices{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+.status-choice{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.status-choice input[type="radio"]{appearance:none;-webkit-appearance:none;width:42px;height:42px;border-radius:50%;border:3px solid var(--border);cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);position:relative;display:flex;align-items:center;justify-content:center;background:#fff}
+.status-choice input[type="radio"]:hover{transform:scale(1.08);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.status-choice input[type="radio"]:checked::after{content:'';width:22px;height:22px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);animation:checkIn .2s ease}
+@keyframes checkIn{from{transform:translate(-50%,-50%) scale(0)}to{transform:translate(-50%,-50%) scale(1)}}
 .status-choice.vert input[type="radio"]{border-color:var(--success)}
-.status-choice.vert input[type="radio"]:checked{background:var(--success);border-color:var(--success)}
+.status-choice.vert input[type="radio"]:checked{background:var(--success);border-color:var(--success);box-shadow:0 4px 14px rgba(15,157,88,.35)}
 .status-choice.vert input[type="radio"]:checked::after{background:#fff}
 .status-choice.rouge input[type="radio"]{border-color:var(--danger)}
-.status-choice.rouge input[type="radio"]:checked{background:var(--danger);border-color:var(--danger)}
+.status-choice.rouge input[type="radio"]:checked{background:var(--danger);border-color:var(--danger);box-shadow:0 4px 14px rgba(217,48,37,.35)}
 .status-choice.rouge input[type="radio"]:checked::after{background:#fff}
 .status-choice.blanc input[type="radio"]{border-color:#f59e0b}
-.status-choice.blanc input[type="radio"]:checked{background:#f59e0b;border-color:#f59e0b}
+.status-choice.blanc input[type="radio"]:checked{background:#f59e0b;border-color:#f59e0b;box-shadow:0 4px 14px rgba(245,158,11,.35)}
 .status-choice.blanc input[type="radio"]:checked::after{background:#fff}
-.status-choice .status-label{font-size:.75rem;font-weight:600;color:var(--muted);text-align:center;white-space:nowrap}
+.status-choice .status-label{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap;letter-spacing:.3px}
 .status-choice.vert .status-label{color:var(--success)}
 .status-choice.rouge .status-label{color:var(--danger)}
 .status-choice.blanc .status-label{color:#f59e0b}
 
-.validation-bar{position:sticky;bottom:0;background:var(--surface);padding:20px;margin-top:24px;border-radius:12px;box-shadow:0 -4px 16px rgba(0,0,0,.1);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary)}
-.validation-bar .info-validation{font-weight:600;font-size:.95rem}
-.validation-bar .info-validation span{color:var(--primary)}
+.validation-bar{position:sticky;bottom:16px;background:var(--surface);padding:20px 24px;margin-top:24px;border-radius:14px;box-shadow:var(--shadow-xl);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary);z-index:50}
+.validation-bar .info-validation{font-weight:600;font-size:.95rem;color:var(--primary)}
+.validation-bar .info-validation span{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:12px;font-weight:800}
 
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:20px}
-.login-card{background:var(--surface);border-radius:16px;padding:40px;max-width:400px;width:100%;box-shadow:var(--shadow-lg)}
-.login-card h1{margin:16px 0 4px;font-size:1.5rem;text-align:center}
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-primary);padding:20px;position:relative;overflow:hidden}
+.login-screen::before{content:'';position:absolute;top:-30%;left:-10%;width:60%;height:160%;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 55%)}
+.login-card{background:var(--surface);border-radius:20px;padding:48px 40px;max-width:420px;width:100%;box-shadow:var(--shadow-xl);position:relative;z-index:1}
+.login-card h1{margin:20px 0 6px;font-size:1.6rem;text-align:center}
 .login-card .logo.center{justify-content:center;display:flex}
-.link-back{display:block;text-align:center;margin-top:16px;color:var(--muted);text-decoration:none;font-size:.85rem}
-.login-card .logo-mark{font-size:1.6rem;padding:12px 20px}
+.login-card .logo-mark{font-size:1.8rem;padding:14px 22px}
+.link-back{display:block;text-align:center;margin-top:20px;color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s}
+.link-back:hover{color:var(--primary)}
 
-.dashboard-main{padding:30px 20px 60px}
-.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px;margin-bottom:24px}
+.dashboard-main{padding:36px 24px 80px}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px;margin-bottom:24px}
 @media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
-.chart-box{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
-.chart-box h3{font-size:1.1rem;margin-bottom:16px}
+.chart-box{background:var(--surface);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);border:1px solid rgba(226,232,240,.6)}
+.chart-box h3{font-size:1.05rem;margin-bottom:20px;font-weight:700;color:var(--primary)}
 .chart-container{position:relative;height:320px}
 
-.alert-list{display:flex;flex-direction:column;gap:10px}
-.alert-item{padding:14px 18px;border-radius:8px;border-left:4px solid var(--danger);background:var(--danger-light);font-size:.9rem}
-.alert-item strong{color:var(--danger)}
+.alert-list{display:flex;flex-direction:column;gap:12px}
+.alert-item{padding:16px 20px;border-radius:10px;border-left:5px solid var(--danger);background:linear-gradient(90deg,var(--danger-light) 0%,#fff 100%);font-size:.9rem;box-shadow:var(--shadow-sm)}
+.alert-item strong{color:var(--danger);font-weight:700}
 
-.historique{display:flex;flex-direction:column;gap:12px}
-.hist-item{background:var(--bg);border-radius:8px;padding:14px 16px}
-.hist-item .hist-date{font-weight:700;color:var(--primary);margin-bottom:6px}
-.hist-item .hist-stats{font-size:.85rem;color:var(--muted)}
-.hist-item .hist-stats span{margin-right:16px}
+.historique{display:flex;flex-direction:column;gap:14px}
+.hist-item{background:linear-gradient(135deg,#f8fafd 0%,#eef2f9 100%);border-radius:12px;padding:18px 20px;border-left:4px solid var(--primary-light)}
+.hist-item .hist-date{font-weight:700;color:var(--primary);margin-bottom:8px;font-size:1rem}
+.hist-item .hist-stats{font-size:.85rem;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
+.hist-item .hist-stats span{font-weight:600}
 
-.export-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-.footer{background:var(--primary);color:#fff;text-align:center;padding:24px 0;font-size:.85rem}
+.export-buttons{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:32px 0;font-size:.85rem;margin-top:40px}
+.footer p{opacity:.75;letter-spacing:.3px}
 
-.dim-list{display:flex;flex-direction:column;gap:8px;max-height:500px;overflow-y:auto}
-.dim-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);border-radius:8px;gap:12px;flex-wrap:wrap}
-.dim-item .dim-date{font-weight:600;flex:1;min-width:200px}
-.dim-item .dim-status{font-size:.8rem;padding:4px 12px;border-radius:12px;font-weight:600}
+.dim-list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto;padding-right:6px}
+.dim-item{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#f8fafd 0%,#eef2f9 100%);border-radius:10px;gap:14px;flex-wrap:wrap;border-left:4px solid var(--primary-light);transition:transform .2s}
+.dim-item:hover{transform:translateX(3px)}
+.dim-item.special{border-left-color:var(--secondary);background:linear-gradient(135deg,#fffbf0 0%,#fff5e0 100%)}
+.dim-item .dim-date{font-weight:600;flex:1;min-width:220px;color:var(--primary)}
+.dim-item .dim-type{font-size:.7rem;padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--primary);color:#fff}
+.dim-item .dim-type.special{background:var(--secondary);color:var(--primary)}
+.dim-item .dim-status{font-size:.75rem;padding:5px 14px;border-radius:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
 .dim-item .dim-status.active{background:var(--success-light);color:var(--success)}
 .dim-item .dim-status.cancelled{background:var(--danger-light);color:var(--danger)}
-.dim-item .dim-actions{display:flex;gap:6px}
+.dim-item .dim-actions{display:flex;gap:8px}
 
 @media(max-width:700px){
-  .ka-row{grid-template-columns:1fr;gap:16px;padding:16px}
-  .status-choices{gap:20px;justify-content:center}
-  .status-choice input[type="radio"]{width:44px;height:44px}
-  .hero h1{font-size:1.5rem}
+  .ka-row{grid-template-columns:1fr;gap:18px;padding:18px}
+  .status-choices{gap:24px;justify-content:space-around;width:100%}
+  .status-choice input[type="radio"]{width:48px;height:48px}
+  .hero h1{font-size:1.9rem}
+  .hero{padding:50px 0 60px}
+  .stat-value{font-size:2rem}
+  .login-card{padding:36px 24px}
+  .tabs{padding:6px}
+  .tab{padding:10px 14px;font-size:.82rem}
 }
 </style>
 </head>
@@ -170,7 +202,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
   <header class="header">
     <div class="container header-inner">
       <div class="logo"><span class="logo-mark">KA</span><div class="logo-text"><strong>Groupe KA</strong><small>Registre de présence</small></div></div>
-      <nav class="nav"><button class="btn btn-outline" onclick="ouvrirLogin()">Secrétariat</button></nav>
+      <nav class="nav"><button class="btn btn-ghost" onclick="ouvrirLogin()">Espace Secrétariat</button></nav>
     </div>
   </header>
   <section class="hero"><div class="container"><h1>Saisie des Présences</h1><p class="hero-sub">Cochez le statut de chaque KA, puis validez en une seule fois</p></div></section>
@@ -178,7 +210,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
     <div class="card">
       <div class="card-header"><h2>Date de la séance</h2></div>
       <div class="date-selector">
-        <label for="selectDate">Dimanche :</label>
+        <label for="selectDate">Séance :</label>
         <select id="selectDate"></select>
         <span class="badge-date" id="badgeDateInfo">—</span>
       </div>
@@ -205,7 +237,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
     <div class="logo center"><span class="logo-mark">KA</span></div>
     <h1>Espace Secrétariat</h1>
     <p class="muted center">Accès protégé</p>
-    <form id="formLogin" style="margin-top:24px">
+    <form id="formLogin" style="margin-top:28px">
       <div class="form-group"><label for="password">Mot de passe</label><input type="password" id="password" placeholder="••••••••" required></div>
       <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
     </form>
@@ -218,13 +250,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
   <header class="header">
     <div class="container header-inner">
       <div class="logo"><span class="logo-mark">KA</span><div class="logo-text"><strong>Secrétariat</strong><small>Groupe KA</small></div></div>
-      <button class="btn btn-outline" onclick="deconnexion()">Déconnexion</button>
+      <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
     </div>
   </header>
   <main class="container dashboard-main">
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
-      <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Dimanches actifs</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Séances actives</div></div>
       <div class="stat-card"><div class="stat-value" id="dashPresences">0</div><div class="stat-label">Présences validées</div></div>
       <div class="stat-card"><div class="stat-value" id="dashAlertes">0</div><div class="stat-label">Alertes 3 absences</div></div>
     </div>
@@ -236,7 +268,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
       <button class="tab active" data-tab="tab-graphiques">📊 Graphiques</button>
       <button class="tab" data-tab="tab-classement">Classement</button>
       <button class="tab" data-tab="tab-voyages">Par voyage</button>
-      <button class="tab" data-tab="tab-dates">Dates dominicales</button>
+      <button class="tab" data-tab="tab-dates">📅 Gérer les dates</button>
       <button class="tab" data-tab="tab-ajoutKA">Ajouter un KA</button>
       <button class="tab" data-tab="tab-historique">Historique</button>
       <button class="tab" data-tab="tab-export">Export</button>
@@ -253,15 +285,28 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
     </div>
     <div id="tab-classement" class="tab-content">
       <div class="card">
-        <div class="card-header"><h2>Classement complet</h2><input type="search" id="searchKA" placeholder="Rechercher un KA..." style="padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:.9rem;max-width:300px"></div>
+        <div class="card-header"><h2>Classement complet</h2><input type="search" id="searchKA" placeholder="Rechercher un KA..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:300px"></div>
         <div class="table-wrap"><table class="table" id="tableClassement"><thead><tr><th>#</th><th>Nom du KA</th><th>Voyage</th><th>Messe</th><th>Activité</th><th>Absences</th><th>Taux</th></tr></thead><tbody></tbody></table></div>
       </div>
     </div>
-    <div id="tab-voyages" class="tab-content"><div id="gridVoyages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px"></div></div>
+    <div id="tab-voyages" class="tab-content"><div id="gridVoyages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px"></div></div>
     <div id="tab-dates" class="tab-content">
       <div class="card">
-        <div class="card-header"><h2>Dimanches jusqu'à fin décembre 2027</h2></div>
-        <p class="muted" style="margin-bottom:16px">Le secrétariat peut annuler un dimanche avec le code <strong>2K27</strong>.</p>
+        <div class="card-header"><h2>Ajouter une date d'activité</h2></div>
+        <p class="muted" style="margin-bottom:16px">Ajoutez une date spéciale (activité, événement) à n'importe quelle date du calendrier.</p>
+        <form id="formAjoutDate">
+          <div class="form-row">
+            <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
+            <div class="form-group"><label for="newTypeDate">Type</label><select id="newTypeDate" required><option value="dimanche">Dimanche</option><option value="activite">Activité</option><option value="evenement">Événement spécial</option></select></div>
+          </div>
+          <div class="form-group"><label for="newLibelle">Libellé (optionnel)</label><input type="text" id="newLibelle" placeholder="Ex : Sortie pédagogique"></div>
+          <button type="submit" class="btn btn-primary">Ajouter la date</button>
+        </form>
+        <div id="ajoutDateMessage" class="message"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Toutes les séances</h2></div>
+        <p class="muted" style="margin-bottom:16px">Gérez les dates dominicales (jusqu'à fin 2027) et les dates spéciales ajoutées.</p>
         <div id="dimList" class="dim-list"></div>
       </div>
     </div>
@@ -279,7 +324,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
       </div>
       <div class="card"><div class="card-header"><h2>Liste des KA</h2></div><div id="listeKASecretariat" class="ka-liste"></div></div>
     </div>
-    <div id="tab-historique" class="tab-content"><div class="card"><div class="card-header"><h2>Historique par dimanche</h2></div><div id="historique" class="historique"></div></div></div>
+    <div id="tab-historique" class="tab-content"><div class="card"><div class="card-header"><h2>Historique par séance</h2></div><div id="historique" class="historique"></div></div></div>
     <div id="tab-export" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Exporter</h2></div>
@@ -295,7 +340,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -327,15 +372,19 @@ async function sha256(s){
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
 
+// Génère uniquement des DIMANCHES (jour 0 = dimanche)
 function genererDimanches(){
   const dimanches = [];
   const d = new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - d.getDay());
+  d.setDate(d.getDate() - d.getDay()); // recule au dimanche
   const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
-  while(d <= fin){ dimanches.push(d.toISOString().slice(0,10)); d.setDate(d.getDate()+7); }
+  while(d <= fin){
+    if(d.getDay() === 0) dimanches.push(d.toISOString().slice(0,10));
+    d.setDate(d.getDate()+7);
+  }
   return dimanches;
 }
-const TOUS_DIMANCHES = genererDimanches();
+const DIMANCHES_AUTO = genererDimanches();
 
 function formatDateFr(iso){
   return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -349,8 +398,10 @@ function afficherMessage(id,msg,type){
 let cacheKAs = [];
 let cachePresences = {};
 let cacheDatesAnnulees = {};
+let cacheDatesSpeciales = {};
 let selectionCourante = {};
 let currentDateSelectionnee = null;
+let listeDatesDisponibles = [];
 
 function ecouterKAs(cb){
   onSnapshot(collection(db,"kas"), snap => {
@@ -374,16 +425,33 @@ function ecouterDatesAnnulees(cb){
     if(cb) cb();
   });
 }
+function ecouterDatesSpeciales(cb){
+  onSnapshot(collection(db,"datesSpeciales"), snap => {
+    cacheDatesSpeciales = {};
+    snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
+
+function reconstruireDates(){
+  const set = new Set(DIMANCHES_AUTO);
+  Object.keys(cacheDatesSpeciales).forEach(d => set.add(d));
+  listeDatesDisponibles = Array.from(set).sort();
+}
 
 function remplirSelectDate(){
+  reconstruireDates();
   const sel = document.getElementById('selectDate');
-  sel.innerHTML = TOUS_DIMANCHES.map(d => {
+  const ancienne = sel.value;
+  sel.innerHTML = listeDatesDisponibles.map(d => {
     const annule = cacheDatesAnnulees[d] ? ' [ANNULÉ]' : '';
-    return `<option value="${d}">${formatDateFr(d)}${annule}</option>`;
+    const special = cacheDatesSpeciales[d] ? ' ★' : '';
+    return `<option value="${d}">${formatDateFr(d)}${special}${annule}</option>`;
   }).join('');
-  if(!currentDateSelectionnee) currentDateSelectionnee = TOUS_DIMANCHES[0];
-  sel.value = currentDateSelectionnee;
-  sel.addEventListener('change', e => { currentDateSelectionnee = e.target.value; chargerSaisie(); });
+  if(currentDateSelectionnee && listeDatesDisponibles.includes(currentDateSelectionnee)) sel.value = currentDateSelectionnee;
+  else if(ancienne && listeDatesDisponibles.includes(ancienne)) { sel.value = ancienne; currentDateSelectionnee = ancienne; }
+  else { currentDateSelectionnee = listeDatesDisponibles[0]; sel.value = currentDateSelectionnee; }
+  sel.onchange = e => { currentDateSelectionnee = e.target.value; selectionCourante = {}; renderKaListe(); };
 }
 
 function renderKaListe(){
@@ -395,12 +463,12 @@ function renderKaListe(){
   }
   const annule = cacheDatesAnnulees[currentDateSelectionnee];
   const existant = cachePresences[currentDateSelectionnee] || {};
-  const dimIndex = TOUS_DIMANCHES.indexOf(currentDateSelectionnee);
+  const dimIndex = listeDatesDisponibles.indexOf(currentDateSelectionnee);
 
   container.innerHTML = cacheKAs.map(ka => {
     let alert3 = false;
     if(dimIndex >= 3){
-      const troisDerniers = TOUS_DIMANCHES.slice(dimIndex-3, dimIndex);
+      const troisDerniers = listeDatesDisponibles.slice(dimIndex-3, dimIndex);
       const absents = troisDerniers.filter(d => {
         const p = cachePresences[d] || {};
         return p[ka.id] === "absent";
@@ -426,28 +494,20 @@ function renderKaListe(){
   document.getElementById('countTotal').textContent = cacheKAs.length;
   document.getElementById('badgeDateInfo').textContent = formatDateFr(currentDateSelectionnee);
   const dm = document.getElementById('dateMessage');
-  if(annule){ dm.textContent = "Ce dimanche est annulé (code 2K27). Saisie désactivée."; dm.className='message show warning'; }
+  if(annule){ dm.textContent = "Cette séance est annulée. Saisie désactivée."; dm.className='message show warning'; }
   else { dm.className='message'; }
 }
 
-function setStatus(id, val){
-  selectionCourante[id] = val;
-  updateCount();
-}
-function updateCount(){
-  document.getElementById('countChecked').textContent = Object.keys(selectionCourante).length;
-}
+function setStatus(id, val){ selectionCourante[id] = val; updateCount(); }
+function updateCount(){ document.getElementById('countChecked').textContent = Object.keys(selectionCourante).length; }
 
 async function validerToutesPresences(){
-  if(cacheDatesAnnulees[currentDateSelectionnee]) return afficherMessage('validationMessage',"Dimanche annulé.",'error');
+  if(cacheDatesAnnulees[currentDateSelectionnee]) return afficherMessage('validationMessage',"Séance annulée.",'error');
   if(Object.keys(selectionCourante).length === 0) return afficherMessage('validationMessage',"Cochez au moins un KA.",'error');
-  const batch = writeBatch(db);
-  const ref = doc(db,"presences",currentDateSelectionnee);
   const existing = cachePresences[currentDateSelectionnee] || {};
   const merged = {...existing, ...selectionCourante};
-  batch.set(ref, merged);
   try {
-    await batch.commit();
+    await setDoc(doc(db,"presences",currentDateSelectionnee), merged);
     afficherMessage('validationMessage',"✓ Présences validées avec succès.",'success');
     selectionCourante = {};
     updateCount();
@@ -456,14 +516,8 @@ async function validerToutesPresences(){
   }
 }
 
-function toutPresent(){
-  cacheKAs.forEach(k => selectionCourante[k.id] = "present");
-  renderKaListe();
-}
-function toutReinitialiser(){
-  selectionCourante = {};
-  renderKaListe();
-}
+function toutPresent(){ cacheKAs.forEach(k => selectionCourante[k.id] = "present"); renderKaListe(); }
+function toutReinitialiser(){ selectionCourante = {}; renderKaListe(); }
 
 function ouvrirLogin(){ document.getElementById('pagePublique').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
 function fermerLogin(e){ e.preventDefault(); document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('pagePublique').classList.remove('hidden'); }
@@ -531,7 +585,7 @@ function calculerAlertes(){
   const alertes = [];
   cacheKAs.forEach(ka => {
     let compteur = 0, maxCompteur = 0;
-    TOUS_DIMANCHES.forEach(d => {
+    listeDatesDisponibles.forEach(d => {
       const p = cachePresences[d] || {};
       if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
       else if(p[ka.id]) compteur = 0;
@@ -574,11 +628,11 @@ function renderClassement(filtre=''){
   const data = calculerStats().filter(k => k.nom.toLowerCase().includes(filtre.toLowerCase()));
   if(data.length === 0){ tbody.innerHTML='<tr><td colspan="7" class="center muted" style="padding:20px">Aucun KA.</td></tr>'; return; }
   tbody.innerHTML = data.map((k,i) => {
-    const cls = k.taux>=75?'':(k.taux>=50?'warning':'danger');
+    const cls = k.taux>=75?'success':(k.taux>=50?'warning':'danger');
     return `<tr>
-      <td>${i+1}</td><td><strong>${esc(k.nom)}</strong></td><td>${CONFIG.VOYAGES[k.voyage]}</td>
+      <td><strong>${i+1}</strong></td><td><strong>${esc(k.nom)}</strong></td><td>${CONFIG.VOYAGES[k.voyage]}</td>
       <td>${k.messe}</td><td>${k.activite}</td><td>${k.absent}</td>
-      <td><span style="background:var(--${cls===''?'success':cls}-light);color:var(--${cls===''?'success':cls});padding:4px 12px;border-radius:12px;font-weight:600;font-size:.8rem">${k.taux}%</span></td>
+      <td><span style="background:var(--${cls}-light);color:var(--${cls});padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">${k.taux}%</span></td>
     </tr>`;
   }).join('');
 }
@@ -591,12 +645,12 @@ function renderVoyages(){
     const liste = cacheKAs.filter(k => k.voyage === v);
     return `<div class="chart-box">
       <h3>${CONFIG.VOYAGES[v]}</h3>
-      <div style="font-size:1.8rem;font-weight:700;color:var(--primary)">${liste.length}</div>
-      <div class="muted" style="font-size:.8rem;margin-bottom:8px">KA enregistrés</div>
-      <div style="max-height:200px;overflow-y:auto;font-size:.85rem">
+      <div style="font-size:2rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${liste.length}</div>
+      <div class="muted" style="font-size:.8rem;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">KA enregistrés</div>
+      <div style="max-height:220px;overflow-y:auto;font-size:.85rem">
         ${liste.map(k => {
           const s = stats.find(x=>x.id===k.id);
-          return `<div style="padding:4px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>${esc(k.nom)}</span><span>${s?s.present:0} prés.</span></div>`;
+          return `<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>${esc(k.nom)}</span><span style="font-weight:600;color:var(--primary)">${s?s.present:0} prés.</span></div>`;
         }).join('') || '<div class="muted">Aucun KA</div>'}
       </div>
     </div>`;
@@ -604,28 +658,49 @@ function renderVoyages(){
 }
 
 function renderDates(){
+  reconstruireDates();
   const container = document.getElementById('dimList');
-  container.innerHTML = TOUS_DIMANCHES.map(d => {
+  container.innerHTML = listeDatesDisponibles.map(d => {
     const annule = cacheDatesAnnulees[d];
-    return `<div class="dim-item">
-      <div class="dim-date">${formatDateFr(d)}</div>
+    const special = cacheDatesSpeciales[d];
+    const isDimanche = DIMANCHES_AUTO.includes(d);
+    const typeLabel = special ? (special.type === 'activite' ? 'ACTIVITÉ' : (special.type === 'evenement' ? 'ÉVÉNEMENT' : 'DIMANCHE +')) : 'DIMANCHE';
+    return `<div class="dim-item ${special?'special':''}">
+      <div class="dim-date">${formatDateFr(d)}${special && special.libelle ? ' — '+esc(special.libelle) : ''}</div>
+      <span class="dim-type ${special?'special':''}">${typeLabel}</span>
       <span class="dim-status ${annule?'cancelled':'active'}">${annule?'ANNULÉ':'Actif'}</span>
       <div class="dim-actions">
         ${annule ? `<button class="btn btn-success btn-sm" onclick="reactiverDate('${d}')">Réactiver</button>`
-                 : `<button class="btn btn-danger btn-sm" onclick="annulerDate('${d}')">Annuler (2K27)</button>`}
+                 : `<button class="btn btn-danger btn-sm" onclick="annulerDate('${d}')">Annuler</button>`}
       </div>
     </div>`;
   }).join('');
 }
 
+// CODE MASQUÉ — jamais affiché à l'écran
 async function annulerDate(d){
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
   await setDoc(doc(db,"datesAnnulees",d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){
-  await deleteDoc(doc(db,"datesAnnulees",d));
-}
+async function reactiverDate(d){ await deleteDoc(doc(db,"datesAnnulees",d)); }
+
+document.getElementById('formAjoutDate').addEventListener('submit', async e => {
+  e.preventDefault();
+  const date = document.getElementById('newDate').value;
+  const type = document.getElementById('newTypeDate').value;
+  const libelle = document.getElementById('newLibelle').value.trim();
+  if(!date) return afficherMessage('ajoutDateMessage',"Date invalide.",'error');
+  if(DIMANCHES_AUTO.includes(date) && type === 'dimanche') return afficherMessage('ajoutDateMessage',"Cette date est déjà dans les dimanches automatiques.",'warning');
+  try{
+    await setDoc(doc(db,"datesSpeciales",date),{type, libelle, ajouteLe:new Date().toISOString()});
+    document.getElementById('newDate').value = '';
+    document.getElementById('newLibelle').value = '';
+    afficherMessage('ajoutDateMessage',"✓ Date ajoutée avec succès.",'success');
+    remplirSelectDate();
+    renderDates();
+  } catch(err){ afficherMessage('ajoutDateMessage',"Erreur : "+err.message,'error'); }
+});
 
 function renderListeKASecretariat(){
   const container = document.getElementById('listeKASecretariat');
@@ -658,7 +733,7 @@ document.getElementById('formAjoutKA').addEventListener('submit', async e => {
 function renderHistorique(){
   const container = document.getElementById('historique');
   const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0).sort().reverse();
-  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucun dimanche enregistré.</p>'; return; }
+  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucune séance enregistrée.</p>'; return; }
   container.innerHTML = dims.map(d => {
     const p = cachePresences[d];
     let presents=0, absents=0, excuses=0;
@@ -668,8 +743,8 @@ function renderHistorique(){
       else if(s==="excuse") excuses++;
     });
     return `<div class="hist-item">
-      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'[ANNULÉ]':''}</div>
-      <div class="hist-stats"><span>✓ ${presents} présents</span><span>✗ ${absents} absents</span><span>⚠ ${excuses} signalés</span></div>
+      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'<span style="color:var(--danger)">[ANNULÉ]</span>':''}</div>
+      <div class="hist-stats"><span style="color:var(--success)">✓ ${presents} présents</span><span style="color:var(--danger)">✗ ${absents} absents</span><span style="color:#f59e0b">⚠ ${excuses} signalés</span></div>
     </div>`;
   }).join('');
 }
@@ -682,32 +757,32 @@ function renderGraphiques(){
   charts.parKA = new Chart(document.getElementById('chartParKA'),{
     type:'bar',
     data:{labels, datasets:[
-      {label:'Messe', data:stats.map(s=>s.messe), backgroundColor:'#2e7d32'},
-      {label:'Activité', data:stats.map(s=>s.activite), backgroundColor:'#3949ab'}
+      {label:'Messe', data:stats.map(s=>s.messe), backgroundColor:'#0f9d58', borderRadius:6},
+      {label:'Activité', data:stats.map(s=>s.activite), backgroundColor:'#2a3f8f', borderRadius:6}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:false},y:{beginAtZero:true}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},scales:{x:{stacked:false,ticks:{font:{family:'Inter',size:10}}},y:{beginAtZero:true,ticks:{font:{family:'Inter'}}}}}
   });
 
   let totalP=0,totalA=0,totalE=0;
   stats.forEach(s => { totalP+=s.present; totalA+=s.absent; totalE+=s.excuse; });
   charts.global = new Chart(document.getElementById('chartGlobal'),{
     type:'doughnut',
-    data:{labels:['Présents','Absents','Absences signalées'], datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#2e7d32','#c62828','#f59e0b']}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}
+    data:{labels:['Présents','Absents','Absences signalées'], datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#d93025','#f59e0b'], borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'Inter',weight:'600'}}}},cutout:'60%'}
   });
 
   const voyageLabels = [1,2,3,4].map(v=>CONFIG.VOYAGES[v]);
   const voyageData = [1,2,3,4].map(v => stats.filter(s=>s.voyage===v).reduce((acc,s)=>acc+s.present,0));
   charts.voyages = new Chart(document.getElementById('chartVoyages'),{
     type:'bar',
-    data:{labels:voyageLabels, datasets:[{label:'Présences totales', data:voyageData, backgroundColor:'#ffb300'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+    data:{labels:voyageLabels, datasets:[{label:'Présences totales', data:voyageData, backgroundColor:'#f5a623', borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter',weight:'600'}}}}}
   });
 
   charts.taux = new Chart(document.getElementById('chartTaux'),{
     type:'bar',
-    data:{labels, datasets:[{label:'Taux de présence (%)', data:stats.map(s=>s.taux), backgroundColor:stats.map(s=>s.taux>=75?'#2e7d32':(s.taux>=50?'#f59e0b':'#c62828'))}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100}}}
+    data:{labels, datasets:[{label:'Taux (%)', data:stats.map(s=>s.taux), backgroundColor:stats.map(s=>s.taux>=75?'#0f9d58':(s.taux>=50?'#f59e0b':'#d93025')), borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100,ticks:{font:{family:'Inter'}}},y:{ticks:{font:{family:'Inter',size:10}}}}}
   });
 }
 
@@ -727,17 +802,12 @@ function exportCSV(){
   telecharger(csv,`groupe-ka-${new Date().toISOString().slice(0,10)}.csv`,'text/csv');
 }
 function exportJSON(){
-  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, exporte:new Date().toISOString()};
+  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, exporte:new Date().toISOString()};
   telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${new Date().toISOString().slice(0,10)}.json`,'application/json');
 }
 function telecharger(c,nom,type){
   const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href=url; a.download=nom; a.click(); URL.revokeObjectURL(url);
-}
-
-function chargerSaisie(){
-  selectionCourante = {};
-  renderKaListe();
 }
 
 window.ouvrirLogin = ouvrirLogin;
@@ -754,9 +824,47 @@ window.exportCSV = exportCSV;
 window.exportJSON = exportJSON;
 window.sha256 = sha256;
 
+// 20 KA DE TEST — 5 par voyage — chargés une seule fois
+const KA_TEST = [
+  {nom:"Kabasele Amina", voyage:1},
+  {nom:"Mbala Josué", voyage:1},
+  {nom:"Nsimba Grâce", voyage:1},
+  {nom:"Lukusa David", voyage:1},
+  {nom:"Tshibangu Esther", voyage:1},
+  {nom:"Mbuyi Rachel", voyage:2},
+  {nom:"Ilunga Patrick", voyage:2},
+  {nom:"Kasongo Sarah", voyage:2},
+  {nom:"Mukendi Daniel", voyage:2},
+  {nom:"Ngoy Béatrice", voyage:2},
+  {nom:"Kabongo Samuel", voyage:3},
+  {nom:"Muteba Rebecca", voyage:3},
+  {nom:"Kalala Jonathan", voyage:3},
+  {nom:"Ntumba Dorcas", voyage:3},
+  {nom:"Beya Michael", voyage:3},
+  {nom:"Mwanza Prisca", voyage:4},
+  {nom:"Kanku Emmanuel", voyage:4},
+  {nom:"Lubaki Naomi", voyage:4},
+  {nom:"Kalonji Benjamin", voyage:4},
+  {nom:"Mpiana Ruth", voyage:4}
+];
+
+async function seedKA(){
+  const check = sessionStorage.getItem('ka_seeded');
+  if(check) return;
+  if(cacheKAs.length > 0){ sessionStorage.setItem('ka_seeded','1'); return; }
+  try{
+    for(const k of KA_TEST){
+      const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
+    }
+    sessionStorage.setItem('ka_seeded','1');
+  }catch(e){ console.log("Seed déjà effectué ou erreur:", e.message); }
+}
+
 function init(){
-  ecouterKAs(()=>{
+  ecouterKAs(async ()=>{
     if(document.getElementById('selectDate').options.length===0) remplirSelectDate();
+    if(cacheKAs.length === 0 && !sessionStorage.getItem('ka_seeded')) await seedKA();
     renderKaListe();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   });
@@ -769,6 +877,11 @@ function init(){
     renderKaListe();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   });
+  ecouterDatesSpeciales(()=>{
+    remplirSelectDate();
+    renderKaListe();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
@@ -777,8 +890,7 @@ function init(){
 }
 init();
 
-console.log("%c🔐 Groupe KA — Firebase connecté","color:#1a237e;font-weight:bold;font-size:14px");
-console.log("Hash mot de passe : await sha256('votreMotDePasse')");
+console.log("%c🔐 Groupe KA — Firebase connecté","color:#0f1b4c;font-weight:bold;font-size:14px");
 </script>
 </body>
 </html>
