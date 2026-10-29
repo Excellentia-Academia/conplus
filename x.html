@@ -99,7 +99,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .voyage-tab .count{display:inline-block;background:rgba(42,63,143,.1);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
 .voyage-tab.active .count{background:rgba(255,255,255,.25);color:#fff}
 
-/* Voyage validé : onglet vert avec ✓ */
 .voyage-tab.validated{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);color:var(--success);border:2px solid var(--success)}
 .voyage-tab.validated .count{background:var(--success);color:#fff}
 .voyage-tab.validated::after{content:'✓';position:absolute;top:6px;right:10px;font-weight:900;color:var(--success);font-size:1rem}
@@ -122,6 +121,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .db-status.open{background:var(--success);color:#fff}
 .db-status.closed{background:var(--danger);color:#fff}
 .db-status.special{background:var(--grad-gold);color:var(--primary)}
+
+/* Espace pour éviter que la barre sticky cache le dernier KA */
+#kaListeVoyage{padding-bottom:20px;margin-bottom:160px}
 
 .ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-bottom:14px;transition:all .25s}
 .ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(42,63,143,.1)}
@@ -200,6 +202,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   .date-banner .db-left .db-date{font-size:1.4rem}
   .voyage-tabs{padding:6px}
   .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
+  #kaListeVoyage{margin-bottom:200px}
 }
 </style>
 </head>
@@ -212,7 +215,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <nav class="nav"><button class="btn btn-ghost" onclick="ouvrirLogin()">Espace Secrétariat</button></nav>
     </div>
   </header>
-  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez les statuts, puis validez</p></div></section>
+  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez tous les KA, puis validez</p></div></section>
   <section class="section"><div class="container">
     <div class="date-banner" id="dateBanner">
       <div class="db-left">
@@ -312,7 +315,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-dates" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Programmer une activité à une date précise</h2></div>
-        <p class="muted" style="margin-bottom:16px">Tous les dimanches jusqu'au 31 décembre 2100 sont déjà programmés automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
+        <p class="muted" style="margin-bottom:16px">Les dimanches sont ouverts automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
         <form id="formAjoutDate">
           <div class="form-row">
             <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
@@ -324,7 +327,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div id="ajoutDateMessage" class="message"></div>
       </div>
       <div class="card">
-        <div class="card-header"><h2>Toutes les séances programmées (jusqu'à 2100)</h2></div>
+        <div class="card-header"><h2>Toutes les séances programmées</h2></div>
         <div id="dimList" class="dim-list"></div>
       </div>
     </div>
@@ -391,7 +394,17 @@ async function sha256(s){
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
 
-function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
+/* ============================================================
+   IMPORTANT : Date en LOCAL (pas UTC) pour éviter le décalage
+   de fuseau horaire (ex: dimanche qui devient samedi)
+   ============================================================ */
+function dateToISO(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return dateToISO(d); }
 function formatDateFr(iso){
   return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
@@ -406,14 +419,14 @@ function afficherMessage(id,msg,type){
   setTimeout(()=>{el.className='message';},5000);
 }
 
-// Génère TOUS les dimanches jusqu'à 2100
+// Génère tous les dimanches en LOCAL (getDay() === 0)
 function genererDimanches(){
   const dimanches = [];
   const d = new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - d.getDay());
+  d.setDate(d.getDate() - d.getDay()); // recule au dimanche local
   const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
   while(d <= fin){
-    if(d.getDay() === 0) dimanches.push(d.toISOString().slice(0,10));
+    if(d.getDay() === 0) dimanches.push(dateToISO(d));
     d.setDate(d.getDate()+7);
   }
   return dimanches;
@@ -587,17 +600,18 @@ async function validerVoyageCourant(){
     return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
 
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-  const selectionFiltree = {};
-  kasVoyage.forEach(k => {
-    if(selectionCourante[k.id]) selectionFiltree[k.id] = selectionCourante[k.id];
-  });
 
-  if(Object.keys(selectionFiltree).length === 0)
-    return afficherMessage('validationMessage',"Cochez au moins un KA de ce voyage.",'error');
+  // OBLIGATION : tous les KA du voyage doivent avoir un statut
+  const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
+  if(nonCoches.length > 0){
+    return afficherMessage('validationMessage',
+      `Veuillez cocher TOUS les KA de ce voyage avant de valider. Il reste ${nonCoches.length} KA non coché${nonCoches.length>1?'s':''}.`,
+      'error');
+  }
 
   try {
     const existing = cachePresences[aujourdhuiISO] || {};
-    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionFiltree});
+    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionCourante});
     await setDoc(doc(db,"voyagesValides",aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
     kasVoyage.forEach(k => delete selectionCourante[k.id]);
     afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
@@ -948,11 +962,11 @@ function exportCSV(){
   const stats = calculerStats();
   let csv = "Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
   stats.forEach(s => { csv += `"${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
-  telecharger(csv,`groupe-ka-${new Date().toISOString().slice(0,10)}.csv`,'text/csv');
+  telecharger(csv,`groupe-ka-${dateToISO(new Date())}.csv`,'text/csv');
 }
 function exportJSON(){
   const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
-  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${new Date().toISOString().slice(0,10)}.json`,'application/json');
+  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${dateToISO(new Date())}.json`,'application/json');
 }
 function telecharger(c,nom,type){
   const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
