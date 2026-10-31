@@ -52,6 +52,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent;box-shadow:0 4px 14px rgba(245,166,35,.35)}
 .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
 .btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-gold{background:var(--grad-gold);color:var(--primary);box-shadow:0 4px 14px rgba(245,166,35,.35)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(245,166,35,.45)}
 .btn-block{width:100%;justify-content:center}
 .btn-sm{padding:7px 14px;font-size:.8rem}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
@@ -174,6 +176,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .kpi-card .kpi-val{font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .kpi-card .kpi-sub{font-size:.78rem;color:var(--muted);margin-top:4px}
 
+.rapport-section-title{margin:26px 0 14px;font-size:1.05rem;color:var(--primary);border-bottom:2px solid var(--grad-gold);padding-bottom:6px;font-family:'Playfair Display',serif}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:6px}
+.checkbox-grid label{display:flex;align-items:center;gap:8px;font-weight:400;font-size:.88rem;padding:6px 10px;border-radius:8px;background:#fdf6f7;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.checkbox-grid label:hover{border-color:var(--primary-light);background:#fae8ea}
+.checkbox-grid input{width:auto;margin:0}
+
 @media(max-width:700px){
   .hero h1{font-size:1.9rem}
   .logo-img{width:48px;height:48px}
@@ -231,7 +239,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
           qui l'accompagnent dans sa croissance spirituelle, morale et sociale.<br><br>
           Nos encadreurs effectuent des <strong>visites régulières</strong> au domicile familial, recueillent
           les observations des parents, et rédigent des <strong>rapports mensuels</strong> permettant de suivre
-          l'évolution de chaque enfant. Notre action est menée en parfaite <strong>synchro&shy;nisation avec la
+          l'évolution de chaque enfant. Notre action est menée en parfaite <strong>synchronisation avec la
           Commission Secrétariat</strong> qui assure le suivi de présence du dimanche.
         </p>
       </div>
@@ -385,6 +393,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="card-header">
           <h2>📋 Registre des KA</h2>
           <input type="search" id="regSearch" placeholder="Rechercher..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
+           <!-- ============ REGISTRE DES KA ============ -->
+    <div id="tab-registre" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📋 Registre des KA</h2>
+          <input type="search" id="regSearch" placeholder="Rechercher..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
         </div>
         <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
           <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
@@ -448,12 +462,14 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
           <h2>📝 Rapports des encadreurs</h2>
           <button class="btn btn-gold btn-sm" onclick="exporterRapportsWord()">📄 Télécharger tous les rapports (Word)</button>
         </div>
-        <p class="muted" style="margin-bottom:16px">Chaque encadreur rédige un rapport mensuel pour chaque KA qui lui est confié. Téléchargement en Word, Times New Roman 12,5.</p>
+        <p class="muted" style="margin-bottom:16px">Chaque encadreur rédige un rapport de suivi pour chaque KA qui lui est confié. Téléchargement en Word, Times New Roman 12,5.</p>
         <div id="rapportsList"></div>
       </div>
       <div class="card">
-        <div class="card-header"><h2>➕ Nouveau rapport</h2></div>
+        <div class="card-header"><h2>➕ Nouveau rapport de suivi</h2></div>
         <form id="formRapport">
+
+          <!-- Informations générales -->
           <div class="form-row">
             <div class="form-group">
               <label for="rapKA">KA concerné</label>
@@ -465,36 +481,184 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
             </div>
           </div>
           <div class="form-row-3">
+            <div class="form-group"><label for="rapMois">Période concernée</label><input type="month" id="rapMois" required></div>
+            <div class="form-group"><label for="rapDateRedaction">Date de rédaction</label><input type="date" id="rapDateRedaction" required></div>
+            <div class="form-group"><label for="rapVisites">Nombre de visites effectuées</label><input type="number" id="rapVisites" min="0" max="31" value="0" required></div>
+          </div>
+
+          <!-- Situation générale -->
+          <h3 class="rapport-section-title">Situation générale de l’enfant</h3>
+          <div class="form-group">
+            <label for="rapSituation">Évaluation de la situation générale</label>
+            <select id="rapSituation" required>
+              <option value="">— Choisir —</option>
+              <option value="Très bonne">Très bonne</option>
+              <option value="Bonne">Bonne</option>
+              <option value="Moyenne">Moyenne</option>
+              <option value="Difficile">Difficile</option>
+              <option value="Préoccupante">Préoccupante</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rapResumeSituation">Résumé de la situation</label>
+            <textarea id="rapResumeSituation" required placeholder="Décrivez brièvement la situation actuelle, les changements constatés et les éléments importants."></textarea>
+          </div>
+
+          <!-- Comportement et relations -->
+          <h3 class="rapport-section-title">Comportement et relations</h3>
+          <div class="form-row-3">
             <div class="form-group">
-              <label for="rapMois">Mois concerné</label>
-              <input type="month" id="rapMois" required>
+              <label for="rapComportement">Comportement général</label>
+              <select id="rapComportement" required>
+                <option value="">— Choisir —</option>
+                <option value="Très satisfaisant">Très satisfaisant</option>
+                <option value="Satisfaisant">Satisfaisant</option>
+                <option value="À améliorer">À améliorer</option>
+                <option value="Préoccupant">Préoccupant</option>
+              </select>
             </div>
             <div class="form-group">
-              <label for="rapVisites">Nombre de visites ce mois</label>
-              <input type="number" id="rapVisites" min="0" max="31" value="0" required>
+              <label for="rapRelations">Relations avec les autres</label>
+              <select id="rapRelations" required>
+                <option value="">— Choisir —</option>
+                <option value="Très bonnes">Très bonnes</option>
+                <option value="Bonnes">Bonnes</option>
+                <option value="Variables">Variables</option>
+                <option value="Difficiles">Difficiles</option>
+              </select>
             </div>
             <div class="form-group">
-              <label for="rapEvolution">Évolution</label>
-              <select id="rapEvolution" required>
-                <option value="excellente">Excellente</option>
-                <option value="positive">Positive</option>
-                <option value="stable">Stable</option>
-                <option value="preoccupante">Préoccupante</option>
+              <label for="rapParticipation">Participation et attitude</label>
+              <select id="rapParticipation" required>
+                <option value="">— Choisir —</option>
+                <option value="Participe activement">Participe activement</option>
+                <option value="Participe généralement">Participe généralement</option>
+                <option value="Participe peu">Participe peu</option>
+                <option value="Ne participe pas ou refuse">Ne participe pas ou refuse</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label for="rapObservations">Observations générales</label>
-            <textarea id="rapObservations" required placeholder="Décrivez la visite, l'accueil de la famille, l'état de l'enfant, sa participation..."></textarea>
+            <label for="rapObsComportement">Observations sur le comportement et les relations</label>
+            <textarea id="rapObsComportement" placeholder="Attitudes observées, relations avec la famille, les autres enfants, les encadrants, changements notables..."></textarea>
+          </div>
+
+          <!-- Scolarité et activités -->
+          <h3 class="rapport-section-title">Scolarité et activités</h3>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="rapAssiduite">Assiduité scolaire</label>
+              <select id="rapAssiduite" required>
+                <option value="">— Choisir —</option>
+                <option value="Régulière">Régulière</option>
+                <option value="Assez régulière">Assez régulière</option>
+                <option value="Irrégulière">Irrégulière</option>
+                <option value="Non connue">Non connue</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="rapProgression">Résultats / progression scolaire</label>
+              <select id="rapProgression" required>
+                <option value="">— Choisir —</option>
+                <option value="Progression importante">Progression importante</option>
+                <option value="Progression satisfaisante">Progression satisfaisante</option>
+                <option value="Peu de progrès">Peu de progrès</option>
+                <option value="Difficultés constatées">Difficultés constatées</option>
+                <option value="Informations non disponibles">Informations non disponibles</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="rapPartActivites">Participation aux activités</label>
+              <select id="rapPartActivites" required>
+                <option value="">— Choisir —</option>
+                <option value="Très régulière">Très régulière</option>
+                <option value="Régulière">Régulière</option>
+                <option value="Occasionnelle">Occasionnelle</option>
+                <option value="Faible">Faible</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
-            <label for="rapDifficultes">Difficultés constatées (optionnel)</label>
-            <textarea id="rapDifficultes" placeholder="Ex : absentéisme, conflit familial, difficultés scolaires..."></textarea>
+            <label for="rapObsScolarite">Observations sur la scolarité et les activités</label>
+            <textarea id="rapObsScolarite" placeholder="Progrès, difficultés, besoins particuliers observés..."></textarea>
+          </div>
+
+          <!-- Évolution -->
+          <h3 class="rapport-section-title">Évolution depuis le dernier rapport</h3>
+          <div class="form-group">
+            <label for="rapEvolution">Évolution générale</label>
+            <select id="rapEvolution" required>
+              <option value="">— Choisir —</option>
+              <option value="Amélioration">Amélioration</option>
+              <option value="Situation stable">Situation stable</option>
+              <option value="Quelques difficultés">Quelques difficultés</option>
+              <option value="Dégradation">Dégradation</option>
+              <option value="Premier rapport, sans comparaison possible">Premier rapport, sans comparaison possible</option>
+            </select>
           </div>
           <div class="form-group">
-            <label for="rapRecommandations">Recommandations (optionnel)</label>
-            <textarea id="rapRecommandations" placeholder="Ex : prévoir une visite avec le pasteur, discuter avec les parents..."></textarea>
+            <label for="rapProgres">Progrès constatés</label>
+            <textarea id="rapProgres" placeholder="Changements positifs, efforts, réussites depuis le précédent rapport..."></textarea>
           </div>
+          <div class="form-group">
+            <label for="rapDifficultes">Difficultés ou changements préoccupants</label>
+            <textarea id="rapDifficultes" placeholder="Difficultés persistantes ou nouvelles demandant une attention particulière..."></textarea>
+          </div>
+
+          <!-- Besoins -->
+          <h3 class="rapport-section-title">Besoins et accompagnement</h3>
+          <div class="form-group">
+            <label>Besoins identifiés (plusieurs choix possibles)</label>
+            <div class="checkbox-grid">
+              <label><input type="checkbox" class="rap-besoin" value="Soutien scolaire"> Soutien scolaire</label>
+              <label><input type="checkbox" class="rap-besoin" value="Écoute et accompagnement"> Écoute et accompagnement</label>
+              <label><input type="checkbox" class="rap-besoin" value="Soutien familial"> Soutien familial</label>
+              <label><input type="checkbox" class="rap-besoin" value="Besoin matériel"> Besoin matériel</label>
+              <label><input type="checkbox" class="rap-besoin" value="Orientation vers un responsable"> Orientation vers un responsable</label>
+              <label><input type="checkbox" class="rap-besoin" value="Autre besoin"> Autre besoin</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rapPrecisionsBesoins">Précisions sur les besoins</label>
+            <textarea id="rapPrecisionsBesoins" placeholder="Aide utile, démarches déjà entreprises..."></textarea>
+          </div>
+
+          <!-- Appréciation -->
+          <h3 class="rapport-section-title">Appréciation de l’encadrant</h3>
+          <div class="form-group">
+            <label for="rapAppreciation">Appréciation globale</label>
+            <select id="rapAppreciation" required>
+              <option value="">— Choisir —</option>
+              <option value="Très satisfaisante">Très satisfaisante</option>
+              <option value="Satisfaisante">Satisfaisante</option>
+              <option value="À suivre">À suivre</option>
+              <option value="Nécessite une attention particulière">Nécessite une attention particulière</option>
+              <option value="Urgente">Urgente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rapCommentaires">Commentaires de l’encadrant</label>
+            <textarea id="rapCommentaires" placeholder="Toute information importante non couverte par les rubriques précédentes..."></textarea>
+          </div>
+
+          <!-- Suites à donner -->
+          <h3 class="rapport-section-title">Suites à donner</h3>
+          <div class="form-group">
+            <label>Suites à donner (plusieurs choix possibles)</label>
+            <div class="checkbox-grid">
+              <label><input type="checkbox" class="rap-suite" value="Poursuivre le suivi habituel"> Poursuivre le suivi habituel</label>
+              <label><input type="checkbox" class="rap-suite" value="Renforcer l’accompagnement"> Renforcer l’accompagnement</label>
+              <label><input type="checkbox" class="rap-suite" value="Revoir la situation avec la commission"> Revoir avec la commission</label>
+              <label><input type="checkbox" class="rap-suite" value="Échanger avec la famille"> Échanger avec la famille</label>
+              <label><input type="checkbox" class="rap-suite" value="Prévoir un nouveau point de suivi"> Prévoir un nouveau point de suivi</label>
+              <label><input type="checkbox" class="rap-suite" value="Autre suite à donner"> Autre suite à donner</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rapActions">Actions proposées et date du prochain suivi</label>
+            <textarea id="rapActions" placeholder="Actions envisagées, personne chargée, date du prochain point..."></textarea>
+          </div>
+
           <button type="submit" class="btn btn-primary">Enregistrer le rapport</button>
         </form>
         <div id="rapMessage" class="message"></div>
@@ -688,7 +852,7 @@ let cacheKAs = [];
 let cacheEncadreurs = [];
 let cacheBdays = [];
 let cacheSecteurs = [];
-let cacheAffectations = []; // {kaId, encId}
+let cacheAffectations = [];
 let cacheRapports = [];
 let cachePresences = {};
 let cacheDatesAnnulees = {};
@@ -817,7 +981,8 @@ function calculerAlertes(){
     let compteur=0, maxC=0;
     dims.forEach(d => {
       const p = cachePresences[d] || {};
-      if(p[ka.id] === "absent"){ compteur++; maxC = Math.max(maxC, compteur); }
+      if(p[ka.id] === "absent"){ compteur++; max
+                                      if(p[ka.id] === "absent"){ compteur++; maxC = Math.max(maxC, compteur); }
       else if(p[ka.id]) compteur=0;
     });
     if(maxC>=3) alertes.push({ka, maxC});
@@ -853,7 +1018,7 @@ function tousLesAnniversaires(){
 }
 
 /* ============================================================
-   RENDER BANNIÈRE ANNIVERSAIRES (notification 7 jours avant)
+   BANNIÈRE ANNIVERSAIRES (7 jours)
    ============================================================ */
 function renderBdayBanner(){
   const wrap = document.getElementById('bdayBannerWrap');
@@ -875,11 +1040,10 @@ function renderBdayBanner(){
 }
 
 /* ============================================================
-   RENDER TABLEAU DE BORD
+   TABLEAU DE BORD
    ============================================================ */
 let chartDim = null;
 function renderDashboard(){
-  // KPI mois
   const moisDims = dimanchesDuMoisEnCours();
   const tauxM = tauxMoisEnCours();
   document.getElementById('kpiTauxMois').textContent = tauxM+"%";
@@ -891,7 +1055,6 @@ function renderDashboard(){
   moisDims.forEach(d => {const t=calculerTaux(d); moisP+=t.presents; moisT+=t.total;});
   document.getElementById('kpiMoisDetail').textContent = `${moisP} présences / ${moisT} pointages sur ${moisDims.length} dimanche(s)`;
 
-  // KPI clan
   const tauxC = tauxGlobalClan();
   document.getElementById('kpiTauxClan').textContent = tauxC+"%";
   document.getElementById('kpiBarClan').style.width = tauxC+"%";
@@ -901,7 +1064,6 @@ function renderDashboard(){
   allDims.forEach(d => {const t=calculerTaux(d); clP+=t.presents; clT+=t.total;});
   document.getElementById('kpiClanDetail').textContent = `${clP} présences cumulées / ${clT} sur ${allDims.length} séances`;
 
-  // Dernier dimanche
   const last = allDims[allDims.length-1];
   if(last){
     const t = calculerTaux(last);
@@ -915,12 +1077,11 @@ function renderDashboard(){
     document.getElementById('kpiLastDetail').textContent = "Aucune séance enregistrée";
   }
 
-  // Tableau dimanches du mois
   const tbody = document.querySelector('#tableDimanches tbody');
   if(moisDims.length === 0){
     tbody.innerHTML = '<tr><td colspan="5" class="center muted" style="padding:20px">Aucune séance ce mois-ci.</td></tr>';
   } else {
-    tbody.innerHTML = moisDims.reverse().map(d => {
+    tbody.innerHTML = [...moisDims].reverse().map(d => {
       const t = calculerTaux(d);
       const cls = t.taux>=75?'success':t.taux>=50?'warning':'danger';
       return `<tr>
@@ -933,7 +1094,6 @@ function renderDashboard(){
     }).join('');
   }
 
-  // Graphique
   const dims30 = allDims.slice(-15);
   const labels = dims30.map(d => new Date(d+"T00:00:00").toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));
   const dataP = dims30.map(d => calculerTaux(d).presents);
@@ -958,13 +1118,13 @@ function renderDashboard(){
 }
 
 /* ============================================================
-   ANNIVERSAIRES RENDER
+   ANNIVERSAIRES — RENDU
    ============================================================ */
 let bdayFilter = 'ka';
 function renderAnniversaires(){
-  // Upcoming 30 jours
   const up = tousLesAnniversaires().filter(x => x.jours <= 30);
   const wrap = document.getElementById('bdayUpcoming');
+  if(!wrap) return;
   if(!up.length){
     wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun anniversaire dans les 30 prochains jours.</p>';
   } else {
@@ -976,7 +1136,6 @@ function renderAnniversaires(){
     `).join('');
   }
 
-  // Liste complète filtrée
   const all = tousLesAnniversaires();
   const filtres = {
     ka: x => x.categorie === "KA",
@@ -985,13 +1144,13 @@ function renderAnniversaires(){
   };
   const list = all.filter(filtres[bdayFilter] || (()=>true));
   const listWrap = document.getElementById('bdayList');
+  if(!listWrap) return;
   if(!list.length){
     listWrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun anniversaire enregistré dans cette catégorie.</p>';
   } else {
     listWrap.innerHTML = `<div class="table-wrap"><table class="table">
       <thead><tr><th>Nom</th><th>Catégorie</th><th>Date</th><th>Dans</th></tr></thead>
       <tbody>
-            <tbody>
         ${list.map(x => `<tr>
           <td><strong>${esc(x.nom)}</strong>${x.voy?' <span class="muted">· '+esc(x.voy)+'</span>':''}</td>
           <td><span class="badge badge-primary">${esc(x.categorie)}</span></td>
@@ -1008,6 +1167,7 @@ function renderAnniversaires(){
    ============================================================ */
 function renderRegistre(){
   const wrap = document.getElementById('registreList');
+  if(!wrap) return;
   const search = (document.getElementById('regSearch')?.value || '').toLowerCase();
   const filtreAdr = document.getElementById('filterAdresseManquante')?.checked || false;
 
@@ -1065,6 +1225,7 @@ window.supprimerKA = async function(id){
    ============================================================ */
 function renderSecteurs(){
   const wrap = document.getElementById('secteurGrid');
+  if(!wrap) return;
   const groups = {};
   cacheKAs.forEach(k => {
     const s = k.secteur || 'Sans secteur';
@@ -1092,6 +1253,7 @@ function renderSecteurs(){
    ============================================================ */
 function renderAlertes(){
   const wrap = document.getElementById('alertesList');
+  if(!wrap) return;
   const alertes = calculerAlertes();
   if(!alertes.length){
     wrap.innerHTML = '<p class="muted center" style="padding:20px">✓ Aucune alerte pour le moment.</p>';
@@ -1110,18 +1272,19 @@ function renderAlertes(){
    ============================================================ */
 function renderRepartition(){
   const wrap = document.getElementById('repartitionGrid');
+  if(!wrap) return;
   if(!cacheEncadreurs.length){
     wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun encadreur. Ajoutez-en dans l\'onglet "Ajouts".</p>';
     return;
   }
   wrap.innerHTML = cacheEncadreurs.map(e => {
-    const kasConfiés = cacheAffectations.filter(a => a.encId === e.id).map(a => cacheKAs.find(k => k.id === a.kaId)).filter(Boolean);
+    const kasConfies = cacheAffectations.filter(a => a.encId === e.id).map(a => cacheKAs.find(k => k.id === a.kaId)).filter(Boolean);
     return `<div class="encadreur-card">
       <h4>${esc(e.nom)}</h4>
       <div class="enc-role">${esc(e.role || (e.categorie?CONFIG.CATEGORIES_BDAY[e.categorie]:'Encadreur'))}${e.secteur?' · '+esc(e.secteur):''}</div>
-      <div class="muted" style="font-size:.82rem">${kasConfiés.length} KA confié${kasConfiés.length>1?'s':''}</div>
+      <div class="muted" style="font-size:.82rem">${kasConfies.length} KA confié${kasConfies.length>1?'s':''}</div>
       <div class="enc-kas">
-        ${kasConfiés.length ? kasConfiés.map(k => `<span class="tag">${esc(k.nom)} <button onclick="retirerAffectation('${k.id}','${e.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-weight:700;margin-left:4px">×</button></span>`).join('') : '<span class="muted" style="font-size:.78rem;font-style:italic">Aucun KA confié</span>'}
+        ${kasConfies.length ? kasConfies.map(k => `<span class="tag">${esc(k.nom)} <button onclick="retirerAffectation('${k.id}','${e.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-weight:700;margin-left:4px">×</button></span>`).join('') : '<span class="muted" style="font-size:.78rem;font-style:italic">Aucun KA confié</span>'}
       </div>
     </div>`;
   }).join('');
@@ -1146,10 +1309,11 @@ document.getElementById('formAffectation').addEventListener('submit', async e =>
 });
 
 /* ============================================================
-   RAPPORTS
+   RAPPORTS — RENDU
    ============================================================ */
 function renderRapports(){
   const wrap = document.getElementById('rapportsList');
+  if(!wrap) return;
   if(!cacheRapports.length){
     wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun rapport enregistré.</p>';
     return;
@@ -1162,16 +1326,16 @@ function renderRapports(){
       <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap">
         <div>
           <div class="ka-nom">${esc(ka?ka.nom:'KA supprimé')} <span class="badge badge-primary" style="margin-left:8px">${esc(r.mois||'—')}</span></div>
-          <div class="ka-meta">Par ${esc(enc?enc.nom:'Encadreur supprimé')} · ${r.visites||0} visite(s) · Évolution : <strong>${esc(r.evolution||'—')}</strong></div>
+          <div class="ka-meta">Par ${esc(enc?enc.nom:'Encadreur supprimé')} · ${r.visites||0} visite(s) · Situation : <strong>${esc(r.situation||'—')}</strong> · Évolution : <strong>${esc(r.evolution||'—')}</strong></div>
         </div>
         <div class="ka-actions">
           <button class="btn btn-danger btn-sm" onclick="supprimerRapport('${r.id}')">🗑️</button>
         </div>
       </div>
       <div style="margin-top:12px;padding:12px;background:#fdf6f7;border-radius:8px;font-size:.85rem">
-        <strong>Observations :</strong> ${esc(r.observations||'—')}
-        ${r.difficultes?`<br><br><strong>Difficultés :</strong> ${esc(r.difficultes)}`:''}
-        ${r.recommandations?`<br><br><strong>Recommandations :</strong> ${esc(r.recommandations)}`:''}
+        <strong>Résumé :</strong> ${esc(r.resumeSituation||r.observations||'—')}
+        ${r.besoins?.length?`<br><br><strong>Besoins :</strong> ${r.besoins.map(esc).join(', ')}`:''}
+        ${r.suites?.length?`<br><br><strong>Suites :</strong> ${r.suites.map(esc).join(', ')}`:''}
       </div>
     </div>`;
   }).join('');
@@ -1183,15 +1347,34 @@ window.supprimerRapport = async function(id){
 
 document.getElementById('formRapport').addEventListener('submit', async e => {
   e.preventDefault();
+  const besoins = [...document.querySelectorAll('.rap-besoin:checked')].map(c => c.value);
+  const suites  = [...document.querySelectorAll('.rap-suite:checked')].map(c => c.value);
+
   const data = {
     kaId: document.getElementById('rapKA').value,
     encId: document.getElementById('rapEnc').value,
     mois: document.getElementById('rapMois').value,
-    visites: Number(document.getElementById('rapVisites').value),
+    dateRedaction: document.getElementById('rapDateRedaction').value,
+    visites: Number(document.getElementById('rapVisites').value) || 0,
+    situation: document.getElementById('rapSituation').value,
+    resumeSituation: document.getElementById('rapResumeSituation').value.trim(),
+    comportement: document.getElementById('rapComportement').value,
+    relations: document.getElementById('rapRelations').value,
+    participation: document.getElementById('rapParticipation').value,
+    obsComportement: document.getElementById('rapObsComportement').value.trim(),
+    assiduite: document.getElementById('rapAssiduite').value,
+    progression: document.getElementById('rapProgression').value,
+    partActivites: document.getElementById('rapPartActivites').value,
+    obsScolarite: document.getElementById('rapObsScolarite').value.trim(),
     evolution: document.getElementById('rapEvolution').value,
-    observations: document.getElementById('rapObservations').value.trim(),
+    progres: document.getElementById('rapProgres').value.trim(),
     difficultes: document.getElementById('rapDifficultes').value.trim(),
-    recommandations: document.getElementById('rapRecommandations').value.trim(),
+    besoins,
+    precisionsBesoins: document.getElementById('rapPrecisionsBesoins').value.trim(),
+    appreciation: document.getElementById('rapAppreciation').value,
+    commentaires: document.getElementById('rapCommentaires').value.trim(),
+    suites,
+    actions: document.getElementById('rapActions').value.trim(),
     createdAt: new Date().toISOString()
   };
   if(!data.kaId || !data.encId) return afficherMessage('rapMessage',"Sélectionnez un KA et un encadreur.",'error');
@@ -1342,7 +1525,6 @@ h3 { font-family: 'Times New Roman', serif; font-size: 14pt; color: #5c0a1a; mar
 table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11pt; }
 th { background: #5c0a1a; color: #fff; padding: 8px; text-align: left; border: 1px solid #5c0a1a; }
 td { padding: 8px; border: 1px solid #ccc; vertical-align: top; }
-.evolution-excellente { color: #0f9d58; font-weight: bold; }
 .evolution-positive { color: #0f9d58; }
 .evolution-stable { color: #e65100; }
 .evolution-preoccupante { color: #c8102e; font-weight: bold; }
@@ -1380,6 +1562,7 @@ function telechargerWord(html, nomFichier){
 }
 
 window.exporterRepartitionWord = function(){
+  if(!cachewindow.exporterRepartitionWord = function(){
   if(!cacheEncadreurs.length) return alert("Aucun encadreur.");
   let contenu = `<h3>Liste de répartition des KA confiés aux encadreurs</h3>
     <p style="font-size:11pt;color:#666;margin-bottom:16px"><em>Document officiel de la Commission Suivi, Social et Visite</em></p>`;
@@ -1411,34 +1594,75 @@ window.exporterRepartitionWord = function(){
 window.exporterRapportsWord = function(){
   if(!cacheRapports.length) return alert("Aucun rapport enregistré.");
   const sorted = [...cacheRapports].sort((a,b) => (b.mois||'').localeCompare(a.mois||''));
-  let contenu = `<h3>Rapports des encadreurs — Compilation</h3>
+  let contenu = `<h3>Rapports de suivi des encadreurs — Compilation</h3>
     <p style="font-size:11pt;color:#666;margin-bottom:16px"><em>${sorted.length} rapport(s) enregistré(s)</em></p>`;
 
   sorted.forEach((r, idx) => {
     const ka = cacheKAs.find(k => k.id === r.kaId);
     const enc = cacheEncadreurs.find(e => e.id === r.encId);
+    const evoClass = {
+      "Amélioration":"evolution-positive",
+      "Situation stable":"evolution-stable",
+      "Quelques difficultés":"evolution-stable",
+      "Dégradation":"evolution-preoccupante"
+    }[r.evolution] || "evolution-stable";
+
     contenu += `<h3>Rapport ${idx+1} — ${esc(ka?ka.nom:'KA supprimé')} (${esc(r.mois||'—')})</h3>
       <table>
-        <tr><th style="width:200px">KA concerné</th><td><strong>${esc(ka?ka.nom:'—')}</strong></td></tr>
-        <tr><th>Voyage</th><td>${ka?esc(CONFIG.VOYAGES[ka.voyage]):'—'}</td></tr>
-        <tr><th>Classe</th><td>${esc(ka?.classe||'—')}</td></tr>
-        <tr><th>Adresse</th><td>${esc(ka?.adresse||'—')}</td></tr>
+        <tr><th style="width:220px">Nom complet</th><td><strong>${esc(ka?ka.nom:'—')}</strong></td></tr>
+        <tr><th>Sexe / Âge / Classe</th><td>${esc(ka?.sexe==='M'?'Masculin':ka?.sexe==='F'?'Féminin':'—')} · ${ka?.age||'—'} ans · ${esc(ka?.classe||'—')}</td></tr>
+        <tr><th>Secteur / Adresse</th><td>${esc(ka?.secteur||'—')} · ${esc(ka?.adresse||'—')}</td></tr>
         <tr><th>Encadreur rédacteur</th><td><strong>${esc(enc?enc.nom:'—')}</strong></td></tr>
-        <tr><th>Mois concerné</th><td>${esc(r.mois||'—')}</td></tr>
+        <tr><th>Période concernée</th><td>${esc(r.mois||'—')}</td></tr>
+        <tr><th>Date de rédaction</th><td>${r.dateRedaction?formatDateCourte(r.dateRedaction):'—'}</td></tr>
         <tr><th>Nombre de visites</th><td><strong>${r.visites||0}</strong></td></tr>
-        <tr><th>Évolution</th><td class="evolution-${r.evolution||'stable'}">${esc((r.evolution||'—').toUpperCase())}</td></tr>
       </table>
-      <p><strong>Observations générales :</strong></p>
-      <p style="text-align:justify">${esc(r.observations||'—')}</p>
-      ${r.difficultes?`<p><strong>Difficultés constatées :</strong></p><p style="text-align:justify">${esc(r.difficultes)}</p>`:''}
-      ${r.recommandations?`<p><strong>Recommandations :</strong></p><p style="text-align:justify">${esc(r.recommandations)}</p>`:''}
+
+      <h3>Situation générale</h3>
+      <p><strong>Évaluation :</strong> ${esc(r.situation||'—')}</p>
+      <p style="text-align:justify">${esc(r.resumeSituation||'—')}</p>
+
+      <h3>Comportement et relations</h3>
+      <table>
+        <tr><th style="width:240px">Comportement général</th><td>${esc(r.comportement||'—')}</td></tr>
+        <tr><th>Relations avec les autres</th><td>${esc(r.relations||'—')}</td></tr>
+        <tr><th>Participation et attitude</th><td>${esc(r.participation||'—')}</td></tr>
+      </table>
+      <p style="text-align:justify">${esc(r.obsComportement||'—')}</p>
+
+      <h3>Scolarité et activités</h3>
+      <table>
+        <tr><th style="width:240px">Assiduité scolaire</th><td>${esc(r.assiduite||'—')}</td></tr>
+        <tr><th>Progression scolaire</th><td>${esc(r.progression||'—')}</td></tr>
+        <tr><th>Participation aux activités</th><td>${esc(r.partActivites||'—')}</td></tr>
+      </table>
+      <p style="text-align:justify">${esc(r.obsScolarite||'—')}</p>
+
+      <h3>Évolution depuis le dernier rapport</h3>
+      <p><strong>Évolution :</strong> <span class="${evoClass}">${esc((r.evolution||'—').toUpperCase())}</span></p>
+      <p><strong>Progrès constatés :</strong> ${esc(r.progres||'—')}</p>
+      <p><strong>Difficultés préoccupantes :</strong> ${esc(r.difficultes||'—')}</p>
+
+      <h3>Besoins et accompagnement</h3>
+      <p><strong>Besoins identifiés :</strong> ${(r.besoins||[]).length?r.besoins.map(esc).join(', '):'—'}</p>
+      <p style="text-align:justify">${esc(r.precisionsBesoins||'—')}</p>
+
+      <h3>Appréciation de l’encadrant</h3>
+      <p><strong>Appréciation globale :</strong> ${esc(r.appreciation||'—')}</p>
+      <p style="text-align:justify">${esc(r.commentaires||'—')}</p>
+
+      <h3>Suites à donner</h3>
+      <p><strong>Suites :</strong> ${(r.suites||[]).length?r.suites.map(esc).join(', '):'—'}</p>
+      <p style="text-align:justify">${esc(r.actions||'—')}</p>
+
       <p style="margin-top:24px;text-align:right;font-size:11pt">
         Fait par : <strong>${esc(enc?enc.nom:'—')}</strong><br>
-        Date : ${new Date().toLocaleDateString('fr-FR')}
-      </p>`;
+        Date : ${r.dateRedaction?formatDateCourte(r.dateRedaction):new Date().toLocaleDateString('fr-FR')}
+      </p>
+      <div class="bloc-signature"><div>L’encadrant</div><div>La Commission Suivi</div></div>`;
   });
 
-  const html = genererDocWord('Rapports des encadreurs', contenu);
+  const html = genererDocWord('Rapports de suivi des encadreurs', contenu);
   telechargerWord(html, `Rapports-Encadreurs-${new Date().toISOString().slice(0,10)}.doc`);
 };
 
@@ -1453,8 +1677,8 @@ function renderPagePublique(){
   const totalVisites = cacheRapports.reduce((s,r)=>s+(r.visites||0),0);
   document.getElementById('pubTotalVisites').textContent = totalVisites;
 
-  // Encadreurs
   const encWrap = document.getElementById('pubEncadreursList');
+  if(!encWrap) return;
   if(!cacheEncadreurs.length){
     encWrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun encadreur enregistré pour le moment.</p>';
   } else {
@@ -1468,13 +1692,13 @@ function renderPagePublique(){
     }).join('');
   }
 
-  // KA publics (nom + encadreur uniquement)
   renderPubKas();
 }
 
 function renderPubKas(){
   const search = (document.getElementById('pubSearch')?.value || '').toLowerCase();
   const wrap = document.getElementById('pubKasList');
+  if(!wrap) return;
   const list = cacheKAs.filter(k => k.nom.toLowerCase().includes(search));
   if(!list.length){
     wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA.</p>';
@@ -1549,7 +1773,6 @@ function chargerDashboard(){
    INITIALISATION
    ============================================================ */
 function init(){
-  // Écoute synchro temps réel
   ecouter("kas", () => {
     renderPagePublique();
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
@@ -1578,9 +1801,8 @@ function init(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   }, arr => cacheRapports = arr);
 
-  // Collections synchronisées avec le Secrétariat
   ecouterObjets("presences", () => {
-        if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   }, obj => cachePresences = obj);
 
   ecouterObjets("datesAnnulees", () => {
@@ -1595,7 +1817,6 @@ function init(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   }, obj => cacheVoyagesValides = obj);
 
-  // Session déjà active ?
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
@@ -1604,7 +1825,6 @@ function init(){
     renderPagePublique();
   }
 
-  // Rafraîchir bannière anniversaires toutes les heures (changement de jour)
   setInterval(() => {
     if(!document.getElementById('dashboard').classList.contains('hidden')){
       renderBdayBanner();
