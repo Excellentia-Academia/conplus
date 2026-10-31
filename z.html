@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commission Suivi, Social et Visite — Groupe KA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --primary:#5c0a1a;--primary-light:#8b1327;--primary-mid:#6e0e1f;
+  --secondary:#f5a623;--secondary-light:#ffc857;
+  --red-professional:#b91c2e;--red-light:#e63946;
+  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
+  --border:#ecd5d8;--success:#0f9d58;--success-light:#e6f7ee;
+  --danger:#c8102e;--danger-light:#fce8e6;
+  --warning:#e65100;--warning-light:#fff3e0;
+  --radius:14px;--shadow-sm:0 1px 3px rgba(92,10,26,.08);
+  --shadow:0 4px 16px rgba(92,10,26,.08);--shadow-lg:0 12px 32px rgba(92,10,26,.14);
+  --shadow-xl:0 24px 48px rgba(92,10,26,.2);
+  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
+  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacing:-.02em}
+.container{max-width:1320px;margin:0 auto;padding:0 24px}
+.hidden{display:none!important}
+.center{text-align:center}
+.muted{color:var(--muted);font-size:.9rem}
+
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:14px;cursor:pointer}
+.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
+.logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
+.logo-text strong{display:block;font-size:1.1rem;letter-spacing:.5px;color:#fff;line-height:1.2}
+.logo-text small{opacity:.85;font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--secondary-light)}
+.nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.nav-link{color:#fff;text-decoration:none;font-weight:600;font-size:.85rem;padding:8px 14px;border-radius:8px;transition:background .2s}
+.nav-link:hover{background:rgba(255,255,255,.15)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-decoration:none;letter-spacing:.3px}
+.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
+.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.35)}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,157,88,.4)}
+.btn-danger{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff;box-shadow:0 4px 14px rgba(185,28,46,.3)}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(185,28,46,.35)}
+.btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
+.btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent;box-shadow:0 4px 14px rgba(245,166,35,.35)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-block{width:100%;justify-content:center}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+
+.hero{background:var(--grad-primary);color:#fff;padding:60px 0 70px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(230,57,70,.4) 0%,transparent 60%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero-badge{display:inline-block;background:rgba(245,166,35,.2);border:1.5px solid var(--secondary);color:var(--secondary-light);padding:6px 18px;border-radius:24px;font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{color:#fff;font-size:2.6rem;margin-bottom:12px;font-weight:900;letter-spacing:-.03em}
+.hero-sub{font-size:1.05rem;opacity:.9;font-weight:400;max-width:720px;margin:0 auto}
+
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid var(--border);transition:box-shadow .3s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-header{margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.card-header h2{font-size:1.4rem;font-weight:700}
+.section{padding:36px 0}
+
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:700px){.form-row,.form-row-3{grid-template-columns:1fr}}
+
+.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
+.message.show{display:block}
+.message.success{background:var(--success-light);color:var(--success);border-left:4px solid var(--success)}
+.message.error{background:var(--danger-light);color:var(--danger);border-left:4px solid var(--danger)}
+.message.warning{background:var(--warning-light);color:var(--warning);border-left:4px solid var(--warning)}
+
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid var(--border)}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
+.stat-value{font-size:2.2rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
+.stat-label{color:var(--muted);font-size:.8rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
+.tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
+.tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(92,10,26,.25)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.table-wrap{overflow-x:auto;border-radius:12px}
+.table{width:100%;border-collapse:collapse;font-size:.88rem}
+.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;white-space:nowrap;font-size:.8rem;text-transform:uppercase}
+.table td{padding:14px 12px;border-bottom:1px solid var(--border)}
+.table tbody tr{transition:background .15s}
+.table tbody tr:hover td{background:#fdf6f7}
+
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-primary);padding:20px;position:relative;overflow:hidden}
+.login-screen::before{content:'';position:absolute;top:-30%;right:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(230,57,70,.3) 0%,transparent 60%);pointer-events:none}
+.login-screen::after{content:'';position:absolute;bottom:-30%;left:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
+.login-card{background:var(--surface);border-radius:20px;padding:48px 40px;max-width:420px;width:100%;box-shadow:var(--shadow-xl);position:relative;z-index:1}
+.login-card h1{margin:20px 0 6px;font-size:1.5rem;text-align:center;line-height:1.2}
+.login-card .logo.center{justify-content:center;display:flex}
+.login-card .logo-img{width:96px;height:96px}
+.link-back{display:block;text-align:center;margin-top:20px;color:var(--muted);text-decoration:none;font-size:.85rem}
+.link-back:hover{color:var(--red-professional)}
+
+.dashboard-main{padding:36px 24px 80px}
+
+.bday-banner{background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);border:2px solid var(--secondary);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;position:relative;overflow:hidden}
+.bday-banner::before{content:'🎂';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3rem;opacity:.25}
+.bday-banner h3{color:var(--warning);font-size:1.1rem;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.bday-list{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
+.bday-item{padding:10px 14px;background:#fff;border-radius:8px;font-size:.88rem;display:flex;justify-content:space-between;align-items:center;border-left:4px solid var(--secondary);flex-wrap:wrap;gap:8px}
+.bday-item strong{color:var(--primary)}
+.bday-when{font-size:.75rem;font-weight:700;color:var(--warning);background:var(--warning-light);padding:3px 10px;border-radius:10px}
+.bday-when.today{background:var(--danger);color:#fff}
+
+.alert-list{display:flex;flex-direction:column;gap:12px}
+.alert-item{padding:16px 20px;border-radius:10px;border-left:5px solid var(--red-professional);background:linear-gradient(90deg,var(--danger-light) 0%,#fff 100%);font-size:.9rem}
+.alert-item strong{color:var(--red-professional);font-weight:700}
+
+.sector-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.sector-card{background:var(--surface);border-radius:12px;padding:20px;box-shadow:var(--shadow-sm);border:2px solid var(--border);transition:all .25s}
+.sector-card:hover{border-color:var(--primary-light);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.sector-card h3{font-size:1rem;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--grad-gold);background:var(--grad-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sector-count{font-size:1.6rem;font-weight:800;color:var(--primary);font-family:'Playfair Display',serif}
+.sector-list{font-size:.82rem;color:var(--muted);margin-top:10px;max-height:150px;overflow-y:auto}
+.sector-list div{padding:3px 0}
+
+.ka-card{background:var(--surface);border-radius:12px;padding:18px 20px;border:2px solid var(--border);margin-bottom:12px;transition:all .25s;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.ka-card:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(139,19,39,.1)}
+.ka-card .ka-nom{font-weight:700;font-size:1rem;color:var(--text)}
+.ka-card .ka-meta{font-size:.78rem;color:var(--muted);margin-top:3px}
+.ka-card .ka-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.badge-warning{background:var(--warning-light);color:var(--warning)}
+.badge-success{background:var(--success-light);color:var(--success)}
+.badge-danger{background:var(--danger-light);color:var(--danger)}
+.badge-primary{background:rgba(92,10,26,.1);color:var(--primary)}
+
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:32px 0;font-size:.85rem;margin-top:40px;position:relative}
+.footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
+.footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
+
+.encadreur-card{background:var(--surface);border-radius:12px;padding:20px;border:2px solid var(--border);margin-bottom:14px}
+.encadreur-card h4{color:var(--primary);font-size:1.05rem;margin-bottom:6px}
+.encadreur-card .enc-role{font-size:.78rem;color:var(--secondary);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.enc-kas{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.enc-kas .tag{background:#fdf6f7;padding:4px 10px;border-radius:10px;font-size:.75rem;border:1px solid var(--border)}
+
+.taux-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-top:6px}
+.taux-bar-fill{height:100%;border-radius:5px;transition:width .4s}
+.taux-high{background:linear-gradient(90deg,#0f9d58,#13b866)}
+.taux-mid{background:linear-gradient(90deg,#f5a623,#ffc857)}
+.taux-low{background:linear-gradient(90deg,#b91c2e,#e63946)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border-radius:12px;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.kpi-card h3{font-size:.95rem;margin-bottom:14px;color:var(--primary);display:flex;justify-content:space-between;align-items:center}
+.kpi-card .kpi-val{font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.kpi-card .kpi-sub{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+@media(max-width:700px){
+  .hero h1{font-size:1.9rem}
+  .logo-img{width:48px;height:48px}
+  .tabs{padding:6px}
+  .tab{padding:9px 12px;font-size:.75rem}
+  .ka-card{flex-direction:column;align-items:flex-start}
+  .ka-card .ka-actions{width:100%}
+  .ka-card .ka-actions button{flex:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE PUBLIQUE ============================ -->
+<div id="pagePublique">
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo">
+        <img src="IMG_6726.png" alt="Logo Groupe KA" class="logo-img">
+        <div class="logo-text">
+          <strong>Commission Suivi, Social et Visite</strong>
+          <small>Groupe KA · Salamu-Amani</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#mission" class="nav-link">Notre mission</a>
+        <a href="#encadreurs" class="nav-link">Encadreurs</a>
+        <a href="#kas" class="nav-link">KA confiés</a>
+        <button class="btn btn-ghost" onclick="ouvrirLogin()">🔐 Espace Commission</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="hero-badge">Suivi · Social · Visite</span>
+      <h1>Accompagner chaque KA,<br>un cœur à la fois.</h1>
+      <p class="hero-sub">La Commission Suivi, Social et Visite veille sur le parcours spirituel, social et familial de chaque enfant du clan, en lien étroit avec leurs encadreurs.</p>
+    </div>
+  </section>
+
+  <section class="section" id="mission">
+    <div class="container">
+      <div class="grid-stats">
+        <div class="stat-card"><div class="stat-value" id="pubTotalKA">—</div><div class="stat-label">KA suivis</div></div>
+        <div class="stat-card"><div class="stat-value" id="pubTotalEnc">—</div><div class="stat-label">Encadreurs engagés</div></div>
+        <div class="stat-card"><div class="stat-value" id="pubTotalSecteurs">—</div><div class="stat-label">Secteurs couverts</div></div>
+        <div class="stat-card"><div class="stat-value" id="pubTotalVisites">—</div><div class="stat-label">Visites réalisées</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Notre mission</h2></div>
+        <p style="font-size:1.02rem;line-height:1.75">
+          La <strong>Commission Suivi, Social et Visite</strong> a pour vocation d'assurer un accompagnement
+          personnalisé de chaque enfant (KA) du clan. Chaque KA est confié à un ou plusieurs encadreurs
+          qui l'accompagnent dans sa croissance spirituelle, morale et sociale.<br><br>
+          Nos encadreurs effectuent des <strong>visites régulières</strong> au domicile familial, recueillent
+          les observations des parents, et rédigent des <strong>rapports mensuels</strong> permettant de suivre
+          l'évolution de chaque enfant. Notre action est menée en parfaite <strong>synchro&shy;nisation avec la
+          Commission Secrétariat</strong> qui assure le suivi de présence du dimanche.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="encadreurs" style="background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%)">
+    <div class="container">
+      <div class="card">
+        <div class="card-header"><h2>👥 Nos encadreurs</h2></div>
+        <div id="pubEncadreursList"><p class="muted center" style="padding:20px">Chargement…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="kas">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <h2>🧒 KA confiés aux encadreurs</h2>
+          <input type="search" id="pubSearch" placeholder="Rechercher un KA..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
+        </div>
+        <div id="pubKasList"><p class="muted center" style="padding:20px">Chargement…</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p><img src="IMG_6726.png" alt="Logo" class="footer-logo"> © 2026 Groupe KA — Commission Suivi, Social et Visite · Salamu-Amani</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================ LOGIN ============================ -->
+<div id="loginScreen" class="login-screen hidden">
+  <div class="login-card">
+    <div class="logo center"><img src="IMG_6726.png" alt="Logo" class="logo-img"></div>
+    <h1>Espace Commission Suivi</h1>
+    <p class="muted center">Accès protégé</p>
+    <form id="formLogin" style="margin-top:28px">
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+    </form>
+    <div id="loginMessage" class="message"></div>
+    <a href="#" class="link-back" onclick="fermerLogin(event)">← Retour au site public</a>
+  </div>
+</div>
+
+<!-- ============================ DASHBOARD ============================ -->
+<div id="dashboard" class="hidden">
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo">
+        <img src="IMG_6726.png" alt="Logo" class="logo-img">
+        <div class="logo-text">
+          <strong>Centre de Contrôle — Commission Suivi</strong>
+          <small>Social · Visite · Groupe KA</small>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="container dashboard-main">
+
+    <div id="bdayBannerWrap"></div>
+
+    <div class="grid-stats">
+      <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA suivis</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashTotalEnc">0</div><div class="stat-label">Encadreurs</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashTotalSecteurs">0</div><div class="stat-label">Secteurs</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashTotalAlertes">0</div><div class="stat-label">Alertes 3 abs.</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashTauxMois">0%</div><div class="stat-label">Taux présence ce mois</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashTauxClan">0%</div><div class="stat-label">Taux global clan</div></div>
+    </div>
+
+    <div class="tabs" id="mainTabs">
+      <button class="tab active" data-tab="tab-dashboard">📊 Tableau de bord</button>
+      <button class="tab" data-tab="tab-anniversaires">🎂 Anniversaires</button>
+      <button class="tab" data-tab="tab-registre">📋 Registre des KA</button>
+      <button class="tab" data-tab="tab-secteurs">🗺️ Enfants par secteur</button>
+      <button class="tab" data-tab="tab-alertes">🚨 Alertes Secrétariat</button>
+      <button class="tab" data-tab="tab-repartition">👥 Répartition des tâches</button>
+      <button class="tab" data-tab="tab-rapports">📝 Rapports des encadreurs</button>
+      <button class="tab" data-tab="tab-ajouts">➕ Ajouts</button>
+    </div>
+
+    <!-- ============ TABLEAU DE BORD ============ -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <h3>Présence ce mois <span class="badge badge-primary" id="kpiMoisLabel">—</span></h3>
+          <div class="kpi-val" id="kpiTauxMois">0%</div>
+          <div class="taux-bar"><div class="taux-bar-fill" id="kpiBarMois" style="width:0%"></div></div>
+          <div class="kpi-sub" id="kpiMoisDetail">—</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Présence globale du clan</h3>
+          <div class="kpi-val" id="kpiTauxClan">0%</div>
+          <div class="taux-bar"><div class="taux-bar-fill" id="kpiBarClan" style="width:0%"></div></div>
+          <div class="kpi-sub" id="kpiClanDetail">—</div>
+        </div>
+        <div class="kpi-card">
+          <h3>Dernier dimanche</h3>
+          <div class="kpi-val" id="kpiLastSunday">0%</div>
+          <div class="taux-bar"><div class="taux-bar-fill" id="kpiBarLast" style="width:0%"></div></div>
+          <div class="kpi-sub" id="kpiLastDetail">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h2>📈 Évolution des présences par dimanche</h2></div>
+        <div style="position:relative;height:340px"><canvas id="chartDimanches"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h2>📅 Détail par dimanche (mois en cours)</h2></div>
+        <div class="table-wrap">
+          <table class="table" id="tableDimanches">
+            <thead><tr><th>Date</th><th>Présents</th><th>Absents</th><th>Signalés</th><th>Taux</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ANNIVERSAIRES ============ -->
+    <div id="tab-anniversaires" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>🎂 Anniversaires — prochains 30 jours</h2></div>
+        <div id="bdayUpcoming"></div>
+      </div>
+      <div class="tabs" style="background:transparent;box-shadow:none;padding:0;gap:8px">
+        <button class="tab active" data-bday="ka">KA</button>
+        <button class="tab" data-bday="encadreur">Encadreurs</button>
+        <button class="tab" data-bday="cp">CP / AS / MAPERA</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Liste complète</h2></div>
+        <div id="bdayList"></div>
+      </div>
+    </div>
+
+    <!-- ============ REGISTRE DES KA ============ -->
+    <div id="tab-registre" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📋 Registre des KA</h2>
+          <input type="search" id="regSearch" placeholder="Rechercher..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
+        </div>
+        <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer">
+            <input type="checkbox" id="filterAdresseManquante" onchange="renderRegistre()"> Afficher uniquement les adresses manquantes
+          </label>
+        </div>
+        <div id="registreList"></div>
+      </div>
+    </div>
+
+    <!-- ============ SECTEURS ============ -->
+    <div id="tab-secteurs" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>🗺️ Enfants classés par secteur</h2></div>
+        <div id="secteurGrid" class="sector-grid"></div>
+      </div>
+    </div>
+
+    <!-- ============ ALERTES ============ -->
+    <div id="tab-alertes" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2 style="color:var(--red-professional)">🚨 Alertes — 3 absences consécutives</h2></div>
+        <p class="muted" style="margin-bottom:16px">Synchronisé en temps réel avec la Commission Secrétariat. Un KA signalé ici doit faire l'objet d'une visite de la part de son encadreur.</p>
+        <div id="alertesList" class="alert-list"></div>
+      </div>
+    </div>
+
+    <!-- ============ RÉPARTITION ============ -->
+    <div id="tab-repartition" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>👥 Répartition des tâches</h2>
+          <button class="btn btn-gold btn-sm" onclick="exporterRepartitionWord()">📄 Télécharger la liste (Word)</button>
+        </div>
+        <p class="muted" style="margin-bottom:16px">Confiez chaque KA à un encadreur. La liste est exportable en document Word professionnel avec le logo du Groupe KA.</p>
+        <div id="repartitionGrid"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>➕ Confier un KA à un encadreur</h2></div>
+        <form id="formAffectation">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="affKA">KA</label>
+              <select id="affKA" required><option value="">— Choisir —</option></select>
+            </div>
+            <div class="form-group">
+              <label for="affEnc">Encadreur</label>
+              <select id="affEnc" required><option value="">— Choisir —</option></select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Confier ce KA</button>
+        </form>
+        <div id="affMessage" class="message"></div>
+      </div>
+    </div>
+
+    <!-- ============ RAPPORTS ============ -->
+    <div id="tab-rapports" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h2>📝 Rapports des encadreurs</h2>
+          <button class="btn btn-gold btn-sm" onclick="exporterRapportsWord()">📄 Télécharger tous les rapports (Word)</button>
+        </div>
+        <p class="muted" style="margin-bottom:16px">Chaque encadreur rédige un rapport mensuel pour chaque KA qui lui est confié. Téléchargement en Word, Times New Roman 12,5.</p>
+        <div id="rapportsList"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>➕ Nouveau rapport</h2></div>
+        <form id="formRapport">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rapKA">KA concerné</label>
+              <select id="rapKA" required><option value="">— Choisir —</option></select>
+            </div>
+            <div class="form-group">
+              <label for="rapEnc">Encadreur rédacteur</label>
+              <select id="rapEnc" required><option value="">— Choisir —</option></select>
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="rapMois">Mois concerné</label>
+              <input type="month" id="rapMois" required>
+            </div>
+            <div class="form-group">
+              <label for="rapVisites">Nombre de visites ce mois</label>
+              <input type="number" id="rapVisites" min="0" max="31" value="0" required>
+            </div>
+            <div class="form-group">
+              <label for="rapEvolution">Évolution</label>
+              <select id="rapEvolution" required>
+                <option value="excellente">Excellente</option>
+                <option value="positive">Positive</option>
+                <option value="stable">Stable</option>
+                <option value="preoccupante">Préoccupante</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rapObservations">Observations générales</label>
+            <textarea id="rapObservations" required placeholder="Décrivez la visite, l'accueil de la famille, l'état de l'enfant, sa participation..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="rapDifficultes">Difficultés constatées (optionnel)</label>
+            <textarea id="rapDifficultes" placeholder="Ex : absentéisme, conflit familial, difficultés scolaires..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="rapRecommandations">Recommandations (optionnel)</label>
+            <textarea id="rapRecommandations" placeholder="Ex : prévoir une visite avec le pasteur, discuter avec les parents..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Enregistrer le rapport</button>
+        </form>
+        <div id="rapMessage" class="message"></div>
+      </div>
+    </div>
+
+    <!-- ============ AJOUTS ============ -->
+    <div id="tab-ajouts" class="tab-content">
+      <div class="tabs" style="background:transparent;box-shadow:none;padding:0;gap:8px;margin-bottom:20px">
+        <button class="tab active" data-ajout="ajout-ka">👤 KA</button>
+        <button class="tab" data-ajout="ajout-enc">🧑‍🏫 Encadreur</button>
+        <button class="tab" data-ajout="ajout-bday">🎂 Anniversaire</button>
+        <button class="tab" data-ajout="ajout-secteur">🗺️ Secteur</button>
+        <button class="tab" data-ajout="ajout-visite">🏠 Visite</button>
+      </div>
+
+      <div id="ajout-ka" class="tab-content active">
+        <div class="card">
+          <div class="card-header"><h2>👤 Ajouter / compléter un KA</h2></div>
+          <form id="formKA">
+            <div class="form-row-3">
+              <div class="form-group"><label>Nom</label><input type="text" id="kaNom" required placeholder="Ex : KABASELE"></div>
+              <div class="form-group"><label>Postnom</label><input type="text" id="kaPostnom" placeholder="Ex : MUKENDI"></div>
+              <div class="form-group"><label>Prénom</label><input type="text" id="kaPrenom" placeholder="Ex : Amina"></div>
+            </div>
+            <div class="form-row-3">
+              <div class="form-group"><label>Sexe</label><select id="kaSexe" required><option value="">— Choisir —</option><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+              <div class="form-group"><label>Âge</label><input type="number" id="kaAge" min="0" max="99" placeholder="Ex : 14"></div>
+              <div class="form-group"><label>Classe</label><input type="text" id="kaClasse" placeholder="Ex : 8ème année"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Voyage</label><select id="kaVoyage" required><option value="1">1er Voyage</option><option value="2">2ème Voyage</option><option value="3">3ème Voyage</option><option value="4">4ème Voyage</option></select></div>
+              <div class="form-group"><label>Nom complet (tel qu'affiché)</label><input type="text" id="kaNomComplet" required placeholder="Ex : K. Amina KABASELE"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Numéro de téléphone du KA (s'il en a)</label><input type="tel" id="kaTel" placeholder="Ex : +243 ..."></div>
+              <div class="form-group"><label>Numéro de contact</label><input type="tel" id="kaTelContact" placeholder="Ex : +243 ..."></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Ce numéro est celui de</label><select id="kaTelType"><option value="">— Choisir —</option><option value="papa">Papa</option><option value="maman">Maman</option><option value="autre">Autre</option></select></div>
+              <div class="form-group"><label>Nom du contact (si Autre)</label><input type="text" id="kaTelNom" placeholder="Ex : Oncle Joseph"></div>
+            </div>
+            <div class="form-group"><label>Adresse</label><input type="text" id="kaAdresse" placeholder="Ex : Avenue... / Quartier... / Secteur..."></div>
+            <div class="form-group"><label>Secteur</label><select id="kaSecteur"><option value="">— Aucun —</option></select></div>
+            <div class="form-group"><label>Date de naissance</label><input type="date" id="kaDateNaissance"></div>
+            <button type="submit" class="btn btn-primary">Enregistrer le KA</button>
+          </form>
+          <div id="kaMessage" class="message"></div>
+        </div>
+      </div>
+
+      <div id="ajout-enc" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h2>🧑‍🏫 Ajouter un encadreur</h2></div>
+          <form id="formEnc">
+            <div class="form-row">
+              <div class="form-group"><label>Nom complet</label><input type="text" id="encNom" required placeholder="Ex : K. Nicolas BABALE"></div>
+              <div class="form-group"><label>Rôle</label><input type="text" id="encRole" placeholder="Ex : Encadreur principal"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Téléphone</label><input type="tel" id="encTel" placeholder="Ex : +243 ..."></div>
+              <div class="form-group"><label>Date de naissance (anniversaire)</label><input type="date" id="encDateNaissance"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Secteur d'action</label><input type="text" id="encSecteur" placeholder="Ex : Katindo"></div>
+              <div class="form-group"><label>Catégorie</label><select id="encCategorie"><option value="encadreur">Encadreur</option><option value="cp">CP</option><option value="as">AS</option><option value="mapera">MAPERA</option></select></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer l'encadreur</button>
+          </form>
+          <div id="encMessage" class="message"></div>
+        </div>
+      </div>
+
+      <div id="ajout-bday" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h2>🎂 Ajouter un anniversaire</h2></div>
+          <p class="muted" style="margin-bottom:16px">Pour les personnes non-KA et non-encadreurs (CP, AS, MAPERA...). Pour un KA ou un encadreur, la date de naissance se renseigne dans sa fiche.</p>
+          <form id="formBday">
+            <div class="form-row">
+              <div class="form-group"><label>Nom complet</label><input type="text" id="bdayNom" required placeholder="Ex : Sœur Marie KABILA"></div>
+              <div class="form-group"><label>Catégorie</label><select id="bdayCategorie" required><option value="cp">CP</option><option value="as">AS</option><option value="mapera">MAPERA</option></select></div>
+            </div>
+            <div class="form-group"><label>Date de naissance</label><input type="date" id="bdayDate" required></div>
+            <button type="submit" class="btn btn-primary">Ajouter l'anniversaire</button>
+          </form>
+          <div id="bdayMessage" class="message"></div>
+        </div>
+      </div>
+
+      <div id="ajout-secteur" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h2>🗺️ Ajouter un secteur</h2></div>
+          <form id="formSecteur">
+            <div class="form-group"><label>Nom du secteur</label><input type="text" id="secteurNom" required placeholder="Ex : Katindo"></div>
+            <button type="submit" class="btn btn-primary">Ajouter le secteur</button>
+          </form>
+          <div id="secteurMessage" class="message"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Secteurs existants</h2></div>
+          <div id="secteursList"></div>
+        </div>
+      </div>
+
+      <div id="ajout-visite" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h2>🏠 Enregistrer une visite rapide</h2></div>
+          <p class="muted" style="margin-bottom:16px">Formulaire rapide : pour un rapport complet (observations), allez dans l'onglet "Rapports des encadreurs".</p>
+          <form id="formVisite">
+            <div class="form-row">
+              <div class="form-group"><label>KA visité</label><select id="visKA" required><option value="">— Choisir —</option></select></div>
+              <div class="form-group"><label>Encadreur</label><select id="visEnc" required><option value="">— Choisir —</option></select></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Date de la visite</label><input type="date" id="visDate" required></div>
+              <div class="form-group"><label>Nb de visites ce mois</label><input type="number" id="visNb" min="1" max="31" value="1" required></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer la visite</button>
+          </form>
+          <div id="visMessage" class="message"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p><img src="IMG_6726.png" alt="Logo" class="footer-logo"> © 2026 Groupe KA — Commission Suivi, Social et Visite</p>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+/* ============================================================
+   INITIALISATION FIREBASE (MÊME BASE QUE LE SECRÉTARIAT)
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
+  authDomain: "registre-e3389.firebaseapp.com",
+  projectId: "registre-e3389",
+  storageBucket: "registre-e3389.firebasestorage.app",
+  messagingSenderId: "180998003518",
+  appId: "1:180998003518:web:43f1f6aa39941025206a6f",
+  measurementId: "G-L79ET2SX74"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const CONFIG = {
+  PASSWORD: "GroupeKA2027!",
+  SESSION_KEY: "ka_suivi_session",
+  SESSION_DUREE: 60*60*1000,
+  VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
+  CATEGORIES_BDAY: {cp:"CP", as:"AS", mapera:"MAPERA"}
+};
+
+/* Utilitaires */
+const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s||'').trim().replace(/\s+/g,' ').toLowerCase();
+function afficherMessage(id,msg,type){
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.className='message show '+type;
+  setTimeout(()=>{el.className='message';},7000);
+}
+function formatDateFr(iso){
+  if(!iso) return '—';
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function formatDateCourte(iso){
+  if(!iso) return '—';
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+}
+function dateToISO(d){
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function aujourdhuiISO(){const d=new Date();d.setHours(0,0,0,0);return dateToISO(d);}
+function nomJour(iso){
+  const j=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  return j[new Date(iso+"T00:00:00").getDay()];
+}
+
+/* ============================================================
+   CACHE & ÉCOUTE TEMPS RÉEL
+   ============================================================ */
+let cacheKAs = [];
+let cacheEncadreurs = [];
+let cacheBdays = [];
+let cacheSecteurs = [];
+let cacheAffectations = []; // {kaId, encId}
+let cacheRapports = [];
+let cachePresences = {};
+let cacheDatesAnnulees = {};
+let cacheDatesSpeciales = {};
+let cacheVoyagesValides = {};
+
+function ecouter(collectionName, cb, cacheSetter){
+  onSnapshot(collection(db, collectionName), snap => {
+    const arr = [];
+    snap.forEach(d => arr.push({id:d.id, ...d.data()}));
+    cacheSetter(arr);
+    if(cb) cb();
+  });
+}
+function ecouterObjets(collectionName, cb, cacheSetter){
+  onSnapshot(collection(db, collectionName), snap => {
+    const obj = {};
+    snap.forEach(d => { obj[d.id] = d.data(); });
+    cacheSetter(obj);
+    if(cb) cb();
+  });
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+function ouvrirLogin(){
+  document.getElementById('pagePublique').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+function fermerLogin(e){
+  if(e) e.preventDefault();
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('pagePublique').classList.remove('hidden');
+}
+function creerSession(){
+  sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify({expire:Date.now()+CONFIG.SESSION_DUREE}));
+}
+function sessionValide(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem(CONFIG.SESSION_KEY));
+    if(!s) return false;
+    if(Date.now()>s.expire){ sessionStorage.removeItem(CONFIG.SESSION_KEY); return false; }
+    s.expire = Date.now()+CONFIG.SESSION_DUREE;
+    sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify(s));
+    return true;
+  }catch(e){ return false; }
+}
+function detruireSession(){ sessionStorage.removeItem(CONFIG.SESSION_KEY); }
+
+document.getElementById('formLogin').addEventListener('submit', e => {
+  e.preventDefault();
+  const mdp = document.getElementById('password').value;
+  if(mdp === CONFIG.PASSWORD){
+    creerSession();
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('password').value = '';
+    chargerDashboard();
+  } else {
+    afficherMessage('loginMessage', "Mot de passe incorrect.", 'error');
+  }
+});
+
+function deconnexion(){
+  detruireSession();
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('pagePublique').classList.remove('hidden');
+}
+
+/* ============================================================
+   CALCULS PRÉSENCES (SYNCHRO SECRÉTARIAT)
+   ============================================================ */
+function dimanchesEnregistres(){
+  return Object.keys(cachePresences)
+    .filter(d => !cacheDatesAnnulees[d] && Object.keys(cachePresences[d]).length>0)
+    .sort();
+}
+function dimanchesDuMoisEnCours(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  return dimanchesEnregistres().filter(d => {
+    const dt = new Date(d+"T00:00:00");
+    return dt.getFullYear()===y && dt.getMonth()===m;
+  });
+}
+function calculerTaux(date){
+  const p = cachePresences[date] || {};
+  let presents=0, absents=0, excuses=0;
+  Object.values(p).forEach(s => {
+    if(s==="present") presents++;
+    else if(s==="absent") absents++;
+    else if(s==="excuse") excuses++;
+  });
+  const total = presents+absents+excuses;
+  return {presents, absents, excuses, total, taux: total ? Math.round((presents/total)*100) : 0};
+}
+function tauxGlobalClan(){
+  const dims = dimanchesEnregistres();
+  if(!dims.length) return 0;
+  let totalP=0, total=0;
+  dims.forEach(d => {
+    const t = calculerTaux(d);
+    totalP += t.presents; total += t.total;
+  });
+  return total ? Math.round((totalP/total)*100) : 0;
+}
+function tauxMoisEnCours(){
+  const dims = dimanchesDuMoisEnCours();
+  if(!dims.length) return 0;
+  let totalP=0, total=0;
+  dims.forEach(d => {
+    const t = calculerTaux(d);
+    totalP += t.presents; total += t.total;
+  });
+  return total ? Math.round((totalP/total)*100) : 0;
+}
+
+/* ============================================================
+   ALERTES 3 ABSENCES CONSÉCUTIVES
+   ============================================================ */
+function calculerAlertes(){
+  const dims = dimanchesEnregistres();
+  const alertes = [];
+  cacheKAs.forEach(ka => {
+    let compteur=0, maxC=0;
+    dims.forEach(d => {
+      const p = cachePresences[d] || {};
+      if(p[ka.id] === "absent"){ compteur++; maxC = Math.max(maxC, compteur); }
+      else if(p[ka.id]) compteur=0;
+    });
+    if(maxC>=3) alertes.push({ka, maxC});
+  });
+  return alertes;
+}
+
+/* ============================================================
+   ANNIVERSAIRES
+   ============================================================ */
+function joursAvantAnniversaire(dateNaissanceISO){
+  if(!dateNaissanceISO) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const [,mois,jour] = dateNaissanceISO.split('-').map(Number);
+  let next = new Date(today.getFullYear(), mois-1, jour);
+  if(next < today) next = new Date(today.getFullYear()+1, mois-1, jour);
+  return Math.round((next - today) / (1000*60*60*24));
+}
+function tousLesAnniversaires(){
+  const list = [];
+  cacheKAs.forEach(k => {
+    if(k.dateNaissance) list.push({nom:k.nom, date:k.dateNaissance, categorie:"KA", voy:CONFIG.VOYAGES[k.voyage]});
+  });
+  cacheEncadreurs.forEach(e => {
+    if(e.dateNaissance) list.push({nom:e.nom, date:e.dateNaissance, categorie: e.categorie ? CONFIG.CATEGORIES_BDAY[e.categorie] : "Encadreur"});
+  });
+  cacheBdays.forEach(b => {
+    list.push({nom:b.nom, date:b.date, categorie:CONFIG.CATEGORIES_BDAY[b.categorie] || b.categorie});
+  });
+  return list.map(x => ({...x, jours: joursAvantAnniversaire(x.date)}))
+    .filter(x => x.jours !== null)
+    .sort((a,b) => a.jours - b.jours);
+}
+
+/* ============================================================
+   RENDER BANNIÈRE ANNIVERSAIRES (notification 7 jours avant)
+   ============================================================ */
+function renderBdayBanner(){
+  const wrap = document.getElementById('bdayBannerWrap');
+  if(!wrap) return;
+  const prochains = tousLesAnniversaires().filter(x => x.jours <= 7);
+  if(!prochains.length){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `
+    <div class="bday-banner">
+      <h3>🎂 Anniversaires imminents (7 jours)</h3>
+      <div class="bday-list">
+        ${prochains.map(x => `
+          <div class="bday-item">
+            <div><strong>${esc(x.nom)}</strong> <span class="badge badge-primary" style="margin-left:8px">${esc(x.categorie)}</span></div>
+            <span class="bday-when ${x.jours===0?'today':''}">${x.jours===0?'Aujourd\'hui !':(x.jours===1?'Demain':`Dans ${x.jours} jours`)}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+/* ============================================================
+   RENDER TABLEAU DE BORD
+   ============================================================ */
+let chartDim = null;
+function renderDashboard(){
+  // KPI mois
+  const moisDims = dimanchesDuMoisEnCours();
+  const tauxM = tauxMoisEnCours();
+  document.getElementById('kpiTauxMois').textContent = tauxM+"%";
+  document.getElementById('kpiBarMois').style.width = tauxM+"%";
+  document.getElementById('kpiBarMois').className = 'taux-bar-fill ' + (tauxM>=75?'taux-high':tauxM>=50?'taux-mid':'taux-low');
+  const now = new Date();
+  document.getElementById('kpiMoisLabel').textContent = now.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  let moisP=0, moisT=0;
+  moisDims.forEach(d => {const t=calculerTaux(d); moisP+=t.presents; moisT+=t.total;});
+  document.getElementById('kpiMoisDetail').textContent = `${moisP} présences / ${moisT} pointages sur ${moisDims.length} dimanche(s)`;
+
+  // KPI clan
+  const tauxC = tauxGlobalClan();
+  document.getElementById('kpiTauxClan').textContent = tauxC+"%";
+  document.getElementById('kpiBarClan').style.width = tauxC+"%";
+  document.getElementById('kpiBarClan').className = 'taux-bar-fill ' + (tauxC>=75?'taux-high':tauxC>=50?'taux-mid':'taux-low');
+  const allDims = dimanchesEnregistres();
+  let clP=0, clT=0;
+  allDims.forEach(d => {const t=calculerTaux(d); clP+=t.presents; clT+=t.total;});
+  document.getElementById('kpiClanDetail').textContent = `${clP} présences cumulées / ${clT} sur ${allDims.length} séances`;
+
+  // Dernier dimanche
+  const last = allDims[allDims.length-1];
+  if(last){
+    const t = calculerTaux(last);
+    document.getElementById('kpiLastSunday').textContent = t.taux+"%";
+    document.getElementById('kpiBarLast').style.width = t.taux+"%";
+    document.getElementById('kpiBarLast').className = 'taux-bar-fill ' + (t.taux>=75?'taux-high':t.taux>=50?'taux-mid':'taux-low');
+    document.getElementById('kpiLastDetail').textContent = formatDateCourte(last)+` · ${t.presents}/${t.total}`;
+  } else {
+    document.getElementById('kpiLastSunday').textContent = "—";
+    document.getElementById('kpiBarLast').style.width = "0%";
+    document.getElementById('kpiLastDetail').textContent = "Aucune séance enregistrée";
+  }
+
+  // Tableau dimanches du mois
+  const tbody = document.querySelector('#tableDimanches tbody');
+  if(moisDims.length === 0){
+    tbody.innerHTML = '<tr><td colspan="5" class="center muted" style="padding:20px">Aucune séance ce mois-ci.</td></tr>';
+  } else {
+    tbody.innerHTML = moisDims.reverse().map(d => {
+      const t = calculerTaux(d);
+      const cls = t.taux>=75?'success':t.taux>=50?'warning':'danger';
+      return `<tr>
+        <td>${formatDateFr(d)}</td>
+        <td><strong style="color:var(--success)">${t.presents}</strong></td>
+        <td><strong style="color:var(--danger)">${t.absents}</strong></td>
+        <td><strong style="color:#f59e0b">${t.excuses}</strong></td>
+        <td><span class="badge badge-${cls==='success'?'success':cls==='warning'?'warning':'danger'}">${t.taux}%</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Graphique
+  const dims30 = allDims.slice(-15);
+  const labels = dims30.map(d => new Date(d+"T00:00:00").toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));
+  const dataP = dims30.map(d => calculerTaux(d).presents);
+  const dataA = dims30.map(d => calculerTaux(d).absents);
+  const dataE = dims30.map(d => calculerTaux(d).excuses);
+  if(chartDim) chartDim.destroy();
+  const ctx = document.getElementById('chartDimanches');
+  if(ctx){
+    chartDim = new Chart(ctx, {
+      type:'bar',
+      data:{
+        labels,
+        datasets:[
+          {label:'Présents', data:dataP, backgroundColor:'#0f9d58', borderRadius:6},
+          {label:'Absents', data:dataA, backgroundColor:'#b91c2e', borderRadius:6},
+          {label:'Signalés', data:dataE, backgroundColor:'#f5a623', borderRadius:6}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
+    });
+  }
+}
+
+/* ============================================================
+   ANNIVERSAIRES RENDER
+   ============================================================ */
+let bdayFilter = 'ka';
+function renderAnniversaires(){
+  // Upcoming 30 jours
+  const up = tousLesAnniversaires().filter(x => x.jours <= 30);
+  const wrap = document.getElementById('bdayUpcoming');
+  if(!up.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun anniversaire dans les 30 prochains jours.</p>';
+  } else {
+    wrap.innerHTML = up.map(x => `
+      <div class="bday-item" style="margin-bottom:8px">
+        <div><strong>${esc(x.nom)}</strong> <span class="badge badge-primary" style="margin-left:8px">${esc(x.categorie)}</span> <span class="muted" style="margin-left:10px;font-size:.8rem">${formatDateCourte(x.date)}</span></div>
+        <span class="bday-when ${x.jours===0?'today':''}">${x.jours===0?"Aujourd'hui":x.jours===1?"Demain":`Dans ${x.jours} jours`}</span>
+      </div>
+    `).join('');
+  }
+
+  // Liste complète filtrée
+  const all = tousLesAnniversaires();
+  const filtres = {
+    ka: x => x.categorie === "KA",
+    encadreur: x => ["Encadreur","CP","AS","MAPERA"].includes(x.categorie),
+    cp: x => ["CP","AS","MAPERA"].includes(x.categorie)
+  };
+  const list = all.filter(filtres[bdayFilter] || (()=>true));
+  const listWrap = document.getElementById('bdayList');
+  if(!list.length){
+    listWrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun anniversaire enregistré dans cette catégorie.</p>';
+  } else {
+    listWrap.innerHTML = `<div class="table-wrap"><table class="table">
+      <thead><tr><th>Nom</th><th>Catégorie</th><th>Date</th><th>Dans</th></tr></thead>
+      <tbody>
+            <tbody>
+        ${list.map(x => `<tr>
+          <td><strong>${esc(x.nom)}</strong>${x.voy?' <span class="muted">· '+esc(x.voy)+'</span>':''}</td>
+          <td><span class="badge badge-primary">${esc(x.categorie)}</span></td>
+          <td>${formatDateCourte(x.date)}</td>
+          <td><span class="badge badge-${x.jours<=7?'warning':'primary'}">${x.jours===0?"Aujourd'hui":`Dans ${x.jours} j`}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+  }
+}
+
+/* ============================================================
+   REGISTRE DES KA
+   ============================================================ */
+function renderRegistre(){
+  const wrap = document.getElementById('registreList');
+  const search = (document.getElementById('regSearch')?.value || '').toLowerCase();
+  const filtreAdr = document.getElementById('filterAdresseManquante')?.checked || false;
+
+  let list = cacheKAs.filter(k => k.nom.toLowerCase().includes(search));
+  if(filtreAdr) list = list.filter(k => !k.adresse || !k.adresse.trim());
+
+  if(!list.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA trouvé.</p>';
+    return;
+  }
+
+  wrap.innerHTML = list.map(k => {
+    const adresseManquante = !k.adresse || !k.adresse.trim();
+    const contactLabel = k.telType === 'papa' ? 'Papa' : k.telType === 'maman' ? 'Maman' : k.telType === 'autre' ? ('Autre' + (k.telNom?` (${esc(k.telNom)})`:'')) : '—';
+    return `<div class="ka-card">
+      <div style="flex:1;min-width:240px">
+        <div class="ka-nom">${esc(k.nom)} ${adresseManquante?'<span class="badge badge-warning" style="margin-left:8px">Adresse à compléter</span>':''}</div>
+        <div class="ka-meta">${esc(CONFIG.VOYAGES[k.voyage])}${k.sexe?' · '+esc(k.sexe==='M'?'Masculin':'Féminin'):''}${k.age?' · '+k.age+' ans':''}${k.classe?' · '+esc(k.classe):''}</div>
+        <div class="ka-meta" style="margin-top:6px">
+          ${k.tel?`📱 KA : ${esc(k.tel)} · `:''}
+          ${k.telContact?`☎ ${contactLabel} : ${esc(k.telContact)} · `:''}
+          ${k.adresse?`📍 ${esc(k.adresse)}`:''}
+        </div>
+      </div>
+      <div class="ka-actions">
+        <button class="btn btn-outline btn-sm" onclick="editerKA('${k.id}')">✏️ Compléter</button>
+        <button class="btn btn-danger btn-sm" onclick="supprimerKA('${k.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.editerKA = function(id){
+  const k = cacheKAs.find(x => x.id === id);
+  if(!k) return;
+  const adresse = prompt(`Adresse de ${k.nom} :`, k.adresse || '');
+  if(adresse === null) return;
+  const tel = prompt(`Téléphone du KA (${k.nom}) :`, k.tel || '');
+  if(tel === null) return;
+  const telContact = prompt(`Numéro de contact (papa/maman/autre) :`, k.telContact || '');
+  if(telContact === null) return;
+  const age = prompt(`Âge :`, k.age || '');
+  if(age === null) return;
+  const classe = prompt(`Classe :`, k.classe || '');
+  if(classe === null) return;
+  setDoc(doc(db,"kas",id), {...k, adresse, tel, telContact, age: age?Number(age):null, classe}, {merge:true});
+};
+window.supprimerKA = async function(id){
+  if(!confirm("Supprimer définitivement ce KA ?")) return;
+  await deleteDoc(doc(db,"kas",id));
+};
+
+/* ============================================================
+   SECTEURS
+   ============================================================ */
+function renderSecteurs(){
+  const wrap = document.getElementById('secteurGrid');
+  const groups = {};
+  cacheKAs.forEach(k => {
+    const s = k.secteur || 'Sans secteur';
+    if(!groups[s]) groups[s] = [];
+    groups[s].push(k);
+  });
+  if(!Object.keys(groups).length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun secteur / KA.</p>';
+    return;
+  }
+  wrap.innerHTML = Object.entries(groups).sort((a,b)=>b[1].length-a[1].length).map(([secteur, kas]) => `
+    <div class="sector-card">
+      <h3>📍 ${esc(secteur)}</h3>
+      <div class="sector-count">${kas.length}</div>
+      <div class="muted" style="font-size:.7rem;text-transform:uppercase;letter-spacing:1px">KA</div>
+      <div class="sector-list">
+        ${kas.map(k => `<div>• ${esc(k.nom)} <span class="muted">(${esc(CONFIG.VOYAGES[k.voyage])})</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   ALERTES
+   ============================================================ */
+function renderAlertes(){
+  const wrap = document.getElementById('alertesList');
+  const alertes = calculerAlertes();
+  if(!alertes.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">✓ Aucune alerte pour le moment.</p>';
+    return;
+  }
+  wrap.innerHTML = alertes.map(a => `
+    <div class="alert-item">
+      <strong>${esc(a.ka.nom)}</strong> (${esc(CONFIG.VOYAGES[a.ka.voyage])}) — ${a.maxC} absences successives consécutives.<br>
+      <span class="muted" style="font-size:.82rem">Action recommandée : visite de l'encadreur référent.</span>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   RÉPARTITION
+   ============================================================ */
+function renderRepartition(){
+  const wrap = document.getElementById('repartitionGrid');
+  if(!cacheEncadreurs.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun encadreur. Ajoutez-en dans l\'onglet "Ajouts".</p>';
+    return;
+  }
+  wrap.innerHTML = cacheEncadreurs.map(e => {
+    const kasConfiés = cacheAffectations.filter(a => a.encId === e.id).map(a => cacheKAs.find(k => k.id === a.kaId)).filter(Boolean);
+    return `<div class="encadreur-card">
+      <h4>${esc(e.nom)}</h4>
+      <div class="enc-role">${esc(e.role || (e.categorie?CONFIG.CATEGORIES_BDAY[e.categorie]:'Encadreur'))}${e.secteur?' · '+esc(e.secteur):''}</div>
+      <div class="muted" style="font-size:.82rem">${kasConfiés.length} KA confié${kasConfiés.length>1?'s':''}</div>
+      <div class="enc-kas">
+        ${kasConfiés.length ? kasConfiés.map(k => `<span class="tag">${esc(k.nom)} <button onclick="retirerAffectation('${k.id}','${e.id}')" style="border:none;background:none;color:var(--danger);cursor:pointer;font-weight:700;margin-left:4px">×</button></span>`).join('') : '<span class="muted" style="font-size:.78rem;font-style:italic">Aucun KA confié</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.retirerAffectation = async function(kaId, encId){
+  if(!confirm("Retirer ce KA de cet encadreur ?")) return;
+  const aff = cacheAffectations.find(a => a.kaId===kaId && a.encId===encId);
+  if(aff) await deleteDoc(doc(db,"affectations",aff.id));
+};
+
+document.getElementById('formAffectation').addEventListener('submit', async e => {
+  e.preventDefault();
+  const kaId = document.getElementById('affKA').value;
+  const encId = document.getElementById('affEnc').value;
+  if(cacheAffectations.some(a => a.kaId===kaId && a.encId===encId)){
+    return afficherMessage('affMessage',"Ce KA est déjà confié à cet encadreur.",'error');
+  }
+  await addDoc(collection(db,"affectations"),{kaId, encId, date:new Date().toISOString()});
+  afficherMessage('affMessage',"✓ KA confié avec succès.",'success');
+  document.getElementById('formAffectation').reset();
+});
+
+/* ============================================================
+   RAPPORTS
+   ============================================================ */
+function renderRapports(){
+  const wrap = document.getElementById('rapportsList');
+  if(!cacheRapports.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun rapport enregistré.</p>';
+    return;
+  }
+  const sorted = [...cacheRapports].sort((a,b) => (b.mois||'').localeCompare(a.mois||''));
+  wrap.innerHTML = sorted.map(r => {
+    const ka = cacheKAs.find(k => k.id === r.kaId);
+    const enc = cacheEncadreurs.find(e => e.id === r.encId);
+    return `<div class="ka-card" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="ka-nom">${esc(ka?ka.nom:'KA supprimé')} <span class="badge badge-primary" style="margin-left:8px">${esc(r.mois||'—')}</span></div>
+          <div class="ka-meta">Par ${esc(enc?enc.nom:'Encadreur supprimé')} · ${r.visites||0} visite(s) · Évolution : <strong>${esc(r.evolution||'—')}</strong></div>
+        </div>
+        <div class="ka-actions">
+          <button class="btn btn-danger btn-sm" onclick="supprimerRapport('${r.id}')">🗑️</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:12px;background:#fdf6f7;border-radius:8px;font-size:.85rem">
+        <strong>Observations :</strong> ${esc(r.observations||'—')}
+        ${r.difficultes?`<br><br><strong>Difficultés :</strong> ${esc(r.difficultes)}`:''}
+        ${r.recommandations?`<br><br><strong>Recommandations :</strong> ${esc(r.recommandations)}`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+window.supprimerRapport = async function(id){
+  if(!confirm("Supprimer ce rapport ?")) return;
+  await deleteDoc(doc(db,"rapports",id));
+};
+
+document.getElementById('formRapport').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    kaId: document.getElementById('rapKA').value,
+    encId: document.getElementById('rapEnc').value,
+    mois: document.getElementById('rapMois').value,
+    visites: Number(document.getElementById('rapVisites').value),
+    evolution: document.getElementById('rapEvolution').value,
+    observations: document.getElementById('rapObservations').value.trim(),
+    difficultes: document.getElementById('rapDifficultes').value.trim(),
+    recommandations: document.getElementById('rapRecommandations').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+  if(!data.kaId || !data.encId) return afficherMessage('rapMessage',"Sélectionnez un KA et un encadreur.",'error');
+  await addDoc(collection(db,"rapports"), data);
+  afficherMessage('rapMessage',"✓ Rapport enregistré.",'success');
+  document.getElementById('formRapport').reset();
+});
+
+/* ============================================================
+   AJOUTS — FORMULAIRES
+   ============================================================ */
+document.getElementById('formKA').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    nom: document.getElementById('kaNomComplet').value.trim(),
+    nomFamille: document.getElementById('kaNom').value.trim(),
+    postnom: document.getElementById('kaPostnom').value.trim(),
+    prenom: document.getElementById('kaPrenom').value.trim(),
+    sexe: document.getElementById('kaSexe').value,
+    age: document.getElementById('kaAge').value ? Number(document.getElementById('kaAge').value) : null,
+    classe: document.getElementById('kaClasse').value.trim(),
+    voyage: Number(document.getElementById('kaVoyage').value),
+    tel: document.getElementById('kaTel').value.trim(),
+    telContact: document.getElementById('kaTelContact').value.trim(),
+    telType: document.getElementById('kaTelType').value,
+    telNom: document.getElementById('kaTelNom').value.trim(),
+    adresse: document.getElementById('kaAdresse').value.trim(),
+    secteur: document.getElementById('kaSecteur').value,
+    dateNaissance: document.getElementById('kaDateNaissance').value,
+    createdAt: new Date().toISOString()
+  };
+  if(cacheKAs.some(k => norm(k.nom) === norm(data.nom))) return afficherMessage('kaMessage',"Ce KA existe déjà.",'error');
+  const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  await setDoc(doc(db,"kas",id), data);
+  afficherMessage('kaMessage',"✓ KA enregistré.",'success');
+  document.getElementById('formKA').reset();
+});
+
+document.getElementById('formEnc').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    nom: document.getElementById('encNom').value.trim(),
+    role: document.getElementById('encRole').value.trim(),
+    tel: document.getElementById('encTel').value.trim(),
+    dateNaissance: document.getElementById('encDateNaissance').value,
+    secteur: document.getElementById('encSecteur').value.trim(),
+    categorie: document.getElementById('encCategorie').value,
+    createdAt: new Date().toISOString()
+  };
+  if(cacheEncadreurs.some(x => norm(x.nom) === norm(data.nom))) return afficherMessage('encMessage',"Cet encadreur existe déjà.",'error');
+  await addDoc(collection(db,"encadreurs"), data);
+  afficherMessage('encMessage',"✓ Encadreur enregistré.",'success');
+  document.getElementById('formEnc').reset();
+});
+
+document.getElementById('formBday').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    nom: document.getElementById('bdayNom').value.trim(),
+    categorie: document.getElementById('bdayCategorie').value,
+    date: document.getElementById('bdayDate').value
+  };
+  await addDoc(collection(db,"anniversairesAutres"), data);
+  afficherMessage('bdayMessage',"✓ Anniversaire enregistré.",'success');
+  document.getElementById('formBday').reset();
+});
+
+document.getElementById('formSecteur').addEventListener('submit', async e => {
+  e.preventDefault();
+  const nom = document.getElementById('secteurNom').value.trim();
+  if(!nom) return;
+  if(cacheSecteurs.some(s => norm(s.nom) === norm(nom))) return afficherMessage('secteurMessage',"Ce secteur existe déjà.",'error');
+  await addDoc(collection(db,"secteurs"),{nom, createdAt:new Date().toISOString()});
+  afficherMessage('secteurMessage',"✓ Secteur ajouté.",'success');
+  document.getElementById('formSecteur').reset();
+});
+
+document.getElementById('formVisite').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    kaId: document.getElementById('visKA').value,
+    encId: document.getElementById('visEnc').value,
+    date: document.getElementById('visDate').value,
+    visites: Number(document.getElementById('visNb').value),
+    createdAt: new Date().toISOString()
+  };
+  await addDoc(collection(db,"visites"), data);
+  afficherMessage('visMessage',"✓ Visite enregistrée.",'success');
+  document.getElementById('formVisite').reset();
+});
+
+/* ============================================================
+   REMPLISSAGE DES SELECTS
+   ============================================================ */
+function peuplerSelects(){
+  const kaOpts = cacheKAs.map(k => `<option value="${k.id}">${esc(k.nom)}</option>`).join('');
+  const encOpts = cacheEncadreurs.map(e => `<option value="${e.id}">${esc(e.nom)}</option>`).join('');
+  const sectOpts = cacheSecteurs.map(s => `<option value="${esc(s.nom)}">${esc(s.nom)}</option>`).join('');
+
+  ['affKA','rapKA','visKA'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = '<option value="">— Choisir —</option>' + kaOpts;
+  });
+  ['affEnc','rapEnc','visEnc'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = '<option value="">— Choisir —</option>' + encOpts;
+  });
+  const kaSect = document.getElementById('kaSecteur');
+  if(kaSect) kaSect.innerHTML = '<option value="">— Aucun —</option>' + sectOpts;
+}
+
+function renderSecteursList(){
+  const el = document.getElementById('secteursList');
+  if(!el) return;
+  if(!cacheSecteurs.length){ el.innerHTML = '<p class="muted center" style="padding:16px">Aucun secteur.</p>'; return; }
+  el.innerHTML = cacheSecteurs.map(s => `
+    <div class="ka-card" style="padding:12px 16px">
+      <strong>📍 ${esc(s.nom)}</strong>
+      <button class="btn btn-danger btn-sm" onclick="supprimerSecteur('${s.id}')">🗑️</button>
+    </div>
+  `).join('');
+}
+window.supprimerSecteur = async function(id){
+  if(!confirm("Supprimer ce secteur ?")) return;
+  await deleteDoc(doc(db,"secteurs",id));
+};
+
+/* ============================================================
+   EXPORTS WORD (Times New Roman 12.5, logo intégré)
+   ============================================================ */
+function genererDocWord(titre, contenuHTML){
+  const logoUrl = new URL('IMG_6726.png', window.location.href).href;
+  const html = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>${titre}</title>
+<style>
+@page { size: A4; margin: 2cm; }
+body { font-family: 'Times New Roman', serif; font-size: 12.5pt; line-height: 1.5; color: #000; }
+.header-doc { display: flex; align-items: center; gap: 16px; padding-bottom: 12px; border-bottom: 3px double #5c0a1a; margin-bottom: 24px; }
+.header-doc img { width: 80px; height: 80px; }
+.header-doc .ht { flex: 1; }
+.header-doc h1 { font-family: 'Times New Roman', serif; font-size: 18pt; color: #5c0a1a; margin: 0; letter-spacing: 1px; }
+.header-doc h2 { font-family: 'Times New Roman', serif; font-size: 14pt; color: #8b1327; margin: 4px 0 0; font-weight: normal; }
+.header-doc .soustitre { font-size: 11pt; color: #666; margin-top: 4px; font-style: italic; }
+h3 { font-family: 'Times New Roman', serif; font-size: 14pt; color: #5c0a1a; margin: 24px 0 12px; border-bottom: 1px solid #5c0a1a; padding-bottom: 4px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11pt; }
+th { background: #5c0a1a; color: #fff; padding: 8px; text-align: left; border: 1px solid #5c0a1a; }
+td { padding: 8px; border: 1px solid #ccc; vertical-align: top; }
+.evolution-excellente { color: #0f9d58; font-weight: bold; }
+.evolution-positive { color: #0f9d58; }
+.evolution-stable { color: #e65100; }
+.evolution-preoccupante { color: #c8102e; font-weight: bold; }
+.footer-doc { margin-top: 40px; padding-top: 12px; border-top: 1px solid #ccc; font-size: 10pt; color: #666; text-align: center; font-style: italic; }
+.bloc-signature { margin-top: 60px; display: flex; justify-content: space-between; }
+.bloc-signature div { width: 45%; text-align: center; border-top: 1px solid #000; padding-top: 8px; font-size: 11pt; }
+</style>
+</head>
+<body>
+<div class="header-doc">
+  <img src="${logoUrl}" alt="Logo">
+  <div class="ht">
+    <h1>GROUPE KA — SALAMU-AMANI</h1>
+    <h2>Commission Suivi, Social et Visite</h2>
+    <div class="soustitre">${titre}</div>
+  </div>
+</div>
+${contenuHTML}
+<div class="footer-doc">
+Document généré par la Commission Suivi, Social et Visite · ${new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}
+</div>
+</body>
+</html>`;
+  return html;
+}
+
+function telechargerWord(html, nomFichier){
+  const blob = new Blob(['\ufeff', html], {type:'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nomFichier;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+window.exporterRepartitionWord = function(){
+  if(!cacheEncadreurs.length) return alert("Aucun encadreur.");
+  let contenu = `<h3>Liste de répartition des KA confiés aux encadreurs</h3>
+    <p style="font-size:11pt;color:#666;margin-bottom:16px"><em>Document officiel de la Commission Suivi, Social et Visite</em></p>`;
+
+  cacheEncadreurs.forEach(e => {
+    const kas = cacheAffectations.filter(a => a.encId === e.id).map(a => cacheKAs.find(k => k.id === a.kaId)).filter(Boolean);
+    if(!kas.length) return;
+    contenu += `<h3>${esc(e.nom)} ${e.role?'— '+esc(e.role):''} ${e.secteur?'('+esc(e.secteur)+')':''}</h3>
+      <table>
+        <thead><tr><th style="width:40px">#</th><th>Nom du KA</th><th>Voyage</th><th>Classe</th><th>Adresse</th></tr></thead>
+        <tbody>
+        ${kas.map((k,i) => `<tr>
+          <td>${i+1}</td>
+          <td><strong>${esc(k.nom)}</strong></td>
+          <td>${esc(CONFIG.VOYAGES[k.voyage])}</td>
+          <td>${esc(k.classe||'—')}</td>
+          <td>${esc(k.adresse||'<em>À compléter</em>')}</td>
+        </tr>`).join('')}
+        </tbody>
+      </table>`;
+  });
+
+  contenu += `<div class="bloc-signature"><div>Le Coordinateur Suivi</div><div>Le Responsable Social</div></div>`;
+
+  const html = genererDocWord('Liste de répartition des KA', contenu);
+  telechargerWord(html, `Repartition-KA-${new Date().toISOString().slice(0,10)}.doc`);
+};
+
+window.exporterRapportsWord = function(){
+  if(!cacheRapports.length) return alert("Aucun rapport enregistré.");
+  const sorted = [...cacheRapports].sort((a,b) => (b.mois||'').localeCompare(a.mois||''));
+  let contenu = `<h3>Rapports des encadreurs — Compilation</h3>
+    <p style="font-size:11pt;color:#666;margin-bottom:16px"><em>${sorted.length} rapport(s) enregistré(s)</em></p>`;
+
+  sorted.forEach((r, idx) => {
+    const ka = cacheKAs.find(k => k.id === r.kaId);
+    const enc = cacheEncadreurs.find(e => e.id === r.encId);
+    contenu += `<h3>Rapport ${idx+1} — ${esc(ka?ka.nom:'KA supprimé')} (${esc(r.mois||'—')})</h3>
+      <table>
+        <tr><th style="width:200px">KA concerné</th><td><strong>${esc(ka?ka.nom:'—')}</strong></td></tr>
+        <tr><th>Voyage</th><td>${ka?esc(CONFIG.VOYAGES[ka.voyage]):'—'}</td></tr>
+        <tr><th>Classe</th><td>${esc(ka?.classe||'—')}</td></tr>
+        <tr><th>Adresse</th><td>${esc(ka?.adresse||'—')}</td></tr>
+        <tr><th>Encadreur rédacteur</th><td><strong>${esc(enc?enc.nom:'—')}</strong></td></tr>
+        <tr><th>Mois concerné</th><td>${esc(r.mois||'—')}</td></tr>
+        <tr><th>Nombre de visites</th><td><strong>${r.visites||0}</strong></td></tr>
+        <tr><th>Évolution</th><td class="evolution-${r.evolution||'stable'}">${esc((r.evolution||'—').toUpperCase())}</td></tr>
+      </table>
+      <p><strong>Observations générales :</strong></p>
+      <p style="text-align:justify">${esc(r.observations||'—')}</p>
+      ${r.difficultes?`<p><strong>Difficultés constatées :</strong></p><p style="text-align:justify">${esc(r.difficultes)}</p>`:''}
+      ${r.recommandations?`<p><strong>Recommandations :</strong></p><p style="text-align:justify">${esc(r.recommandations)}</p>`:''}
+      <p style="margin-top:24px;text-align:right;font-size:11pt">
+        Fait par : <strong>${esc(enc?enc.nom:'—')}</strong><br>
+        Date : ${new Date().toLocaleDateString('fr-FR')}
+      </p>`;
+  });
+
+  const html = genererDocWord('Rapports des encadreurs', contenu);
+  telechargerWord(html, `Rapports-Encadreurs-${new Date().toISOString().slice(0,10)}.doc`);
+};
+
+/* ============================================================
+   PAGE PUBLIQUE
+   ============================================================ */
+function renderPagePublique(){
+  document.getElementById('pubTotalKA').textContent = cacheKAs.length;
+  document.getElementById('pubTotalEnc').textContent = cacheEncadreurs.length;
+  const secteursUniques = new Set(cacheKAs.map(k => k.secteur).filter(Boolean));
+  document.getElementById('pubTotalSecteurs').textContent = secteursUniques.size;
+  const totalVisites = cacheRapports.reduce((s,r)=>s+(r.visites||0),0);
+  document.getElementById('pubTotalVisites').textContent = totalVisites;
+
+  // Encadreurs
+  const encWrap = document.getElementById('pubEncadreursList');
+  if(!cacheEncadreurs.length){
+    encWrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun encadreur enregistré pour le moment.</p>';
+  } else {
+    encWrap.innerHTML = cacheEncadreurs.map(e => {
+      const nbKA = cacheAffectations.filter(a => a.encId === e.id).length;
+      return `<div class="encadreur-card">
+        <h4>${esc(e.nom)}</h4>
+        <div class="enc-role">${esc(e.role || (e.categorie?CONFIG.CATEGORIES_BDAY[e.categorie]:'Encadreur'))}${e.secteur?' · '+esc(e.secteur):''}</div>
+        <div class="muted" style="font-size:.82rem">${nbKA} KA confié${nbKA>1?'s':''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // KA publics (nom + encadreur uniquement)
+  renderPubKas();
+}
+
+function renderPubKas(){
+  const search = (document.getElementById('pubSearch')?.value || '').toLowerCase();
+  const wrap = document.getElementById('pubKasList');
+  const list = cacheKAs.filter(k => k.nom.toLowerCase().includes(search));
+  if(!list.length){
+    wrap.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA.</p>';
+    return;
+  }
+  wrap.innerHTML = list.sort((a,b)=>a.nom.localeCompare(b.nom)).map(k => {
+    const encs = cacheAffectations.filter(a => a.kaId === k.id).map(a => cacheEncadreurs.find(e => e.id === a.encId)).filter(Boolean);
+    return `<div class="ka-card">
+      <div style="flex:1">
+        <div class="ka-nom">${esc(k.nom)}</div>
+        <div class="ka-meta">${esc(CONFIG.VOYAGES[k.voyage])}${encs.length?' · Confié à '+encs.map(e=>esc(e.nom)).join(', '):''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('pubSearch')?.addEventListener('input', renderPubKas);
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('#mainTabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#mainTabs .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('#tab-dashboard, #tab-anniversaires, #tab-registre, #tab-secteurs, #tab-alertes, #tab-repartition, #tab-rapports, #tab-ajouts').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+document.querySelectorAll('[data-bday]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('[data-bday]').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    bdayFilter = tab.dataset.bday;
+    renderAnniversaires();
+  });
+});
+document.querySelectorAll('[data-ajout]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('[data-ajout]').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('#ajout-ka, #ajout-enc, #ajout-bday, #ajout-secteur, #ajout-visite').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.ajout).classList.add('active');
+  });
+});
+
+document.getElementById('regSearch')?.addEventListener('input', renderRegistre);
+
+/* ============================================================
+   CHARGEMENT GLOBAL
+   ============================================================ */
+function chargerDashboard(){
+  renderDashboard();
+  renderAnniversaires();
+  renderRegistre();
+  renderSecteurs();
+  renderAlertes();
+  renderRepartition();
+  renderRapports();
+  renderSecteursList();
+  peuplerSelects();
+  renderBdayBanner();
+  document.getElementById('dashTotalKA').textContent = cacheKAs.length;
+  document.getElementById('dashTotalEnc').textContent = cacheEncadreurs.length;
+  document.getElementById('dashTotalSecteurs').textContent = cacheSecteurs.length;
+  document.getElementById('dashTotalAlertes').textContent = calculerAlertes().length;
+  document.getElementById('dashTauxMois').textContent = tauxMoisEnCours()+"%";
+  document.getElementById('dashTauxClan').textContent = tauxGlobalClan()+"%";
+}
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+function init(){
+  // Écoute synchro temps réel
+  ecouter("kas", () => {
+    renderPagePublique();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheKAs = arr);
+
+  ecouter("encadreurs", () => {
+    renderPagePublique();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheEncadreurs = arr);
+
+  ecouter("anniversairesAutres", () => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheBdays = arr);
+
+  ecouter("secteurs", () => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheSecteurs = arr);
+
+  ecouter("affectations", () => {
+    renderPagePublique();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheAffectations = arr);
+
+  ecouter("rapports", () => {
+    renderPagePublique();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, arr => cacheRapports = arr);
+
+  // Collections synchronisées avec le Secrétariat
+  ecouterObjets("presences", () => {
+        if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, obj => cachePresences = obj);
+
+  ecouterObjets("datesAnnulees", () => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, obj => cacheDatesAnnulees = obj);
+
+  ecouterObjets("datesSpeciales", () => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, obj => cacheDatesSpeciales = obj);
+
+  ecouterObjets("voyagesValides", () => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }, obj => cacheVoyagesValides = obj);
+
+  // Session déjà active ?
+  if(sessionValide()){
+    document.getElementById('pagePublique').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    chargerDashboard();
+  } else {
+    renderPagePublique();
+  }
+
+  // Rafraîchir bannière anniversaires toutes les heures (changement de jour)
+  setInterval(() => {
+    if(!document.getElementById('dashboard').classList.contains('hidden')){
+      renderBdayBanner();
+      renderAnniversaires();
+    }
+  }, 60*60*1000);
+}
+
+/* Exposer les fonctions globales */
+window.ouvrirLogin = ouvrirLogin;
+window.fermerLogin = fermerLogin;
+window.deconnexion = deconnexion;
+window.renderRegistre = renderRegistre;
+
+init();
+</script>
+</body>
+</html>
