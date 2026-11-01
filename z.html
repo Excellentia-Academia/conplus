@@ -192,7 +192,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px;margin-bottom:24px;align-items:start}
 @media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
 .chart-box{background:var(--surface);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);border:1px solid var(--border)}
-.chart-box h3{font-size:1.05rem;margin-bottom:16px;font-weight:700}
+.chart-box h3{font-size:1.05rem;margin-bottom:6px;font-weight:700}
+.chart-box .chart-period{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+.chart-box .chart-period .badge{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.68rem;font-weight:800;letter-spacing:.5px}
 .chart-container{position:relative;height:320px}
 
 .chart-voyage-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;padding:7px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
@@ -355,6 +357,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <div class="chart-grid">
         <div class="chart-box">
           <h3>Présences par KA (Messe vs Activité) — %</h3>
+          <div class="chart-period">Période : <span class="badge" id="chart1PeriodLabel">—</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart1Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots1">
@@ -371,6 +374,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         </div>
         <div class="chart-box">
           <h3>Répartition globale</h3>
+          <div class="chart-period">Filtre : <span class="badge" id="chart2PeriodLabel">Tout depuis le début</span></div>
           <div class="filter-cards">
             <button class="filter-card active" data-filtre="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
             <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Cette<br>année</button>
@@ -382,7 +386,8 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <div class="chart-grid">
         <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
-          <h3>Taux de présence par KA (%) — global</h3>
+          <h3>Taux de présence par KA (%)</h3>
+          <div class="chart-period">Période : <span class="badge">Toutes les années</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots4">
@@ -515,6 +520,9 @@ function formatDateCourte(iso){
 function nomJour(iso){
   const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
   return jours[new Date(iso+"T00:00:00").getDay()];
+}
+function nomMois(iso){
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
 }
 function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
@@ -844,6 +852,7 @@ function renderAlertes(){
   ).join('');
 }
 
+/* Toutes les années — utilisé par Classement, Exports, Chart 4 */
 function calculerStats(){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
   return cacheKAs.map(ka => {
@@ -862,18 +871,26 @@ function calculerStats(){
 }
 
 /* ============================================================
-   NOUVEAU : calcul % Messe (dimanches) vs % Activité (dates spéciales)
+   MOIS EN COURS — utilisé par Chart 1
    ============================================================ */
-function calculerStatsParVoyageEtType(voyage){
+function calculerStatsParVoyageEtTypeMoisCourant(voyage){
+  const now = new Date();
+  const moisCourant = now.getMonth();
+  const anneeCourante = now.getFullYear();
+
   const dimsMesse = [];
   const dimsActivite = [];
   Object.keys(cachePresences).forEach(d => {
     if(cacheDatesAnnulees[d]) return;
+    const dt = new Date(d+"T00:00:00");
+    // ⬇️ Filtre : uniquement le mois en cours
+    if(dt.getMonth() !== moisCourant || dt.getFullYear() !== anneeCourante) return;
     const isSpecial = cacheDatesSpeciales[d];
-    const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
+    const isDimanche = dt.getDay() === 0;
     if(isSpecial){ dimsActivite.push(d); }
     else if(isDimanche){ dimsMesse.push(d); }
   });
+
   const kas = cacheKAs.filter(k => k.voyage === voyage);
   return kas.map(ka => {
     let presentMesse = 0, presentActivite = 0;
@@ -1123,11 +1140,15 @@ function setContainerHeight(containerId, nbItems){
   el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
 }
 
-/* Chart 1 : Présences par KA — % Messe (dimanches) vs % Activité (dates spéciales) */
+/* Chart 1 : Présences par KA — % Messe vs % Activité — SUR LE MOIS EN COURS */
 function renderChart1(){
   if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
-  const data = calculerStatsParVoyageEtType(chart1Voyage);
+  const data = calculerStatsParVoyageEtTypeMoisCourant(chart1Voyage);
   const labels = data.map(d => d.ka.nom);
+
+  // Badge période
+  const badge = document.getElementById('chart1PeriodLabel');
+  if(badge) badge.textContent = nomMois(aujourdhuiISO);
 
   document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
@@ -1142,8 +1163,8 @@ function renderChart1(){
     data:{
       labels,
       datasets:[
-        {label:'Messe (%)', data:data.map(d=>d.tauxMesse), backgroundColor:'#0f9d58', borderRadius:6},
-        {label:'Activité (%)', data:data.map(d=>d.tauxActivite), backgroundColor:'#b91c2e', borderRadius:6}
+        {label:'Messe (ce mois)', data:data.map(d=>d.tauxMesse), backgroundColor:'#0f9d58', borderRadius:6},
+        {label:'Activité (ce mois)', data:data.map(d=>d.tauxActivite), backgroundColor:'#b91c2e', borderRadius:6}
       ]
     },
     options:{
@@ -1155,8 +1176,8 @@ function renderChart1(){
         tooltip:{callbacks:{label: ctx => {
           const d = data[ctx.dataIndex];
           return ctx.datasetIndex === 0
-            ? `Messe : ${d.tauxMesse}% (${d.nbMesse} dim.)`
-            : `Activité : ${d.tauxActivite}% (${d.nbActivite} date${d.nbActivite>1?'s':''})`;
+            ? `Messe : ${d.tauxMesse}% (${d.nbMesse} dim. ce mois)`
+            : `Activité : ${d.tauxActivite}% (${d.nbActivite} date${d.nbActivite>1?'s':''} ce mois)`;
         }}}
       },
       scales:{
@@ -1172,6 +1193,11 @@ function renderChart2(){
   document.querySelectorAll('.filter-card').forEach(c => {
     c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
   });
+  const badge = document.getElementById('chart2PeriodLabel');
+  if(badge) badge.textContent =
+    filtreRepartition === 'tout' ? 'Tout depuis le début' :
+    filtreRepartition === 'annee' ? 'Cette année' : 'Ce mois — dimanches';
+
   if(charts.global){ try{charts.global.destroy();}catch(e){} }
 
   const dims = getDatesFiltrees(filtreRepartition);
@@ -1195,7 +1221,7 @@ function renderChart2(){
   });
 }
 
-/* Chart 3 : Présences par voyage (inchangé) */
+/* Chart 3 : Présences par voyage (inchangé — toutes les années) */
 function renderChart3(){
   if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
   const stats = calculerStats();
@@ -1208,7 +1234,7 @@ function renderChart3(){
   });
 }
 
-/* Chart 4 : Taux de présence par KA (%) — global, par voyage */
+/* Chart 4 : Taux de présence par KA (%) — TOUTES LES ANNÉES */
 function renderChart4(){
   if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
   const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
