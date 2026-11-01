@@ -1,1 +1,1514 @@
-Le site web est parfait mais Présences par KA (Messe vs Activité) peut pas afficher tous les KA si possible de fairev ça aprt voyage en swipp de droit pour chaque voyage c'est mieux pour avoir le pourcentage de chaque KA , pour la Répartition globale rajoute 3 cases audessus pas trop grande pas case donne la forme que tuveux c'est pour permettre si le statistique c'est seulement pour le dimanche durant le mois auquel on sera ou bien durant DU debut de chaque presence chaque à présent. Pareil pour Taux de présence par KA (%) fais la meme méthode que ce que j'ai dit pour Présences par KA (Messe vs Activité). à part ça ne modifie rien tout est parfait impeccable, parfait , ne change rien redonne moi un code parfait et complet que je pourrai coller
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groupe KA — Registre de Présence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --primary:#5c0a1a;--primary-light:#8b1327;--primary-mid:#6e0e1f;
+  --secondary:#f5a623;--secondary-light:#ffc857;
+  --red-professional:#b91c2e;--red-light:#e63946;--red-dark:#4a0512;
+  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
+  --border:#ecd5d8;--success:#0f9d58;--success-light:#e6f7ee;
+  --danger:#c8102e;--danger-light:#fce8e6;
+  --warning:#e65100;--warning-light:#fff3e0;
+  --radius:14px;--shadow-sm:0 1px 3px rgba(92,10,26,.08);
+  --shadow:0 4px 16px rgba(92,10,26,.08);--shadow-lg:0 12px 32px rgba(92,10,26,.14);
+  --shadow-xl:0 24px 48px rgba(92,10,26,.2);
+  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
+  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacing:-.02em}
+.container{max-width:1320px;margin:0 auto;padding:0 24px}
+.hidden{display:none!important}
+.center{text-align:center}
+.muted{color:var(--muted);font-size:.9rem}
+
+.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
+.logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
+.logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
+.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary-light)}
+
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:14px}
+.nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-decoration:none;letter-spacing:.3px}
+.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
+.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.35)}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,157,88,.4)}
+.btn-danger{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff;box-shadow:0 4px 14px rgba(185,28,46,.3)}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(185,28,46,.35)}
+.btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
+.btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent;box-shadow:0 4px 14px rgba(245,166,35,.35)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-block{width:100%;justify-content:center}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+
+.hero{background:var(--grad-primary);color:#fff;padding:60px 0 70px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(230,57,70,.4) 0%,transparent 60%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero h1{color:#fff;font-size:2.6rem;margin-bottom:12px;font-weight:900;letter-spacing:-.03em}
+.hero-sub{font-size:1.1rem;opacity:.9;font-weight:400}
+
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid var(--border);transition:box-shadow .3s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-header{margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.card-header h2{font-size:1.4rem;font-weight:700}
+.section{padding:36px 0}
+
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
+.form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+
+.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
+.message.show{display:block}
+.message.success{background:var(--success-light);color:var(--success);border-left:4px solid var(--success)}
+.message.error{background:var(--danger-light);color:var(--danger);border-left:4px solid var(--danger)}
+.message.warning{background:var(--warning-light);color:var(--warning);border-left:4px solid var(--warning)}
+
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid var(--border)}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
+.stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
+.stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
+.tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s}
+.tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
+.tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(92,10,26,.25)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.voyage-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm);flex-wrap:wrap}
+.voyage-tab{flex:1;min-width:140px;background:none;border:none;padding:14px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+.voyage-tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
+.voyage-tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(92,10,26,.25)}
+.voyage-tab .count{display:inline-block;background:rgba(139,19,39,.1);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
+.voyage-tab.active .count{background:rgba(255,255,255,.25);color:#fff}
+
+.voyage-tab.validated{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);color:var(--success);border:2px solid var(--success)}
+.voyage-tab.validated .count{background:var(--success);color:#fff}
+.voyage-tab.validated::after{content:'✓';position:absolute;top:6px;right:10px;font-weight:900;color:var(--success);font-size:1rem}
+.voyage-tab.validated.active{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(15,157,88,.4)}
+.voyage-tab.validated.active::after{color:#fff}
+.voyage-tab.validated.active .count{background:rgba(255,255,255,.25);color:#fff}
+
+.table-wrap{overflow-x:auto;border-radius:12px}
+.table{width:100%;border-collapse:collapse;font-size:.88rem}
+.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;white-space:nowrap;font-size:.82rem;text-transform:uppercase}
+.table td{padding:14px 12px;border-bottom:1px solid var(--border)}
+.table tbody tr{transition:background .15s}
+.table tbody tr:hover td{background:#fdf6f7}
+
+.detail-row td{padding:0!important;border-bottom:2px solid var(--red-professional)!important;background:#fff8f9!important}
+.detail-content{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.detail-block{display:flex;flex-direction:column;gap:8px}
+.detail-block-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px}
+.detail-block-title .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.detail-block.present .detail-block-title{color:var(--success)}
+.detail-block.present .dot{background:var(--success)}
+.detail-block.absent .detail-block-title{color:var(--danger)}
+.detail-block.absent .dot{background:var(--danger)}
+.detail-block.excuse .detail-block-title{color:#f59e0b}
+.detail-block.excuse .dot{background:#f59e0b}
+.detail-dates{display:flex;flex-wrap:wrap;gap:8px}
+.detail-date{padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:600;white-space:nowrap}
+.detail-block.present .detail-date{background:var(--success-light);color:var(--success);border:1.5px solid var(--success)}
+.detail-block.absent .detail-date{background:var(--danger-light);color:var(--danger);border:1.5px solid var(--danger)}
+.detail-block.excuse .detail-date{background:var(--warning-light);color:#b45309;border:1.5px solid #f59e0b}
+.detail-empty{font-size:.82rem;color:var(--muted);font-style:italic}
+
+.nom-ka-cliquable{cursor:pointer;transition:color .2s;display:inline-flex;align-items:center;gap:6px}
+.nom-ka-cliquable:hover{color:var(--red-professional)}
+.nom-ka-cliquable::after{content:'▼';font-size:.65rem;opacity:.5;transition:transform .2s;display:inline-block}
+.nom-ka-cliquable.open::after{transform:rotate(180deg);opacity:1;color:var(--red-professional)}
+
+.date-banner{background:var(--grad-primary);color:#fff;padding:24px 28px;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow-lg);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden}
+.date-banner::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--grad-gold)}
+.date-banner .db-left .db-label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;opacity:.75;font-weight:600}
+.date-banner .db-left .db-date{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
+.date-banner .db-left .db-time{font-size:.85rem;opacity:.8;margin-top:4px}
+.db-status{padding:10px 20px;border-radius:24px;font-weight:700;font-size:.85rem;letter-spacing:.5px;text-transform:uppercase}
+.db-status.open{background:var(--success);color:#fff}
+.db-status.closed{background:var(--red-professional);color:#fff}
+.db-status.special{background:var(--grad-gold);color:var(--primary)}
+
+.ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-bottom:14px;transition:all .25s}
+.ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(139,19,39,.1)}
+.ka-row.absence-alert{border-color:var(--danger);background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
+.ka-info .ka-nom{font-weight:700;font-size:1.05rem;color:var(--text);display:block;margin-bottom:4px}
+.ka-info .alert-3{font-size:.8rem;color:var(--danger);font-weight:700;margin-top:4px;display:block}
+
+.status-choices{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+.status-choice{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.status-choice input[type="radio"]{appearance:none;-webkit-appearance:none;width:42px;height:42px;border-radius:50%;border:3px solid var(--border);cursor:pointer;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center;background:#fff}
+.status-choice input[type="radio"]:hover{transform:scale(1.08)}
+.status-choice input[type="radio"]:checked::after{content:'';width:22px;height:22px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.status-choice.vert input[type="radio"]{border-color:var(--success)}
+.status-choice.vert input[type="radio"]:checked{background:var(--success);border-color:var(--success);box-shadow:0 4px 14px rgba(15,157,88,.35)}
+.status-choice.vert input[type="radio"]:checked::after{background:#fff}
+.status-choice.rouge input[type="radio"]{border-color:var(--red-professional)}
+.status-choice.rouge input[type="radio"]:checked{background:var(--red-professional);border-color:var(--red-professional);box-shadow:0 4px 14px rgba(200,16,46,.35)}
+.status-choice.rouge input[type="radio"]:checked::after{background:#fff}
+.status-choice.blanc input[type="radio"]{border-color:#f59e0b}
+.status-choice.blanc input[type="radio"]:checked{background:#f59e0b;border-color:#f59e0b;box-shadow:0 4px 14px rgba(245,158,11,.35)}
+.status-choice.blanc input[type="radio"]:checked::after{background:#fff}
+.status-choice .status-label{font-size:.72rem;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap}
+.status-choice.vert .status-label{color:var(--success)}
+.status-choice.rouge .status-label{color:var(--red-professional)}
+.status-choice.blanc .status-label{color:#f59e0b}
+
+.validation-bar{background:var(--surface);padding:20px 24px;margin-top:24px;border-radius:14px;box-shadow:var(--shadow-lg);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary)}
+.validation-bar .info-validation{font-weight:600;font-size:.95rem;color:var(--primary)}
+.validation-bar .info-validation span{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:12px;font-weight:800}
+
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-primary);padding:20px;position:relative;overflow:hidden}
+.login-screen::before{content:'';position:absolute;top:-30%;right:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(230,57,70,.3) 0%,transparent 60%);pointer-events:none}
+.login-screen::after{content:'';position:absolute;bottom:-30%;left:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
+.login-card{background:var(--surface);border-radius:20px;padding:48px 40px;max-width:420px;width:100%;box-shadow:var(--shadow-xl);position:relative;z-index:1}
+.login-card h1{margin:20px 0 6px;font-size:1.5rem;text-align:center;line-height:1.2}
+.login-card .logo.center{justify-content:center;display:flex}
+.login-card .logo-img{width:96px;height:96px}
+.link-back{display:block;text-align:center;margin-top:20px;color:var(--muted);text-decoration:none;font-size:.85rem}
+.link-back:hover{color:var(--red-professional)}
+
+.dashboard-main{padding:36px 24px 80px}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px;margin-bottom:24px;align-items:start}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+.chart-box{background:var(--surface);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.chart-box h3{font-size:1.05rem;margin-bottom:16px;font-weight:700}
+.chart-container{position:relative;height:320px}
+
+/* ===== Nouveau : navigation voyages (flèches + points) ===== */
+.chart-voyage-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;padding:7px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
+.nav-arrow{background:var(--grad-primary);color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px rgba(92,10,26,.3);flex-shrink:0;font-weight:700}
+.nav-arrow:hover:not(:disabled){transform:scale(1.12)}
+.nav-arrow:disabled{opacity:.3;cursor:not-allowed}
+.voyage-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex:1}
+.voyage-dot{background:#fff;border:2px solid var(--border);padding:6px 12px;border-radius:16px;font-family:inherit;font-weight:600;font-size:.72rem;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.voyage-dot:hover{border-color:var(--primary-light);color:var(--primary)}
+.voyage-dot.active{background:var(--grad-primary);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(92,10,26,.25)}
+
+/* ===== Nouveau : cases filtres répartition ===== */
+.filter-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.filter-card{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 4px;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit;font-size:.68rem;font-weight:700;color:var(--muted);line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px}
+.filter-card:hover{border-color:var(--primary-light);color:var(--primary);transform:translateY(-1px)}
+.filter-card.active{background:var(--grad-gold);color:var(--primary);border-color:var(--secondary);box-shadow:0 4px 12px rgba(245,166,35,.35)}
+.filter-card .fc-icon{font-size:1.1rem;line-height:1}
+
+/* ===== Nouveau : zone scrollable pour charts 1 et 4 ===== */
+.chart-scroll{max-height:440px;overflow-y:auto;padding-right:6px;border-radius:10px}
+.chart-scroll::-webkit-scrollbar{width:8px}
+.chart-scroll::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
+.chart-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.chart-scroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+.alert-list{display:flex;flex-direction:column;gap:12px}
+.alert-item{padding:16px 20px;border-radius:10px;border-left:5px solid var(--red-professional);background:linear-gradient(90deg,var(--danger-light) 0%,#fff 100%);font-size:.9rem}
+.alert-item strong{color:var(--red-professional);font-weight:700}
+
+.historique{display:flex;flex-direction:column;gap:14px}
+.hist-item{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:12px;padding:18px 20px;border-left:4px solid var(--red-professional)}
+.hist-item .hist-date{font-weight:700;color:var(--primary);margin-bottom:8px;font-size:1rem}
+.hist-item .hist-stats{font-size:.85rem;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
+.hist-item .hist-stats span{font-weight:600}
+
+.export-buttons{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:32px 0;font-size:.85rem;margin-top:40px;position:relative}
+.footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
+.footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
+
+.dim-list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto;padding-right:6px}
+.dim-item{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:10px;gap:14px;flex-wrap:wrap;border-left:4px solid var(--primary-light)}
+.dim-item.special{border-left-color:var(--secondary);background:linear-gradient(135deg,#fffbf0 0%,#fff5e0 100%)}
+.dim-item .dim-date{font-weight:600;flex:1;min-width:220px;color:var(--primary)}
+.dim-item .dim-type{font-size:.7rem;padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--primary);color:#fff}
+.dim-item .dim-type.special{background:var(--secondary);color:var(--primary)}
+.dim-item .dim-status{font-size:.75rem;padding:5px 14px;border-radius:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.dim-item .dim-status.active{background:var(--success-light);color:var(--success)}
+.dim-item .dim-status.cancelled{background:var(--danger-light);color:var(--danger)}
+.dim-item .dim-actions{display:flex;gap:8px}
+
+@media(max-width:700px){
+  .ka-row{grid-template-columns:1fr;gap:18px;padding:16px}
+  .status-choices{gap:20px;justify-content:space-around;width:100%}
+  .status-choice input[type="radio"]{width:48px;height:48px}
+  .hero h1{font-size:1.9rem}
+  .date-banner{padding:18px}
+  .date-banner .db-left .db-date{font-size:1.4rem}
+  .voyage-tabs{padding:6px}
+  .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
+  .logo-img{width:48px;height:48px}
+  .detail-content{padding:16px}
+  .voyage-dot{padding:5px 9px;font-size:.68rem}
+  .filter-card{font-size:.62rem;padding:8px 3px}
+  .filter-card .fc-icon{font-size:1rem}
+  .chart-scroll{max-height:380px}
+}
+</style>
+</head>
+<body>
+
+<div id="pagePublique">
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo">
+        <img src="IMG_6726.png" alt="Logo Groupe KA" class="logo-img">
+        <div class="logo-text"><strong>Groupe KA</strong><small>Registre de présence</small></div>
+      </div>
+      <nav class="nav"><button class="btn btn-ghost" onclick="ouvrirLogin()">Commission Secrétariat</button></nav>
+    </div>
+  </header>
+  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez tous les KA, puis validez</p></div></section>
+  <section class="section"><div class="container">
+    <div class="date-banner" id="dateBanner">
+      <div class="db-left">
+        <div class="db-label">Séance du jour</div>
+        <div class="db-date" id="dbDate">—</div>
+        <div class="db-time" id="dbTime">—</div>
+      </div>
+      <div class="db-status" id="dbStatus">—</div>
+    </div>
+    <div id="dateMessage" class="message"></div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Liste de présence</h2>
+        <button class="btn btn-outline btn-sm" onclick="reinitialiserVoyage()">Réinitialiser ce voyage</button>
+      </div>
+      <div class="voyage-tabs" id="voyageTabs">
+        <button class="voyage-tab active" data-voyage="1">1er Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="2">2ème Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="3">3ème Voyage <span class="count">0</span></button>
+        <button class="voyage-tab" data-voyage="4">4ème Voyage <span class="count">0</span></button>
+      </div>
+      <div id="kaListeVoyage"></div>
+      <div class="validation-bar" id="validationBar">
+        <div class="info-validation"><span id="countChecked">0</span> / <span id="countTotal">0</span> KA cochés (ce voyage)</div>
+        <button class="btn btn-success" id="btnValider" onclick="validerVoyageCourant()">✓ Valider ce voyage</button>
+      </div>
+      <div id="validationMessage" class="message"></div>
+    </div>
+  </div></section>
+  <footer class="footer"><div class="container"><p><img src="IMG_6726.png" alt="Logo" class="footer-logo"> © 2026 Groupe KA — Salamu-Amani</p></div></footer>
+</div>
+
+<div id="loginScreen" class="login-screen hidden">
+  <div class="login-card">
+    <div class="logo center"><img src="IMG_6726.png" alt="Logo" class="logo-img"></div>
+    <h1>Commission Secrétariat</h1>
+    <p class="muted center">Accès protégé</p>
+    <form id="formLogin" style="margin-top:28px">
+      <div class="form-group"><label for="password">Mot de passe</label><input type="password" id="password" placeholder="••••••••" required></div>
+      <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+    </form>
+    <div id="loginMessage" class="message"></div>
+    <a href="#" class="link-back" onclick="fermerLogin(event)">← Retour au site</a>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo">
+        <img src="IMG_6726.png" alt="Logo" class="logo-img">
+        <div class="logo-text"><strong>Commission Secrétariat</strong><small>Groupe KA</small></div>
+      </div>
+      <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+    </div>
+  </header>
+  <main class="container dashboard-main">
+    <div class="grid-stats">
+      <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Séances validées</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashPresences">0</div><div class="stat-label">Présences validées</div></div>
+      <div class="stat-card"><div class="stat-value" id="dashAlertes">0</div><div class="stat-label">Alertes 3 absences</div></div>
+    </div>
+    <div class="card" id="cardAlertes" style="display:none">
+      <div class="card-header"><h2 style="color:var(--red-professional)">⚠️ Alertes — 3 absences successives</h2></div>
+      <div id="alertesList" class="alert-list"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="tab-graphiques">📊 Graphiques</button>
+      <button class="tab" data-tab="tab-classement">Classement</button>
+      <button class="tab" data-tab="tab-voyages">Par voyage</button>
+      <button class="tab" data-tab="tab-dates">📅 Gérer les dates</button>
+      <button class="tab" data-tab="tab-ajoutKA">Ajouter un KA</button>
+      <button class="tab" data-tab="tab-historique">Historique</button>
+      <button class="tab" data-tab="tab-export">Export</button>
+    </div>
+    <div id="tab-graphiques" class="tab-content active">
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3>Présences par KA (Messe vs Activité) — %</h3>
+          <div class="chart-voyage-nav">
+            <button class="nav-arrow" id="chart1Prev" aria-label="Voyage précédent">◀</button>
+            <div class="voyage-dots" id="voyageDots1">
+              <button class="voyage-dot active" data-v="1">1er</button>
+              <button class="voyage-dot" data-v="2">2ème</button>
+              <button class="voyage-dot" data-v="3">3ème</button>
+              <button class="voyage-dot" data-v="4">4ème</button>
+            </div>
+            <button class="nav-arrow" id="chart1Next" aria-label="Voyage suivant">▶</button>
+          </div>
+          <div class="chart-scroll" id="chart1Scroll">
+            <div class="chart-container" id="chartParKAContainer" style="height:320px"><canvas id="chartParKA"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h3>Répartition globale</h3>
+          <div class="filter-cards">
+            <button class="filter-card active" data-filtre="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
+            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Cette<br>année</button>
+            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce mois<br>dimanches</button>
+          </div>
+          <div class="chart-container"><canvas id="chartGlobal"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
+        <div class="chart-box">
+          <h3>Taux de présence par KA (%)</h3>
+          <div class="chart-voyage-nav">
+            <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
+            <div class="voyage-dots" id="voyageDots4">
+              <button class="voyage-dot active" data-v="1">1er</button>
+              <button class="voyage-dot" data-v="2">2ème</button>
+              <button class="voyage-dot" data-v="3">3ème</button>
+              <button class="voyage-dot" data-v="4">4ème</button>
+            </div>
+            <button class="nav-arrow" id="chart4Next" aria-label="Voyage suivant">▶</button>
+          </div>
+          <div class="chart-scroll" id="chart4Scroll">
+            <div class="chart-container" id="chartTauxContainer" style="height:320px"><canvas id="chartTaux"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="tab-classement" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>Classement complet</h2><input type="search" id="searchKA" placeholder="Rechercher un KA..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:300px"></div>
+        <div class="table-wrap">
+          <table class="table" id="tableClassement">
+            <thead><tr><th>#</th><th>Nom du KA</th><th>Voyage</th><th>Messe</th><th>Activité</th><th>Absences</th><th>Absences signalées</th><th>Taux</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="tab-voyages" class="tab-content"><div id="gridVoyages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px"></div></div>
+    <div id="tab-dates" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>Programmer une activité à une date précise</h2></div>
+        <p class="muted" style="margin-bottom:16px">Les dimanches sont ouverts automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
+        <form id="formAjoutDate">
+          <div class="form-row">
+            <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
+            <div class="form-group"><label for="newTypeDate">Type</label><select id="newTypeDate" required><option value="activite">Activité</option><option value="evenement">Événement spécial</option></select></div>
+          </div>
+          <div class="form-group"><label for="newLibelle">Libellé (optionnel)</label><input type="text" id="newLibelle" placeholder="Ex : Sortie pédagogique"></div>
+          <button type="submit" class="btn btn-primary">Programmer la date</button>
+        </form>
+        <div id="ajoutDateMessage" class="message"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Toutes les séances programmées</h2></div>
+        <div id="dimList" class="dim-list"></div>
+      </div>
+    </div>
+    <div id="tab-ajoutKA" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>Charger la liste officielle des KA</h2></div>
+        <p class="muted" style="margin-bottom:16px">Si des KA officiels ne sont pas encore dans le système (nouveau groupe, Firebase vide, mise à jour...), cliquez sur ce bouton. Les KA déjà présents ne seront pas dupliqués. Seuls les manquants seront ajoutés.</p>
+        <button class="btn btn-success" onclick="chargerKAOfficiels()">📥 Charger tous les KA officiels</button>
+        <div id="chargementMessage" class="message"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Ajouter un KA manuellement</h2></div>
+        <form id="formAjoutKA">
+          <div class="form-row">
+            <div class="form-group"><label for="newNom">Nom complet du KA</label><input type="text" id="newNom" required placeholder="Ex : K. Amina KABASELE"></div>
+            <div class="form-group"><label for="newVoyage">Voyage</label><select id="newVoyage" required><option value="">— Choisir —</option><option value="1">1er Voyage</option><option value="2">2ème Voyage</option><option value="3">3ème Voyage</option><option value="4">4ème Voyage</option></select></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Ajouter le KA</button>
+        </form>
+        <div id="ajoutMessage" class="message"></div>
+      </div>
+      <div class="card"><div class="card-header"><h2>Liste des KA</h2></div><div id="listeKASecretariat"></div></div>
+    </div>
+    <div id="tab-historique" class="tab-content"><div class="card"><div class="card-header"><h2>Historique par séance</h2></div><div id="historique" class="historique"></div></div></div>
+    <div id="tab-export" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>Exporter</h2></div>
+        <div class="export-buttons">
+          <button class="btn btn-primary" onclick="exportCSV()">Exporter en CSV</button>
+          <button class="btn btn-outline" onclick="exportJSON()">Exporter en JSON</button>
+          <button class="btn btn-outline" onclick="window.print()">Imprimer</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
+  authDomain: "registre-e3389.firebaseapp.com",
+  projectId: "registre-e3389",
+  storageBucket: "registre-e3389.firebasestorage.app",
+  messagingSenderId: "180998003518",
+  appId: "1:180998003518:web:43f1f6aa39941025206a6f",
+  measurementId: "G-L79ET2SX74"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const CONFIG = {
+  PASSWORD_HASH: "",
+  PASSWORD_DEMO: "GroupeKA2026!",
+  SESSION_KEY: "ka_session",
+  SESSION_DUREE: 60*60*1000,
+  CODE_ANNULATION: "2K27",
+  CODE_SUPPRESSION: "20K7",
+  VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
+  DATE_FIN: "2100-12-31"
+};
+
+async function sha256(s){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
+
+function dateToISO(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return dateToISO(d); }
+function formatDateFr(iso){
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function formatDateCourte(iso){
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+}
+function nomJour(iso){
+  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  return jours[new Date(iso+"T00:00:00").getDay()];
+}
+function afficherMessage(id,msg,type){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg; el.className='message show '+type;
+  setTimeout(()=>{el.className='message';},8000);
+}
+
+function genererDimanches(){
+  const dimanches = [];
+  const d = new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - d.getDay());
+  const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
+  while(d <= fin){
+    if(d.getDay() === 0) dimanches.push(dateToISO(d));
+    d.setDate(d.getDate()+7);
+  }
+  return dimanches;
+}
+const DIMANCHES_AUTO = genererDimanches();
+
+let cacheKAs = [];
+let cachePresences = {};
+let cacheDatesAnnulees = {};
+let cacheDatesSpeciales = {};
+let cacheVoyagesValides = {};
+let selectionCourante = {};
+let voyageSelectionnee = 1;
+let kaOuvert = null;
+
+// ==== NOUVEL ÉTAT GRAPHIQUES ====
+let chart1Voyage = 1;
+let chart4Voyage = 1;
+let filtreRepartition = 'tout';
+
+const aujourdhuiISO = aujourdhui();
+
+function ecouterKAs(cb){
+  onSnapshot(collection(db,"kas"), snap => {
+    cacheKAs = [];
+    snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
+    cacheKAs.sort((a,b)=> a.voyage-b.voyage || a.nom.localeCompare(b.nom));
+    if(cb) cb();
+  });
+}
+function ecouterPresences(cb){
+  onSnapshot(collection(db,"presences"), snap => {
+    cachePresences = {};
+    snap.forEach(d => { cachePresences[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
+function ecouterDatesAnnulees(cb){
+  onSnapshot(collection(db,"datesAnnulees"), snap => {
+    cacheDatesAnnulees = {};
+    snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
+function ecouterDatesSpeciales(cb){
+  onSnapshot(collection(db,"datesSpeciales"), snap => {
+    cacheDatesSpeciales = {};
+    snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
+function ecouterVoyagesValides(cb){
+  onSnapshot(collection(db,"voyagesValides"), snap => {
+    cacheVoyagesValides = {};
+    snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
+    if(cb) cb();
+  });
+}
+
+function statutDuJour(){
+  const special = cacheDatesSpeciales[aujourdhuiISO];
+  const estDimanche = new Date(aujourdhuiISO+"T00:00:00").getDay() === 0;
+  const annule = cacheDatesAnnulees[aujourdhuiISO];
+
+  if(annule) return {ouvert:false, raison:"ANNULÉ", detail:"Cette séance a été annulée par la Commission Secrétariat."};
+  if(estDimanche) return {ouvert:true, raison:"DIMANCHE", detail:""};
+  if(special) return {ouvert:true, raison: special.type === 'activite' ? "ACTIVITÉ" : "ÉVÉNEMENT", detail: special.libelle || ""};
+  return {ouvert:false, raison:"FERMÉ", detail:"La saisie n'est ouverte que le dimanche, ou lorsqu'une activité est programmée."};
+}
+
+function estVoyageValide(date, voyage){
+  const v = cacheVoyagesValides[date];
+  return v && v[voyage] === true;
+}
+
+function renderBanniere(){
+  const statut = statutDuJour();
+  document.getElementById('dbDate').textContent = formatDateFr(aujourdhuiISO);
+  document.getElementById('dbTime').textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const st = document.getElementById('dbStatus');
+  st.textContent = statut.raison;
+  st.className = 'db-status ' + (statut.ouvert ? (statut.raison === 'DIMANCHE' ? 'open' : 'special') : 'closed');
+
+  const dm = document.getElementById('dateMessage');
+  if(!statut.ouvert){
+    dm.textContent = statut.detail;
+    dm.className = 'message show error';
+  } else {
+    dm.textContent = "✓ Saisie ouverte : " + (statut.detail || statut.raison);
+    dm.className = 'message show success';
+  }
+}
+
+function updateVoyageTabCounts(){
+  [1,2,3,4].forEach(v => {
+    const count = cacheKAs.filter(k => k.voyage === v).length;
+    const tab = document.querySelector(`.voyage-tab[data-voyage="${v}"]`);
+    if(!tab) return;
+    const span = tab.querySelector('.count');
+    if(span) span.textContent = count;
+    if(estVoyageValide(aujourdhuiISO, v)) tab.classList.add('validated');
+    else tab.classList.remove('validated');
+  });
+}
+
+function renderKaListeVoyage(){
+  updateVoyageTabCounts();
+  const container = document.getElementById('kaListeVoyage');
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+
+  if(kasVoyage.length === 0){
+    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage.</p>';
+    document.getElementById('countChecked').textContent = 0;
+    document.getElementById('countTotal').textContent = 0;
+    return;
+  }
+
+  const statut = statutDuJour();
+  const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
+  const existant = cachePresences[aujourdhuiISO] || {};
+  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
+
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
+
+  const kizito = kasVoyage.filter(k => k.nom.startsWith('K.'));
+  const anuarite = kasVoyage.filter(k => k.nom.startsWith('A.'));
+
+  const renderRow = (ka) => {
+    let alert3 = false;
+    let compteur = 0, maxCompteur = 0;
+    dims.forEach(d => {
+      const p = cachePresences[d] || {};
+      if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
+      else if(p[ka.id]) compteur = 0;
+    });
+    if(maxCompteur >= 3) alert3 = true;
+
+    const val = selectionCourante[ka.id] || existant[ka.id] || "";
+
+    return `<div class="ka-row ${alert3?'absence-alert':''}">
+      <div class="ka-info">
+        <span class="ka-nom">${esc(ka.nom)}</span>
+        ${alert3?'<span class="alert-3">⚠️ 3 absences successives</span>':''}
+      </div>
+      <div class="status-choices">
+        <label class="status-choice vert"><input type="radio" name="status-${ka.id}" value="present" ${val==='present'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','present')"><span class="status-label">Présent</span></label>
+        <label class="status-choice rouge"><input type="radio" name="status-${ka.id}" value="absent" ${val==='absent'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','absent')"><span class="status-label">Absent</span></label>
+        <label class="status-choice blanc"><input type="radio" name="status-${ka.id}" value="excuse" ${val==='excuse'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','excuse')"><span class="status-label">Abs. signalée</span></label>
+      </div>
+    </div>`;
+  };
+
+  let html = '';
+  if(kizito.length){
+    html += `<h3 style="font-size:1rem;color:var(--primary);margin:6px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--red-professional);text-transform:uppercase;letter-spacing:1.5px">Kizito (K.)</h3>`;
+    html += kizito.map(renderRow).join('');
+  }
+  if(anuarite.length){
+    html += `<h3 style="font-size:1rem;color:var(--primary);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--secondary);text-transform:uppercase;letter-spacing:1.5px">Anuarite (A.)</h3>`;
+    html += anuarite.map(renderRow).join('');
+  }
+
+  container.innerHTML = html;
+
+  updateCount();
+
+  const btn = document.getElementById('btnValider');
+  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
+  else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
+}
+
+function setStatus(id, val){
+  const statut = statutDuJour();
+  if(!statut.ouvert) return;
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
+  selectionCourante[id] = val;
+  updateCount();
+}
+
+function updateCount(){
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+  const checked = kasVoyage.filter(k => selectionCourante[k.id]).length;
+  document.getElementById('countChecked').textContent = checked;
+  document.getElementById('countTotal').textContent = kasVoyage.length;
+}
+
+async function validerVoyageCourant(){
+  const statut = statutDuJour();
+  if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
+    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
+
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+
+  const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
+  if(nonCoches.length > 0){
+    return afficherMessage('validationMessage',
+      `Veuillez cocher TOUS les KA de ce voyage avant de valider. Il reste ${nonCoches.length} KA non coché${nonCoches.length>1?'s':''}.`,
+      'error');
+  }
+
+  try {
+    const existing = cachePresences[aujourdhuiISO] || {};
+    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionCourante});
+    await setDoc(doc(db,"voyagesValides",aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
+    kasVoyage.forEach(k => delete selectionCourante[k.id]);
+    afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
+    updateCount();
+    renderKaListeVoyage();
+  } catch(e){
+    afficherMessage('validationMessage',"Erreur : "+e.message,'error');
+  }
+}
+
+function reinitialiserVoyage(){
+  const statut = statutDuJour();
+  if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
+  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
+    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
+  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
+  kasVoyage.forEach(k => delete selectionCourante[k.id]);
+  renderKaListeVoyage();
+  afficherMessage('validationMessage',"✓ Sélection réinitialisée pour ce voyage.",'success');
+}
+
+function ouvrirLogin(){ document.getElementById('pagePublique').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
+function fermerLogin(e){ e.preventDefault(); document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('pagePublique').classList.remove('hidden'); }
+
+function creerSession(){ sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify({expire:Date.now()+CONFIG.SESSION_DUREE})); }
+function sessionValide(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem(CONFIG.SESSION_KEY));
+    if(!s) return false;
+    if(Date.now() > s.expire){ sessionStorage.removeItem(CONFIG.SESSION_KEY); return false; }
+    s.expire = Date.now()+CONFIG.SESSION_DUREE;
+    sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify(s));
+    return true;
+  }catch(e){ return false; }
+}
+function detruireSession(){ sessionStorage.removeItem(CONFIG.SESSION_KEY); }
+
+async function verifierMotDePasse(mdp){
+  if(CONFIG.PASSWORD_DEMO && mdp === CONFIG.PASSWORD_DEMO) return true;
+  const h = await sha256(mdp);
+  return h === CONFIG.PASSWORD_HASH;
+}
+
+document.getElementById('formLogin').addEventListener('submit', async e => {
+  e.preventDefault();
+  const mdp = document.getElementById('password').value;
+  const ok = await verifierMotDePasse(mdp);
+  if(ok){
+    creerSession();
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('password').value = '';
+    chargerDashboard();
+  } else afficherMessage('loginMessage',"Mot de passe incorrect.",'error');
+});
+
+function deconnexion(){
+  detruireSession();
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('pagePublique').classList.remove('hidden');
+  kaOuvert = null;
+}
+
+let charts = {};
+function chargerDashboard(){
+  renderStats();
+  renderAlertes();
+  renderClassement();
+  renderVoyages();
+  renderDates();
+  renderListeKASecretariat();
+  renderHistorique();
+  renderGraphiques();
+}
+
+function renderStats(){
+  document.getElementById('dashTotalKA').textContent = cacheKAs.length;
+  const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0);
+  document.getElementById('dashDimanches').textContent = dims.length;
+  let total = 0;
+  dims.forEach(d => { total += Object.keys(cachePresences[d]).length; });
+  document.getElementById('dashPresences').textContent = total;
+}
+
+function calculerAlertes(){
+  const alertes = [];
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
+  cacheKAs.forEach(ka => {
+    let compteur = 0, maxCompteur = 0;
+    dims.forEach(d => {
+      const p = cachePresences[d] || {};
+      if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
+      else if(p[ka.id]) compteur = 0;
+    });
+    if(maxCompteur >= 3) alertes.push({ka, maxCompteur});
+  });
+  return alertes;
+}
+
+function renderAlertes(){
+  const alertes = calculerAlertes();
+  document.getElementById('dashAlertes').textContent = alertes.length;
+  const card = document.getElementById('cardAlertes');
+  if(alertes.length === 0){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  document.getElementById('alertesList').innerHTML = alertes.map(a =>
+    `<div class="alert-item"><strong>${esc(a.ka.nom)}</strong> (${CONFIG.VOYAGES[a.ka.voyage]}) — ${a.maxCompteur} absences successives consécutives.</div>`
+  ).join('');
+}
+
+function calculerStats(){
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
+  return cacheKAs.map(ka => {
+    let messe=0, activite=0, absent=0, excuse=0, present=0;
+    dims.forEach(d => {
+      const p = cachePresences[d] || {};
+      const s = p[ka.id];
+      if(s === "present"){ present++; messe++; activite++; }
+      else if(s === "absent"){ absent++; }
+      else if(s === "excuse"){ excuse++; }
+    });
+    const total = dims.length;
+    const taux = total ? Math.round((present/total)*100) : 0;
+    return {...ka, messe, activite, absent, excuse, present, total, taux};
+  }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
+}
+
+function calculerDetailsKA(kaId){
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
+  const details = {present:[], absent:[], excuse:[]};
+  dims.forEach(d => {
+    const p = cachePresences[d] || {};
+    const s = p[kaId];
+    if(s === "present") details.present.push(d);
+    else if(s === "absent") details.absent.push(d);
+    else if(s === "excuse") details.excuse.push(d);
+  });
+  return details;
+}
+
+window.toggleDetailKA = function(kaId){
+  kaOuvert = (kaOuvert === kaId) ? null : kaId;
+  renderClassement(document.getElementById('searchKA')?.value || '');
+};
+
+function construireDetail(details){
+  const renderBlock = (titre, dates, cls) => {
+    if(dates.length === 0) return '';
+    return `<div class="detail-block ${cls}">
+      <div class="detail-block-title"><span class="dot"></span>${titre} (${dates.length})</div>
+      <div class="detail-dates">${dates.map(d => `<span class="detail-date">${formatDateCourte(d)}</span>`).join('')}</div>
+    </div>`;
+  };
+  const blocks = [
+    renderBlock('Présent', details.present, 'present'),
+    renderBlock('Absent', details.absent, 'absent'),
+    renderBlock('Absence signalée', details.excuse, 'excuse')
+  ].filter(Boolean).join('');
+  if(!blocks) return '<div class="detail-content"><p class="detail-empty">Aucune donnée enregistrée pour ce KA.</p></div>';
+  return `<div class="detail-content">${blocks}</div>`;
+}
+
+function renderClassement(filtre=''){
+  const tbody = document.querySelector('#tableClassement tbody');
+  const data = calculerStats().filter(k => k.nom.toLowerCase().includes(filtre.toLowerCase()));
+  if(data.length === 0){ tbody.innerHTML='<tr><td colspan="8" class="center muted" style="padding:20px">Aucun KA.</td></tr>'; return; }
+  tbody.innerHTML = data.map((k,i) => {
+    const cls = k.taux>=75?'success':(k.taux>=50?'warning':'danger');
+    const ouvert = kaOuvert === k.id;
+    const rowMain = `<tr>
+      <td><strong>${i+1}</strong></td>
+      <td><strong class="nom-ka-cliquable ${ouvert?'open':''}" onclick="toggleDetailKA('${k.id}')">${esc(k.nom)}</strong></td>
+      <td>${CONFIG.VOYAGES[k.voyage]}</td>
+      <td>${k.messe}</td><td>${k.activite}</td>
+      <td><span style="color:var(--red-professional);font-weight:700">${k.absent}</span></td>
+      <td><span style="color:#f59e0b;font-weight:700">${k.excuse}</span></td>
+      <td><span style="background:var(--${cls}-light);color:var(--${cls});padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">${k.taux}%</span></td>
+    </tr>`;
+    let rowDetail = '';
+    if(ouvert){
+      const details = calculerDetailsKA(k.id);
+      rowDetail = `<tr class="detail-row"><td colspan="8">${construireDetail(details)}</td></tr>`;
+    }
+    return rowMain + rowDetail;
+  }).join('');
+}
+
+function renderVoyages(){
+  const grid = document.getElementById('gridVoyages');
+  const stats = calculerStats();
+  grid.innerHTML = [1,2,3,4].map(v => {
+    const liste = cacheKAs.filter(k => k.voyage === v);
+    return `<div class="chart-box">
+      <h3>${CONFIG.VOYAGES[v]}</h3>
+      <div style="font-size:2rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${liste.length}</div>
+      <div class="muted" style="font-size:.8rem;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">KA enregistrés</div>
+      <div style="max-height:220px;overflow-y:auto;font-size:.85rem">
+        ${liste.map(k => {
+          const s = stats.find(x=>x.id===k.id);
+          return `<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>${esc(k.nom)}</span><span style="font-weight:600;color:var(--primary)">${s?s.present:0} prés.</span></div>`;
+        }).join('') || '<div class="muted">Aucun KA</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function statutDate(d){
+  if(cacheDatesAnnulees[d]) return {label:"ANNULÉ", class:"cancelled"};
+  const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
+  const special = cacheDatesSpeciales[d];
+  if(!isDimanche && !special) return {label:"FERMÉ", class:"cancelled"};
+  const vv = cacheVoyagesValides[d] || {};
+  const nbValides = Object.keys(vv).filter(k => vv[k] === true).length;
+  if(nbValides === 4) return {label:"VALIDÉ", class:"active"};
+  if(nbValides > 0) return {label:`${nbValides}/4 VALIDÉ`, class:"active"};
+  return {label:"OUVERT", class:"active"};
+}
+
+function renderDates(){
+  const container = document.getElementById('dimList');
+  const datesSet = new Set(DIMANCHES_AUTO);
+  Object.keys(cacheDatesSpeciales).forEach(d => datesSet.add(d));
+  const dates = Array.from(datesSet).sort();
+
+  container.innerHTML = dates.map(d => {
+    const annule = cacheDatesAnnulees[d];
+    const special = cacheDatesSpeciales[d];
+    const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
+    let typeLabel, typeClass;
+    if(special){ typeLabel = special.type === 'activite' ? 'ACTIVITÉ' : 'ÉVÉNEMENT'; typeClass = 'special'; }
+    else if(isDimanche){ typeLabel = 'DIMANCHE'; typeClass = ''; }
+    else { typeLabel = 'JOUR'; typeClass = ''; }
+
+    const st = statutDate(d);
+
+    return `<div class="dim-item ${special?'special':''}">
+      <div class="dim-date">${formatDateFr(d)}${special && special.libelle ? ' — '+esc(special.libelle) : ''}</div>
+      <span class="dim-type ${typeClass}">${typeLabel}</span>
+      <span class="dim-status ${st.class}">${st.label}</span>
+      <div class="dim-actions">
+        ${annule ? `<button class="btn btn-success btn-sm" onclick="reactiverDate('${d}')">Réactiver</button>`
+                 : `<button class="btn btn-danger btn-sm" onclick="annulerDate('${d}')">Annuler</button>`}
+        ${special ? `<button class="btn btn-outline btn-sm" onclick="supprimerDateSpecial('${d}')">Retirer</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function annulerDate(d){
+  const code = prompt("Entrez le code d'annulation :");
+  if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
+  await setDoc(doc(db,"datesAnnulees",d),{annule:true, date:new Date().toISOString()});
+}
+async function reactiverDate(d){ await deleteDoc(doc(db,"datesAnnulees",d)); }
+async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(doc(db,"datesSpeciales",d)); }
+
+document.getElementById('formAjoutDate').addEventListener('submit', async e => {
+  e.preventDefault();
+  const date = document.getElementById('newDate').value;
+  const type = document.getElementById('newTypeDate').value;
+  const libelle = document.getElementById('newLibelle').value.trim();
+  if(!date) return afficherMessage('ajoutDateMessage',"Date invalide.",'error');
+  try{
+    await setDoc(doc(db,"datesSpeciales",date),{type, libelle, ajouteLe:new Date().toISOString()});
+    document.getElementById('newDate').value = '';
+    document.getElementById('newLibelle').value = '';
+    afficherMessage('ajoutDateMessage',"✓ Date programmée avec succès.",'success');
+    renderDates();
+  } catch(err){ afficherMessage('ajoutDateMessage',"Erreur : "+err.message,'error'); }
+});
+
+function renderListeKASecretariat(){
+  const container = document.getElementById('listeKASecretariat');
+  if(cacheKAs.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucun KA.</p>'; return; }
+  const parVoyage = {1:[],2:[],3:[],4:[]};
+  cacheKAs.forEach(k => { if(parVoyage[k.voyage]) parVoyage[k.voyage].push(k); });
+  let html = '';
+  [1,2,3,4].forEach(v => {
+    if(parVoyage[v].length === 0) return;
+    html += `<div style="margin-bottom:22px">
+      <h3 style="font-size:1.05rem;margin-bottom:12px;color:var(--primary);border-bottom:2px solid var(--border);padding-bottom:8px">${CONFIG.VOYAGES[v]} <span style="background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.75rem;margin-left:8px">${parVoyage[v].length}</span></h3>`;
+    parVoyage[v].forEach(k => {
+      html += `<div class="ka-row">
+        <div class="ka-info"><span class="ka-nom">${esc(k.nom)}</span></div>
+        <button class="btn btn-danger btn-sm" onclick="supprimerKA('${k.id}')">Supprimer</button>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+async function supprimerKA(id){
+  const code = prompt("Code de suppression requis :");
+  if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
+  if(!confirm("Supprimer définitivement ce KA ?")) return;
+  await deleteDoc(doc(db,"kas",id));
+}
+
+document.getElementById('formAjoutKA').addEventListener('submit', async e => {
+  e.preventDefault();
+  const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
+  const voyage = Number(document.getElementById('newVoyage').value);
+  if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
+  if(![1,2,3,4].includes(voyage)) return afficherMessage('ajoutMessage',"Voyage invalide.",'error');
+  if(cacheKAs.some(k => norm(k.nom) === norm(nom))) return afficherMessage('ajoutMessage',"Ce KA existe déjà.",'error');
+  const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  await setDoc(doc(db,"kas",id), {nom, voyage, createdAt: new Date().toISOString()});
+  document.getElementById('newNom').value = '';
+  document.getElementById('newVoyage').value = '';
+  afficherMessage('ajoutMessage',"✓ KA ajouté avec succès.",'success');
+});
+
+function renderHistorique(){
+  const container = document.getElementById('historique');
+  const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0).sort().reverse();
+  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucune séance enregistrée.</p>'; return; }
+  container.innerHTML = dims.map(d => {
+    const p = cachePresences[d];
+    let presents=0, absents=0, excuses=0;
+    Object.values(p).forEach(s => {
+      if(s==="present") presents++;
+      else if(s==="absent") absents++;
+      else if(s==="excuse") excuses++;
+    });
+    const vv = cacheVoyagesValides[d] || {};
+    const nbV = Object.keys(vv).filter(k => vv[k] === true).length;
+    return `<div class="hist-item">
+      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'<span style="color:var(--danger)">[ANNULÉ]</span>':''} <span style="background:var(--primary);color:#fff;padding:2px 10px;border-radius:10px;font-size:.7rem;margin-left:8px">${nbV}/4 voyages validés</span></div>
+      <div class="hist-stats"><span style="color:var(--success)">✓ ${presents} présents</span><span style="color:var(--red-professional)">✗ ${absents} absents</span><span style="color:#f59e0b">⚠ ${excuses} signalés</span></div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   GRAPHIQUES — Navigation par voyage + filtres répartition
+   ============================================================ */
+
+// Renvoie les dates de présence filtrées selon le mode choisi
+function getDatesFiltrees(mode){
+  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
+  const now = new Date();
+  const moisCourant = now.getMonth();
+  const anneeCourante = now.getFullYear();
+  if(mode === 'mois'){
+    return dims.filter(d => {
+      const dt = new Date(d+"T00:00:00");
+      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCourante;
+    });
+  }
+  if(mode === 'annee'){
+    return dims.filter(d => new Date(d+"T00:00:00").getFullYear() === anneeCourante);
+  }
+  return dims;
+}
+
+// Hauteur adaptative du container interne pour afficher tous les KA
+function setContainerHeight(containerId, nbItems){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
+}
+
+// ---- Chart 1 : Présences par KA (Messe vs Activité) en % — par voyage ----
+function renderChart1(){
+  if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
+  const stats = calculerStats().filter(s => s.voyage === chart1Voyage);
+  const labels = stats.map(s => s.nom);
+
+  // UI : dots actifs + flèches
+  document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
+  });
+  document.getElementById('chart1Prev').disabled = (chart1Voyage === 1);
+  document.getElementById('chart1Next').disabled = (chart1Voyage === 4);
+
+  setContainerHeight('chartParKAContainer', Math.max(stats.length, 5));
+
+  charts.parKA = new Chart(document.getElementById('chartParKA'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Messe (%)', data:stats.map(s=>s.taux), backgroundColor:'#0f9d58', borderRadius:6},
+        {label:'Activité (%)', data:stats.map(s=>s.taux), backgroundColor:'#b91c2e', borderRadius:6}
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{
+        legend:{position:'top'},
+        tooltip:{callbacks:{label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x}%`}}
+      },
+      scales:{
+        x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
+        y:{ticks:{font:{size:11}, autoSkip:false}}
+      }
+    }
+  });
+}
+
+// ---- Chart 2 : Répartition globale — 3 filtres ----
+function renderChart2(){
+  document.querySelectorAll('.filter-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
+  });
+  if(charts.global){ try{charts.global.destroy();}catch(e){} }
+
+  const dims = getDatesFiltrees(filtreRepartition);
+  let totalP=0, totalA=0, totalE=0;
+  dims.forEach(d => {
+    const p = cachePresences[d] || {};
+    Object.values(p).forEach(s => {
+      if(s === 'present') totalP++;
+      else if(s === 'absent') totalA++;
+      else if(s === 'excuse') totalE++;
+    });
+  });
+
+  charts.global = new Chart(document.getElementById('chartGlobal'), {
+    type:'doughnut',
+    data:{
+      labels:['Présents','Absents','Absences signalées'],
+      datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#c8102e','#f59e0b'], borderWidth:0}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
+  });
+}
+
+// ---- Chart 3 : Présences par voyage (inchangé) ----
+function renderChart3(){
+  if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
+  const stats = calculerStats();
+  const voyageLabels = [1,2,3,4].map(v=>CONFIG.VOYAGES[v]);
+  const voyageData = [1,2,3,4].map(v => stats.filter(s=>s.voyage===v).reduce((acc,s)=>acc+s.present,0));
+  charts.voyages = new Chart(document.getElementById('chartVoyages'), {
+    type:'bar',
+    data:{labels:voyageLabels, datasets:[{label:'Présences totales', data:voyageData, backgroundColor:'#f5a623', borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  });
+}
+
+// ---- Chart 4 : Taux de présence par KA (%) — par voyage ----
+function renderChart4(){
+  if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
+  const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
+  const labels = stats.map(s => s.nom);
+
+  document.querySelectorAll('#voyageDots4 .voyage-dot').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.v) === chart4Voyage);
+  });
+  document.getElementById('chart4Prev').disabled = (chart4Voyage === 1);
+  document.getElementById('chart4Next').disabled = (chart4Voyage === 4);
+
+  setContainerHeight('chartTauxContainer', Math.max(stats.length, 5));
+
+  charts.taux = new Chart(document.getElementById('chartTaux'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Taux (%)',
+        data:stats.map(s=>s.taux),
+        backgroundColor:stats.map(s=>s.taux>=75?'#0f9d58':(s.taux>=50?'#f59e0b':'#c8102e')),
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label: ctx => `${ctx.parsed.x}%`}}
+      },
+      scales:{
+        x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
+        y:{ticks:{font:{size:11}, autoSkip:false}}
+      }
+    }
+  });
+}
+
+function renderGraphiques(){
+  renderChart1();
+  renderChart2();
+  renderChart3();
+  renderChart4();
+}
+
+/* ============================================================
+   Navigation voyages (flèches + dots + swipe) pour charts 1 & 4
+   ============================================================ */
+function bindChart1Nav(){
+  document.getElementById('chart1Prev').addEventListener('click', () => {
+    if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); }
+  });
+  document.getElementById('chart1Next').addEventListener('click', () => {
+    if(chart1Voyage < 4){ chart1Voyage++; renderChart1(); }
+  });
+  document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
+    b.addEventListener('click', () => {
+      chart1Voyage = Number(b.dataset.v);
+      renderChart1();
+    });
+  });
+}
+function bindChart4Nav(){
+  document.getElementById('chart4Prev').addEventListener('click', () => {
+    if(chart4Voyage > 1){ chart4Voyage--; renderChart4(); }
+  });
+  document.getElementById('chart4Next').addEventListener('click', () => {
+    if(chart4Voyage < 4){ chart4Voyage++; renderChart4(); }
+  });
+  document.querySelectorAll('#voyageDots4 .voyage-dot').forEach(b => {
+    b.addEventListener('click', () => {
+      chart4Voyage = Number(b.dataset.v);
+      renderChart4();
+    });
+  });
+}
+
+function bindFilterCards(){
+  document.querySelectorAll('.filter-card').forEach(c => {
+    c.addEventListener('click', () => {
+      filtreRepartition = c.dataset.filtre;
+      renderChart2();
+    });
+  });
+}
+
+// Swipe horizontal : gauche = suivant, droite = précédent
+function addSwipe(containerId, onSwipeLeft, onSwipeRight){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  let startX = 0, startY = 0;
+  el.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive:true});
+  el.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50){
+      if(dx < 0) onSwipeLeft();
+      else onSwipeRight();
+    }
+  }, {passive:true});
+}
+
+function bindSwipeCharts(){
+  addSwipe('chart1Scroll',
+    () => { if(chart1Voyage < 4){ chart1Voyage++; renderChart1(); } },
+    () => { if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); } }
+  );
+  addSwipe('chart4Scroll',
+    () => { if(chart4Voyage < 4){ chart4Voyage++; renderChart4(); } },
+    () => { if(chart4Voyage > 1){ chart4Voyage--; renderChart4(); } }
+  );
+}
+
+bindChart1Nav();
+bindChart4Nav();
+bindFilterCards();
+bindSwipeCharts();
+
+/* ============================================================
+   Onglets, voyage-tabs, recherche
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.voyage-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.voyage-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    voyageSelectionnee = Number(tab.dataset.voyage);
+    renderKaListeVoyage();
+  });
+});
+
+document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
+
+function exportCSV(){
+  const stats = calculerStats();
+  let csv = "Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
+  stats.forEach(s => { csv += `"${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
+  telecharger(csv,`groupe-ka-${dateToISO(new Date())}.csv`,'text/csv');
+}
+function exportJSON(){
+  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
+  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${dateToISO(new Date())}.json`,'application/json');
+}
+function telecharger(c,nom,type){
+  const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=nom; a.click(); URL.revokeObjectURL(url);
+}
+
+window.ouvrirLogin = ouvrirLogin;
+window.fermerLogin = fermerLogin;
+window.deconnexion = deconnexion;
+window.setStatus = setStatus;
+window.reinitialiserVoyage = reinitialiserVoyage;
+window.validerVoyageCourant = validerVoyageCourant;
+window.supprimerKA = supprimerKA;
+window.annulerDate = annulerDate;
+window.reactiverDate = reactiverDate;
+window.supprimerDateSpecial = supprimerDateSpecial;
+window.exportCSV = exportCSV;
+window.exportJSON = exportJSON;
+window.sha256 = sha256;
+
+/* ============================================================
+   LISTE COMPLÈTE DES KA OFFICIELS
+   ============================================================ */
+const KA_TEST = [
+  // ===== 2ème Voyage =====
+  {nom:"K. Nicolas BABALE", voyage:2},
+  {nom:"K. Joseph BABALE", voyage:2},
+  {nom:"K. John MUYAMBA", voyage:2},
+  {nom:"K. Junior KIKAKEDI", voyage:2},
+  {nom:"K. Dianna MULUNDA", voyage:2},
+  {nom:"K. Didier NLANDU J.", voyage:2},
+  {nom:"K. Jules MANZAMBI", voyage:2},
+  {nom:"K. Rachlin MIDO", voyage:2},
+  {nom:"K. Antoine MBONGU", voyage:2},
+  {nom:"K. Bruno TUBWINGE", voyage:2},
+  {nom:"K. Vismy SAIDI", voyage:2},
+  {nom:"K. Gervais LENGWA", voyage:2},
+  {nom:"K. Israel NSILU", voyage:2},
+  {nom:"A. Patricia MUTHU", voyage:2},
+  {nom:"A. Viviane RAMAZANI", voyage:2},
+  {nom:"A. Vanessa MASIKA", voyage:2},
+  {nom:"A. Divine MWIKA", voyage:2},
+  {nom:"A. Maria LUEMBA", voyage:2},
+  {nom:"A. Enya MBANGALA", voyage:2},
+  {nom:"A. Angelique NDERI", voyage:2},
+  {nom:"A. Maria MAVINGA", voyage:2},
+  {nom:"A. Norianna KASAKWA", voyage:2},
+  {nom:"A. Bienveillance KIALA", voyage:2},
+  {nom:"A. Helena NKEMBI", voyage:2},
+  {nom:"A. Maria KANAMBAKI", voyage:2},
+  {nom:"A. Gode MIDO", voyage:2},
+  {nom:"A. Perla BELAWO", voyage:2},
+  {nom:"A. Nicole TSHIBANGU", voyage:2},
+  {nom:"A. Parfaite LENGWA", voyage:2},
+  {nom:"A. Eliana WADIPOYI", voyage:2},
+  {nom:"A. Noella MBELA", voyage:2},
+  {nom:"A. Espoire SINGA", voyage:2},
+  {nom:"A. Lajoie SINGA", voyage:2},
+  {nom:"A. Kersene TSHIBANGU", voyage:2},
+  {nom:"A. Clémence SAFARI", voyage:2},
+  {nom:"A. Glorianna BELEMO", voyage:2},
+  {nom:"A. Merveille MIANDA", voyage:2},
+  {nom:"A. Consolate SAIDI", voyage:2},
+
+  // ===== 3ème Voyage =====
+  {nom:"K. Moïse SINGA", voyage:3},
+  {nom:"K. Credo SINGA", voyage:3},
+  {nom:"K. David LUBO", voyage:3},
+  {nom:"K. Daniel DIPONGO", voyage:3},
+  {nom:"K. David MAYADILA", voyage:3},
+  {nom:"K. Marcelo ONAKUDU", voyage:3},
+  {nom:"K. Jervie SHUTSHA", voyage:3},
+  {nom:"K. Dieu Merci KABONGO", voyage:3},
+  {nom:"K. Messi LENGWA", voyage:3},
+  {nom:"K. Matthieu MUTANGALA", voyage:3},
+  {nom:"K. Dave KIPELEKA", voyage:3},
+  {nom:"A. Triomphe BOKIKA", voyage:3},
+  {nom:"A. Claudia MADIDISH", voyage:3},
+  {nom:"A. Phideline KIKETA", voyage:3},
+  {nom:"A. Phongella IMANA", voyage:3},
+  {nom:"A. Helena MAKABA", voyage:3},
+  {nom:"A. Nestolla RAMAZANI", voyage:3},
+  {nom:"A. Valerie NDAMBA", voyage:3},
+  {nom:"A. Emilie KIKA", voyage:3},
+  {nom:"A. Nestivie BOTOKO", voyage:3},
+  {nom:"A. Abigael LUMEYA", voyage:3},
+  {nom:"A. Claudine PEMBE", voyage:3},
+  {nom:"A. Hortance MBONDA", voyage:3},
+  {nom:"A. Larose BOTULU", voyage:3},
+  {nom:"A. Lumiere KOTOBA", voyage:3},
+  {nom:"A. Marta BINJA", voyage:3},
+  {nom:"A. Lajoie TSHIBOLA", voyage:3},
+
+  // ===== 4ème Voyage =====
+  {nom:"K. Marcel KILOMBO", voyage:4},
+  {nom:"K. Jeremie AKILI", voyage:4},
+  {nom:"K. Josaphat LUZOLO", voyage:4},
+  {nom:"K. Winner SAIDI", voyage:4},
+  {nom:"K. Grael MUYISI", voyage:4},
+  {nom:"A. Bienfait MADIDISHI", voyage:4},
+  {nom:"A. Aubaine SINGA", voyage:4},
+  {nom:"A. Thérèse KAPINGA", voyage:4},
+  {nom:"A. Hélène MBELE", voyage:4},
+  {nom:"A. Ruth IBANGA", voyage:4},
+  {nom:"A. Immaculée MALONGA", voyage:4},
+  {nom:"A. Chancelvie MOLOKO", voyage:4},
+  {nom:"A. Hermelie MUYUKU", voyage:4},
+  {nom:"A. Nana KIALA", voyage:4},
+  {nom:"A. Ben Alicia MOLOKO", voyage:4},
+  {nom:"A. Winnie MONGILA", voyage:4},
+  {nom:"A. Marie-Fortune KAWE", voyage:4}
+];
+
+/* ============================================================
+   BOUTON MANUEL : charger TOUS les KA officiels
+   ============================================================ */
+window.chargerKAOfficiels = async function(){
+  const msg = document.getElementById('chargementMessage');
+  msg.textContent = "Chargement en cours...";
+  msg.className = 'message show warning';
+  let ajoutes = 0, dejaPresents = 0, erreurs = 0;
+  for(const k of KA_TEST){
+    const existe = cacheKAs.some(x => norm(x.nom) === norm(k.nom));
+    if(existe){ dejaPresents++; continue; }
+    try{
+      const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
+      ajoutes++;
+    } catch(e){ erreurs++; console.log("Erreur :", k.nom, e.message); }
+  }
+  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
+  msg.className = 'message show success';
+};
+
+function rafraichirTempsReel(){
+  renderBanniere();
+  renderKaListeVoyage();
+}
+
+function init(){
+  ecouterKAs(async ()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
+  ecouterPresences(()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
+  ecouterDatesAnnulees(()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
+  ecouterDatesSpeciales(()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
+  ecouterVoyagesValides(()=>{
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  });
+  if(sessionValide()){
+    document.getElementById('pagePublique').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    chargerDashboard();
+  }
+  setInterval(()=>{
+    const el = document.getElementById('dbTime');
+    if(el) el.textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }, 1000);
+}
+init();
+</script>
+</body>
+</html>
