@@ -195,7 +195,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .chart-box h3{font-size:1.05rem;margin-bottom:16px;font-weight:700}
 .chart-container{position:relative;height:320px}
 
-/* ===== Nouveau : navigation voyages (flèches + points) ===== */
 .chart-voyage-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;padding:7px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
 .nav-arrow{background:var(--grad-primary);color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px rgba(92,10,26,.3);flex-shrink:0;font-weight:700}
 .nav-arrow:hover:not(:disabled){transform:scale(1.12)}
@@ -205,14 +204,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .voyage-dot:hover{border-color:var(--primary-light);color:var(--primary)}
 .voyage-dot.active{background:var(--grad-primary);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(92,10,26,.25)}
 
-/* ===== Nouveau : cases filtres répartition ===== */
 .filter-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .filter-card{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 4px;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit;font-size:.68rem;font-weight:700;color:var(--muted);line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px}
 .filter-card:hover{border-color:var(--primary-light);color:var(--primary);transform:translateY(-1px)}
 .filter-card.active{background:var(--grad-gold);color:var(--primary);border-color:var(--secondary);box-shadow:0 4px 12px rgba(245,166,35,.35)}
 .filter-card .fc-icon{font-size:1.1rem;line-height:1}
 
-/* ===== Nouveau : zone scrollable pour charts 1 et 4 ===== */
 .chart-scroll{max-height:440px;overflow-y:auto;padding-right:6px;border-radius:10px}
 .chart-scroll::-webkit-scrollbar{width:8px}
 .chart-scroll::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
@@ -385,7 +382,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <div class="chart-grid">
         <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
-          <h3>Taux de présence par KA (%)</h3>
+          <h3>Taux de présence par KA (%) — global</h3>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots4">
@@ -548,7 +545,6 @@ let selectionCourante = {};
 let voyageSelectionnee = 1;
 let kaOuvert = null;
 
-// ==== NOUVEL ÉTAT GRAPHIQUES ====
 let chart1Voyage = 1;
 let chart4Voyage = 1;
 let filtreRepartition = 'tout';
@@ -865,6 +861,34 @@ function calculerStats(){
   }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
 }
 
+/* ============================================================
+   NOUVEAU : calcul % Messe (dimanches) vs % Activité (dates spéciales)
+   ============================================================ */
+function calculerStatsParVoyageEtType(voyage){
+  const dimsMesse = [];
+  const dimsActivite = [];
+  Object.keys(cachePresences).forEach(d => {
+    if(cacheDatesAnnulees[d]) return;
+    const isSpecial = cacheDatesSpeciales[d];
+    const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
+    if(isSpecial){ dimsActivite.push(d); }
+    else if(isDimanche){ dimsMesse.push(d); }
+  });
+  const kas = cacheKAs.filter(k => k.voyage === voyage);
+  return kas.map(ka => {
+    let presentMesse = 0, presentActivite = 0;
+    dimsMesse.forEach(d => {
+      if((cachePresences[d] || {})[ka.id] === 'present') presentMesse++;
+    });
+    dimsActivite.forEach(d => {
+      if((cachePresences[d] || {})[ka.id] === 'present') presentActivite++;
+    });
+    const tauxMesse = dimsMesse.length ? Math.round(presentMesse / dimsMesse.length * 100) : 0;
+    const tauxActivite = dimsActivite.length ? Math.round(presentActivite / dimsActivite.length * 100) : 0;
+    return {ka, tauxMesse, tauxActivite, nbMesse: dimsMesse.length, nbActivite: dimsActivite.length};
+  });
+}
+
 function calculerDetailsKA(kaId){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
   const details = {present:[], absent:[], excuse:[]};
@@ -1073,10 +1097,9 @@ function renderHistorique(){
 }
 
 /* ============================================================
-   GRAPHIQUES — Navigation par voyage + filtres répartition
+   GRAPHIQUES
    ============================================================ */
 
-// Renvoie les dates de présence filtrées selon le mode choisi
 function getDatesFiltrees(mode){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
   const now = new Date();
@@ -1094,35 +1117,33 @@ function getDatesFiltrees(mode){
   return dims;
 }
 
-// Hauteur adaptative du container interne pour afficher tous les KA
 function setContainerHeight(containerId, nbItems){
   const el = document.getElementById(containerId);
   if(!el) return;
   el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
 }
 
-// ---- Chart 1 : Présences par KA (Messe vs Activité) en % — par voyage ----
+/* Chart 1 : Présences par KA — % Messe (dimanches) vs % Activité (dates spéciales) */
 function renderChart1(){
   if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
-  const stats = calculerStats().filter(s => s.voyage === chart1Voyage);
-  const labels = stats.map(s => s.nom);
+  const data = calculerStatsParVoyageEtType(chart1Voyage);
+  const labels = data.map(d => d.ka.nom);
 
-  // UI : dots actifs + flèches
   document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
   });
   document.getElementById('chart1Prev').disabled = (chart1Voyage === 1);
   document.getElementById('chart1Next').disabled = (chart1Voyage === 4);
 
-  setContainerHeight('chartParKAContainer', Math.max(stats.length, 5));
+  setContainerHeight('chartParKAContainer', Math.max(data.length, 5));
 
   charts.parKA = new Chart(document.getElementById('chartParKA'), {
     type:'bar',
     data:{
       labels,
       datasets:[
-        {label:'Messe (%)', data:stats.map(s=>s.taux), backgroundColor:'#0f9d58', borderRadius:6},
-        {label:'Activité (%)', data:stats.map(s=>s.taux), backgroundColor:'#b91c2e', borderRadius:6}
+        {label:'Messe (%)', data:data.map(d=>d.tauxMesse), backgroundColor:'#0f9d58', borderRadius:6},
+        {label:'Activité (%)', data:data.map(d=>d.tauxActivite), backgroundColor:'#b91c2e', borderRadius:6}
       ]
     },
     options:{
@@ -1131,7 +1152,12 @@ function renderChart1(){
       indexAxis:'y',
       plugins:{
         legend:{position:'top'},
-        tooltip:{callbacks:{label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x}%`}}
+        tooltip:{callbacks:{label: ctx => {
+          const d = data[ctx.dataIndex];
+          return ctx.datasetIndex === 0
+            ? `Messe : ${d.tauxMesse}% (${d.nbMesse} dim.)`
+            : `Activité : ${d.tauxActivite}% (${d.nbActivite} date${d.nbActivite>1?'s':''})`;
+        }}}
       },
       scales:{
         x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
@@ -1141,7 +1167,7 @@ function renderChart1(){
   });
 }
 
-// ---- Chart 2 : Répartition globale — 3 filtres ----
+/* Chart 2 : Répartition globale — 3 filtres */
 function renderChart2(){
   document.querySelectorAll('.filter-card').forEach(c => {
     c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
@@ -1169,7 +1195,7 @@ function renderChart2(){
   });
 }
 
-// ---- Chart 3 : Présences par voyage (inchangé) ----
+/* Chart 3 : Présences par voyage (inchangé) */
 function renderChart3(){
   if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
   const stats = calculerStats();
@@ -1182,7 +1208,7 @@ function renderChart3(){
   });
 }
 
-// ---- Chart 4 : Taux de présence par KA (%) — par voyage ----
+/* Chart 4 : Taux de présence par KA (%) — global, par voyage */
 function renderChart4(){
   if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
   const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
@@ -1230,9 +1256,6 @@ function renderGraphiques(){
   renderChart4();
 }
 
-/* ============================================================
-   Navigation voyages (flèches + dots + swipe) pour charts 1 & 4
-   ============================================================ */
 function bindChart1Nav(){
   document.getElementById('chart1Prev').addEventListener('click', () => {
     if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); }
@@ -1271,7 +1294,6 @@ function bindFilterCards(){
   });
 }
 
-// Swipe horizontal : gauche = suivant, droite = précédent
 function addSwipe(containerId, onSwipeLeft, onSwipeRight){
   const el = document.getElementById(containerId);
   if(!el) return;
@@ -1306,9 +1328,6 @@ bindChart4Nav();
 bindFilterCards();
 bindSwipeCharts();
 
-/* ============================================================
-   Onglets, voyage-tabs, recherche
-   ============================================================ */
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1358,102 +1377,15 @@ window.exportCSV = exportCSV;
 window.exportJSON = exportJSON;
 window.sha256 = sha256;
 
-/* ============================================================
-   LISTE COMPLÈTE DES KA OFFICIELS
-   ============================================================ */
 const KA_TEST = [
-  // ===== 2ème Voyage =====
-  {nom:"K. Nicolas BABALE", voyage:2},
-  {nom:"K. Joseph BABALE", voyage:2},
-  {nom:"K. John MUYAMBA", voyage:2},
-  {nom:"K. Junior KIKAKEDI", voyage:2},
-  {nom:"K. Dianna MULUNDA", voyage:2},
-  {nom:"K. Didier NLANDU J.", voyage:2},
-  {nom:"K. Jules MANZAMBI", voyage:2},
-  {nom:"K. Rachlin MIDO", voyage:2},
-  {nom:"K. Antoine MBONGU", voyage:2},
-  {nom:"K. Bruno TUBWINGE", voyage:2},
-  {nom:"K. Vismy SAIDI", voyage:2},
-  {nom:"K. Gervais LENGWA", voyage:2},
-  {nom:"K. Israel NSILU", voyage:2},
-  {nom:"A. Patricia MUTHU", voyage:2},
-  {nom:"A. Viviane RAMAZANI", voyage:2},
-  {nom:"A. Vanessa MASIKA", voyage:2},
-  {nom:"A. Divine MWIKA", voyage:2},
-  {nom:"A. Maria LUEMBA", voyage:2},
-  {nom:"A. Enya MBANGALA", voyage:2},
-  {nom:"A. Angelique NDERI", voyage:2},
-  {nom:"A. Maria MAVINGA", voyage:2},
-  {nom:"A. Norianna KASAKWA", voyage:2},
-  {nom:"A. Bienveillance KIALA", voyage:2},
-  {nom:"A. Helena NKEMBI", voyage:2},
-  {nom:"A. Maria KANAMBAKI", voyage:2},
-  {nom:"A. Gode MIDO", voyage:2},
-  {nom:"A. Perla BELAWO", voyage:2},
-  {nom:"A. Nicole TSHIBANGU", voyage:2},
-  {nom:"A. Parfaite LENGWA", voyage:2},
-  {nom:"A. Eliana WADIPOYI", voyage:2},
-  {nom:"A. Noella MBELA", voyage:2},
-  {nom:"A. Espoire SINGA", voyage:2},
-  {nom:"A. Lajoie SINGA", voyage:2},
-  {nom:"A. Kersene TSHIBANGU", voyage:2},
-  {nom:"A. Clémence SAFARI", voyage:2},
-  {nom:"A. Glorianna BELEMO", voyage:2},
-  {nom:"A. Merveille MIANDA", voyage:2},
-  {nom:"A. Consolate SAIDI", voyage:2},
-
-  // ===== 3ème Voyage =====
-  {nom:"K. Moïse SINGA", voyage:3},
-  {nom:"K. Credo SINGA", voyage:3},
-  {nom:"K. David LUBO", voyage:3},
-  {nom:"K. Daniel DIPONGO", voyage:3},
-  {nom:"K. David MAYADILA", voyage:3},
-  {nom:"K. Marcelo ONAKUDU", voyage:3},
-  {nom:"K. Jervie SHUTSHA", voyage:3},
-  {nom:"K. Dieu Merci KABONGO", voyage:3},
-  {nom:"K. Messi LENGWA", voyage:3},
-  {nom:"K. Matthieu MUTANGALA", voyage:3},
-  {nom:"K. Dave KIPELEKA", voyage:3},
-  {nom:"A. Triomphe BOKIKA", voyage:3},
-  {nom:"A. Claudia MADIDISH", voyage:3},
-  {nom:"A. Phideline KIKETA", voyage:3},
-  {nom:"A. Phongella IMANA", voyage:3},
-  {nom:"A. Helena MAKABA", voyage:3},
-  {nom:"A. Nestolla RAMAZANI", voyage:3},
-  {nom:"A. Valerie NDAMBA", voyage:3},
-  {nom:"A. Emilie KIKA", voyage:3},
-  {nom:"A. Nestivie BOTOKO", voyage:3},
-  {nom:"A. Abigael LUMEYA", voyage:3},
-  {nom:"A. Claudine PEMBE", voyage:3},
-  {nom:"A. Hortance MBONDA", voyage:3},
-  {nom:"A. Larose BOTULU", voyage:3},
-  {nom:"A. Lumiere KOTOBA", voyage:3},
-  {nom:"A. Marta BINJA", voyage:3},
-  {nom:"A. Lajoie TSHIBOLA", voyage:3},
-
-  // ===== 4ème Voyage =====
-  {nom:"K. Marcel KILOMBO", voyage:4},
-  {nom:"K. Jeremie AKILI", voyage:4},
-  {nom:"K. Josaphat LUZOLO", voyage:4},
-  {nom:"K. Winner SAIDI", voyage:4},
-  {nom:"K. Grael MUYISI", voyage:4},
-  {nom:"A. Bienfait MADIDISHI", voyage:4},
-  {nom:"A. Aubaine SINGA", voyage:4},
-  {nom:"A. Thérèse KAPINGA", voyage:4},
-  {nom:"A. Hélène MBELE", voyage:4},
-  {nom:"A. Ruth IBANGA", voyage:4},
-  {nom:"A. Immaculée MALONGA", voyage:4},
-  {nom:"A. Chancelvie MOLOKO", voyage:4},
-  {nom:"A. Hermelie MUYUKU", voyage:4},
-  {nom:"A. Nana KIALA", voyage:4},
-  {nom:"A. Ben Alicia MOLOKO", voyage:4},
-  {nom:"A. Winnie MONGILA", voyage:4},
-  {nom:"A. Marie-Fortune KAWE", voyage:4}
+  {nom:"K. Nicolas BABALE", voyage:2},{nom:"K. Joseph BABALE", voyage:2},{nom:"K. John MUYAMBA", voyage:2},{nom:"K. Junior KIKAKEDI", voyage:2},{nom:"K. Dianna MULUNDA", voyage:2},{nom:"K. Didier NLANDU J.", voyage:2},{nom:"K. Jules MANZAMBI", voyage:2},{nom:"K. Rachlin MIDO", voyage:2},{nom:"K. Antoine MBONGU", voyage:2},{nom:"K. Bruno TUBWINGE", voyage:2},{nom:"K. Vismy SAIDI", voyage:2},{nom:"K. Gervais LENGWA", voyage:2},{nom:"K. Israel NSILU", voyage:2},
+  {nom:"A. Patricia MUTHU", voyage:2},{nom:"A. Viviane RAMAZANI", voyage:2},{nom:"A. Vanessa MASIKA", voyage:2},{nom:"A. Divine MWIKA", voyage:2},{nom:"A. Maria LUEMBA", voyage:2},{nom:"A. Enya MBANGALA", voyage:2},{nom:"A. Angelique NDERI", voyage:2},{nom:"A. Maria MAVINGA", voyage:2},{nom:"A. Norianna KASAKWA", voyage:2},{nom:"A. Bienveillance KIALA", voyage:2},{nom:"A. Helena NKEMBI", voyage:2},{nom:"A. Maria KANAMBAKI", voyage:2},{nom:"A. Gode MIDO", voyage:2},{nom:"A. Perla BELAWO", voyage:2},{nom:"A. Nicole TSHIBANGU", voyage:2},{nom:"A. Parfaite LENGWA", voyage:2},{nom:"A. Eliana WADIPOYI", voyage:2},{nom:"A. Noella MBELA", voyage:2},{nom:"A. Espoire SINGA", voyage:2},{nom:"A. Lajoie SINGA", voyage:2},{nom:"A. Kersene TSHIBANGU", voyage:2},{nom:"A. Clémence SAFARI", voyage:2},{nom:"A. Glorianna BELEMO", voyage:2},{nom:"A. Merveille MIANDA", voyage:2},{nom:"A. Consolate SAIDI", voyage:2},
+  {nom:"K. Moïse SINGA", voyage:3},{nom:"K. Credo SINGA", voyage:3},{nom:"K. David LUBO", voyage:3},{nom:"K. Daniel DIPONGO", voyage:3},{nom:"K. David MAYADILA", voyage:3},{nom:"K. Marcelo ONAKUDU", voyage:3},{nom:"K. Jervie SHUTSHA", voyage:3},{nom:"K. Dieu Merci KABONGO", voyage:3},{nom:"K. Messi LENGWA", voyage:3},{nom:"K. Matthieu MUTANGALA", voyage:3},{nom:"K. Dave KIPELEKA", voyage:3},
+  {nom:"A. Triomphe BOKIKA", voyage:3},{nom:"A. Claudia MADIDISH", voyage:3},{nom:"A. Phideline KIKETA", voyage:3},{nom:"A. Phongella IMANA", voyage:3},{nom:"A. Helena MAKABA", voyage:3},{nom:"A. Nestolla RAMAZANI", voyage:3},{nom:"A. Valerie NDAMBA", voyage:3},{nom:"A. Emilie KIKA", voyage:3},{nom:"A. Nestivie BOTOKO", voyage:3},{nom:"A. Abigael LUMEYA", voyage:3},{nom:"A. Claudine PEMBE", voyage:3},{nom:"A. Hortance MBONDA", voyage:3},{nom:"A. Larose BOTULU", voyage:3},{nom:"A. Lumiere KOTOBA", voyage:3},{nom:"A. Marta BINJA", voyage:3},{nom:"A. Lajoie TSHIBOLA", voyage:3},
+  {nom:"K. Marcel KILOMBO", voyage:4},{nom:"K. Jeremie AKILI", voyage:4},{nom:"K. Josaphat LUZOLO", voyage:4},{nom:"K. Winner SAIDI", voyage:4},{nom:"K. Grael MUYISI", voyage:4},
+  {nom:"A. Bienfait MADIDISHI", voyage:4},{nom:"A. Aubaine SINGA", voyage:4},{nom:"A. Thérèse KAPINGA", voyage:4},{nom:"A. Hélène MBELE", voyage:4},{nom:"A. Ruth IBANGA", voyage:4},{nom:"A. Immaculée MALONGA", voyage:4},{nom:"A. Chancelvie MOLOKO", voyage:4},{nom:"A. Hermelie MUYUKU", voyage:4},{nom:"A. Nana KIALA", voyage:4},{nom:"A. Ben Alicia MOLOKO", voyage:4},{nom:"A. Winnie MONGILA", voyage:4},{nom:"A. Marie-Fortune KAWE", voyage:4}
 ];
 
-/* ============================================================
-   BOUTON MANUEL : charger TOUS les KA officiels
-   ============================================================ */
 window.chargerKAOfficiels = async function(){
   const msg = document.getElementById('chargementMessage');
   msg.textContent = "Chargement en cours...";
