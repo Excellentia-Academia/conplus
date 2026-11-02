@@ -40,6 +40,14 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .logo{display:flex;align-items:center;gap:14px}
 .nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
+.year-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem;letter-spacing:.5px;color:#fff}
+.year-badge .yb-icon{font-size:1rem}
+.year-badge.public{cursor:default}
+
+.year-select{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:10px 14px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;min-width:160px}
+.year-select:hover{background:rgba(255,255,255,.25)}
+.year-select option{color:var(--text);background:#fff}
+
 .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-decoration:none;letter-spacing:.3px}
 .btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
@@ -260,6 +268,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   .filter-card{font-size:.62rem;padding:8px 3px}
   .filter-card .fc-icon{font-size:1rem}
   .chart-scroll{max-height:380px}
+  .year-select{min-width:120px;font-size:.8rem;padding:8px 10px}
 }
 </style>
 </head>
@@ -272,7 +281,10 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <img src="IMG_6726.png" alt="Logo Groupe KA" class="logo-img">
         <div class="logo-text"><strong>Groupe KA</strong><small>Registre de présence</small></div>
       </div>
-      <nav class="nav"><button class="btn btn-ghost" onclick="ouvrirLogin()">Commission Secrétariat</button></nav>
+      <div class="nav">
+        <span class="year-badge public" id="yearBadgePublic" title="Année initiatique consultée"><span class="yb-icon">📅</span>—</span>
+        <button class="btn btn-ghost" onclick="ouvrirLogin()">Commission Secrétariat</button>
+      </div>
     </div>
   </header>
   <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez tous les KA, puis validez</p></div></section>
@@ -330,9 +342,16 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <img src="IMG_6726.png" alt="Logo" class="logo-img">
         <div class="logo-text"><strong>Commission Secrétariat</strong><small>Groupe KA</small></div>
       </div>
-      <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+      <div class="nav">
+        <select class="year-select" id="yearSelect" onchange="changerAnnee(this.value)" title="Choisir l'année initiatique"></select>
+        <button class="btn btn-ghost btn-sm" onclick="ouvrirNouvelleAnnee()">＋ Année</button>
+        <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+      </div>
     </div>
   </header>
+  <div id="bannerArchive" class="message warning" style="display:none;margin:12px 24px 0;max-width:none">
+    🔒 <strong>Année archivée</strong> — cette année est en lecture seule. Les données sont conservées telles quelles et ne peuvent plus être modifiées. Créez une nouvelle année pour repartir à zéro.
+  </div>
   <main class="container dashboard-main">
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
@@ -352,11 +371,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <button class="tab" data-tab="tab-ajoutKA">Ajouter un KA</button>
       <button class="tab" data-tab="tab-historique">Historique</button>
       <button class="tab" data-tab="tab-export">Export</button>
+      <button class="tab" data-tab="tab-annees">🗓️ Années</button>
     </div>
     <div id="tab-graphiques" class="tab-content active">
       <div class="chart-grid">
         <div class="chart-box">
-          <h3>Présences par KA (Messe vs Activité) — %</h3>
+          <h3>Présences par KA (Messe vs Activité) — % affiché en bout de barre</h3>
           <div class="chart-period">Période : <span class="badge" id="chart1PeriodLabel">—</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart1Prev" aria-label="Voyage précédent">◀</button>
@@ -375,19 +395,34 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="chart-box">
           <h3>Répartition globale</h3>
           <div class="chart-period">Filtre : <span class="badge" id="chart2PeriodLabel">Tout depuis le début</span></div>
-          <div class="filter-cards">
+          <div class="filter-cards" style="grid-template-columns:repeat(4,1fr)">
+            <button class="filter-card" data-filtre="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
+            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
+            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Année<br>active</button>
             <button class="filter-card active" data-filtre="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
-            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Cette<br>année</button>
-            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce mois<br>dimanches</button>
+          </div>
+          <div class="filter-cards" id="sousFiltres" style="grid-template-columns:repeat(3,1fr);margin-top:-6px">
+            <button class="filter-card active" data-sousfiltre="tous"><span class="fc-icon">∑</span>Tous</button>
+            <button class="filter-card" data-sousfiltre="messe"><span class="fc-icon">⛪</span>Messe</button>
+            <button class="filter-card" data-sousfiltre="activite"><span class="fc-icon">🎯</span>Activité</button>
           </div>
           <div class="chart-container"><canvas id="chartGlobal"></canvas></div>
         </div>
       </div>
       <div class="chart-grid">
-        <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
-          <h3>Taux de présence par KA (%)</h3>
-          <div class="chart-period">Période : <span class="badge">Toutes les années</span></div>
+          <h3>Présences par voyage</h3>
+          <div class="chart-period">Filtre : <span class="badge" id="chart3PeriodLabel">Tout depuis le début</span></div>
+          <div class="filter-cards" style="grid-template-columns:repeat(3,1fr)">
+            <button class="filter-card" data-filtre3="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
+            <button class="filter-card" data-filtre3="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
+            <button class="filter-card active" data-filtre3="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
+          </div>
+          <div class="chart-container"><canvas id="chartVoyages"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3>Taux de présence par KA (%) — % affiché en bout de barre</h3>
+          <div class="chart-period">Période : <span class="badge" id="chart4PeriodLabel">Cette année initiatique</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots4">
@@ -459,11 +494,40 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-export" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Exporter</h2></div>
+        <p class="muted" style="margin-bottom:16px">Les exports CSV/JSON concernent uniquement l'année sélectionnée : <strong id="exportYearLabel">—</strong></p>
         <div class="export-buttons">
           <button class="btn btn-primary" onclick="exportCSV()">Exporter en CSV</button>
           <button class="btn btn-outline" onclick="exportJSON()">Exporter en JSON</button>
           <button class="btn btn-outline" onclick="window.print()">Imprimer</button>
         </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>📄 Rapport statistique Word</h2></div>
+        <p class="muted" style="margin-bottom:16px">
+          Génère un fichier Word (<code>.doc</code>) modifiable, avec logo, en-tête, pied de page, tableaux et graphiques.
+          Le rapport couvre <strong>toutes les années depuis le début</strong> jusqu'à aujourd'hui.
+          Vous pourrez l'ouvrir dans Microsoft Word, le modifier, l'imprimer ou l'envoyer.
+        </p>
+        <button class="btn btn-success" onclick="genererRapportWord()">📥 Générer le rapport Word</button>
+        <div id="rapportMessage" class="message"></div>
+      </div>
+    </div>
+    <div id="tab-annees" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>Gérer les années initiatiques</h2></div>
+        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Dès qu'une nouvelle année est créée, toutes les années antérieures passent automatiquement en lecture seule (archivées) — leurs données restent consultables pour toujours.</p>
+        <form id="formAjoutAnnee" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
+            <label for="newAnneeInput">Nouvelle année initiatique (ex. 2027-2028)</label>
+            <input type="text" id="newAnneeInput" placeholder="2027-2028" required pattern="\d{4}-\d{4}">
+          </div>
+          <button type="submit" class="btn btn-primary">Créer l'année</button>
+        </form>
+        <div id="anneeMessage" class="message"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>Années existantes</h2></div>
+        <div id="listeAnnees" class="dim-list"></div>
       </div>
     </div>
   </main>
@@ -471,7 +535,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -494,7 +558,9 @@ const CONFIG = {
   CODE_ANNULATION: "2K27",
   CODE_SUPPRESSION: "20K7",
   VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
-  DATE_FIN: "2100-12-31"
+  DATE_FIN: "2100-12-31",
+  ANNEE_STORAGE_KEY: "ka_annee_courante",
+  ANNEE_DEFAUT: "2026-2027"
 };
 
 async function sha256(s){
@@ -556,44 +622,235 @@ let kaOuvert = null;
 let chart1Voyage = 1;
 let chart4Voyage = 1;
 let filtreRepartition = 'tout';
+let sousFiltreRepartition = 'tous';
+let filtreVoyages = 'tout';
+let cacheAnneesMeta = {};
 
 const aujourdhuiISO = aujourdhui();
 
-function ecouterKAs(cb){
-  onSnapshot(collection(db,"kas"), snap => {
+let anneeCourante = CONFIG.ANNEE_DEFAUT;
+let anneesDisponibles = [];
+let listenAnneesUnsub = null;
+let listenersAnnee = [];
+
+function anneeStorageLire(){
+  try { return localStorage.getItem(CONFIG.ANNEE_STORAGE_KEY); } catch(e){ return null; }
+}
+function anneeStorageEcrire(a){
+  try { localStorage.setItem(CONFIG.ANNEE_STORAGE_KEY, a); } catch(e){}
+}
+function validerFormatAnnee(a){
+  return /^\d{4}-\d{4}$/.test(a) && Number(a.slice(5)) === Number(a.slice(0,4))+1;
+}
+function anneeCouranteEstArchivee(){
+  const meta = cacheAnneesMeta[anneeCourante];
+  return !!(meta && meta.archivee === true);
+}
+function refuserSiArchivee(){
+  if(anneeCouranteEstArchivee()){
+    alert("🔒 Cette année est archivée (lecture seule). Aucune modification n'est possible.");
+    return true;
+  }
+  return false;
+}
+
+function cheminKA(){ return collection(db, "annees", anneeCourante, "kas"); }
+function cheminKAId(id){ return doc(db, "annees", anneeCourante, "kas", id); }
+function cheminPresences(){ return collection(db, "annees", anneeCourante, "presences"); }
+function cheminPresenceId(d){ return doc(db, "annees", anneeCourante, "presences", d); }
+function cheminDatesAnnulees(){ return collection(db, "annees", anneeCourante, "datesAnnulees"); }
+function cheminDateAnnuleeId(d){ return doc(db, "annees", anneeCourante, "datesAnnulees", d); }
+function cheminDatesSpeciales(){ return collection(db, "annees", anneeCourante, "datesSpeciales"); }
+function cheminDateSpecialeId(d){ return doc(db, "annees", anneeCourante, "datesSpeciales", d); }
+function cheminVoyagesValides(){ return collection(db, "annees", anneeCourante, "voyagesValides"); }
+function cheminVoyageValideId(d){ return doc(db, "annees", anneeCourante, "voyagesValides", d); }
+
+async function assurerAnneeExiste(a){
+  const docAnnee = doc(db, "annees", a);
+  const snap = await getDoc(docAnnee);
+  if(!snap.exists()){
+    await setDoc(docAnnee, {
+      creeLe: new Date().toISOString(),
+      libelle: a,
+      archivee: false
+    });
+  }
+  return a;
+}
+
+async function chargerAnneesDepuisFirestore(){
+  const snap = await getDocs(collection(db, "annees"));
+  const annees = [];
+  snap.forEach(d => annees.push(d.id));
+  annees.sort();
+  return annees;
+}
+
+function remplirSelectAnnees(){
+  const sel = document.getElementById('yearSelect');
+  if(!sel) return;
+  sel.innerHTML = anneesDisponibles.map(a => {
+    const meta = cacheAnneesMeta[a] || {};
+    const suffixe = meta.archivee === true ? ' 🔒' : '';
+    return `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}${suffixe}</option>`;
+  }).join('');
+  const badge = document.getElementById('yearBadgePublic');
+  if(badge) badge.innerHTML = `<span class="yb-icon">📅</span>${anneeCourante}`;
+  const exportLabel = document.getElementById('exportYearLabel');
+  if(exportLabel) exportLabel.textContent = anneeCourante;
+}
+
+function detacherListenersAnnee(){
+  listenersAnnee.forEach(l => { try{ l.unsub(); }catch(e){} });
+  listenersAnnee = [];
+}
+
+async function attacherListenersAnnee(){
+  detacherListenersAnnee();
+
+  listenersAnnee.push({unsub: onSnapshot(cheminKA(), snap => {
     cacheKAs = [];
     snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
     cacheKAs.sort((a,b)=> a.voyage-b.voyage || a.nom.localeCompare(b.nom));
-    if(cb) cb();
-  });
-}
-function ecouterPresences(cb){
-  onSnapshot(collection(db,"presences"), snap => {
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  })});
+
+  listenersAnnee.push({unsub: onSnapshot(cheminPresences(), snap => {
     cachePresences = {};
     snap.forEach(d => { cachePresences[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterDatesAnnulees(cb){
-  onSnapshot(collection(db,"datesAnnulees"), snap => {
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  })});
+
+  listenersAnnee.push({unsub: onSnapshot(cheminDatesAnnulees(), snap => {
     cacheDatesAnnulees = {};
     snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterDatesSpeciales(cb){
-  onSnapshot(collection(db,"datesSpeciales"), snap => {
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  })});
+
+  listenersAnnee.push({unsub: onSnapshot(cheminDatesSpeciales(), snap => {
     cacheDatesSpeciales = {};
     snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterVoyagesValides(cb){
-  onSnapshot(collection(db,"voyagesValides"), snap => {
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  })});
+
+  listenersAnnee.push({unsub: onSnapshot(cheminVoyagesValides(), snap => {
     cacheVoyagesValides = {};
     snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
-    if(cb) cb();
-  });
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  })});
+}
+
+async function changerAnnee(nouvelleAnnee){
+  if(!nouvelleAnnee || nouvelleAnnee === anneeCourante) return;
+  const ok = await assurerAnneeExiste(nouvelleAnnee);
+  if(!ok) return;
+  anneeCourante = nouvelleAnnee;
+  anneeStorageEcrire(anneeCourante);
+
+  cacheKAs = [];
+  cachePresences = {};
+  cacheDatesAnnulees = {};
+  cacheDatesSpeciales = {};
+  cacheVoyagesValides = {};
+  selectionCourante = {};
+  kaOuvert = null;
+  voyageSelectionnee = 1;
+  chart1Voyage = 1;
+  chart4Voyage = 1;
+  filtreRepartition = 'tout';
+  sousFiltreRepartition = 'tous';
+  filtreVoyages = 'tout';
+
+  remplirSelectAnnees();
+  await attacherListenersAnnee();
+  renderBanniereArchive();
+
+  if(!document.getElementById('dashboard').classList.contains('hidden')){
+    chargerDashboard();
+  }
+  rafraichirTempsReel();
+}
+
+async function ouvrirNouvelleAnnee(){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.tab[data-tab="tab-annees"]').classList.add('active');
+  document.getElementById('tab-annees').classList.add('active');
+
+  const input = document.getElementById('newAnneeInput');
+  const debut = Number(anneeCourante.slice(0,4)) + 1;
+  const suggestion = `${debut}-${debut+1}`;
+  if(input && !input.value) input.value = suggestion;
+}
+
+async function creerAnnee(annee){
+  annee = annee.trim();
+  if(!validerFormatAnnee(annee)){
+    return afficherMessage('anneeMessage', "Format attendu : AAAA-AAAA (ex. 2027-2028), avec la deuxième année = première + 1.", 'error');
+  }
+  if(anneesDisponibles.includes(annee)){
+    return afficherMessage('anneeMessage', "Cette année existe déjà.", 'warning');
+  }
+  try {
+    await assurerAnneeExiste(annee);
+
+    const debutNouvelle = Number(annee.slice(0,4));
+    for(const autre of anneesDisponibles){
+      if(autre === annee) continue;
+      const debutAutre = Number(autre.slice(0,4));
+      if(debutAutre < debutNouvelle){
+        await setDoc(doc(db, "annees", autre), { archivee: true, archiveeLe: new Date().toISOString() }, {merge:true});
+      }
+    }
+
+    anneesDisponibles = await chargerAnneesDepuisFirestore();
+    const snap = await getDocs(collection(db, "annees"));
+    cacheAnneesMeta = {};
+    snap.forEach(d => { cacheAnneesMeta[d.id] = d.data() || {}; });
+
+    remplirSelectAnnees();
+    renderListeAnnees();
+    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Les années antérieures sont désormais archivées (lecture seule).`, 'success');
+    await changerAnnee(annee);
+  } catch(e){
+    afficherMessage('anneeMessage', "Erreur : " + e.message, 'error');
+  }
+}
+
+function renderListeAnnees(){
+  const cont = document.getElementById('listeAnnees');
+  if(!cont) return;
+  if(anneesDisponibles.length === 0){
+    cont.innerHTML = '<p class="muted center" style="padding:20px">Aucune année.</p>';
+    return;
+  }
+  cont.innerHTML = anneesDisponibles.map(a => {
+    const active = a === anneeCourante;
+    const meta = cacheAnneesMeta[a] || {};
+    const archivee = meta.archivee === true;
+    let badge;
+    if(active)         badge = '<span class="dim-type special">ACTIVE</span>';
+    else if(archivee)  badge = '<span class="dim-type" style="background:#7a5c62">ARCHIVÉE 🔒</span>';
+    else               badge = '<span class="dim-type">—</span>';
+    return `<div class="dim-item ${archivee?'special':''}">
+      <div class="dim-date">📅 ${a}${archivee?' <span class="muted" style="font-size:.75rem">(lecture seule)</span>':''}</div>
+      ${badge}
+      <div class="dim-actions">
+        ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Consulter</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBanniereArchive(){
+  const banner = document.getElementById('bannerArchive');
+  if(!banner) return;
+  banner.style.display = anneeCouranteEstArchivee() ? 'block' : 'none';
 }
 
 function statutDuJour(){
@@ -606,7 +863,6 @@ function statutDuJour(){
   if(special) return {ouvert:true, raison: special.type === 'activite' ? "ACTIVITÉ" : "ÉVÉNEMENT", detail: special.libelle || ""};
   return {ouvert:false, raison:"FERMÉ", detail:"La saisie n'est ouverte que le dimanche, ou lorsqu'une activité est programmée."};
 }
-
 function estVoyageValide(date, voyage){
   const v = cacheVoyagesValides[date];
   return v && v[voyage] === true;
@@ -648,7 +904,7 @@ function renderKaListeVoyage(){
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
 
   if(kasVoyage.length === 0){
-    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage.</p>';
+    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage pour cette année.</p>';
     document.getElementById('countChecked').textContent = 0;
     document.getElementById('countTotal').textContent = 0;
     return;
@@ -656,8 +912,9 @@ function renderKaListeVoyage(){
 
   const statut = statutDuJour();
   const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
+  const archivee = anneeCouranteEstArchivee();
   const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
+  const disabled = (!statut.ouvert || dejaValide || archivee) ? 'disabled' : '';
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
@@ -700,16 +957,17 @@ function renderKaListeVoyage(){
   }
 
   container.innerHTML = html;
-
   updateCount();
 
   const btn = document.getElementById('btnValider');
-  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  if(archivee){ btn.disabled = true; btn.textContent = "🔒 Année archivée"; }
+  else if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
   else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
   else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
 function setStatus(id, val){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return;
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
@@ -725,13 +983,13 @@ function updateCount(){
 }
 
 async function validerVoyageCourant(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
     return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
 
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-
   const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
   if(nonCoches.length > 0){
     return afficherMessage('validationMessage',
@@ -741,8 +999,8 @@ async function validerVoyageCourant(){
 
   try {
     const existing = cachePresences[aujourdhuiISO] || {};
-    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionCourante});
-    await setDoc(doc(db,"voyagesValides",aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
+    await setDoc(cheminPresenceId(aujourdhuiISO), {...existing, ...selectionCourante});
+    await setDoc(cheminVoyageValideId(aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
     kasVoyage.forEach(k => delete selectionCourante[k.id]);
     afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
     updateCount();
@@ -753,6 +1011,7 @@ async function validerVoyageCourant(){
 }
 
 function reinitialiserVoyage(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -807,6 +1066,7 @@ function deconnexion(){
 
 let charts = {};
 function chargerDashboard(){
+  renderBanniereArchive();
   renderStats();
   renderAlertes();
   renderClassement();
@@ -815,6 +1075,7 @@ function chargerDashboard(){
   renderListeKASecretariat();
   renderHistorique();
   renderGraphiques();
+  renderListeAnnees();
 }
 
 function renderStats(){
@@ -852,7 +1113,6 @@ function renderAlertes(){
   ).join('');
 }
 
-/* Toutes les années — utilisé par Classement, Exports, Chart 4 */
 function calculerStats(){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
   return cacheKAs.map(ka => {
@@ -870,21 +1130,17 @@ function calculerStats(){
   }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
 }
 
-/* ============================================================
-   MOIS EN COURS — utilisé par Chart 1
-   ============================================================ */
 function calculerStatsParVoyageEtTypeMoisCourant(voyage){
   const now = new Date();
   const moisCourant = now.getMonth();
-  const anneeCourante = now.getFullYear();
+  const anneeCivile = now.getFullYear();
 
   const dimsMesse = [];
   const dimsActivite = [];
   Object.keys(cachePresences).forEach(d => {
     if(cacheDatesAnnulees[d]) return;
     const dt = new Date(d+"T00:00:00");
-    // ⬇️ Filtre : uniquement le mois en cours
-    if(dt.getMonth() !== moisCourant || dt.getFullYear() !== anneeCourante) return;
+    if(dt.getMonth() !== moisCourant || dt.getFullYear() !== anneeCivile) return;
     const isSpecial = cacheDatesSpeciales[d];
     const isDimanche = dt.getDay() === 0;
     if(isSpecial){ dimsActivite.push(d); }
@@ -1028,21 +1284,29 @@ function renderDates(){
 }
 
 async function annulerDate(d){
+  if(refuserSiArchivee()) return;
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
-  await setDoc(doc(db,"datesAnnulees",d),{annule:true, date:new Date().toISOString()});
+  await setDoc(cheminDateAnnuleeId(d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){ await deleteDoc(doc(db,"datesAnnulees",d)); }
-async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(doc(db,"datesSpeciales",d)); }
+async function reactiverDate(d){
+  if(refuserSiArchivee()) return;
+  await deleteDoc(cheminDateAnnuleeId(d));
+}
+async function supprimerDateSpecial(d){
+  if(refuserSiArchivee()) return;
+  if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d));
+}
 
 document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const date = document.getElementById('newDate').value;
   const type = document.getElementById('newTypeDate').value;
   const libelle = document.getElementById('newLibelle').value.trim();
   if(!date) return afficherMessage('ajoutDateMessage',"Date invalide.",'error');
   try{
-    await setDoc(doc(db,"datesSpeciales",date),{type, libelle, ajouteLe:new Date().toISOString()});
+    await setDoc(cheminDateSpecialeId(date),{type, libelle, ajouteLe:new Date().toISOString()});
     document.getElementById('newDate').value = '';
     document.getElementById('newLibelle').value = '';
     afficherMessage('ajoutDateMessage',"✓ Date programmée avec succès.",'success');
@@ -1052,7 +1316,7 @@ document.getElementById('formAjoutDate').addEventListener('submit', async e => {
 
 function renderListeKASecretariat(){
   const container = document.getElementById('listeKASecretariat');
-  if(cacheKAs.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucun KA.</p>'; return; }
+  if(cacheKAs.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucun KA pour cette année.</p>'; return; }
   const parVoyage = {1:[],2:[],3:[],4:[]};
   cacheKAs.forEach(k => { if(parVoyage[k.voyage]) parVoyage[k.voyage].push(k); });
   let html = '';
@@ -1072,21 +1336,23 @@ function renderListeKASecretariat(){
 }
 
 async function supprimerKA(id){
+  if(refuserSiArchivee()) return;
   const code = prompt("Code de suppression requis :");
   if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
   if(!confirm("Supprimer définitivement ce KA ?")) return;
-  await deleteDoc(doc(db,"kas",id));
+  await deleteDoc(cheminKAId(id));
 }
 
 document.getElementById('formAjoutKA').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
   const voyage = Number(document.getElementById('newVoyage').value);
   if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
   if(![1,2,3,4].includes(voyage)) return afficherMessage('ajoutMessage',"Voyage invalide.",'error');
   if(cacheKAs.some(k => norm(k.nom) === norm(nom))) return afficherMessage('ajoutMessage',"Ce KA existe déjà.",'error');
   const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  await setDoc(doc(db,"kas",id), {nom, voyage, createdAt: new Date().toISOString()});
+  await setDoc(cheminKAId(id), {nom, voyage, createdAt: new Date().toISOString()});
   document.getElementById('newNom').value = '';
   document.getElementById('newVoyage').value = '';
   afficherMessage('ajoutMessage',"✓ KA ajouté avec succès.",'success');
@@ -1095,7 +1361,7 @@ document.getElementById('formAjoutKA').addEventListener('submit', async e => {
 function renderHistorique(){
   const container = document.getElementById('historique');
   const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0).sort().reverse();
-  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucune séance enregistrée.</p>'; return; }
+  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucune séance enregistrée pour cette année.</p>'; return; }
   container.innerHTML = dims.map(d => {
     const p = cachePresences[d];
     let presents=0, absents=0, excuses=0;
@@ -1113,25 +1379,25 @@ function renderHistorique(){
   }).join('');
 }
 
-/* ============================================================
-   GRAPHIQUES
-   ============================================================ */
-
 function getDatesFiltrees(mode){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
   const now = new Date();
   const moisCourant = now.getMonth();
-  const anneeCourante = now.getFullYear();
+  const anneeCivile = now.getFullYear();
+
+  if(mode === 'seance'){
+    return cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
+  }
   if(mode === 'mois'){
     return dims.filter(d => {
       const dt = new Date(d+"T00:00:00");
-      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCourante;
+      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCivile;
     });
   }
   if(mode === 'annee'){
-    return dims.filter(d => new Date(d+"T00:00:00").getFullYear() === anneeCourante);
+    return dims;
   }
-  return dims;
+  return null;
 }
 
 function setContainerHeight(containerId, nbItems){
@@ -1140,15 +1406,13 @@ function setContainerHeight(containerId, nbItems){
   el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
 }
 
-/* Chart 1 : Présences par KA — % Messe vs % Activité — SUR LE MOIS EN COURS */
 function renderChart1(){
   if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
   const data = calculerStatsParVoyageEtTypeMoisCourant(chart1Voyage);
   const labels = data.map(d => d.ka.nom);
 
-  // Badge période
   const badge = document.getElementById('chart1PeriodLabel');
-  if(badge) badge.textContent = nomMois(aujourdhuiISO);
+  if(badge) badge.textContent = nomMois(aujourdhuiISO) + ' · ' + anneeCourante;
 
   document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
@@ -1157,6 +1421,29 @@ function renderChart1(){
   document.getElementById('chart1Next').disabled = (chart1Voyage === 4);
 
   setContainerHeight('chartParKAContainer', Math.max(data.length, 5));
+
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart1',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textBaseline = 'middle';
+      chart.data.datasets.forEach((dataset, dsIndex) => {
+        const meta = chart.getDatasetMeta(dsIndex);
+        meta.data.forEach((bar, i) => {
+          const val = dataset.data[i];
+          if(val === undefined || val === null) return;
+          const texte = val + '%';
+          const x = bar.x + 6;
+          const y = bar.y;
+          ctx.fillText(texte, x, y);
+        });
+      });
+      ctx.restore();
+    }
+  };
 
   charts.parKA = new Chart(document.getElementById('chartParKA'), {
     type:'bar',
@@ -1171,6 +1458,7 @@ function renderChart1(){
       responsive:true,
       maintainAspectRatio:false,
       indexAxis:'y',
+      layout:{padding:{right:50}},
       plugins:{
         legend:{position:'top'},
         tooltip:{callbacks:{label: ctx => {
@@ -1184,24 +1472,45 @@ function renderChart1(){
         x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
         y:{ticks:{font:{size:11}, autoSkip:false}}
       }
-    }
+    },
+    plugins:[pluginPourcentage]
   });
 }
 
-/* Chart 2 : Répartition globale — 3 filtres */
 function renderChart2(){
-  document.querySelectorAll('.filter-card').forEach(c => {
+  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
     c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
   });
+  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.sousfiltre === sousFiltreRepartition);
+  });
+
   const badge = document.getElementById('chart2PeriodLabel');
-  if(badge) badge.textContent =
-    filtreRepartition === 'tout' ? 'Tout depuis le début' :
-    filtreRepartition === 'annee' ? 'Cette année' : 'Ce mois — dimanches';
+  if(badge){
+    const libelleFiltre =
+      filtreRepartition === 'seance' ? 'Séance du jour' :
+      filtreRepartition === 'mois'   ? 'Ce mois' :
+      filtreRepartition === 'annee'  ? 'Année active' :
+                                       'Tout depuis le début';
+    const libelleSous =
+      sousFiltreRepartition === 'tous' ? '' :
+      sousFiltreRepartition === 'messe' ? ' · Messe' : ' · Activité';
+    badge.textContent = libelleFiltre + libelleSous + ' · ' + anneeCourante;
+  }
 
   if(charts.global){ try{charts.global.destroy();}catch(e){} }
 
-  const dims = getDatesFiltrees(filtreRepartition);
-  let totalP=0, totalA=0, totalE=0;
+  if(filtreRepartition === 'tout'){
+    renderChart2Tout();
+    return;
+  }
+
+  const dims = getDatesFiltrees(filtreRepartition) || [];
+  dessinerDoughnut(dims);
+}
+
+function dessinerDoughnut(dims){
+  let totalP = 0, totalA = 0, totalE = 0;
   dims.forEach(d => {
     const p = cachePresences[d] || {};
     Object.values(p).forEach(s => {
@@ -1221,20 +1530,165 @@ function renderChart2(){
   });
 }
 
-/* Chart 3 : Présences par voyage (inchangé — toutes les années) */
-function renderChart3(){
-  if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
-  const stats = calculerStats();
-  const voyageLabels = [1,2,3,4].map(v=>CONFIG.VOYAGES[v]);
-  const voyageData = [1,2,3,4].map(v => stats.filter(s=>s.voyage===v).reduce((acc,s)=>acc+s.present,0));
-  charts.voyages = new Chart(document.getElementById('chartVoyages'), {
-    type:'bar',
-    data:{labels:voyageLabels, datasets:[{label:'Présences totales', data:voyageData, backgroundColor:'#f5a623', borderRadius:8}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+async function renderChart2Tout(){
+  try {
+    let totalP = 0, totalA = 0, totalE = 0;
+
+    for(const a of anneesDisponibles){
+      const presSnap = await getDocs(collection(db, "annees", a, "presences"));
+      const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
+      const annulees = new Set();
+      annSnap.forEach(d => annulees.add(d.id));
+      const specSnap = await getDocs(collection(db, "annees", a, "datesSpeciales"));
+      const speciales = new Set();
+      specSnap.forEach(d => speciales.add(d.id));
+
+      presSnap.forEach(d => {
+        const date = d.id;
+        if(annulees.has(date)) return;
+
+        const isSpeciale = speciales.has(date);
+        const isDimanche = new Date(date+"T00:00:00").getDay() === 0;
+        if(sousFiltreRepartition === 'messe' && !(isDimanche && !isSpeciale)) return;
+        if(sousFiltreRepartition === 'activite' && !isSpeciale) return;
+
+        Object.values(d.data() || {}).forEach(s => {
+          if(s === 'present') totalP++;
+          else if(s === 'absent') totalA++;
+          else if(s === 'excuse') totalE++;
+        });
+      });
+    }
+
+    charts.global = new Chart(document.getElementById('chartGlobal'), {
+      type:'doughnut',
+      data:{
+        labels:['Présents','Absents','Absences signalées'],
+        datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#c8102e','#f59e0b'], borderWidth:0}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
+    });
+  } catch(e){
+    console.error("Erreur répartition globale :", e);
+    charts.global = new Chart(document.getElementById('chartGlobal'), {
+      type:'doughnut',
+      data:{labels:['Erreur'], datasets:[{data:[1], backgroundColor:['#c8102e']}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+    });
+  }
+}
+
+function calculerStatsVoyagesParFiltre(mode){
+  let datesConcernees = [];
+
+  if(mode === 'seance'){
+    datesConcernees = cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
+  } else if(mode === 'mois'){
+    const now = new Date();
+    const moisCourant = now.getMonth();
+    const anneeCivile = now.getFullYear();
+    datesConcernees = Object.keys(cachePresences).filter(d => {
+      if(cacheDatesAnnulees[d]) return false;
+      const dt = new Date(d+"T00:00:00");
+      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCivile;
+    });
+  } else {
+    datesConcernees = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
+  }
+
+  return [1,2,3,4].map(v => {
+    const kasVoyage = cacheKAs.filter(k => k.voyage === v);
+    let presents = 0, absents = 0, excuses = 0;
+    datesConcernees.forEach(d => {
+      const p = cachePresences[d] || {};
+      kasVoyage.forEach(ka => {
+        const s = p[ka.id];
+        if(s === 'present') presents++;
+        else if(s === 'absent') absents++;
+        else if(s === 'excuse') excuses++;
+      });
+    });
+    const total = presents + absents + excuses;
+    const taux = total ? Math.round((presents / total) * 100) : 0;
+    return {voyage: v, presents, absents, excuses, total, taux};
   });
 }
 
-/* Chart 4 : Taux de présence par KA (%) — TOUTES LES ANNÉES */
+function renderChart3(){
+  if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
+
+  const donnees = calculerStatsVoyagesParFiltre(filtreVoyages);
+
+  const badge = document.getElementById('chart3PeriodLabel');
+  if(badge){
+    badge.textContent =
+      filtreVoyages === 'seance' ? 'Séance du jour' :
+      filtreVoyages === 'mois'   ? 'Ce mois' :
+                                   'Tout depuis le début';
+  }
+
+  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
+    c.classList.toggle('active', c.dataset.filtre3 === filtreVoyages);
+  });
+
+  const labels = [1,2,3,4].map(v => CONFIG.VOYAGES[v]);
+
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart3',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      const meta = chart.getDatasetMeta(0);
+      meta.data.forEach((bar, i) => {
+        const val = donnees[i].taux;
+        if(val === undefined || val === null) return;
+        ctx.fillText(val + '%', bar.x, bar.y - 4);
+      });
+      ctx.restore();
+    }
+  };
+
+  charts.voyages = new Chart(document.getElementById('chartVoyages'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Présences',
+        data: donnees.map(d => d.presents),
+        backgroundColor:'#f5a623',
+        borderRadius:8
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{padding:{top:24}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const d = donnees[ctx.dataIndex];
+              return [
+                `Présences : ${d.presents}`,
+                `Absences : ${d.absents}`,
+                `Signalées : ${d.excuses}`,
+                `Taux : ${d.taux}%`
+              ];
+            }
+          }
+        }
+      },
+      scales:{y:{beginAtZero:true}}
+    },
+    plugins:[pluginPourcentage]
+  });
+}
+
 function renderChart4(){
   if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
   const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
@@ -1247,6 +1701,24 @@ function renderChart4(){
   document.getElementById('chart4Next').disabled = (chart4Voyage === 4);
 
   setContainerHeight('chartTauxContainer', Math.max(stats.length, 5));
+
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart4',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textBaseline = 'middle';
+      const meta = chart.getDatasetMeta(0);
+      meta.data.forEach((bar, i) => {
+        const val = stats[i].taux;
+        if(val === undefined || val === null) return;
+        ctx.fillText(val + '%', bar.x + 6, bar.y);
+      });
+      ctx.restore();
+    }
+  };
 
   charts.taux = new Chart(document.getElementById('chartTaux'), {
     type:'bar',
@@ -1263,6 +1735,7 @@ function renderChart4(){
       responsive:true,
       maintainAspectRatio:false,
       indexAxis:'y',
+      layout:{padding:{right:50}},
       plugins:{
         legend:{display:false},
         tooltip:{callbacks:{label: ctx => `${ctx.parsed.x}%`}}
@@ -1271,7 +1744,8 @@ function renderChart4(){
         x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
         y:{ticks:{font:{size:11}, autoSkip:false}}
       }
-    }
+    },
+    plugins:[pluginPourcentage]
   });
 }
 
@@ -1312,10 +1786,22 @@ function bindChart4Nav(){
 }
 
 function bindFilterCards(){
-  document.querySelectorAll('.filter-card').forEach(c => {
+  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
     c.addEventListener('click', () => {
       filtreRepartition = c.dataset.filtre;
       renderChart2();
+    });
+  });
+  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
+    c.addEventListener('click', () => {
+      sousFiltreRepartition = c.dataset.sousfiltre;
+      renderChart2();
+    });
+  });
+  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
+    c.addEventListener('click', () => {
+      filtreVoyages = c.dataset.filtre3;
+      renderChart3();
     });
   });
 }
@@ -1374,19 +1860,500 @@ document.querySelectorAll('.voyage-tab').forEach(tab => {
 
 document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
 
+document.getElementById('formAjoutAnnee').addEventListener('submit', e => {
+  e.preventDefault();
+  creerAnnee(document.getElementById('newAnneeInput').value);
+});
+
 function exportCSV(){
   const stats = calculerStats();
-  let csv = "Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
-  stats.forEach(s => { csv += `"${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
-  telecharger(csv,`groupe-ka-${dateToISO(new Date())}.csv`,'text/csv');
+  let csv = "Annee,Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
+  stats.forEach(s => { csv += `"${anneeCourante}","${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
+  telecharger(csv,`groupe-ka-${anneeCourante}.csv`,'text/csv');
 }
 function exportJSON(){
-  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
-  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${dateToISO(new Date())}.json`,'application/json');
+  const data = {annee: anneeCourante, kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
+  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${anneeCourante}.json`,'application/json');
 }
 function telecharger(c,nom,type){
   const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href=url; a.download=nom; a.click(); URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   RAPPORT WORD (.doc) — TOUTES LES ANNEES JUSQU'A AUJOURD'HUI
+   ============================================================ */
+
+async function chargerDonneesRapportComplet(){
+  const annees = anneesDisponibles.slice();
+  const toutesPresences = [];
+  const annuleesGlobal = new Set();
+  const tousKAs = [];
+
+  for(const a of annees){
+    const kasSnap = await getDocs(collection(db, "annees", a, "kas"));
+    kasSnap.forEach(d => {
+      const data = d.data() || {};
+      tousKAs.push({annee: a, id: d.id, nom: data.nom, voyage: data.voyage});
+    });
+    const presSnap = await getDocs(collection(db, "annees", a, "presences"));
+    presSnap.forEach(d => {
+      toutesPresences.push({annee: a, date: d.id, data: d.data() || {}});
+    });
+    const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
+    annSnap.forEach(d => annuleesGlobal.add(a + "|" + d.id));
+  }
+
+  const presencesValides = toutesPresences.filter(p => !annuleesGlobal.has(p.annee + "|" + p.date));
+  presencesValides.sort((a,b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+  return {annees, tousKAs, presencesValides};
+}
+
+function calculerStatistiquesRapport(donnees){
+  const {tousKAs, presencesValides} = donnees;
+
+  let totalPresences = 0, totalAbsences = 0, totalExcuses = 0;
+  presencesValides.forEach(p => {
+    Object.values(p.data).forEach(s => {
+      if(s === "present") totalPresences++;
+      else if(s === "absent") totalAbsences++;
+      else if(s === "excuse") totalExcuses++;
+    });
+  });
+  const totalMarques = totalPresences + totalAbsences + totalExcuses;
+  const tauxGlobal = totalMarques ? Math.round((totalPresences / totalMarques) * 100) : 0;
+
+  const statsParKA = tousKAs.map(ka => {
+    let present = 0, absent = 0, excuse = 0;
+    presencesValides.forEach(p => {
+      const s = p.data[ka.id];
+      if(s === "present") present++;
+      else if(s === "absent") absent++;
+      else if(s === "excuse") excuse++;
+    });
+    const total = present + absent + excuse;
+    const taux = total ? Math.round((present / total) * 100) : 0;
+    return {...ka, present, absent, excuse, total, taux};
+  });
+
+  const classement = statsParKA.slice().sort((a,b) =>
+    b.present - a.present || b.taux - a.taux || a.nom.localeCompare(b.nom)
+  );
+  classement.forEach((k,i) => k.rang = i+1);
+
+  const parVoyage = [1,2,3,4].map(v => {
+    const kasV = statsParKA.filter(k => k.voyage === v);
+    const presents = kasV.reduce((acc,k) => acc + k.present, 0);
+    const absents = kasV.reduce((acc,k) => acc + k.absent, 0);
+    const excuses = kasV.reduce((acc,k) => acc + k.excuse, 0);
+    const total = presents + absents + excuses;
+    const taux = total ? Math.round((presents / total) * 100) : 0;
+    return {voyage: v, nbKA: kasV.length, presents, absents, excuses, taux};
+  });
+
+  const dates = presencesValides.map(p => p.date).sort();
+  const dateDebut = dates.length ? dates[0] : null;
+  const dateFin = dates.length ? dates[dates.length-1] : null;
+
+  return {
+    totalPresences, totalAbsences, totalExcuses, totalMarques, tauxGlobal,
+    statsParKA, classement, parVoyage,
+    nbSeances: presencesValides.length,
+    nbKA: tousKAs.length,
+    dateDebut, dateFin
+  };
+}
+
+function genererGraphiquesRapport(stats){
+  const resultats = {doughnut: null, parKA: null, parVoyage: null};
+
+  try {
+    const canvas1 = document.createElement('canvas');
+    canvas1.width = 600; canvas1.height = 400;
+    const chart1 = new Chart(canvas1.getContext('2d'), {
+      type:'doughnut',
+      data:{
+        labels:['Présents','Absents','Absences signalées'],
+        datasets:[{
+          data:[stats.totalPresences, stats.totalAbsences, stats.totalExcuses],
+          backgroundColor:['#0f9d58','#c8102e','#f59e0b'],
+          borderWidth:2, borderColor:'#fff'
+        }]
+      },
+      options:{
+        responsive:false, animation:false,
+        plugins:{
+          legend:{position:'bottom', labels:{font:{size:14, family:'Times New Roman'}}},
+          title:{display:true, text:'Répartition globale des présences', font:{size:16, family:'Times New Roman'}}
+        },
+        cutout:'55%'
+      }
+    });
+    chart1.update();
+    resultats.doughnut = canvas1.toDataURL('image/png');
+    chart1.destroy();
+  } catch(e){ console.error("Erreur doughnut:", e); }
+
+  try {
+    const topKA = stats.statsParKA.slice().sort((a,b) => b.taux - a.taux || b.present - a.present);
+    const hauteur = Math.max(400, topKA.length * 26 + 100);
+    const canvas2 = document.createElement('canvas');
+    canvas2.width = 900; canvas2.height = hauteur;
+    const chart2 = new Chart(canvas2.getContext('2d'), {
+      type:'bar',
+      data:{
+        labels: topKA.map(k => k.nom),
+        datasets:[{
+          label:'Taux de présence (%)',
+          data: topKA.map(k => k.taux),
+          backgroundColor: topKA.map(k => k.taux >= 75 ? '#0f9d58' : (k.taux >= 50 ? '#f59e0b' : '#c8102e')),
+          borderRadius:4
+        }]
+      },
+      options:{
+        responsive:false, animation:false, indexAxis:'y',
+        plugins:{
+          legend:{display:false},
+          title:{display:true, text:'Taux de présence par KA (%)', font:{size:16, family:'Times New Roman'}}
+        },
+        scales:{
+          x:{beginAtZero:true, max:100, ticks:{callback:v => v+'%', font:{family:'Times New Roman'}}},
+          y:{ticks:{font:{size:11, family:'Times New Roman'}, autoSkip:false}}
+        }
+      }
+    });
+    chart2.update();
+    resultats.parKA = canvas2.toDataURL('image/png');
+    chart2.destroy();
+  } catch(e){ console.error("Erreur parKA:", e); }
+
+  try {
+    const canvas3 = document.createElement('canvas');
+    canvas3.width = 800; canvas3.height = 400;
+    const chart3 = new Chart(canvas3.getContext('2d'), {
+      type:'bar',
+      data:{
+        labels: stats.parVoyage.map(v => CONFIG.VOYAGES[v.voyage]),
+        datasets:[{
+          label:'Présences totales',
+          data: stats.parVoyage.map(v => v.presents),
+          backgroundColor:'#f5a623', borderRadius:8
+        }]
+      },
+      options:{
+        responsive:false, animation:false,
+        plugins:{
+          legend:{display:false},
+          title:{display:true, text:'Présences par voyage', font:{size:16, family:'Times New Roman'}}
+        },
+        scales:{
+          y:{beginAtZero:true, ticks:{font:{family:'Times New Roman'}}},
+          x:{ticks:{font:{family:'Times New Roman'}}}
+        }
+      }
+    });
+    chart3.update();
+    resultats.parVoyage = canvas3.toDataURL('image/png');
+    chart3.destroy();
+  } catch(e){ console.error("Erreur parVoyage:", e); }
+
+  return resultats;
+}
+
+function construireHtmlRapport(stats, graphiques, logoSrc){
+  const dateGen = new Date().toLocaleDateString('fr-FR', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+  const heureGen = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  const periode = (stats.dateDebut && stats.dateFin)
+    ? `du ${formatDateFr(stats.dateDebut)} au ${formatDateFr(stats.dateFin)}`
+    : '—';
+
+  const logoHtml = logoSrc
+    ? `<div style="text-align:center;margin-bottom:20px"><img src="${logoSrc}" alt="Logo Groupe KA" style="width:100px;height:100px;object-fit:contain"></div>`
+    : '';
+
+  const lignesClassement = stats.classement.map(k => `
+    <tr>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${k.rang}</td>
+      <td style="padding:8px;border:1px solid #999">${esc(k.nom)}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${CONFIG.VOYAGES[k.voyage] || '—'}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${k.present}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${k.absent}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${k.excuse}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999;font-weight:bold">${k.taux}%</td>
+    </tr>
+  `).join('');
+
+  const lignesVoyages = stats.parVoyage.map(v => `
+    <tr>
+      <td style="padding:8px;border:1px solid #999">${CONFIG.VOYAGES[v.voyage]}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${v.nbKA}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${v.presents}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${v.absents}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999">${v.excuses}</td>
+      <td style="text-align:center;padding:8px;border:1px solid #999;font-weight:bold">${v.taux}%</td>
+    </tr>
+  `).join('');
+
+  const imgDoughnut = graphiques.doughnut
+    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.doughnut}" alt="Répartition globale" style="max-width:600px;width:100%"></div>`
+    : '';
+  const imgParKA = graphiques.parKA
+    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.parKA}" alt="Taux par KA" style="max-width:900px;width:100%"></div>`
+    : '';
+  const imgParVoyage = graphiques.parVoyage
+    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.parVoyage}" alt="Présences par voyage" style="max-width:800px;width:100%"></div>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<title>Rapport Groupe KA</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+  size: A4;
+  margin: 2cm 1.5cm 2cm 1.5cm;
+  mso-header-margin: 1cm;
+  mso-footer-margin: 1cm;
+}
+body {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12.5pt;
+  line-height: 1.5;
+  color: #000;
+  margin: 0;
+}
+h1 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20pt;
+  font-weight: bold;
+  color: #5c0a1a;
+  text-align: center;
+  margin: 10px 0;
+  text-transform: uppercase;
+}
+h2 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 15pt;
+  font-weight: bold;
+  color: #5c0a1a;
+  border-bottom: 2px solid #5c0a1a;
+  padding-bottom: 4px;
+  margin: 24px 0 12px 0;
+}
+h3 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 13pt;
+  font-weight: bold;
+  color: #5c0a1a;
+  margin: 16px 0 8px 0;
+}
+p {
+  margin: 8px 0;
+  text-align: justify;
+}
+.sous-titre {
+  text-align: center;
+  font-size: 13pt;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 4px;
+}
+.date-gen {
+  text-align: center;
+  font-size: 11pt;
+  color: #666;
+  margin-bottom: 20px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 11pt;
+}
+th {
+  background-color: #5c0a1a;
+  color: #fff;
+  padding: 8px;
+  border: 1px solid #5c0a1a;
+  text-align: left;
+  font-weight: bold;
+}
+td {
+  padding: 8px;
+  border: 1px solid #999;
+}
+.info-box {
+  border: 2px solid #5c0a1a;
+  background-color: #fdf6f7;
+  padding: 12px;
+  margin: 16px 0;
+}
+.signature {
+  margin-top: 60px;
+  text-align: right;
+}
+.signature-ligne {
+  border-top: 1px solid #000;
+  width: 200px;
+  margin-left: auto;
+  margin-top: 40px;
+  padding-top: 4px;
+  text-align: center;
+}
+.footer-page {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 9pt;
+  color: #888;
+  border-top: 1px solid #ccc;
+  padding-top: 4px;
+}
+</style>
+</head>
+<body>
+
+${logoHtml}
+
+<h1>Rapport Statistique de Présence</h1>
+<p class="sous-titre">Groupe KA — Commission Secrétariat</p>
+<p class="date-gen">Généré le ${dateGen} à ${heureGen}</p>
+
+<div class="info-box">
+  <p style="margin:4px 0"><strong>Période couverte :</strong> ${periode}</p>
+  <p style="margin:4px 0"><strong>Nombre d'années initiatiques :</strong> ${anneesDisponibles.length}</p>
+  <p style="margin:4px 0"><strong>Nombre total de KA :</strong> ${stats.nbKA}</p>
+  <p style="margin:4px 0"><strong>Nombre total de séances :</strong> ${stats.nbSeances}</p>
+</div>
+
+<h2>1. Synthèse générale</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Indicateur</th>
+      <th style="text-align:center">Valeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Présences enregistrées</td><td style="text-align:center">${stats.totalPresences}</td></tr>
+    <tr><td>Absences enregistrées</td><td style="text-align:center">${stats.totalAbsences}</td></tr>
+    <tr><td>Absences signalées</td><td style="text-align:center">${stats.totalExcuses}</td></tr>
+    <tr><td><strong>Total des marquages</strong></td><td style="text-align:center"><strong>${stats.totalMarques}</strong></td></tr>
+    <tr><td><strong>Taux global de présence</strong></td><td style="text-align:center"><strong>${stats.tauxGlobal}%</strong></td></tr>
+  </tbody>
+</table>
+<p>Sur la période couverte, le Groupe KA a enregistré <strong>${stats.totalPresences} présences</strong> sur un total de <strong>${stats.totalMarques} marquages</strong>, soit un taux global de présence de <strong>${stats.tauxGlobal}%</strong>.</p>
+
+${imgDoughnut}
+
+<h2>2. Classement complet des KA</h2>
+<p>Classement de tous les KA enregistrés, triés par nombre de présences décroissant.</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:center">Rang</th>
+      <th>Nom du KA</th>
+      <th style="text-align:center">Voyage</th>
+      <th style="text-align:center">Présences</th>
+      <th style="text-align:center">Absences</th>
+      <th style="text-align:center">Signalées</th>
+      <th style="text-align:center">Taux</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${lignesClassement}
+  </tbody>
+</table>
+
+${imgParKA}
+
+<h2>3. Statistiques par voyage</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Voyage</th>
+      <th style="text-align:center">KA</th>
+      <th style="text-align:center">Présences</th>
+      <th style="text-align:center">Absences</th>
+      <th style="text-align:center">Signalées</th>
+      <th style="text-align:center">Taux</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${lignesVoyages}
+  </tbody>
+</table>
+
+${imgParVoyage}
+
+<div class="signature">
+  <p><strong>La Commission Secrétariat</strong></p>
+  <div class="signature-ligne">Signature</div>
+</div>
+
+<p class="footer-page">Rapport généré automatiquement par le Registre de Présence Groupe KA — ${dateGen}</p>
+
+</body>
+</html>`;
+}
+
+async function genererRapportWord(){
+  const msg = document.getElementById('rapportMessage');
+  msg.textContent = "Génération en cours... Veuillez patienter.";
+  msg.className = 'message show warning';
+
+  try {
+    const donnees = await chargerDonneesRapportComplet();
+    const stats = calculerStatistiquesRapport(donnees);
+    const graphiques = genererGraphiquesRapport(stats);
+
+    let logoSrc = null;
+    try {
+      const resp = await fetch('IMG_6726.png');
+      const blob = await resp.blob();
+      logoSrc = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch(e){ console.warn("Logo non chargé:", e); }
+
+    const html = construireHtmlRapport(stats, graphiques, logoSrc);
+    const dateISO = dateToISO(new Date());
+    const nomFichier = `Rapport_GroupeKA_${dateISO}.doc`;
+    const blobFinal = new Blob(['\ufeff', html], {type: 'application/msword'});
+    const url = URL.createObjectURL(blobFinal);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomFichier;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    msg.innerHTML = `✅ Rapport généré avec succès : <strong>${nomFichier}</strong><br>
+      ${stats.nbSeances} séances · ${stats.nbKA} KA · taux global ${stats.tauxGlobal}%`;
+    msg.className = 'message show success';
+  } catch(e){
+    console.error("Erreur génération rapport:", e);
+    msg.textContent = "Erreur lors de la génération : " + e.message;
+    msg.className = 'message show error';
+  }
 }
 
 window.ouvrirLogin = ouvrirLogin;
@@ -1402,6 +2369,9 @@ window.supprimerDateSpecial = supprimerDateSpecial;
 window.exportCSV = exportCSV;
 window.exportJSON = exportJSON;
 window.sha256 = sha256;
+window.changerAnnee = changerAnnee;
+window.ouvrirNouvelleAnnee = ouvrirNouvelleAnnee;
+window.genererRapportWord = genererRapportWord;
 
 const KA_TEST = [
   {nom:"K. Nicolas BABALE", voyage:2},{nom:"K. Joseph BABALE", voyage:2},{nom:"K. John MUYAMBA", voyage:2},{nom:"K. Junior KIKAKEDI", voyage:2},{nom:"K. Dianna MULUNDA", voyage:2},{nom:"K. Didier NLANDU J.", voyage:2},{nom:"K. Jules MANZAMBI", voyage:2},{nom:"K. Rachlin MIDO", voyage:2},{nom:"K. Antoine MBONGU", voyage:2},{nom:"K. Bruno TUBWINGE", voyage:2},{nom:"K. Vismy SAIDI", voyage:2},{nom:"K. Gervais LENGWA", voyage:2},{nom:"K. Israel NSILU", voyage:2},
@@ -1409,10 +2379,11 @@ const KA_TEST = [
   {nom:"K. Moïse SINGA", voyage:3},{nom:"K. Credo SINGA", voyage:3},{nom:"K. David LUBO", voyage:3},{nom:"K. Daniel DIPONGO", voyage:3},{nom:"K. David MAYADILA", voyage:3},{nom:"K. Marcelo ONAKUDU", voyage:3},{nom:"K. Jervie SHUTSHA", voyage:3},{nom:"K. Dieu Merci KABONGO", voyage:3},{nom:"K. Messi LENGWA", voyage:3},{nom:"K. Matthieu MUTANGALA", voyage:3},{nom:"K. Dave KIPELEKA", voyage:3},
   {nom:"A. Triomphe BOKIKA", voyage:3},{nom:"A. Claudia MADIDISH", voyage:3},{nom:"A. Phideline KIKETA", voyage:3},{nom:"A. Phongella IMANA", voyage:3},{nom:"A. Helena MAKABA", voyage:3},{nom:"A. Nestolla RAMAZANI", voyage:3},{nom:"A. Valerie NDAMBA", voyage:3},{nom:"A. Emilie KIKA", voyage:3},{nom:"A. Nestivie BOTOKO", voyage:3},{nom:"A. Abigael LUMEYA", voyage:3},{nom:"A. Claudine PEMBE", voyage:3},{nom:"A. Hortance MBONDA", voyage:3},{nom:"A. Larose BOTULU", voyage:3},{nom:"A. Lumiere KOTOBA", voyage:3},{nom:"A. Marta BINJA", voyage:3},{nom:"A. Lajoie TSHIBOLA", voyage:3},
   {nom:"K. Marcel KILOMBO", voyage:4},{nom:"K. Jeremie AKILI", voyage:4},{nom:"K. Josaphat LUZOLO", voyage:4},{nom:"K. Winner SAIDI", voyage:4},{nom:"K. Grael MUYISI", voyage:4},
-  {nom:"A. Bienfait MADIDISHI", voyage:4},{nom:"A. Aubaine SINGA", voyage:4},{nom:"A. Thérèse KAPINGA", voyage:4},{nom:"A. Hélène MBELE", voyage:4},{nom:"A. Ruth IBANGA", voyage:4},{nom:"A. Immaculée MALONGA", voyage:4},{nom:"A. Chancelvie MOLOKO", voyage:4},{nom:"A. Hermelie MUYUKU", voyage:4},{nom:"A. Nana KIALA", voyage:4},{nom:"A. Ben Alicia MOLOKO", voyage:4},{nom:"A. Winnie MONGILA", voyage:4},{nom:"A. Marie-Fortune KAWE", voyage:4}
+  {nom:"A. Bienfait MADIDISHI", voyage:4},{nom:"A. Aubaine SINGA", voyage:4},{nom:"A. Thérèse KAPINGA", voyage:4},{nom:"A. Hèle MBELE", voyage:4},{nom:"A. Ruth IBANGA", voyage:4},{nom:"A. Immaculée MALONGA", voyage:4},{nom:"A. Chancelvie MOLOKO", voyage:4},{nom:"A. Hermelie MUYUKU", voyage:4},{nom:"A. Nana KIALA", voyage:4},{nom:"A. Ben Alicia MOLOKO", voyage:4},{nom:"A. Winnie MONGILA", voyage:4},{nom:"A. Marie-Fortune KAWE", voyage:4}
 ];
 
 window.chargerKAOfficiels = async function(){
+  if(refuserSiArchivee()) return;
   const msg = document.getElementById('chargementMessage');
   msg.textContent = "Chargement en cours...";
   msg.className = 'message show warning';
@@ -1422,11 +2393,11 @@ window.chargerKAOfficiels = async function(){
     if(existe){ dejaPresents++; continue; }
     try{
       const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
+      await setDoc(cheminKAId(id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
       ajoutes++;
     } catch(e){ erreurs++; console.log("Erreur :", k.nom, e.message); }
   }
-  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
+  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés à l'année <strong>${anneeCourante}</strong> · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
   msg.className = 'message show success';
 };
 
@@ -1435,32 +2406,39 @@ function rafraichirTempsReel(){
   renderKaListeVoyage();
 }
 
-function init(){
-  ecouterKAs(async ()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+async function init(){
+  listenAnneesUnsub = onSnapshot(collection(db, "annees"), snap => {
+    anneesDisponibles = [];
+    cacheAnneesMeta = {};
+    snap.forEach(d => {
+      anneesDisponibles.push(d.id);
+      cacheAnneesMeta[d.id] = d.data() || {};
+    });
+    anneesDisponibles.sort();
+    remplirSelectAnnees();
+    renderListeAnnees();
+    renderBanniereArchive();
   });
-  ecouterPresences(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterDatesAnnulees(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterDatesSpeciales(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterVoyagesValides(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
+
+  await assurerAnneeExiste(CONFIG.ANNEE_DEFAUT);
+
+  let anneeVoulue = anneeStorageLire();
+  if(!anneeVoulue){
+    const existantes = await chargerAnneesDepuisFirestore();
+    anneeVoulue = existantes.length ? existantes[existantes.length-1] : CONFIG.ANNEE_DEFAUT;
+  }
+  anneeCourante = anneeVoulue;
+  anneeStorageEcrire(anneeCourante);
+
+  await attacherListenersAnnee();
+  renderBanniereArchive();
+
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     chargerDashboard();
   }
+
   setInterval(()=>{
     const el = document.getElementById('dbTime');
     if(el) el.textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
