@@ -471,7 +471,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       </div>
     </div>
     <div id="tab-ajoutKA" class="tab-content">
-      <div class="card">
+      <div class="card" style="display:none">
         <div class="card-header"><h2>Charger la liste officielle des KA</h2></div>
         <p class="muted" style="margin-bottom:16px">Si des KA officiels ne sont pas encore dans le système (nouveau groupe, Firebase vide, mise à jour...), cliquez sur ce bouton. Les KA déjà présents ne seront pas dupliqués. Seuls les manquants seront ajoutés.</p>
         <button class="btn btn-success" onclick="chargerKAOfficiels()">📥 Charger tous les KA officiels</button>
@@ -1435,10 +1435,7 @@ function renderChart1(){
         meta.data.forEach((bar, i) => {
           const val = dataset.data[i];
           if(val === undefined || val === null) return;
-          const texte = val + '%';
-          const x = bar.x + 6;
-          const y = bar.y;
-          ctx.fillText(texte, x, y);
+          ctx.fillText(val + '%', bar.x + 6, bar.y);
         });
       });
       ctx.restore();
