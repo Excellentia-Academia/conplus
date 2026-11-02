@@ -316,7 +316,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <p class="muted center">Accès protégé</p>
     <form id="formLogin" style="margin-top:28px">
       <div class="form-group"><label for="password">Mot de passe</label><input type="password" id="password" placeholder="••••••••" required></div>
-      <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+      <button type="submit" class="btn btn-primary btn-block">Se connecter</       </button>
     </form>
     <div id="loginMessage" class="message"></div>
     <a href="#" class="link-back" onclick="fermerLogin(event)">← Retour au site</a>
@@ -330,10 +330,26 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <img src="IMG_6726.png" alt="Logo" class="logo-img">
         <div class="logo-text"><strong>Commission Secrétariat</strong><small>Groupe KA</small></div>
       </div>
-      <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+      <div class="nav">
+        <select id="academicYearSelect" class="btn btn-ghost" style="cursor:pointer;font-family:inherit;font-weight:600;padding:10px 16px;border-radius:10px;" title="Année académique">
+        </select>
+        <button class="btn btn-ghost" onclick="ouvrirModalNouvelleAnnee()">+ Année</button>
+        <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
+      </div>
     </div>
   </header>
   <main class="container dashboard-main">
+    <div class="card" style="background:linear-gradient(135deg,#fff 0%,#fdf6f7 100%);border-left:5px solid var(--secondary)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700">Année académique active</div>
+          <div id="currentYearLabel" style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--primary);line-height:1.1">—</div>
+          <div id="currentYearPeriod" class="muted" style="font-size:.82rem;margin-top:4px">—</div>
+        </div>
+        <div id="yearStatusBadge" class="db-status open" style="font-size:.8rem">—</div>
+      </div>
+    </div>
+
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
       <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Séances validées</div></div>
@@ -352,6 +368,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <button class="tab" data-tab="tab-ajoutKA">Ajouter un KA</button>
       <button class="tab" data-tab="tab-historique">Historique</button>
       <button class="tab" data-tab="tab-export">Export</button>
+      <button class="tab" data-tab="tab-annees">🗓️ Années</button>
     </div>
     <div id="tab-graphiques" class="tab-content active">
       <div class="chart-grid">
@@ -387,7 +404,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
           <h3>Taux de présence par KA (%)</h3>
-          <div class="chart-period">Période : <span class="badge">Toutes les années</span></div>
+          <div class="chart-period">Période : <span class="badge">Année sélectionnée</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots4">
@@ -466,12 +483,35 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         </div>
       </div>
     </div>
+
+    <div id="tab-annees" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2>🗓️ Gestion des années académiques</h2></div>
+        <p class="muted" style="margin-bottom:16px">Chaque année académique est un espace totalement isolé : les KA, présences, dates spéciales et validations sont propres à chaque année. Sélectionnez une année pour basculer dessus, ou créez-en une nouvelle.</p>
+        <button class="btn btn-success" onclick="ouvrirModalNouvelleAnnee()">+ Créer une nouvelle année</button>
+        <div id="listeAnnees" style="margin-top:24px"></div>
+        <div id="anneeMessage" class="message"></div>
+      </div>
+    </div>
   </main>
+</div>
+
+<div id="modalNouvelleAnnee" class="login-screen hidden" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55)">
+  <div class="login-card">
+    <h1>Nouvelle année académique</h1>
+    <p class="muted center">L'espace de données sera vierge et totalement isolé.</p>
+    <form id="formNouvelleAnnee" style="margin-top:24px">
+      <div class="form-group"><label for="newYearLabel">Année (format AAAA-AAAA)</label><input type="text" id="newYearLabel" required pattern="\d{4}-\d{4}" placeholder="Ex : 2027-2028"></div>
+      <button type="submit" class="btn btn-primary btn-block">Créer cette année</button>
+    </form>
+    <div id="newYearMessage" class="message"></div>
+    <a href="#" class="link-back" onclick="fermerModalNouvelleAnnee(event)">← Annuler</a>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, query, orderBy, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -497,13 +537,51 @@ const CONFIG = {
   DATE_FIN: "2100-12-31"
 };
 
+/* ============================================================
+   ÉTAT GLOBAL — année sélectionnée
+   ============================================================ */
+let anneesAcademiques = [];
+let anneeSelectionnee = null;   // {id, label, startDate, endDate, isActive}
+let cacheKAs = [];
+let cachePresences = {};
+let cacheDatesAnnulees = {};
+let cacheDatesSpeciales = {};
+let cacheVoyagesValides = {};
+let selectionCourante = {};
+let voyageSelectionnee = 1;
+let kaOuvert = null;
+let chart1Voyage = 1;
+let chart4Voyage = 1;
+let filtreRepartition = 'tout';
+
+/* Désabonnements Firestore pour changer d'année proprement */
+let unsubscribers = [];
+
+function detruireAbonnements(){
+  unsubscribers.forEach(fn => { try{ fn(); }catch(e){} });
+  unsubscribers = [];
+  cacheKAs = [];
+  cachePresences = {};
+  cacheDatesAnnulees = {};
+  cacheDatesSpeciales = {};
+  cacheVoyagesValides = {};
+  selectionCourante = {};
+}
+
+function prefixeAnnee(){
+  if(!anneeSelectionnee) return null;
+  return `academicYears/${anneeSelectionnee.id}`;
+}
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
 async function sha256(s){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
-
 function dateToISO(d){
   const y = d.getFullYear();
   const m = String(d.getMonth()+1).padStart(2,'0');
@@ -511,19 +589,10 @@ function dateToISO(d){
   return `${y}-${m}-${day}`;
 }
 function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return dateToISO(d); }
-function formatDateFr(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-}
-function formatDateCourte(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
-}
-function nomJour(iso){
-  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  return jours[new Date(iso+"T00:00:00").getDay()];
-}
-function nomMois(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
-}
+function formatDateFr(iso){ return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+function formatDateCourte(iso){ return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}); }
+function nomJour(iso){ const jours=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi']; return jours[new Date(iso+"T00:00:00").getDay()]; }
+function nomMois(iso){ return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{month:'long',year:'numeric'}); }
 function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
   if(!el) return;
@@ -531,6 +600,212 @@ function afficherMessage(id,msg,type){
   setTimeout(()=>{el.className='message';},8000);
 }
 
+const aujourdhuiISO = aujourdhui();
+
+/* ============================================================
+   GESTION DES ANNÉES ACADÉMIQUES
+   ============================================================ */
+async function chargerAnnees(){
+  const snap = await getDocs(query(collection(db,"academicYears"), orderBy("startDate","desc")));
+  anneesAcademiques = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(anneesAcademiques.length === 0){
+    // Initialise 2026-2027 par défaut
+    const id = await creerAnnee("2026-2027");
+    anneesAcademiques = [{id, label:"2026-2027", isActive:true, startDate:new Date("2026-09-01"), endDate:new Date("2027-08-31")}];
+    await setActiveAnnee(id);
+  }
+  const active = anneesAcademiques.find(a => a.isActive) || anneesAcademiques[0];
+  anneeSelectionnee = active;
+  renderSelecteurAnnee();
+  renderListeAnnees();
+  renderBanniereAnnee();
+}
+
+async function creerAnnee(label){
+  const [start] = label.split("-").map(Number);
+  if(isNaN(start)) throw new Error("Format invalide. Ex: 2027-2028");
+  const ref = doc(collection(db,"academicYears"));
+  await setDoc(ref, {
+    label,
+    startDate: new Date(`${start}-09-01`),
+    endDate: new Date(`${start+1}-08-31`),
+    isActive: false,
+    createdAt: serverTimestamp()
+  });
+  return ref.id;
+}
+
+async function setActiveAnnee(id){
+  const batch = writeBatch(db);
+  anneesAcademiques.forEach(a => {
+    batch.update(doc(db,"academicYears",a.id), { isActive: a.id === id });
+  });
+  await batch.commit();
+}
+
+async function basculerAnnee(id){
+  if(id === anneeSelectionnee?.id) return;
+  detruireAbonnements();
+  const cible = anneesAcademiques.find(a => a.id === id);
+  if(!cible) return;
+  await setActiveAnnee(id);
+  anneeSelectionnee = cible;
+  anneesAcademiques = anneesAcademiques.map(a => ({...a, isActive: a.id === id}));
+  renderSelecteurAnnee();
+  renderListeAnnees();
+  renderBanniereAnnee();
+  demarrerEcouteurs();
+  rafraichirTempsReel();
+  if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  afficherMessage('anneeMessage', `✓ Année ${cible.label} sélectionnée.`, 'success');
+}
+
+function renderSelecteurAnnee(){
+  const sel = document.getElementById('academicYearSelect');
+  if(!sel) return;
+  sel.innerHTML = anneesAcademiques.map(a =>
+    `<option value="${a.id}" ${a.id===anneeSelectionnee?.id?'selected':''}>${a.label}${a.isActive?' ●':''}</option>`
+  ).join('');
+  sel.onchange = (e) => basculerAnnee(e.target.value);
+}
+
+function renderListeAnnees(){
+  const el = document.getElementById('listeAnnees');
+  if(!el) return;
+  el.innerHTML = anneesAcademiques.map(a => {
+    const actif = a.id === anneeSelectionnee?.id;
+    return `<div class="dim-item ${actif?'special':''}" style="margin-bottom:8px">
+      <div class="dim-date">
+        <strong style="font-size:1.05rem">${esc(a.label)}</strong>
+        ${actif?'<span class="dim-status active" style="margin-left:10px">SÉLECTIONNÉE</span>':''}
+        ${a.isActive && !actif?'<span class="dim-type">ACTIVE</span>':''}
+      </div>
+      <div class="dim-actions">
+        ${!actif?`<button class="btn btn-primary btn-sm" onclick="basculerAnnee('${a.id}')">Basculer</button>`:''}
+        ${anneesAcademiques.length>1?`<button class="btn btn-danger btn-sm" onclick="supprimerAnnee('${a.id}')">Supprimer</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function supprimerAnnee(id){
+  if(anneesAcademiques.length <= 1){ alert("Impossible : au moins une année doit exister."); return; }
+  const a = anneesAcademiques.find(x => x.id === id);
+  if(!a) return;
+  if(!confirm(`Supprimer DÉFINITIVEMENT l'année ${a.label} et TOUTES ses données (KA, présences, dates) ?`)) return;
+  const sousCols = ["kas","presences","datesAnnulees","datesSpeciales","voyagesValides"];
+  for(const sub of sousCols){
+    const snap = await getDocs(collection(db,`academicYears/${id}/${sub}`));
+    for(const d of snap.docs){ await deleteDoc(d.ref); }
+  }
+  await deleteDoc(doc(db,"academicYears",id));
+  afficherMessage('anneeMessage', `Année ${a.label} supprimée.`, 'success');
+  detruireAbonnements();
+  await chargerAnnees();
+  await basculerAnnee(anneesAcademiques[0].id);
+}
+
+function renderBanniereAnnee(){
+  if(!anneeSelectionnee) return;
+  document.getElementById('currentYearLabel').textContent = anneeSelectionnee.label;
+  const s = anneeSelectionnee.startDate?.toDate?.() || new Date(anneeSelectionnee.startDate);
+  const e = anneeSelectionnee.endDate?.toDate?.() || new Date(anneeSelectionnee.endDate);
+  document.getElementById('currentYearPeriod').textContent =
+    `${s.toLocaleDateString('fr-FR')} → ${e.toLocaleDateString('fr-FR')}`;
+  const b = document.getElementById('yearStatusBadge');
+  b.textContent = anneeSelectionnee.isActive ? "ACTIVE" : "CONSULTABLE";
+  b.className = 'db-status ' + (anneeSelectionnee.isActive ? 'open' : 'special');
+}
+
+window.basculerAnnee = basculerAnnee;
+window.supprimerAnnee = supprimerAnnee;
+
+/* ============================================================
+   MODAL NOUVELLE ANNÉE
+   ============================================================ */
+window.ouvrirModalNouvelleAnnee = function(){
+  const last = anneesAcademiques[0]?.label || "2026-2027";
+  const [start] = last.split("-").map(Number);
+  document.getElementById('newYearLabel').value = `${start+1}-${start+2}`;
+  document.getElementById('newYearMessage').className = 'message';
+  document.getElementById('modalNouvelleAnnee').classList.remove('hidden');
+};
+window.fermerModalNouvelleAnnee = function(e){
+  if(e) e.preventDefault();
+  document.getElementById('modalNouvelleAnnee').classList.add('hidden');
+};
+
+document.getElementById('formNouvelleAnnee').addEventListener('submit', async e => {
+  e.preventDefault();
+  const label = document.getElementById('newYearLabel').value.trim();
+  if(!/^\d{4}-\d{4}$/.test(label)){
+    afficherMessage('newYearMessage', "Format invalide. Ex: 2027-2028", 'error');
+    return;
+  }
+  if(anneesAcademiques.some(a => a.label === label)){
+    afficherMessage('newYearMessage', "Cette année existe déjà.", 'error');
+    return;
+  }
+  try{
+    const id = await creerAnnee(label);
+    afficherMessage('newYearMessage', "✓ Année créée. Basculer dessus...", 'success');
+    await chargerAnnees();
+    await basculerAnnee(id);
+    setTimeout(() => fermerModalNouvelleAnnee(), 600);
+  }catch(err){
+    afficherMessage('newYearMessage', "Erreur : "+err.message, 'error');
+  }
+});
+
+/* ============================================================
+   ÉCOUTEURS FIRESTORE — TOUS PRÉFIXÉS PAR L'ANNÉE ACTIVE
+   ============================================================ */
+function demarrerEcouteurs(){
+  detruireAbonnements();
+  const base = prefixeAnnee();
+  if(!base) return;
+
+  unsubscribers.push(onSnapshot(collection(db, `${base}/kas`), snap => {
+    cacheKAs = [];
+    snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
+    cacheKAs.sort((a,b)=> a.voyage-b.voyage || a.nom.localeCompare(b.nom));
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }));
+
+  unsubscribers.push(onSnapshot(collection(db, `${base}/presences`), snap => {
+    cachePresences = {};
+    snap.forEach(d => { cachePresences[d.id] = d.data(); });
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }));
+
+  unsubscribers.push(onSnapshot(collection(db, `${base}/datesAnnulees`), snap => {
+    cacheDatesAnnulees = {};
+    snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }));
+
+  unsubscribers.push(onSnapshot(collection(db, `${base}/datesSpeciales`), snap => {
+    cacheDatesSpeciales = {};
+    snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }));
+
+  unsubscribers.push(onSnapshot(collection(db, `${base}/voyagesValides`), snap => {
+    cacheVoyagesValides = {};
+    snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
+    rafraichirTempsReel();
+    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
+  }));
+}
+
+/* ============================================================
+   TOUT LE RESTE EST IDENTIQUE — les chemins de collection
+   sont simplement préfixés par `academicYears/{id}/...`
+   ============================================================ */
 function genererDimanches(){
   const dimanches = [];
   const d = new Date(); d.setHours(0,0,0,0);
@@ -544,63 +819,10 @@ function genererDimanches(){
 }
 const DIMANCHES_AUTO = genererDimanches();
 
-let cacheKAs = [];
-let cachePresences = {};
-let cacheDatesAnnulees = {};
-let cacheDatesSpeciales = {};
-let cacheVoyagesValides = {};
-let selectionCourante = {};
-let voyageSelectionnee = 1;
-let kaOuvert = null;
-
-let chart1Voyage = 1;
-let chart4Voyage = 1;
-let filtreRepartition = 'tout';
-
-const aujourdhuiISO = aujourdhui();
-
-function ecouterKAs(cb){
-  onSnapshot(collection(db,"kas"), snap => {
-    cacheKAs = [];
-    snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
-    cacheKAs.sort((a,b)=> a.voyage-b.voyage || a.nom.localeCompare(b.nom));
-    if(cb) cb();
-  });
-}
-function ecouterPresences(cb){
-  onSnapshot(collection(db,"presences"), snap => {
-    cachePresences = {};
-    snap.forEach(d => { cachePresences[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterDatesAnnulees(cb){
-  onSnapshot(collection(db,"datesAnnulees"), snap => {
-    cacheDatesAnnulees = {};
-    snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterDatesSpeciales(cb){
-  onSnapshot(collection(db,"datesSpeciales"), snap => {
-    cacheDatesSpeciales = {};
-    snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-function ecouterVoyagesValides(cb){
-  onSnapshot(collection(db,"voyagesValides"), snap => {
-    cacheVoyagesValides = {};
-    snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
-    if(cb) cb();
-  });
-}
-
 function statutDuJour(){
   const special = cacheDatesSpeciales[aujourdhuiISO];
   const estDimanche = new Date(aujourdhuiISO+"T00:00:00").getDay() === 0;
   const annule = cacheDatesAnnulees[aujourdhuiISO];
-
   if(annule) return {ouvert:false, raison:"ANNULÉ", detail:"Cette séance a été annulée par la Commission Secrétariat."};
   if(estDimanche) return {ouvert:true, raison:"DIMANCHE", detail:""};
   if(special) return {ouvert:true, raison: special.type === 'activite' ? "ACTIVITÉ" : "ÉVÉNEMENT", detail: special.libelle || ""};
@@ -619,7 +841,6 @@ function renderBanniere(){
   const st = document.getElementById('dbStatus');
   st.textContent = statut.raison;
   st.className = 'db-status ' + (statut.ouvert ? (statut.raison === 'DIMANCHE' ? 'open' : 'special') : 'closed');
-
   const dm = document.getElementById('dateMessage');
   if(!statut.ouvert){
     dm.textContent = statut.detail;
@@ -646,21 +867,17 @@ function renderKaListeVoyage(){
   updateVoyageTabCounts();
   const container = document.getElementById('kaListeVoyage');
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-
   if(kasVoyage.length === 0){
     container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage.</p>';
     document.getElementById('countChecked').textContent = 0;
     document.getElementById('countTotal').textContent = 0;
     return;
   }
-
   const statut = statutDuJour();
   const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
   const existant = cachePresences[aujourdhuiISO] || {};
   const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
-
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
-
   const kizito = kasVoyage.filter(k => k.nom.startsWith('K.'));
   const anuarite = kasVoyage.filter(k => k.nom.startsWith('A.'));
 
@@ -672,10 +889,8 @@ function renderKaListeVoyage(){
       if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
       else if(p[ka.id]) compteur = 0;
     });
-    if(maxCompteur >= 3) alert3 = true;
-
+    if(maxCom     if(maxCompteur >= 3) alert3 = true;
     const val = selectionCourante[ka.id] || existant[ka.id] || "";
-
     return `<div class="ka-row ${alert3?'absence-alert':''}">
       <div class="ka-info">
         <span class="ka-nom">${esc(ka.nom)}</span>
@@ -698,11 +913,8 @@ function renderKaListeVoyage(){
     html += `<h3 style="font-size:1rem;color:var(--primary);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--secondary);text-transform:uppercase;letter-spacing:1.5px">Anuarite (A.)</h3>`;
     html += anuarite.map(renderRow).join('');
   }
-
   container.innerHTML = html;
-
   updateCount();
-
   const btn = document.getElementById('btnValider');
   if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
   else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
@@ -731,7 +943,6 @@ async function validerVoyageCourant(){
     return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
 
   const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-
   const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
   if(nonCoches.length > 0){
     return afficherMessage('validationMessage',
@@ -740,9 +951,10 @@ async function validerVoyageCourant(){
   }
 
   try {
+    const base = prefixeAnnee();
     const existing = cachePresences[aujourdhuiISO] || {};
-    await setDoc(doc(db,"presences",aujourdhuiISO), {...existing, ...selectionCourante});
-    await setDoc(doc(db,"voyagesValides",aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
+    await setDoc(doc(db, `${base}/presences`, aujourdhuiISO), {...existing, ...selectionCourante});
+    await setDoc(doc(db, `${base}/voyagesValides`, aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
     kasVoyage.forEach(k => delete selectionCourante[k.id]);
     afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
     updateCount();
@@ -794,12 +1006,16 @@ document.getElementById('formLogin').addEventListener('submit', async e => {
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('password').value = '';
+    await chargerAnnees();
+    demarrerEcouteurs();
+    rafraichirTempsReel();
     chargerDashboard();
   } else afficherMessage('loginMessage',"Mot de passe incorrect.",'error');
 });
 
 function deconnexion(){
   detruireSession();
+  detruireAbonnements();
   document.getElementById('dashboard').classList.add('hidden');
   document.getElementById('pagePublique').classList.remove('hidden');
   kaOuvert = null;
@@ -815,6 +1031,8 @@ function chargerDashboard(){
   renderListeKASecretariat();
   renderHistorique();
   renderGraphiques();
+  renderBanniereAnnee();
+  renderListeAnnees();
 }
 
 function renderStats(){
@@ -852,7 +1070,6 @@ function renderAlertes(){
   ).join('');
 }
 
-/* Toutes les années — utilisé par Classement, Exports, Chart 4 */
 function calculerStats(){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
   return cacheKAs.map(ka => {
@@ -870,27 +1087,21 @@ function calculerStats(){
   }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
 }
 
-/* ============================================================
-   MOIS EN COURS — utilisé par Chart 1
-   ============================================================ */
 function calculerStatsParVoyageEtTypeMoisCourant(voyage){
   const now = new Date();
   const moisCourant = now.getMonth();
   const anneeCourante = now.getFullYear();
-
   const dimsMesse = [];
   const dimsActivite = [];
   Object.keys(cachePresences).forEach(d => {
     if(cacheDatesAnnulees[d]) return;
     const dt = new Date(d+"T00:00:00");
-    // ⬇️ Filtre : uniquement le mois en cours
     if(dt.getMonth() !== moisCourant || dt.getFullYear() !== anneeCourante) return;
     const isSpecial = cacheDatesSpeciales[d];
     const isDimanche = dt.getDay() === 0;
     if(isSpecial){ dimsActivite.push(d); }
     else if(isDimanche){ dimsMesse.push(d); }
   });
-
   const kas = cacheKAs.filter(k => k.voyage === voyage);
   return kas.map(ka => {
     let presentMesse = 0, presentActivite = 0;
@@ -1002,7 +1213,6 @@ function renderDates(){
   const datesSet = new Set(DIMANCHES_AUTO);
   Object.keys(cacheDatesSpeciales).forEach(d => datesSet.add(d));
   const dates = Array.from(datesSet).sort();
-
   container.innerHTML = dates.map(d => {
     const annule = cacheDatesAnnulees[d];
     const special = cacheDatesSpeciales[d];
@@ -1011,9 +1221,7 @@ function renderDates(){
     if(special){ typeLabel = special.type === 'activite' ? 'ACTIVITÉ' : 'ÉVÉNEMENT'; typeClass = 'special'; }
     else if(isDimanche){ typeLabel = 'DIMANCHE'; typeClass = ''; }
     else { typeLabel = 'JOUR'; typeClass = ''; }
-
     const st = statutDate(d);
-
     return `<div class="dim-item ${special?'special':''}">
       <div class="dim-date">${formatDateFr(d)}${special && special.libelle ? ' — '+esc(special.libelle) : ''}</div>
       <span class="dim-type ${typeClass}">${typeLabel}</span>
@@ -1030,10 +1238,11 @@ function renderDates(){
 async function annulerDate(d){
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
-  await setDoc(doc(db,"datesAnnulees",d),{annule:true, date:new Date().toISOString()});
+  const base = prefixeAnnee();
+  await setDoc(doc(db,`${base}/datesAnnulees`,d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){ await deleteDoc(doc(db,"datesAnnulees",d)); }
-async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(doc(db,"datesSpeciales",d)); }
+async function reactiverDate(d){ await deleteDoc(doc(db,`${prefixeAnnee()}/datesAnnulees`,d)); }
+async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(doc(db,`${prefixeAnnee()}/datesSpeciales`,d)); }
 
 document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   e.preventDefault();
@@ -1042,7 +1251,7 @@ document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   const libelle = document.getElementById('newLibelle').value.trim();
   if(!date) return afficherMessage('ajoutDateMessage',"Date invalide.",'error');
   try{
-    await setDoc(doc(db,"datesSpeciales",date),{type, libelle, ajouteLe:new Date().toISOString()});
+    await setDoc(doc(db,`${prefixeAnnee()}/datesSpeciales`,date),{type, libelle, ajouteLe:new Date().toISOString()});
     document.getElementById('newDate').value = '';
     document.getElementById('newLibelle').value = '';
     afficherMessage('ajoutDateMessage',"✓ Date programmée avec succès.",'success');
@@ -1075,7 +1284,7 @@ async function supprimerKA(id){
   const code = prompt("Code de suppression requis :");
   if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
   if(!confirm("Supprimer définitivement ce KA ?")) return;
-  await deleteDoc(doc(db,"kas",id));
+  await deleteDoc(doc(db,`${prefixeAnnee()}/kas`,id));
 }
 
 document.getElementById('formAjoutKA').addEventListener('submit', async e => {
@@ -1086,7 +1295,7 @@ document.getElementById('formAjoutKA').addEventListener('submit', async e => {
   if(![1,2,3,4].includes(voyage)) return afficherMessage('ajoutMessage',"Voyage invalide.",'error');
   if(cacheKAs.some(k => norm(k.nom) === norm(nom))) return afficherMessage('ajoutMessage',"Ce KA existe déjà.",'error');
   const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  await setDoc(doc(db,"kas",id), {nom, voyage, createdAt: new Date().toISOString()});
+  await setDoc(doc(db,`${prefixeAnnee()}/kas`,id), {nom, voyage, createdAt: new Date().toISOString()});
   document.getElementById('newNom').value = '';
   document.getElementById('newVoyage').value = '';
   afficherMessage('ajoutMessage',"✓ KA ajouté avec succès.",'success');
@@ -1113,10 +1322,6 @@ function renderHistorique(){
   }).join('');
 }
 
-/* ============================================================
-   GRAPHIQUES
-   ============================================================ */
-
 function getDatesFiltrees(mode){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
   const now = new Date();
@@ -1140,24 +1345,18 @@ function setContainerHeight(containerId, nbItems){
   el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
 }
 
-/* Chart 1 : Présences par KA — % Messe vs % Activité — SUR LE MOIS EN COURS */
 function renderChart1(){
   if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
   const data = calculerStatsParVoyageEtTypeMoisCourant(chart1Voyage);
   const labels = data.map(d => d.ka.nom);
-
-  // Badge période
   const badge = document.getElementById('chart1PeriodLabel');
   if(badge) badge.textContent = nomMois(aujourdhuiISO);
-
   document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
   });
   document.getElementById('chart1Prev').disabled = (chart1Voyage === 1);
   document.getElementById('chart1Next').disabled = (chart1Voyage === 4);
-
   setContainerHeight('chartParKAContainer', Math.max(data.length, 5));
-
   charts.parKA = new Chart(document.getElementById('chartParKA'), {
     type:'bar',
     data:{
@@ -1188,7 +1387,6 @@ function renderChart1(){
   });
 }
 
-/* Chart 2 : Répartition globale — 3 filtres */
 function renderChart2(){
   document.querySelectorAll('.filter-card').forEach(c => {
     c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
@@ -1197,9 +1395,7 @@ function renderChart2(){
   if(badge) badge.textContent =
     filtreRepartition === 'tout' ? 'Tout depuis le début' :
     filtreRepartition === 'annee' ? 'Cette année' : 'Ce mois — dimanches';
-
   if(charts.global){ try{charts.global.destroy();}catch(e){} }
-
   const dims = getDatesFiltrees(filtreRepartition);
   let totalP=0, totalA=0, totalE=0;
   dims.forEach(d => {
@@ -1210,7 +1406,6 @@ function renderChart2(){
       else if(s === 'excuse') totalE++;
     });
   });
-
   charts.global = new Chart(document.getElementById('chartGlobal'), {
     type:'doughnut',
     data:{
@@ -1221,7 +1416,6 @@ function renderChart2(){
   });
 }
 
-/* Chart 3 : Présences par voyage (inchangé — toutes les années) */
 function renderChart3(){
   if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
   const stats = calculerStats();
@@ -1234,20 +1428,16 @@ function renderChart3(){
   });
 }
 
-/* Chart 4 : Taux de présence par KA (%) — TOUTES LES ANNÉES */
 function renderChart4(){
   if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
   const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
   const labels = stats.map(s => s.nom);
-
   document.querySelectorAll('#voyageDots4 .voyage-dot').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.v) === chart4Voyage);
   });
   document.getElementById('chart4Prev').disabled = (chart4Voyage === 1);
   document.getElementById('chart4Next').disabled = (chart4Voyage === 4);
-
   setContainerHeight('chartTauxContainer', Math.max(stats.length, 5));
-
   charts.taux = new Chart(document.getElementById('chartTaux'), {
     type:'bar',
     data:{
@@ -1327,146 +1517,14 @@ function addSwipe(containerId, onSwipeLeft, onSwipeRight){
   el.addEventListener('touchstart', e => {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-  }, {passive:true});
-  el.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50){
-      if(dx < 0) onSwipeLeft();
-      else onSwipeRight();
+  }, rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /academicYears/{yearId} {
+      allow read, write: if true;
+      match /{subcollection=**}/{docId} {
+        allow read, write: if true;
+      }
     }
-  }, {passive:true});
-}
-
-function bindSwipeCharts(){
-  addSwipe('chart1Scroll',
-    () => { if(chart1Voyage < 4){ chart1Voyage++; renderChart1(); } },
-    () => { if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); } }
-  );
-  addSwipe('chart4Scroll',
-    () => { if(chart4Voyage < 4){ chart4Voyage++; renderChart4(); } },
-    () => { if(chart4Voyage > 1){ chart4Voyage--; renderChart4(); } }
-  );
-}
-
-bindChart1Nav();
-bindChart4Nav();
-bindFilterCards();
-bindSwipeCharts();
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
-});
-
-document.querySelectorAll('.voyage-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.voyage-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    voyageSelectionnee = Number(tab.dataset.voyage);
-    renderKaListeVoyage();
-  });
-});
-
-document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
-
-function exportCSV(){
-  const stats = calculerStats();
-  let csv = "Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
-  stats.forEach(s => { csv += `"${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
-  telecharger(csv,`groupe-ka-${dateToISO(new Date())}.csv`,'text/csv');
-}
-function exportJSON(){
-  const data = {kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
-  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${dateToISO(new Date())}.json`,'application/json');
-}
-function telecharger(c,nom,type){
-  const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download=nom; a.click(); URL.revokeObjectURL(url);
-}
-
-window.ouvrirLogin = ouvrirLogin;
-window.fermerLogin = fermerLogin;
-window.deconnexion = deconnexion;
-window.setStatus = setStatus;
-window.reinitialiserVoyage = reinitialiserVoyage;
-window.validerVoyageCourant = validerVoyageCourant;
-window.supprimerKA = supprimerKA;
-window.annulerDate = annulerDate;
-window.reactiverDate = reactiverDate;
-window.supprimerDateSpecial = supprimerDateSpecial;
-window.exportCSV = exportCSV;
-window.exportJSON = exportJSON;
-window.sha256 = sha256;
-
-const KA_TEST = [
-  {nom:"K. Nicolas BABALE", voyage:2},{nom:"K. Joseph BABALE", voyage:2},{nom:"K. John MUYAMBA", voyage:2},{nom:"K. Junior KIKAKEDI", voyage:2},{nom:"K. Dianna MULUNDA", voyage:2},{nom:"K. Didier NLANDU J.", voyage:2},{nom:"K. Jules MANZAMBI", voyage:2},{nom:"K. Rachlin MIDO", voyage:2},{nom:"K. Antoine MBONGU", voyage:2},{nom:"K. Bruno TUBWINGE", voyage:2},{nom:"K. Vismy SAIDI", voyage:2},{nom:"K. Gervais LENGWA", voyage:2},{nom:"K. Israel NSILU", voyage:2},
-  {nom:"A. Patricia MUTHU", voyage:2},{nom:"A. Viviane RAMAZANI", voyage:2},{nom:"A. Vanessa MASIKA", voyage:2},{nom:"A. Divine MWIKA", voyage:2},{nom:"A. Maria LUEMBA", voyage:2},{nom:"A. Enya MBANGALA", voyage:2},{nom:"A. Angelique NDERI", voyage:2},{nom:"A. Maria MAVINGA", voyage:2},{nom:"A. Norianna KASAKWA", voyage:2},{nom:"A. Bienveillance KIALA", voyage:2},{nom:"A. Helena NKEMBI", voyage:2},{nom:"A. Maria KANAMBAKI", voyage:2},{nom:"A. Gode MIDO", voyage:2},{nom:"A. Perla BELAWO", voyage:2},{nom:"A. Nicole TSHIBANGU", voyage:2},{nom:"A. Parfaite LENGWA", voyage:2},{nom:"A. Eliana WADIPOYI", voyage:2},{nom:"A. Noella MBELA", voyage:2},{nom:"A. Espoire SINGA", voyage:2},{nom:"A. Lajoie SINGA", voyage:2},{nom:"A. Kersene TSHIBANGU", voyage:2},{nom:"A. Clémence SAFARI", voyage:2},{nom:"A. Glorianna BELEMO", voyage:2},{nom:"A. Merveille MIANDA", voyage:2},{nom:"A. Consolate SAIDI", voyage:2},
-  {nom:"K. Moïse SINGA", voyage:3},{nom:"K. Credo SINGA", voyage:3},{nom:"K. David LUBO", voyage:3},{nom:"K. Daniel DIPONGO", voyage:3},{nom:"K. David MAYADILA", voyage:3},{nom:"K. Marcelo ONAKUDU", voyage:3},{nom:"K. Jervie SHUTSHA", voyage:3},{nom:"K. Dieu Merci KABONGO", voyage:3},{nom:"K. Messi LENGWA", voyage:3},{nom:"K. Matthieu MUTANGALA", voyage:3},{nom:"K. Dave KIPELEKA", voyage:3},
-  {nom:"A. Triomphe BOKIKA", voyage:3},{nom:"A. Claudia MADIDISH", voyage:3},{nom:"A. Phideline KIKETA", voyage:3},{nom:"A. Phongella IMANA", voyage:3},{nom:"A. Helena MAKABA", voyage:3},{nom:"A. Nestolla RAMAZANI", voyage:3},{nom:"A. Valerie NDAMBA", voyage:3},{nom:"A. Emilie KIKA", voyage:3},{nom:"A. Nestivie BOTOKO", voyage:3},{nom:"A. Abigael LUMEYA", voyage:3},{nom:"A. Claudine PEMBE", voyage:3},{nom:"A. Hortance MBONDA", voyage:3},{nom:"A. Larose BOTULU", voyage:3},{nom:"A. Lumiere KOTOBA", voyage:3},{nom:"A. Marta BINJA", voyage:3},{nom:"A. Lajoie TSHIBOLA", voyage:3},
-  {nom:"K. Marcel KILOMBO", voyage:4},{nom:"K. Jeremie AKILI", voyage:4},{nom:"K. Josaphat LUZOLO", voyage:4},{nom:"K. Winner SAIDI", voyage:4},{nom:"K. Grael MUYISI", voyage:4},
-  {nom:"A. Bienfait MADIDISHI", voyage:4},{nom:"A. Aubaine SINGA", voyage:4},{nom:"A. Thérèse KAPINGA", voyage:4},{nom:"A. Hélène MBELE", voyage:4},{nom:"A. Ruth IBANGA", voyage:4},{nom:"A. Immaculée MALONGA", voyage:4},{nom:"A. Chancelvie MOLOKO", voyage:4},{nom:"A. Hermelie MUYUKU", voyage:4},{nom:"A. Nana KIALA", voyage:4},{nom:"A. Ben Alicia MOLOKO", voyage:4},{nom:"A. Winnie MONGILA", voyage:4},{nom:"A. Marie-Fortune KAWE", voyage:4}
-];
-
-window.chargerKAOfficiels = async function(){
-  const msg = document.getElementById('chargementMessage');
-  msg.textContent = "Chargement en cours...";
-  msg.className = 'message show warning';
-  let ajoutes = 0, dejaPresents = 0, erreurs = 0;
-  for(const k of KA_TEST){
-    const existe = cacheKAs.some(x => norm(x.nom) === norm(k.nom));
-    if(existe){ dejaPresents++; continue; }
-    try{
-      const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      await setDoc(doc(db,"kas",id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
-      ajoutes++;
-    } catch(e){ erreurs++; console.log("Erreur :", k.nom, e.message); }
   }
-  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
-  msg.className = 'message show success';
-};
-
-function rafraichirTempsReel(){
-  renderBanniere();
-  renderKaListeVoyage();
 }
-
-function init(){
-  ecouterKAs(async ()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterPresences(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterDatesAnnulees(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterDatesSpeciales(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  ecouterVoyagesValides(()=>{
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  });
-  if(sessionValide()){
-    document.getElementById('pagePublique').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    chargerDashboard();
-  }
-  setInterval(()=>{
-    const el = document.getElementById('dbTime');
-    if(el) el.textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }, 1000);
-}
-init();
-</script>
-</body>
-</html>
