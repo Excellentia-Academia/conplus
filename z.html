@@ -376,7 +376,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-graphiques" class="tab-content active">
       <div class="chart-grid">
         <div class="chart-box">
-          <h3>Présences par KA (Messe vs Activité) — %</h3>
+          <h3>Présences par KA (Messe vs Activité) — % affiché en bout de barre</h3>
           <div class="chart-period">Période : <span class="badge" id="chart1PeriodLabel">—</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart1Prev" aria-label="Voyage précédent">◀</button>
@@ -410,9 +410,18 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         </div>
       </div>
       <div class="chart-grid">
-        <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
-          <h3>Taux de présence par KA (%)</h3>
+          <h3>Présences par voyage</h3>
+          <div class="chart-period">Filtre : <span class="badge" id="chart3PeriodLabel">Tout depuis le début</span></div>
+          <div class="filter-cards" style="grid-template-columns:repeat(3,1fr)">
+            <button class="filter-card" data-filtre3="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
+            <button class="filter-card" data-filtre3="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
+            <button class="filter-card active" data-filtre3="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
+          </div>
+          <div class="chart-container"><canvas id="chartVoyages"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3>Taux de présence par KA (%) — % affiché en bout de barre</h3>
           <div class="chart-period">Période : <span class="badge" id="chart4PeriodLabel">Cette année initiatique</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
@@ -614,6 +623,7 @@ let chart1Voyage = 1;
 let chart4Voyage = 1;
 let filtreRepartition = 'tout';
 let sousFiltreRepartition = 'tous';
+let filtreVoyages = 'tout';
 let cacheAnneesMeta = {};
 
 const aujourdhuiISO = aujourdhui();
@@ -754,6 +764,7 @@ async function changerAnnee(nouvelleAnnee){
   chart4Voyage = 1;
   filtreRepartition = 'tout';
   sousFiltreRepartition = 'tous';
+  filtreVoyages = 'tout';
 
   remplirSelectAnnees();
   await attacherListenersAnnee();
@@ -1411,6 +1422,29 @@ function renderChart1(){
 
   setContainerHeight('chartParKAContainer', Math.max(data.length, 5));
 
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart1',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textBaseline = 'middle';
+      chart.data.datasets.forEach((dataset, dsIndex) => {
+        const meta = chart.getDatasetMeta(dsIndex);
+        meta.data.forEach((bar, i) => {
+          const val = dataset.data[i];
+          if(val === undefined || val === null) return;
+          const texte = val + '%';
+          const x = bar.x + 6;
+          const y = bar.y;
+          ctx.fillText(texte, x, y);
+        });
+      });
+      ctx.restore();
+    }
+  };
+
   charts.parKA = new Chart(document.getElementById('chartParKA'), {
     type:'bar',
     data:{
@@ -1424,6 +1458,7 @@ function renderChart1(){
       responsive:true,
       maintainAspectRatio:false,
       indexAxis:'y',
+      layout:{padding:{right:50}},
       plugins:{
         legend:{position:'top'},
         tooltip:{callbacks:{label: ctx => {
@@ -1437,7 +1472,8 @@ function renderChart1(){
         x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
         y:{ticks:{font:{size:11}, autoSkip:false}}
       }
-    }
+    },
+    plugins:[pluginPourcentage]
   });
 }
 
@@ -1542,15 +1578,114 @@ async function renderChart2Tout(){
   }
 }
 
+function calculerStatsVoyagesParFiltre(mode){
+  let datesConcernees = [];
+
+  if(mode === 'seance'){
+    datesConcernees = cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
+  } else if(mode === 'mois'){
+    const now = new Date();
+    const moisCourant = now.getMonth();
+    const anneeCivile = now.getFullYear();
+    datesConcernees = Object.keys(cachePresences).filter(d => {
+      if(cacheDatesAnnulees[d]) return false;
+      const dt = new Date(d+"T00:00:00");
+      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCivile;
+    });
+  } else {
+    datesConcernees = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
+  }
+
+  return [1,2,3,4].map(v => {
+    const kasVoyage = cacheKAs.filter(k => k.voyage === v);
+    let presents = 0, absents = 0, excuses = 0;
+    datesConcernees.forEach(d => {
+      const p = cachePresences[d] || {};
+      kasVoyage.forEach(ka => {
+        const s = p[ka.id];
+        if(s === 'present') presents++;
+        else if(s === 'absent') absents++;
+        else if(s === 'excuse') excuses++;
+      });
+    });
+    const total = presents + absents + excuses;
+    const taux = total ? Math.round((presents / total) * 100) : 0;
+    return {voyage: v, presents, absents, excuses, total, taux};
+  });
+}
+
 function renderChart3(){
   if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
-  const stats = calculerStats();
-  const voyageLabels = [1,2,3,4].map(v=>CONFIG.VOYAGES[v]);
-  const voyageData = [1,2,3,4].map(v => stats.filter(s=>s.voyage===v).reduce((acc,s)=>acc+s.present,0));
+
+  const donnees = calculerStatsVoyagesParFiltre(filtreVoyages);
+
+  const badge = document.getElementById('chart3PeriodLabel');
+  if(badge){
+    badge.textContent =
+      filtreVoyages === 'seance' ? 'Séance du jour' :
+      filtreVoyages === 'mois'   ? 'Ce mois' :
+                                   'Tout depuis le début';
+  }
+
+  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
+    c.classList.toggle('active', c.dataset.filtre3 === filtreVoyages);
+  });
+
+  const labels = [1,2,3,4].map(v => CONFIG.VOYAGES[v]);
+
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart3',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      const meta = chart.getDatasetMeta(0);
+      meta.data.forEach((bar, i) => {
+        const val = donnees[i].taux;
+        if(val === undefined || val === null) return;
+        ctx.fillText(val + '%', bar.x, bar.y - 4);
+      });
+      ctx.restore();
+    }
+  };
+
   charts.voyages = new Chart(document.getElementById('chartVoyages'), {
     type:'bar',
-    data:{labels:voyageLabels, datasets:[{label:'Présences totales', data:voyageData, backgroundColor:'#f5a623', borderRadius:8}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+    data:{
+      labels,
+      datasets:[{
+        label:'Présences',
+        data: donnees.map(d => d.presents),
+        backgroundColor:'#f5a623',
+        borderRadius:8
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{padding:{top:24}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const d = donnees[ctx.dataIndex];
+              return [
+                `Présences : ${d.presents}`,
+                `Absences : ${d.absents}`,
+                `Signalées : ${d.excuses}`,
+                `Taux : ${d.taux}%`
+              ];
+            }
+          }
+        }
+      },
+      scales:{y:{beginAtZero:true}}
+    },
+    plugins:[pluginPourcentage]
   });
 }
 
@@ -1567,6 +1702,24 @@ function renderChart4(){
 
   setContainerHeight('chartTauxContainer', Math.max(stats.length, 5));
 
+  const pluginPourcentage = {
+    id: 'pluginPourcentageChart4',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillStyle = '#1a0a0f';
+      ctx.textBaseline = 'middle';
+      const meta = chart.getDatasetMeta(0);
+      meta.data.forEach((bar, i) => {
+        const val = stats[i].taux;
+        if(val === undefined || val === null) return;
+        ctx.fillText(val + '%', bar.x + 6, bar.y);
+      });
+      ctx.restore();
+    }
+  };
+
   charts.taux = new Chart(document.getElementById('chartTaux'), {
     type:'bar',
     data:{
@@ -1582,6 +1735,7 @@ function renderChart4(){
       responsive:true,
       maintainAspectRatio:false,
       indexAxis:'y',
+      layout:{padding:{right:50}},
       plugins:{
         legend:{display:false},
         tooltip:{callbacks:{label: ctx => `${ctx.parsed.x}%`}}
@@ -1590,7 +1744,8 @@ function renderChart4(){
         x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
         y:{ticks:{font:{size:11}, autoSkip:false}}
       }
-    }
+    },
+    plugins:[pluginPourcentage]
   });
 }
 
@@ -1641,6 +1796,12 @@ function bindFilterCards(){
     c.addEventListener('click', () => {
       sousFiltreRepartition = c.dataset.sousfiltre;
       renderChart2();
+    });
+  });
+  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
+    c.addEventListener('click', () => {
+      filtreVoyages = c.dataset.filtre3;
+      renderChart3();
     });
   });
 }
@@ -2075,7 +2236,7 @@ ${logoHtml}
 
 <div class="info-box">
   <p style="margin:4px 0"><strong>Période couverte :</strong> ${periode}</p>
-  <p style="margin:4px 0"><strong>Nombre d'années initiatiques :</strong> ${stats.nbKA ? '' : ''}${anneesDisponibles.length}</p>
+  <p style="margin:4px 0"><strong>Nombre d'années initiatiques :</strong> ${anneesDisponibles.length}</p>
   <p style="margin:4px 0"><strong>Nombre total de KA :</strong> ${stats.nbKA}</p>
   <p style="margin:4px 0"><strong>Nombre total de séances :</strong> ${stats.nbSeances}</p>
 </div>
@@ -2157,13 +2318,10 @@ async function genererRapportWord(){
   msg.className = 'message show warning';
 
   try {
-    // 1) Charger toutes les données
     const donnees = await chargerDonneesRapportComplet();
-    // 2) Calculer les statistiques
     const stats = calculerStatistiquesRapport(donnees);
-    // 3) Générer les graphiques
     const graphiques = genererGraphiquesRapport(stats);
-    // 4) Charger le logo en base64
+
     let logoSrc = null;
     try {
       const resp = await fetch('IMG_6726.png');
@@ -2174,9 +2332,8 @@ async function genererRapportWord(){
         reader.readAsDataURL(blob);
       });
     } catch(e){ console.warn("Logo non chargé:", e); }
-    // 5) Construire le HTML
+
     const html = construireHtmlRapport(stats, graphiques, logoSrc);
-    // 6) Télécharger en .doc
     const dateISO = dateToISO(new Date());
     const nomFichier = `Rapport_GroupeKA_${dateISO}.doc`;
     const blobFinal = new Blob(['\ufeff', html], {type: 'application/msword'});
