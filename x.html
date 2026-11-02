@@ -349,9 +349,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       </div>
     </div>
   </header>
-  <div id="bannerArchive" class="message warning" style="display:none;margin:12px 24px 0;max-width:none">
-    🔒 <strong>Année archivée</strong> — cette année est en lecture seule. Les données sont conservées telles quelles et ne peuvent plus être modifiées. Créez une nouvelle année pour repartir à zéro.
-  </div>
   <main class="container dashboard-main">
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
@@ -505,7 +502,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="card-header"><h2>📄 Rapport statistique Word</h2></div>
         <p class="muted" style="margin-bottom:16px">
           Génère un fichier Word (<code>.doc</code>) modifiable, avec logo, en-tête, pied de page, tableaux et graphiques.
-          Le rapport couvre <strong>toutes les années depuis le début</strong> jusqu'à aujourd'hui.
+          Le rapport couvre <strong>uniquement l'année initiatique actuellement sélectionnée</strong> (<strong id="rapportYearLabel">—</strong>).
           Vous pourrez l'ouvrir dans Microsoft Word, le modifier, l'imprimer ou l'envoyer.
         </p>
         <button class="btn btn-success" onclick="genererRapportWord()">📥 Générer le rapport Word</button>
@@ -515,7 +512,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-annees" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Gérer les années initiatiques</h2></div>
-        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Dès qu'une nouvelle année est créée, toutes les années antérieures passent automatiquement en lecture seule (archivées) — leurs données restent consultables pour toujours.</p>
+        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Toutes les années restent modifiables et consultables à tout moment. Créer une nouvelle année ne bloque ni ne supprime les anciennes.</p>
         <form id="formAjoutAnnee" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
           <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
             <label for="newAnneeInput">Nouvelle année initiatique (ex. 2027-2028)</label>
@@ -642,17 +639,6 @@ function anneeStorageEcrire(a){
 function validerFormatAnnee(a){
   return /^\d{4}-\d{4}$/.test(a) && Number(a.slice(5)) === Number(a.slice(0,4))+1;
 }
-function anneeCouranteEstArchivee(){
-  const meta = cacheAnneesMeta[anneeCourante];
-  return !!(meta && meta.archivee === true);
-}
-function refuserSiArchivee(){
-  if(anneeCouranteEstArchivee()){
-    alert("🔒 Cette année est archivée (lecture seule). Aucune modification n'est possible.");
-    return true;
-  }
-  return false;
-}
 
 function cheminKA(){ return collection(db, "annees", anneeCourante, "kas"); }
 function cheminKAId(id){ return doc(db, "annees", anneeCourante, "kas", id); }
@@ -671,8 +657,7 @@ async function assurerAnneeExiste(a){
   if(!snap.exists()){
     await setDoc(docAnnee, {
       creeLe: new Date().toISOString(),
-      libelle: a,
-      archivee: false
+      libelle: a
     });
   }
   return a;
@@ -689,15 +674,15 @@ async function chargerAnneesDepuisFirestore(){
 function remplirSelectAnnees(){
   const sel = document.getElementById('yearSelect');
   if(!sel) return;
-  sel.innerHTML = anneesDisponibles.map(a => {
-    const meta = cacheAnneesMeta[a] || {};
-    const suffixe = meta.archivee === true ? ' 🔒' : '';
-    return `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}${suffixe}</option>`;
-  }).join('');
+  sel.innerHTML = anneesDisponibles.map(a =>
+    `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}</option>`
+  ).join('');
   const badge = document.getElementById('yearBadgePublic');
   if(badge) badge.innerHTML = `<span class="yb-icon">📅</span>${anneeCourante}`;
   const exportLabel = document.getElementById('exportYearLabel');
   if(exportLabel) exportLabel.textContent = anneeCourante;
+  const rapportLabel = document.getElementById('rapportYearLabel');
+  if(rapportLabel) rapportLabel.textContent = anneeCourante;
 }
 
 function detacherListenersAnnee(){
@@ -768,7 +753,6 @@ async function changerAnnee(nouvelleAnnee){
 
   remplirSelectAnnees();
   await attacherListenersAnnee();
-  renderBanniereArchive();
 
   if(!document.getElementById('dashboard').classList.contains('hidden')){
     chargerDashboard();
@@ -799,15 +783,6 @@ async function creerAnnee(annee){
   try {
     await assurerAnneeExiste(annee);
 
-    const debutNouvelle = Number(annee.slice(0,4));
-    for(const autre of anneesDisponibles){
-      if(autre === annee) continue;
-      const debutAutre = Number(autre.slice(0,4));
-      if(debutAutre < debutNouvelle){
-        await setDoc(doc(db, "annees", autre), { archivee: true, archiveeLe: new Date().toISOString() }, {merge:true});
-      }
-    }
-
     anneesDisponibles = await chargerAnneesDepuisFirestore();
     const snap = await getDocs(collection(db, "annees"));
     cacheAnneesMeta = {};
@@ -815,7 +790,7 @@ async function creerAnnee(annee){
 
     remplirSelectAnnees();
     renderListeAnnees();
-    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Les années antérieures sont désormais archivées (lecture seule).`, 'success');
+    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Toutes les années restent modifiables et accessibles.`, 'success');
     await changerAnnee(annee);
   } catch(e){
     afficherMessage('anneeMessage', "Erreur : " + e.message, 'error');
@@ -831,26 +806,17 @@ function renderListeAnnees(){
   }
   cont.innerHTML = anneesDisponibles.map(a => {
     const active = a === anneeCourante;
-    const meta = cacheAnneesMeta[a] || {};
-    const archivee = meta.archivee === true;
-    let badge;
-    if(active)         badge = '<span class="dim-type special">ACTIVE</span>';
-    else if(archivee)  badge = '<span class="dim-type" style="background:#7a5c62">ARCHIVÉE 🔒</span>';
-    else               badge = '<span class="dim-type">—</span>';
-    return `<div class="dim-item ${archivee?'special':''}">
-      <div class="dim-date">📅 ${a}${archivee?' <span class="muted" style="font-size:.75rem">(lecture seule)</span>':''}</div>
+    const badge = active
+      ? '<span class="dim-type special">ACTIVE</span>'
+      : '<span class="dim-type">—</span>';
+    return `<div class="dim-item">
+      <div class="dim-date">📅 ${a}</div>
       ${badge}
       <div class="dim-actions">
         ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Consulter</button>`}
       </div>
     </div>`;
   }).join('');
-}
-
-function renderBanniereArchive(){
-  const banner = document.getElementById('bannerArchive');
-  if(!banner) return;
-  banner.style.display = anneeCouranteEstArchivee() ? 'block' : 'none';
 }
 
 function statutDuJour(){
@@ -912,9 +878,8 @@ function renderKaListeVoyage(){
 
   const statut = statutDuJour();
   const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
-  const archivee = anneeCouranteEstArchivee();
   const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = (!statut.ouvert || dejaValide || archivee) ? 'disabled' : '';
+  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
@@ -960,14 +925,12 @@ function renderKaListeVoyage(){
   updateCount();
 
   const btn = document.getElementById('btnValider');
-  if(archivee){ btn.disabled = true; btn.textContent = "🔒 Année archivée"; }
-  else if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
   else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
   else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
 function setStatus(id, val){
-  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return;
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
@@ -983,7 +946,6 @@ function updateCount(){
 }
 
 async function validerVoyageCourant(){
-  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -1011,7 +973,6 @@ async function validerVoyageCourant(){
 }
 
 function reinitialiserVoyage(){
-  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -1066,7 +1027,6 @@ function deconnexion(){
 
 let charts = {};
 function chargerDashboard(){
-  renderBanniereArchive();
   renderStats();
   renderAlertes();
   renderClassement();
@@ -1284,23 +1244,15 @@ function renderDates(){
 }
 
 async function annulerDate(d){
-  if(refuserSiArchivee()) return;
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
   await setDoc(cheminDateAnnuleeId(d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){
-  if(refuserSiArchivee()) return;
-  await deleteDoc(cheminDateAnnuleeId(d));
-}
-async function supprimerDateSpecial(d){
-  if(refuserSiArchivee()) return;
-  if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d));
-}
+async function reactiverDate(d){ await deleteDoc(cheminDateAnnuleeId(d)); }
+async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d)); }
 
 document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   e.preventDefault();
-  if(refuserSiArchivee()) return;
   const date = document.getElementById('newDate').value;
   const type = document.getElementById('newTypeDate').value;
   const libelle = document.getElementById('newLibelle').value.trim();
@@ -1336,7 +1288,6 @@ function renderListeKASecretariat(){
 }
 
 async function supprimerKA(id){
-  if(refuserSiArchivee()) return;
   const code = prompt("Code de suppression requis :");
   if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
   if(!confirm("Supprimer définitivement ce KA ?")) return;
@@ -1345,7 +1296,6 @@ async function supprimerKA(id){
 
 document.getElementById('formAjoutKA').addEventListener('submit', async e => {
   e.preventDefault();
-  if(refuserSiArchivee()) return;
   const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
   const voyage = Number(document.getElementById('newVoyage').value);
   if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
@@ -1878,33 +1828,31 @@ function telecharger(c,nom,type){
 }
 
 /* ============================================================
-   RAPPORT WORD (.doc) — TOUTES LES ANNEES JUSQU'A AUJOURD'HUI
+   RAPPORT WORD (.doc) — ANNÉE ACTIVE UNIQUEMENT
    ============================================================ */
 
-async function chargerDonneesRapportComplet(){
-  const annees = anneesDisponibles.slice();
+async function chargerDonneesRapportAnneeActive(){
+  const a = anneeCourante;
   const toutesPresences = [];
   const annuleesGlobal = new Set();
   const tousKAs = [];
 
-  for(const a of annees){
-    const kasSnap = await getDocs(collection(db, "annees", a, "kas"));
-    kasSnap.forEach(d => {
-      const data = d.data() || {};
-      tousKAs.push({annee: a, id: d.id, nom: data.nom, voyage: data.voyage});
-    });
-    const presSnap = await getDocs(collection(db, "annees", a, "presences"));
-    presSnap.forEach(d => {
-      toutesPresences.push({annee: a, date: d.id, data: d.data() || {}});
-    });
-    const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
-    annSnap.forEach(d => annuleesGlobal.add(a + "|" + d.id));
-  }
+  const kasSnap = await getDocs(collection(db, "annees", a, "kas"));
+  kasSnap.forEach(d => {
+    const data = d.data() || {};
+    tousKAs.push({annee: a, id: d.id, nom: data.nom, voyage: data.voyage});
+  });
+  const presSnap = await getDocs(collection(db, "annees", a, "presences"));
+  presSnap.forEach(d => {
+    toutesPresences.push({annee: a, date: d.id, data: d.data() || {}});
+  });
+  const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
+  annSnap.forEach(d => annuleesGlobal.add(a + "|" + d.id));
 
   const presencesValides = toutesPresences.filter(p => !annuleesGlobal.has(p.annee + "|" + p.date));
   presencesValides.sort((a,b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
-  return {annees, tousKAs, presencesValides};
+  return {annees: [a], tousKAs, presencesValides};
 }
 
 function calculerStatistiquesRapport(donnees){
@@ -2108,7 +2056,7 @@ function construireHtmlRapport(stats, graphiques, logoSrc){
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
 <meta charset="UTF-8">
-<title>Rapport Groupe KA</title>
+<title>Rapport Groupe KA ${anneeCourante}</title>
 <!--[if gte mso 9]>
 <xml>
 <w:WordDocument>
@@ -2229,11 +2177,12 @@ ${logoHtml}
 
 <h1>Rapport Statistique de Présence</h1>
 <p class="sous-titre">Groupe KA — Commission Secrétariat</p>
+<p class="sous-titre" style="color:#5c0a1a;font-weight:bold;font-style:normal">Année initiatique : ${anneeCourante}</p>
 <p class="date-gen">Généré le ${dateGen} à ${heureGen}</p>
 
 <div class="info-box">
+  <p style="margin:4px 0"><strong>Année initiatique :</strong> ${anneeCourante}</p>
   <p style="margin:4px 0"><strong>Période couverte :</strong> ${periode}</p>
-  <p style="margin:4px 0"><strong>Nombre d'années initiatiques :</strong> ${anneesDisponibles.length}</p>
   <p style="margin:4px 0"><strong>Nombre total de KA :</strong> ${stats.nbKA}</p>
   <p style="margin:4px 0"><strong>Nombre total de séances :</strong> ${stats.nbSeances}</p>
 </div>
@@ -2254,12 +2203,12 @@ ${logoHtml}
     <tr><td><strong>Taux global de présence</strong></td><td style="text-align:center"><strong>${stats.tauxGlobal}%</strong></td></tr>
   </tbody>
 </table>
-<p>Sur la période couverte, le Groupe KA a enregistré <strong>${stats.totalPresences} présences</strong> sur un total de <strong>${stats.totalMarques} marquages</strong>, soit un taux global de présence de <strong>${stats.tauxGlobal}%</strong>.</p>
+<p>Sur l'année initiatique <strong>${anneeCourante}</strong>, le Groupe KA a enregistré <strong>${stats.totalPresences} présences</strong> sur un total de <strong>${stats.totalMarques} marquages</strong>, soit un taux global de présence de <strong>${stats.tauxGlobal}%</strong>.</p>
 
 ${imgDoughnut}
 
 <h2>2. Classement complet des KA</h2>
-<p>Classement de tous les KA enregistrés, triés par nombre de présences décroissant.</p>
+<p>Classement de tous les KA de l'année <strong>${anneeCourante}</strong>, triés par nombre de présences décroissant.</p>
 <table>
   <thead>
     <tr>
@@ -2303,7 +2252,7 @@ ${imgParVoyage}
   <div class="signature-ligne">Signature</div>
 </div>
 
-<p class="footer-page">Rapport généré automatiquement par le Registre de Présence Groupe KA — ${dateGen}</p>
+<p class="footer-page">Rapport généré automatiquement par le Registre de Présence Groupe KA — ${dateGen} — Année ${anneeCourante}</p>
 
 </body>
 </html>`;
@@ -2315,7 +2264,7 @@ async function genererRapportWord(){
   msg.className = 'message show warning';
 
   try {
-    const donnees = await chargerDonneesRapportComplet();
+    const donnees = await chargerDonneesRapportAnneeActive();
     const stats = calculerStatistiquesRapport(donnees);
     const graphiques = genererGraphiquesRapport(stats);
 
@@ -2332,7 +2281,7 @@ async function genererRapportWord(){
 
     const html = construireHtmlRapport(stats, graphiques, logoSrc);
     const dateISO = dateToISO(new Date());
-    const nomFichier = `Rapport_GroupeKA_${dateISO}.doc`;
+    const nomFichier = `Rapport_GroupeKA_${anneeCourante}_${dateISO}.doc`;
     const blobFinal = new Blob(['\ufeff', html], {type: 'application/msword'});
     const url = URL.createObjectURL(blobFinal);
     const a = document.createElement('a');
@@ -2344,7 +2293,7 @@ async function genererRapportWord(){
     URL.revokeObjectURL(url);
 
     msg.innerHTML = `✅ Rapport généré avec succès : <strong>${nomFichier}</strong><br>
-      ${stats.nbSeances} séances · ${stats.nbKA} KA · taux global ${stats.tauxGlobal}%`;
+      Année ${anneeCourante} · ${stats.nbSeances} séances · ${stats.nbKA} KA · taux global ${stats.tauxGlobal}%`;
     msg.className = 'message show success';
   } catch(e){
     console.error("Erreur génération rapport:", e);
@@ -2380,7 +2329,6 @@ const KA_TEST = [
 ];
 
 window.chargerKAOfficiels = async function(){
-  if(refuserSiArchivee()) return;
   const msg = document.getElementById('chargementMessage');
   msg.textContent = "Chargement en cours...";
   msg.className = 'message show warning';
@@ -2414,7 +2362,6 @@ async function init(){
     anneesDisponibles.sort();
     remplirSelectAnnees();
     renderListeAnnees();
-    renderBanniereArchive();
   });
 
   await assurerAnneeExiste(CONFIG.ANNEE_DEFAUT);
@@ -2428,7 +2375,6 @@ async function init(){
   anneeStorageEcrire(anneeCourante);
 
   await attacherListenersAnnee();
-  renderBanniereArchive();
 
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
