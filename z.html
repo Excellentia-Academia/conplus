@@ -282,7 +282,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="logo-text"><strong>Groupe KA</strong><small>Registre de présence</small></div>
       </div>
       <div class="nav">
-        <span class="year-badge public" id="yearBadgePublic" title="Année académique consultée"><span class="yb-icon">📅</span>—</span>
+        <span class="year-badge public" id="yearBadgePublic" title="Année initiatique consultée"><span class="yb-icon">📅</span>—</span>
         <button class="btn btn-ghost" onclick="ouvrirLogin()">Commission Secrétariat</button>
       </div>
     </div>
@@ -343,12 +343,15 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="logo-text"><strong>Commission Secrétariat</strong><small>Groupe KA</small></div>
       </div>
       <div class="nav">
-        <select class="year-select" id="yearSelect" onchange="changerAnnee(this.value)" title="Choisir l'année académique"></select>
+        <select class="year-select" id="yearSelect" onchange="changerAnnee(this.value)" title="Choisir l'année initiatique"></select>
         <button class="btn btn-ghost btn-sm" onclick="ouvrirNouvelleAnnee()">＋ Année</button>
         <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
       </div>
     </div>
   </header>
+  <div id="bannerArchive" class="message warning" style="display:none;margin:12px 24px 0;max-width:none">
+    🔒 <strong>Année archivée</strong> — cette année est en lecture seule. Les données sont conservées telles quelles et ne peuvent plus être modifiées. Créez une nouvelle année pour repartir à zéro.
+  </div>
   <main class="container dashboard-main">
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
@@ -392,10 +395,16 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="chart-box">
           <h3>Répartition globale</h3>
           <div class="chart-period">Filtre : <span class="badge" id="chart2PeriodLabel">Tout depuis le début</span></div>
-          <div class="filter-cards">
+          <div class="filter-cards" style="grid-template-columns:repeat(4,1fr)">
+            <button class="filter-card" data-filtre="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
+            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
+            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Année<br>active</button>
             <button class="filter-card active" data-filtre="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
-            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Cette<br>année</button>
-            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce mois<br>dimanches</button>
+          </div>
+          <div class="filter-cards" id="sousFiltres" style="grid-template-columns:repeat(3,1fr);margin-top:-6px">
+            <button class="filter-card active" data-sousfiltre="tous"><span class="fc-icon">∑</span>Tous</button>
+            <button class="filter-card" data-sousfiltre="messe"><span class="fc-icon">⛪</span>Messe</button>
+            <button class="filter-card" data-sousfiltre="activite"><span class="fc-icon">🎯</span>Activité</button>
           </div>
           <div class="chart-container"><canvas id="chartGlobal"></canvas></div>
         </div>
@@ -404,7 +413,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
         <div class="chart-box"><h3>Présences par voyage</h3><div class="chart-container"><canvas id="chartVoyages"></canvas></div></div>
         <div class="chart-box">
           <h3>Taux de présence par KA (%)</h3>
-          <div class="chart-period">Période : <span class="badge" id="chart4PeriodLabel">Cette année académique</span></div>
+          <div class="chart-period">Période : <span class="badge" id="chart4PeriodLabel">Cette année initiatique</span></div>
           <div class="chart-voyage-nav">
             <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
             <div class="voyage-dots" id="voyageDots4">
@@ -486,11 +495,11 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     </div>
     <div id="tab-annees" class="tab-content">
       <div class="card">
-        <div class="card-header"><h2>Gérer les années académiques</h2></div>
-        <p class="muted" style="margin-bottom:16px">Chaque année académique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Ajoutez ici une nouvelle année pour repartir à zéro.</p>
+        <div class="card-header"><h2>Gérer les années initiatiques</h2></div>
+        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Dès qu'une nouvelle année est créée, toutes les années antérieures passent automatiquement en lecture seule (archivées) — leurs données restent consultables pour toujours.</p>
         <form id="formAjoutAnnee" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
           <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
-            <label for="newAnneeInput">Nouvelle année académique (ex. 2027-2028)</label>
+            <label for="newAnneeInput">Nouvelle année initiatique (ex. 2027-2028)</label>
             <input type="text" id="newAnneeInput" placeholder="2027-2028" required pattern="\d{4}-\d{4}">
           </div>
           <button type="submit" class="btn btn-primary">Créer l'année</button>
@@ -597,16 +606,18 @@ let kaOuvert = null;
 let chart1Voyage = 1;
 let chart4Voyage = 1;
 let filtreRepartition = 'tout';
+let sousFiltreRepartition = 'tous';
+let cacheAnneesMeta = {};
 
 const aujourdhuiISO = aujourdhui();
 
 /* ============================================================
-   ANNÉE ACADÉMIQUE
+   ANNÉE INITIATIQUE
    ============================================================ */
 let anneeCourante = CONFIG.ANNEE_DEFAUT;
 let anneesDisponibles = [];
 let listenAnneesUnsub = null;
-let listenersAnnee = []; // {unsub} à recréer quand l'année change
+let listenersAnnee = [];
 
 function anneeStorageLire(){
   try { return localStorage.getItem(CONFIG.ANNEE_STORAGE_KEY); } catch(e){ return null; }
@@ -617,8 +628,16 @@ function anneeStorageEcrire(a){
 function validerFormatAnnee(a){
   return /^\d{4}-\d{4}$/.test(a) && Number(a.slice(5)) === Number(a.slice(0,4))+1;
 }
-function anneeRef(a = anneeCourante){
-  return collection(db, "annees", a, "ref");
+function anneeCouranteEstArchivee(){
+  const meta = cacheAnneesMeta[anneeCourante];
+  return !!(meta && meta.archivee === true);
+}
+function refuserSiArchivee(){
+  if(anneeCouranteEstArchivee()){
+    alert("🔒 Cette année est archivée (lecture seule). Aucune modification n'est possible.");
+    return true;
+  }
+  return false;
 }
 
 /* Chemins Firestore, tous scopés par année */
@@ -639,7 +658,8 @@ async function assurerAnneeExiste(a){
   if(!snap.exists()){
     await setDoc(docAnnee, {
       creeLe: new Date().toISOString(),
-      libelle: a
+      libelle: a,
+      archivee: false
     });
   }
   return a;
@@ -656,9 +676,11 @@ async function chargerAnneesDepuisFirestore(){
 function remplirSelectAnnees(){
   const sel = document.getElementById('yearSelect');
   if(!sel) return;
-  sel.innerHTML = anneesDisponibles.map(a =>
-    `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}</option>`
-  ).join('');
+  sel.innerHTML = anneesDisponibles.map(a => {
+    const meta = cacheAnneesMeta[a] || {};
+    const suffixe = meta.archivee === true ? ' 🔒' : '';
+    return `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}${suffixe}</option>`;
+  }).join('');
   const badge = document.getElementById('yearBadgePublic');
   if(badge) badge.innerHTML = `<span class="yb-icon">📅</span>${anneeCourante}`;
   const exportLabel = document.getElementById('exportYearLabel');
@@ -673,7 +695,6 @@ function detacherListenersAnnee(){
 async function attacherListenersAnnee(){
   detacherListenersAnnee();
 
-  // KA
   listenersAnnee.push({unsub: onSnapshot(cheminKA(), snap => {
     cacheKAs = [];
     snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
@@ -682,7 +703,6 @@ async function attacherListenersAnnee(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   })});
 
-  // Présences
   listenersAnnee.push({unsub: onSnapshot(cheminPresences(), snap => {
     cachePresences = {};
     snap.forEach(d => { cachePresences[d.id] = d.data(); });
@@ -690,7 +710,6 @@ async function attacherListenersAnnee(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   })});
 
-  // Dates annulées
   listenersAnnee.push({unsub: onSnapshot(cheminDatesAnnulees(), snap => {
     cacheDatesAnnulees = {};
     snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
@@ -698,7 +717,6 @@ async function attacherListenersAnnee(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   })});
 
-  // Dates spéciales
   listenersAnnee.push({unsub: onSnapshot(cheminDatesSpeciales(), snap => {
     cacheDatesSpeciales = {};
     snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
@@ -706,7 +724,6 @@ async function attacherListenersAnnee(){
     if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
   })});
 
-  // Voyages validés
   listenersAnnee.push({unsub: onSnapshot(cheminVoyagesValides(), snap => {
     cacheVoyagesValides = {};
     snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
@@ -722,7 +739,6 @@ async function changerAnnee(nouvelleAnnee){
   anneeCourante = nouvelleAnnee;
   anneeStorageEcrire(anneeCourante);
 
-  // Réinitialisation complète de l'état lié à l'année
   cacheKAs = [];
   cachePresences = {};
   cacheDatesAnnulees = {};
@@ -734,9 +750,11 @@ async function changerAnnee(nouvelleAnnee){
   chart1Voyage = 1;
   chart4Voyage = 1;
   filtreRepartition = 'tout';
+  sousFiltreRepartition = 'tous';
 
   remplirSelectAnnees();
   await attacherListenersAnnee();
+  renderBanniereArchive();
 
   if(!document.getElementById('dashboard').classList.contains('hidden')){
     chargerDashboard();
@@ -745,15 +763,13 @@ async function changerAnnee(nouvelleAnnee){
 }
 
 async function ouvrirNouvelleAnnee(){
-  // Bascule sur l'onglet "Années" et pré-remplit un an plus loin
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.querySelector('.tab[data-tab="tab-annees"]').classList.add('active');
   document.getElementById('tab-annees').classList.add('active');
 
   const input = document.getElementById('newAnneeInput');
-  const anneeActuelle = anneeCourante;
-  const debut = Number(anneeActuelle.slice(0,4)) + 1;
+  const debut = Number(anneeCourante.slice(0,4)) + 1;
   const suggestion = `${debut}-${debut+1}`;
   if(input && !input.value) input.value = suggestion;
 }
@@ -768,10 +784,24 @@ async function creerAnnee(annee){
   }
   try {
     await assurerAnneeExiste(annee);
+
+    const debutNouvelle = Number(annee.slice(0,4));
+    for(const autre of anneesDisponibles){
+      if(autre === annee) continue;
+      const debutAutre = Number(autre.slice(0,4));
+      if(debutAutre < debutNouvelle){
+        await setDoc(doc(db, "annees", autre), { archivee: true, archiveeLe: new Date().toISOString() }, {merge:true});
+      }
+    }
+
     anneesDisponibles = await chargerAnneesDepuisFirestore();
+    const snap = await getDocs(collection(db, "annees"));
+    cacheAnneesMeta = {};
+    snap.forEach(d => { cacheAnneesMeta[d.id] = d.data() || {}; });
+
     remplirSelectAnnees();
     renderListeAnnees();
-    afficherMessage('anneeMessage', `✓ Année ${annee} créée.`, 'success');
+    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Les années antérieures sont désormais archivées (lecture seule).`, 'success');
     await changerAnnee(annee);
   } catch(e){
     afficherMessage('anneeMessage', "Erreur : " + e.message, 'error');
@@ -787,18 +817,30 @@ function renderListeAnnees(){
   }
   cont.innerHTML = anneesDisponibles.map(a => {
     const active = a === anneeCourante;
-    return `<div class="dim-item">
-      <div class="dim-date">📅 ${a}</div>
-      <span class="dim-type ${active?'special':''}">${active?'ACTIVE':'—'}</span>
+    const meta = cacheAnneesMeta[a] || {};
+    const archivee = meta.archivee === true;
+    let badge;
+    if(active)         badge = '<span class="dim-type special">ACTIVE</span>';
+    else if(archivee)  badge = '<span class="dim-type" style="background:#7a5c62">ARCHIVÉE 🔒</span>';
+    else               badge = '<span class="dim-type">—</span>';
+    return `<div class="dim-item ${archivee?'special':''}">
+      <div class="dim-date">📅 ${a}${archivee?' <span class="muted" style="font-size:.75rem">(lecture seule)</span>':''}</div>
+      ${badge}
       <div class="dim-actions">
-        ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Choisir</button>`}
+        ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Consulter</button>`}
       </div>
     </div>`;
   }).join('');
 }
 
+function renderBanniereArchive(){
+  const banner = document.getElementById('bannerArchive');
+  if(!banner) return;
+  banner.style.display = anneeCouranteEstArchivee() ? 'block' : 'none';
+}
+
 /* ============================================================
-   STATUT DU JOUR (dépend de l'année courante)
+   STATUT DU JOUR
    ============================================================ */
 function statutDuJour(){
   const special = cacheDatesSpeciales[aujourdhuiISO];
@@ -859,8 +901,9 @@ function renderKaListeVoyage(){
 
   const statut = statutDuJour();
   const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
+  const archivee = anneeCouranteEstArchivee();
   const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
+  const disabled = (!statut.ouvert || dejaValide || archivee) ? 'disabled' : '';
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
@@ -906,12 +949,14 @@ function renderKaListeVoyage(){
   updateCount();
 
   const btn = document.getElementById('btnValider');
-  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  if(archivee){ btn.disabled = true; btn.textContent = "🔒 Année archivée"; }
+  else if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
   else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
   else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
 function setStatus(id, val){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return;
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
@@ -927,6 +972,7 @@ function updateCount(){
 }
 
 async function validerVoyageCourant(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -954,6 +1000,7 @@ async function validerVoyageCourant(){
 }
 
 function reinitialiserVoyage(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -1014,6 +1061,7 @@ function deconnexion(){
    ============================================================ */
 let charts = {};
 function chargerDashboard(){
+  renderBanniereArchive();
   renderStats();
   renderAlertes();
   renderClassement();
@@ -1231,15 +1279,23 @@ function renderDates(){
 }
 
 async function annulerDate(d){
+  if(refuserSiArchivee()) return;
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
   await setDoc(cheminDateAnnuleeId(d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){ await deleteDoc(cheminDateAnnuleeId(d)); }
-async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d)); }
+async function reactiverDate(d){
+  if(refuserSiArchivee()) return;
+  await deleteDoc(cheminDateAnnuleeId(d));
+}
+async function supprimerDateSpecial(d){
+  if(refuserSiArchivee()) return;
+  if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d));
+}
 
 document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const date = document.getElementById('newDate').value;
   const type = document.getElementById('newTypeDate').value;
   const libelle = document.getElementById('newLibelle').value.trim();
@@ -1275,6 +1331,7 @@ function renderListeKASecretariat(){
 }
 
 async function supprimerKA(id){
+  if(refuserSiArchivee()) return;
   const code = prompt("Code de suppression requis :");
   if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
   if(!confirm("Supprimer définitivement ce KA ?")) return;
@@ -1283,6 +1340,7 @@ async function supprimerKA(id){
 
 document.getElementById('formAjoutKA').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
   const voyage = Number(document.getElementById('newVoyage').value);
   if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
@@ -1324,6 +1382,10 @@ function getDatesFiltrees(mode){
   const now = new Date();
   const moisCourant = now.getMonth();
   const anneeCivile = now.getFullYear();
+
+  if(mode === 'seance'){
+    return cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
+  }
   if(mode === 'mois'){
     return dims.filter(d => {
       const dt = new Date(d+"T00:00:00");
@@ -1331,9 +1393,9 @@ function getDatesFiltrees(mode){
     });
   }
   if(mode === 'annee'){
-    return dims.filter(d => new Date(d+"T00:00:00").getFullYear() === anneeCivile);
+    return dims;
   }
-  return dims;
+  return null;
 }
 
 function setContainerHeight(containerId, nbItems){
@@ -1389,19 +1451,39 @@ function renderChart1(){
 }
 
 function renderChart2(){
-  document.querySelectorAll('.filter-card').forEach(c => {
+  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
     c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
   });
+  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.sousfiltre === sousFiltreRepartition);
+  });
+
   const badge = document.getElementById('chart2PeriodLabel');
-  if(badge) badge.textContent =
-    filtreRepartition === 'tout' ? 'Tout depuis le début · ' + anneeCourante :
-    filtreRepartition === 'annee' ? 'Cette année civile · ' + anneeCourante :
-    'Ce mois — dimanches · ' + anneeCourante;
+  if(badge){
+    const libelleFiltre =
+      filtreRepartition === 'seance' ? 'Séance du jour' :
+      filtreRepartition === 'mois'   ? 'Ce mois' :
+      filtreRepartition === 'annee'  ? 'Année active' :
+                                       'Tout depuis le début';
+    const libelleSous =
+      sousFiltreRepartition === 'tous' ? '' :
+      sousFiltreRepartition === 'messe' ? ' · Messe' : ' · Activité';
+    badge.textContent = libelleFiltre + libelleSous + ' · ' + anneeCourante;
+  }
 
   if(charts.global){ try{charts.global.destroy();}catch(e){} }
 
-  const dims = getDatesFiltrees(filtreRepartition);
-  let totalP=0, totalA=0, totalE=0;
+  if(filtreRepartition === 'tout'){
+    renderChart2Tout();
+    return;
+  }
+
+  const dims = getDatesFiltrees(filtreRepartition) || [];
+  dessinerDoughnut(dims);
+}
+
+function dessinerDoughnut(dims){
+  let totalP = 0, totalA = 0, totalE = 0;
   dims.forEach(d => {
     const p = cachePresences[d] || {};
     Object.values(p).forEach(s => {
@@ -1419,6 +1501,54 @@ function renderChart2(){
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
   });
+}
+
+async function renderChart2Tout(){
+  try {
+    let totalP = 0, totalA = 0, totalE = 0;
+
+    for(const a of anneesDisponibles){
+      const presSnap = await getDocs(collection(db, "annees", a, "presences"));
+      const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
+      const annulees = new Set();
+      annSnap.forEach(d => annulees.add(d.id));
+      const specSnap = await getDocs(collection(db, "annees", a, "datesSpeciales"));
+      const speciales = new Set();
+      specSnap.forEach(d => speciales.add(d.id));
+
+      presSnap.forEach(d => {
+        const date = d.id;
+        if(annulees.has(date)) return;
+
+        const isSpeciale = speciales.has(date);
+        const isDimanche = new Date(date+"T00:00:00").getDay() === 0;
+        if(sousFiltreRepartition === 'messe' && !(isDimanche && !isSpeciale)) return;
+        if(sousFiltreRepartition === 'activite' && !isSpeciale) return;
+
+        Object.values(d.data() || {}).forEach(s => {
+          if(s === 'present') totalP++;
+          else if(s === 'absent') totalA++;
+          else if(s === 'excuse') totalE++;
+        });
+      });
+    }
+
+    charts.global = new Chart(document.getElementById('chartGlobal'), {
+      type:'doughnut',
+      data:{
+        labels:['Présents','Absents','Absences signalées'],
+        datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#c8102e','#f59e0b'], borderWidth:0}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
+    });
+  } catch(e){
+    console.error("Erreur répartition globale :", e);
+    charts.global = new Chart(document.getElementById('chartGlobal'), {
+      type:'doughnut',
+      data:{labels:['Erreur'], datasets:[{data:[1], backgroundColor:['#c8102e']}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+    });
+  }
 }
 
 function renderChart3(){
@@ -1510,9 +1640,15 @@ function bindChart4Nav(){
 }
 
 function bindFilterCards(){
-  document.querySelectorAll('.filter-card').forEach(c => {
+  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
     c.addEventListener('click', () => {
       filtreRepartition = c.dataset.filtre;
+      renderChart2();
+    });
+  });
+  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
+    c.addEventListener('click', () => {
+      sousFiltreRepartition = c.dataset.sousfiltre;
       renderChart2();
     });
   });
@@ -1618,6 +1754,7 @@ const KA_TEST = [
 ];
 
 window.chargerKAOfficiels = async function(){
+  if(refuserSiArchivee()) return;
   const msg = document.getElementById('chargementMessage');
   msg.textContent = "Chargement en cours...";
   msg.className = 'message show warning';
@@ -1641,28 +1778,31 @@ function rafraichirTempsReel(){
 }
 
 async function init(){
-  // Écoute de la liste des années
   listenAnneesUnsub = onSnapshot(collection(db, "annees"), snap => {
     anneesDisponibles = [];
-    snap.forEach(d => anneesDisponibles.push(d.id));
+    cacheAnneesMeta = {};
+    snap.forEach(d => {
+      anneesDisponibles.push(d.id);
+      cacheAnneesMeta[d.id] = d.data() || {};
+    });
     anneesDisponibles.sort();
     remplirSelectAnnees();
     renderListeAnnees();
+    renderBanniereArchive();
   });
 
-  // Assurer la structure de l'année par défaut, puis choisir l'année à ouvrir
   await assurerAnneeExiste(CONFIG.ANNEE_DEFAUT);
+
   let anneeVoulue = anneeStorageLire();
   if(!anneeVoulue){
-    // Si aucune année en cache, prendre la première existante
     const existantes = await chargerAnneesDepuisFirestore();
     anneeVoulue = existantes.length ? existantes[existantes.length-1] : CONFIG.ANNEE_DEFAUT;
   }
   anneeCourante = anneeVoulue;
   anneeStorageEcrire(anneeCourante);
 
-  // Rattacher les listeners de l'année
   await attacherListenersAnnee();
+  renderBanniereArchive();
 
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
