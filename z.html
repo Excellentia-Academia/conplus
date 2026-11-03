@@ -113,7 +113,6 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 <main class="container" style="padding-top:24px">
 
-  <!-- ===== TABLEAU DE BORD ===== -->
   <div id="tab-dashboard" class="tab-content active">
     <h1 style="margin-bottom:20px">Mon évolution</h1>
     <div class="grid-stats">
@@ -128,7 +127,6 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
     </div>
   </div>
 
-  <!-- ===== BIBLIOTHÈQUE ===== -->
   <div id="tab-bibliotheque" class="tab-content">
     <h1 style="margin-bottom:20px">Ma Bibliothèque</h1>
     <div class="card">
@@ -162,7 +160,6 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 </main>
 
-<!-- ============ VIEWER PDF ============ -->
 <div id="viewerOverlay" class="viewer-overlay">
   <div class="viewer-header">
     <div style="display:flex;align-items:center;gap:12px">
@@ -180,9 +177,6 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 </div>
 
 <script type="module">
-// ============================================================
-// 1. CONFIGURATION FIREBASE (VOTRE CLÉ)
-// ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
@@ -199,15 +193,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ============================================================
-// 2. CHARGEMENT DE PDF.JS
-// ============================================================
 import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
 
-// ============================================================
-// 3. NAVIGATION & INITIALISATION
-// ============================================================
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -218,9 +206,6 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
-// ============================================================
-// 4. GESTION DES PDF (FIREBASE)
-// ============================================================
 const colPdfs = collection(db, "pdfs");
 const colTemps = collection(db, "temps");
 
@@ -253,7 +238,6 @@ document.getElementById('btnAddPdf').addEventListener('click', async () => {
     msg.className = 'message show success';
     msg.textContent = `✅ Cours enregistré !`;
     document.getElementById('pdfFile').value = '';
-    rafraichirBibliotheque();
   } catch (e) {
     console.error(e);
     msg.className = 'message show error';
@@ -298,9 +282,6 @@ window.supprimerPDF = async function(id) {
   await deleteDoc(doc(db, "pdfs", id));
 };
 
-// ============================================================
-// 5. LECTEUR PDF & CHRONOMÈTRE
-// ============================================================
 let timerInterval = null;
 let timerSecondes = 0;
 let timerPaused = false;
@@ -315,7 +296,6 @@ window.ouvrirPDF = async function(id) {
   document.getElementById('viewerTitle').textContent = pdf.nom;
   document.getElementById('viewerOverlay').classList.add('show');
   
-  // Afficher le texte du PDF dans une iframe
   document.getElementById('viewerIframe').srcdoc = `<html><body style="font-family:sans-serif;padding:40px;line-height:1.8;background:#fff;"><h1>${pdf.nom}</h1><hr><p style="white-space:pre-wrap;">${pdf.texte}</p></body></html>`;
   
   timerSecondes = 0; timerPaused = false;
@@ -329,7 +309,6 @@ window.ouvrirPDF = async function(id) {
     timerSecondes++;
     document.getElementById('viewerTimer').textContent = `${String(Math.floor(timerSecondes/60)).padStart(2,'0')}:${String(timerSecondes%60).padStart(2,'0')}`;
     
-    // Sauvegarde toutes les 30 secondes
     if (timerSecondes % 30 === 0) {
       await setDoc(doc(db, "temps", Date.now().toString()), { pdfId: currentPdfId, secondes: 30, date: new Date().toISOString() });
     }
@@ -351,9 +330,6 @@ document.getElementById('btnCloseViewer').onclick = async () => {
   rafraichirDashboard();
 };
 
-// ============================================================
-// 6. TABLEAU DE BORD
-// ============================================================
 async function rafraichirDashboard() {
   const tempsSnap = await getDocs(colTemps);
   const temps = [];
@@ -390,7 +366,6 @@ async function rafraichirDashboard() {
   });
 }
 
-// Démarrage
 rafraichirDashboard();
 </script>
 </body>
