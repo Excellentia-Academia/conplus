@@ -349,6 +349,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       </div>
     </div>
   </header>
+  <div id="bannerArchive" class="message warning" style="display:none;margin:12px 24px 0;max-width:none">
+    🔒 <strong>Année archivée</strong> — cette année est en lecture seule. Les données sont conservées telles quelles et ne peuvent plus être modifiées. Créez une nouvelle année pour repartir à zéro.
+  </div>
   <main class="container dashboard-main">
     <div class="grid-stats">
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
@@ -512,7 +515,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
     <div id="tab-annees" class="tab-content">
       <div class="card">
         <div class="card-header"><h2>Gérer les années initiatiques</h2></div>
-        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Toutes les années restent modifiables et consultables à tout moment. Créer une nouvelle année ne bloque ni ne supprime les anciennes.</p>
+        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Dès qu'une nouvelle année est créée, toutes les années antérieures passent automatiquement en lecture seule (archivées) — leurs données restent consultables pour toujours.</p>
         <form id="formAjoutAnnee" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
           <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
             <label for="newAnneeInput">Nouvelle année initiatique (ex. 2027-2028)</label>
@@ -639,6 +642,17 @@ function anneeStorageEcrire(a){
 function validerFormatAnnee(a){
   return /^\d{4}-\d{4}$/.test(a) && Number(a.slice(5)) === Number(a.slice(0,4))+1;
 }
+function anneeCouranteEstArchivee(){
+  const meta = cacheAnneesMeta[anneeCourante];
+  return !!(meta && meta.archivee === true);
+}
+function refuserSiArchivee(){
+  if(anneeCouranteEstArchivee()){
+    alert("🔒 Cette année est archivée (lecture seule). Aucune modification n'est possible.");
+    return true;
+  }
+  return false;
+}
 
 function cheminKA(){ return collection(db, "annees", anneeCourante, "kas"); }
 function cheminKAId(id){ return doc(db, "annees", anneeCourante, "kas", id); }
@@ -657,7 +671,8 @@ async function assurerAnneeExiste(a){
   if(!snap.exists()){
     await setDoc(docAnnee, {
       creeLe: new Date().toISOString(),
-      libelle: a
+      libelle: a,
+      archivee: false
     });
   }
   return a;
@@ -674,9 +689,11 @@ async function chargerAnneesDepuisFirestore(){
 function remplirSelectAnnees(){
   const sel = document.getElementById('yearSelect');
   if(!sel) return;
-  sel.innerHTML = anneesDisponibles.map(a =>
-    `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}</option>`
-  ).join('');
+  sel.innerHTML = anneesDisponibles.map(a => {
+    const meta = cacheAnneesMeta[a] || {};
+    const suffixe = meta.archivee === true ? ' 🔒' : '';
+    return `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}${suffixe}</option>`;
+  }).join('');
   const badge = document.getElementById('yearBadgePublic');
   if(badge) badge.innerHTML = `<span class="yb-icon">📅</span>${anneeCourante}`;
   const exportLabel = document.getElementById('exportYearLabel');
@@ -753,6 +770,7 @@ async function changerAnnee(nouvelleAnnee){
 
   remplirSelectAnnees();
   await attacherListenersAnnee();
+  renderBanniereArchive();
 
   if(!document.getElementById('dashboard').classList.contains('hidden')){
     chargerDashboard();
@@ -783,6 +801,15 @@ async function creerAnnee(annee){
   try {
     await assurerAnneeExiste(annee);
 
+    const debutNouvelle = Number(annee.slice(0,4));
+    for(const autre of anneesDisponibles){
+      if(autre === annee) continue;
+      const debutAutre = Number(autre.slice(0,4));
+      if(debutAutre < debutNouvelle){
+        await setDoc(doc(db, "annees", autre), { archivee: true, archiveeLe: new Date().toISOString() }, {merge:true});
+      }
+    }
+
     anneesDisponibles = await chargerAnneesDepuisFirestore();
     const snap = await getDocs(collection(db, "annees"));
     cacheAnneesMeta = {};
@@ -790,7 +817,7 @@ async function creerAnnee(annee){
 
     remplirSelectAnnees();
     renderListeAnnees();
-    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Toutes les années restent modifiables et accessibles.`, 'success');
+    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Les années antérieures sont désormais archivées (lecture seule).`, 'success');
     await changerAnnee(annee);
   } catch(e){
     afficherMessage('anneeMessage', "Erreur : " + e.message, 'error');
@@ -806,17 +833,26 @@ function renderListeAnnees(){
   }
   cont.innerHTML = anneesDisponibles.map(a => {
     const active = a === anneeCourante;
-    const badge = active
-      ? '<span class="dim-type special">ACTIVE</span>'
-      : '<span class="dim-type">—</span>';
-    return `<div class="dim-item">
-      <div class="dim-date">📅 ${a}</div>
+    const meta = cacheAnneesMeta[a] || {};
+    const archivee = meta.archivee === true;
+    let badge;
+    if(active)         badge = '<span class="dim-type special">ACTIVE</span>';
+    else if(archivee)  badge = '<span class="dim-type" style="background:#7a5c62">ARCHIVÉE 🔒</span>';
+    else               badge = '<span class="dim-type">—</span>';
+    return `<div class="dim-item ${archivee?'special':''}">
+      <div class="dim-date">📅 ${a}${archivee?' <span class="muted" style="font-size:.75rem">(lecture seule)</span>':''}</div>
       ${badge}
       <div class="dim-actions">
         ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Consulter</button>`}
       </div>
     </div>`;
   }).join('');
+}
+
+function renderBanniereArchive(){
+  const banner = document.getElementById('bannerArchive');
+  if(!banner) return;
+  banner.style.display = anneeCouranteEstArchivee() ? 'block' : 'none';
 }
 
 function statutDuJour(){
@@ -878,8 +914,9 @@ function renderKaListeVoyage(){
 
   const statut = statutDuJour();
   const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
+  const archivee = anneeCouranteEstArchivee();
   const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = (!statut.ouvert || dejaValide) ? 'disabled' : '';
+  const disabled = (!statut.ouvert || dejaValide || archivee) ? 'disabled' : '';
 
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
 
@@ -925,12 +962,14 @@ function renderKaListeVoyage(){
   updateCount();
 
   const btn = document.getElementById('btnValider');
-  if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
+  if(archivee){ btn.disabled = true; btn.textContent = "🔒 Année archivée"; }
+  else if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
   else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
   else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
 }
 
 function setStatus(id, val){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return;
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
@@ -946,6 +985,7 @@ function updateCount(){
 }
 
 async function validerVoyageCourant(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -973,6 +1013,7 @@ async function validerVoyageCourant(){
 }
 
 function reinitialiserVoyage(){
+  if(refuserSiArchivee()) return;
   const statut = statutDuJour();
   if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
   if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
@@ -1027,6 +1068,7 @@ function deconnexion(){
 
 let charts = {};
 function chargerDashboard(){
+  renderBanniereArchive();
   renderStats();
   renderAlertes();
   renderClassement();
@@ -1244,15 +1286,23 @@ function renderDates(){
 }
 
 async function annulerDate(d){
+  if(refuserSiArchivee()) return;
   const code = prompt("Entrez le code d'annulation :");
   if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
   await setDoc(cheminDateAnnuleeId(d),{annule:true, date:new Date().toISOString()});
 }
-async function reactiverDate(d){ await deleteDoc(cheminDateAnnuleeId(d)); }
-async function supprimerDateSpecial(d){ if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d)); }
+async function reactiverDate(d){
+  if(refuserSiArchivee()) return;
+  await deleteDoc(cheminDateAnnuleeId(d));
+}
+async function supprimerDateSpecial(d){
+  if(refuserSiArchivee()) return;
+  if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d));
+}
 
 document.getElementById('formAjoutDate').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const date = document.getElementById('newDate').value;
   const type = document.getElementById('newTypeDate').value;
   const libelle = document.getElementById('newLibelle').value.trim();
@@ -1288,6 +1338,7 @@ function renderListeKASecretariat(){
 }
 
 async function supprimerKA(id){
+  if(refuserSiArchivee()) return;
   const code = prompt("Code de suppression requis :");
   if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
   if(!confirm("Supprimer définitivement ce KA ?")) return;
@@ -1296,6 +1347,7 @@ async function supprimerKA(id){
 
 document.getElementById('formAjoutKA').addEventListener('submit', async e => {
   e.preventDefault();
+  if(refuserSiArchivee()) return;
   const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
   const voyage = Number(document.getElementById('newVoyage').value);
   if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
@@ -2329,6 +2381,7 @@ const KA_TEST = [
 ];
 
 window.chargerKAOfficiels = async function(){
+  if(refuserSiArchivee()) return;
   const msg = document.getElementById('chargementMessage');
   msg.textContent = "Chargement en cours...";
   msg.className = 'message show warning';
@@ -2362,6 +2415,7 @@ async function init(){
     anneesDisponibles.sort();
     remplirSelectAnnees();
     renderListeAnnees();
+    renderBanniereArchive();
   });
 
   await assurerAnneeExiste(CONFIG.ANNEE_DEFAUT);
@@ -2375,6 +2429,7 @@ async function init(){
   anneeStorageEcrire(anneeCourante);
 
   await attacherListenersAnnee();
+  renderBanniereArchive();
 
   if(sessionValide()){
     document.getElementById('pagePublique').classList.add('hidden');
