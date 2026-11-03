@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Génie du Droit — Étude Pro</title>
+<title>Mon Co-pilote d'Étude — IA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
   --primary:#1e3a5f;--primary-light:#2d4a75;
@@ -44,12 +43,6 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
 .card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 
-.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow);position:relative}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
-.stat-value{font-size:2.2rem;font-weight:800;color:var(--primary)}
-.stat-label{color:var(--muted);font-size:.8rem;text-transform:uppercase;font-weight:600;margin-top:6px}
-
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-weight:600;margin-bottom:6px;color:var(--primary);font-size:.88rem}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem}
@@ -60,6 +53,14 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 .pdf-title{font-weight:700;color:var(--primary);margin-bottom:6px}
 .pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
+.chat-container{display:flex;flex-direction:column;height:500px;background:#fff;border-radius:8px;border:1px solid var(--border)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.chat-msg{max-width:85%;padding:12px 16px;border-radius:12px;font-size:.95rem;white-space:pre-wrap;}
+.chat-msg.user{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:2px}
+.chat-msg.bot{align-self:flex-start;background:#f1f5f9;border-bottom-left-radius:2px;border:1px solid var(--border)}
+.chat-input-area{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);background:#f8fafc}
+.chat-input-area input{flex:1;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:inherit}
+
 .quiz-item{background:#f8fafc;border-left:4px solid var(--info);padding:20px;border-radius:8px;margin-bottom:16px}
 .quiz-question{font-weight:600;margin-bottom:14px;font-size:1.05rem}
 .quiz-option{padding:12px 16px;margin-bottom:8px;border-radius:8px;background:#fff;border:2px solid var(--border);cursor:pointer;transition:all .2s}
@@ -69,15 +70,11 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 .quiz-explication{font-size:.9rem;color:#475569;margin-top:12px;padding:12px;background:#f1f5f9;border-radius:8px;border-left:3px solid var(--info);display:none}
 .quiz-explication.show{display:block}
 
-.timer-container{text-align:center;padding:40px}
-.timer-display{font-size:5rem;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums}
-
-.viewer-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:1000;display:none;flex-direction:column}
-.viewer-overlay.show{display:flex}
-.viewer-header{background:var(--primary);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.viewer-timer{font-size:1.2rem;font-weight:800;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:8px}
-.viewer-content{flex:1;overflow:auto;background:#525659;position:relative}
-.viewer-text{font-family:serif;font-size:1.2rem;line-height:1.8;padding:40px;background:#fff;max-width:900px;margin:20px auto;border-radius:8px;color:#1a1a2e;white-space:pre-wrap;}
+.flashcard{width:100%;max-width:500px;height:250px;margin:20px auto;perspective:1000px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform 0.6s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flashcard-front, .flashcard-back{position:absolute;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:#fff;border:2px solid var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:20px;font-size:1.1rem;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.flashcard-back{transform:rotateY(180deg);background:var(--info-light);border-color:var(--info);font-weight:400}
 
 .message{padding:12px;border-radius:8px;margin-top:12px;display:none;font-size:.9rem}
 .message.show{display:block}
@@ -93,38 +90,23 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 <header class="header">
   <div class="container header-inner">
     <div class="logo-text">
-      <strong>⚖️ Mon Génie du Droit</strong>
-      <small>Étude Pro & Outils</small>
+      <strong>⚖️ Mon Co-pilote d'Étude</strong>
+      <small>IA & Bibliothèque</small>
     </div>
     <div class="nav">
-      <button class="nav-btn active" data-tab="tab-dashboard">📊 Progrès</button>
-      <button class="nav-btn" data-tab="tab-bibliotheque">📚 Bibliothèque</button>
-      <button class="nav-btn" data-tab="tab-chatgpt">🤖 Générateur ChatGPT</button>
-      <button class="nav-btn" data-tab="tab-quiz">🧠 Mes Quiz</button>
-      <button class="nav-btn" data-tab="tab-focus">⏱️ Mode Focus</button>
+      <button class="nav-btn active" data-tab="tab-bibliotheque">📚 Bibliothèque</button>
+      <button class="nav-btn" data-tab="tab-chat">🤖 Tuteur IA</button>
+      <button class="nav-btn" data-tab="tab-quiz">🧠 Quiz IA</button>
+      <button class="nav-btn" data-tab="tab-flashcards">🗂️ Flashcards IA</button>
+      <button class="nav-btn" data-tab="tab-settings">⚙️ Paramètres</button>
     </div>
   </div>
 </header>
 
 <main class="container" style="padding-top:24px">
 
-  <!-- DASHBOARD -->
-  <div id="tab-dashboard" class="tab-content active">
-    <h1 style="margin-bottom:20px">Mon évolution</h1>
-    <div class="grid-stats">
-      <div class="stat-card"><div class="stat-value" id="statTotalTime">0h</div><div class="stat-label">Temps total</div></div>
-      <div class="stat-card"><div class="stat-value" id="statWeekTime">0h</div><div class="stat-label">Cette semaine</div></div>
-      <div class="stat-card"><div class="stat-value" id="statTodayTime">0min</div><div class="stat-label">Aujourd'hui</div></div>
-      <div class="stat-card"><div class="stat-value" id="statPdfCount">0</div><div class="stat-label">Documents</div></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><h2>📈 Temps d'étude (7 derniers jours)</h2></div>
-      <div style="position:relative;height:300px;"><canvas id="chartEvolution"></canvas></div>
-    </div>
-  </div>
-
   <!-- BIBLIOTHÈQUE -->
-  <div id="tab-bibliotheque" class="tab-content">
+  <div id="tab-bibliotheque" class="tab-content active">
     <h1 style="margin-bottom:20px">Ma Bibliothèque</h1>
     <div class="card">
       <div class="card-header"><h2>➕ Ajouter un cours (PDF)</h2></div>
@@ -148,89 +130,75 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
       <div id="pdfMsg" class="message"></div>
     </div>
     <div class="card">
-      <div class="card-header"><h2>📂 Mes cours (<span id="pdfCount2">0</span>)</h2></div>
+      <div class="card-header"><h2>📂 Mes cours (<span id="pdfCount">0</span>)</h2></div>
       <div id="pdfList" class="pdf-list"><p class="muted center">Chargement...</p></div>
     </div>
   </div>
 
-  <!-- GÉNÉRATEUR CHATGPT -->
-  <div id="tab-chatgpt" class="tab-content">
-    <h1 style="margin-bottom:20px">Générateur de questions</h1>
-    <div class="card">
-      <p class="muted" style="margin-bottom:16px">
-        <strong>Comment ça marche ?</strong><br>
-        1. Sélectionnez un cours ci-dessous.<br>
-        2. Cliquez sur "Générer le Prompt".<br>
-        3. Copiez le texte obtenu et collez-le dans ChatGPT.<br>
-        4. Copiez la réponse de ChatGPT, puis collez-la dans l'onglet "Mes Quiz".
-      </p>
-      <div class="form-group">
-        <label>Choisir un cours :</label>
-        <select id="selectPdfChatGpt"></select>
+  <!-- CHAT IA -->
+  <div id="tab-chat" class="tab-content">
+    <h1 style="margin-bottom:20px">Mon Tuteur IA</h1>
+    <p class="muted" style="margin-bottom:16px">Posez des questions sur vos cours. L'IA a accès à tous vos PDF.</p>
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot">Bonjour ! Je suis votre tuteur. Posez-moi une question sur vos cours.</div>
       </div>
-      <button class="btn btn-primary" id="btnGenererPrompt">✨ Générer le Prompt (Texte Complet)</button>
-      <div class="form-group" style="margin-top:16px">
-        <label>Texte à copier dans ChatGPT :</label>
-        <textarea id="promptOutput" rows="8" readonly placeholder="Le texte apparaîtra ici..."></textarea>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Ex: Explique-moi la responsabilité civile..." onkeypress="if(event.key === 'Enter') envoyerMessage()">
+        <button class="btn btn-primary" id="btnSendChat" onclick="envoyerMessage()">Envoyer</button>
       </div>
-      <button class="btn btn-success" onclick="navigator.clipboard.writeText(document.getElementById('promptOutput').value); alert('Copié !')">📋 Copier le texte</button>
-      <button class="btn btn-primary" onclick="telechargerTexte()">💾 Télécharger en .txt</button>
     </div>
   </div>
 
-  <!-- MES QUIZ -->
+  <!-- QUIZ IA -->
   <div id="tab-quiz" class="tab-content">
-    <h1 style="margin-bottom:20px">Mes Quiz</h1>
+    <h1 style="margin-bottom:20px">Quiz IA</h1>
     <div class="card">
-      <div class="card-header"><h2>📝 Importer un quiz depuis ChatGPT</h2></div>
-      <p class="muted" style="margin-bottom:12px">Collez ici la réponse JSON générée par ChatGPT :</p>
-      <textarea id="importJson" rows="6" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;" placeholder='[{"type":"qcm","question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."},{"type":"casus","enonce":"...","solution":"..."}]'></textarea>
-      <button class="btn btn-success" style="margin-top:12px;" id="btnImportQuiz">📥 Importer le Quiz</button>
-      <div id="importMsg" class="message"></div>
+      <div class="card-header"><h2>🧠 Générer un quiz</h2></div>
+      <div class="form-group">
+        <label>Choisir un cours :</label>
+        <select id="selectPdfQuiz"></select>
+      </div>
+      <button class="btn btn-success" id="btnGenQuiz">✨ Générer le Quiz</button>
+      <div id="quizMsg" class="message"></div>
     </div>
     <div id="quizContainer"></div>
   </div>
 
-  <!-- MODE FOCUS -->
-  <div id="tab-focus" class="tab-content">
-    <h1 style="margin-bottom:20px">Mode Focus (Pomodoro)</h1>
+  <!-- FLASHCARDS IA -->
+  <div id="tab-flashcards" class="tab-content">
+    <h1 style="margin-bottom:20px">Flashcards IA</h1>
     <div class="card">
-      <div class="timer-container">
-        <div class="timer-display" id="pomodoroDisplay">25:00</div>
-        <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;">
-          <button class="btn btn-primary" id="btnStartTimer">▶️ Démarrer</button>
-          <button class="btn btn-danger" id="btnResetTimer">🔄 Réinitialiser</button>
-        </div>
-        <p class="muted" style="margin-top:20px;">Concentrez-vous pendant 25 minutes sur votre cours. C'est la clé pour mémoriser !</p>
+      <div class="card-header"><h2>🗂️ Générer des Flashcards</h2></div>
+      <div class="form-group">
+        <label>Choisir un cours :</label>
+        <select id="selectPdfFlash"></select>
       </div>
+      <button class="btn btn-success" id="btnGenFlash">✨ Générer les Flashcards</button>
+      <div id="flashMsg" class="message"></div>
+    </div>
+    <div id="flashContainer" class="center"></div>
+  </div>
+
+  <!-- PARAMÈTRES -->
+  <div id="tab-settings" class="tab-content">
+    <h1 style="margin-bottom:20px">Paramètres</h1>
+    <div class="card">
+      <div class="card-header"><h2>🔑 Clé API Gemini</h2></div>
+      <p class="muted" style="margin-bottom:12px">
+        Obtenez votre clé gratuite sur <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>.
+        Elle est stockée uniquement dans votre navigateur.
+      </p>
+      <div class="form-group">
+        <label>Clé API</label>
+        <input type="password" id="geminiKey" placeholder="AIzaSy...">
+      </div>
+      <button class="btn btn-success" id="btnSaveKey">💾 Sauvegarder</button>
+      <div id="keyMsg" class="message"></div>
     </div>
   </div>
 
 </main>
-
-<!-- LECTEUR PDF & VOCAL -->
-<div id="viewerOverlay" class="viewer-overlay">
-  <div class="viewer-header">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <strong id="viewerTitle">Document</strong>
-      <span class="viewer-timer">⏱️ <span id="viewerTimer">00:00</span></span>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="btnReadAloud">🗣️ Lecture</button>
-      <select id="speedSelect" class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none;padding:6px;border-radius:6px;">
-        <option value="0.5">0.5x (Lent)</option>
-        <option value="0.75" selected>0.75x (Doux)</option>
-        <option value="1">1x (Normal)</option>
-        <option value="1.25">1.25x (Rapide)</option>
-      </select>
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="btnPauseTimer">⏸️ Pause</button>
-      <button class="btn btn-sm" style="background:#dc2626;color:#fff" id="btnCloseViewer">✕ Fermer</button>
-    </div>
-  </div>
-  <div class="viewer-content" id="viewerContent">
-    <div class="viewer-text" id="viewerText"></div>
-  </div>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -250,8 +218,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const colPdfs = collection(db, "pdfs");
-const colTemps = collection(db, "temps");
 const colQuiz = collection(db, "quiz");
+const colFlash = collection(db, "flashcards");
+
+// --- GESTION CLÉ ---
+function getKey() { return localStorage.getItem('gemini_key') || ''; }
+function setKey(k) { localStorage.setItem('gemini_key', k); }
+
+document.getElementById('btnSaveKey').onclick = () => {
+  const k = document.getElementById('geminiKey').value.trim();
+  if (k) { setKey(k); document.getElementById('keyMsg').className = 'message show success'; document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée.'; }
+};
 
 // --- NAVIGATION ---
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -260,313 +237,188 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
-    if (btn.dataset.tab === 'tab-dashboard') rafraichirDashboard();
-    if (btn.dataset.tab === 'tab-chatgpt') rafraichirSelectChatGpt();
+    if (btn.dataset.tab === 'tab-chat') rafraichirSelectChat();
+    if (btn.dataset.tab === 'tab-quiz') rafraichirSelectQuiz();
+    if (btn.dataset.tab === 'tab-flashcards') rafraichirSelectFlash();
   });
 });
 
-// --- AJOUT PDF (Texte complet) ---
-document.getElementById('btnAddPdf').addEventListener('click', async () => {
+// --- AJOUT PDF ---
+document.getElementById('btnAddPdf').onclick = async () => {
   const file = document.getElementById('pdfFile').files[0];
   if (!file) return;
   const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show info'; msg.textContent = 'Lecture du PDF (peut prendre du temps pour 2000 pages)...';
+  msg.className = 'message show info'; msg.textContent = 'Lecture du PDF...';
   
   try {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
     let texte = '';
-    
-    // On boucle sur TOUTES les pages
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const contenu = await page.getTextContent();
       texte += contenu.items.map(it => it.str).join(' ') + '\n\n';
     }
-    
     const id = 'pdf_' + Date.now();
-    await setDoc(doc(db, "pdfs", id), {
-      id, nom: file.name, matiere: document.getElementById('pdfMatiere').value,
-      texte: texte, dateAjout: new Date().toISOString()
-    });
-    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré avec succès !';
+    await setDoc(doc(db, "pdfs", id), { id, nom: file.name, matiere: document.getElementById('pdfMatiere').value, texte, dateAjout: new Date().toISOString() });
+    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré !';
     document.getElementById('pdfFile').value = '';
-  } catch (e) { 
-    msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; 
-  }
-});
+  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; }
+};
 
 onSnapshot(colPdfs, (snap) => {
   const pdfs = []; snap.forEach(d => pdfs.push(d.data()));
-  document.getElementById('pdfCount2').textContent = pdfs.length;
-  document.getElementById('statPdfCount').textContent = pdfs.length;
+  document.getElementById('pdfCount').textContent = pdfs.length;
   const container = document.getElementById('pdfList');
   if (pdfs.length === 0) return container.innerHTML = '<p class="muted center">Aucun cours.</p>';
-  
   container.innerHTML = pdfs.map(p => `
     <div class="pdf-card">
       <div class="pdf-title">${p.nom}</div>
       <div class="pdf-meta">${p.matiere}</div>
-      <div class="pdf-actions">
-        <button class="btn btn-primary btn-sm" onclick="ouvrirPDF('${p.id}')">📖 Lire</button>
-        <button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">🗑️</button>
-      </div>
+      <div class="pdf-actions"><button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">🗑️</button></div>
     </div>
   `).join('');
 });
 
-window.supprimerPDF = async function(id) {
-  if (confirm('Supprimer ce cours ?')) await deleteDoc(doc(db, "pdfs", id));
-};
+window.supprimerPDF = async (id) => { if(confirm('Supprimer ?')) await deleteDoc(doc(db, "pdfs", id)); };
 
-// --- LECTEUR & VOCAL ---
-let timerInterval = null, timerSecondes = 0, timerPaused = false, currentPdfId = null;
-
-window.ouvrirPDF = async function(id) {
-  const snap = await getDoc(doc(db, "pdfs", id));
-  if (!snap.exists()) return;
-  const pdf = snap.data();
-  currentPdfId = id;
-  
-  document.getElementById('viewerTitle').textContent = pdf.nom;
-  document.getElementById('viewerOverlay').classList.add('show');
-  
-  const viewerText = document.getElementById('viewerText');
-  viewerText.innerHTML = pdf.texte.replace(/\n/g, '<br>');
-  
-  // Position de lecture sauvegardée
-  const savedPos = localStorage.getItem('pos_' + id);
-  if (savedPos) {
-    document.getElementById('viewerContent').scrollTop = parseInt(savedPos);
-  }
-  
-  // Timer
-  timerSecondes = 0; timerPaused = false;
-  document.getElementById('viewerTimer').textContent = '00:00';
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(async () => {
-    if (timerPaused) return;
-    timerSecondes++;
-    document.getElementById('viewerTimer').textContent = `${String(Math.floor(timerSecondes/60)).padStart(2,'0')}:${String(timerSecondes%60).padStart(2,'0')}`;
-    if (timerSecondes % 30 === 0) await setDoc(doc(db, "temps", Date.now().toString()), { secondes: 30, date: new Date().toISOString() });
-  }, 1000);
-};
-
-// Sauvegarde position
-document.getElementById('viewerContent').addEventListener('scroll', (e) => {
-  if (currentPdfId) {
-    localStorage.setItem('pos_' + currentPdfId, e.target.scrollTop);
-  }
-});
-
-document.getElementById('btnPauseTimer').onclick = () => {
-  timerPaused = !timerPaused;
-  document.getElementById('btnPauseTimer').textContent = timerPaused ? '▶️ Reprendre' : '⏸️ Pause';
-};
-
-document.getElementById('btnCloseViewer').onclick = async () => {
-  if (timerSecondes % 30 > 0) await setDoc(doc(db, "temps", Date.now().toString()), { secondes: timerSecondes % 30, date: new Date().toISOString() });
-  clearInterval(timerInterval);
-  speechSynthesis.cancel();
-  document.getElementById('viewerOverlay').classList.remove('show');
-  rafraichirDashboard();
-};
-
-// --- LECTURE VOCALE (Lente & Contrôlable) ---
-document.getElementById('btnReadAloud').onclick = async () => {
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    document.getElementById('btnReadAloud').textContent = '🗣️ Lecture';
-    return;
-  }
-  
-  const snap = await getDoc(doc(db, "pdfs", currentPdfId));
-  if (!snap.exists()) return;
-  const pdf = snap.data();
-  
-  const speed = parseFloat(document.getElementById('speedSelect').value);
-  const utterance = new SpeechSynthesisUtterance(pdf.texte);
-  utterance.lang = 'fr-FR';
-  utterance.rate = speed; 
-  
-  utterance.onend = () => { document.getElementById('btnReadAloud').textContent = '🗣️ Lecture'; };
-  speechSynthesis.speak(utterance);
-  document.getElementById('btnReadAloud').textContent = '⏹️ Arrêter';
-};
-
-// --- GÉNÉRATEUR CHATGPT (Texte complet) ---
-async function rafraichirSelectChatGpt() {
+// --- CHAT IA ---
+async function rafraichirSelectChat() {
   const snap = await getDocs(colPdfs);
-  const select = document.getElementById('selectPdfChatGpt');
-  select.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    select.innerHTML += `<option value="${p.id}">${p.nom} (${p.matiere})</option>`;
-  });
+  const select = document.getElementById('selectPdfQuiz'); // On réutilise pour simplifier
+  // Le chat utilise tous les cours, pas besoin de select
 }
 
-document.getElementById('btnGenererPrompt').onclick = async () => {
-  const id = document.getElementById('selectPdfChatGpt').value;
-  const snap = await getDoc(doc(db, "pdfs", id));
-  if (!snap.exists()) return;
-  const pdf = snap.data();
+window.envoyerMessage = async () => {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const key = getKey();
+  if (!key) return alert('Configurez la clé Gemini dans Paramètres.');
 
-  // On met TOUT le texte
-  const prompt = `Tu es un professeur de droit expert en ${pdf.matiere}. 
-À partir du texte ci-dessous, génère 10 questions QCM et 2 cas pratiques (casus) avec leurs corrections détaillées.
+  const chat = document.getElementById('chatMessages');
+  chat.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+  input.value = '';
+  chat.scrollTop = chat.scrollHeight;
 
-Format de réponse STRICT (JSON uniquement, sans texte autour) :
-[
-  {"type":"qcm","question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."},
-  {"type":"casus","enonce":"...","solution":"..."}
-]
+  const loadId = 'load_' + Date.now();
+  chat.innerHTML += `<div class="chat-msg bot" id="${loadId}">Réflexion...</div>`;
 
-Texte du cours :
-${pdf.texte}`;
-
-  document.getElementById('promptOutput').value = prompt;
-};
-
-// Télécharger le texte
-window.telechargerTexte = function() {
-  const text = document.getElementById('promptOutput').value;
-  if (!text) return alert('Générez d\'abord le prompt.');
-  const blob = new Blob([text], {type: 'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'prompt_cours.txt';
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-// --- IMPORTATEUR DE QUIZ ---
-document.getElementById('btnImportQuiz').onclick = async () => {
-  const txt = document.getElementById('importJson').value;
-  const msg = document.getElementById('importMsg');
   try {
-    let jsonStr = txt.match(/\[[\s\S]*\]/)[0];
-    let data = JSON.parse(jsonStr);
-    await setDoc(doc(db, "quiz", Date.now().toString()), {
-      questions: data, date: new Date().toISOString()
+    const snap = await getDocs(colPdfs);
+    let contexte = "Cours de l'étudiant :\n";
+    snap.forEach(d => { const p = d.data(); contexte += `[${p.matiere}] ${p.texte.substring(0, 3000)}...\n`; });
+
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{parts: [{text: `Tu es un tuteur de droit. Réponds à : ${msg}\n\n${contexte}`}]}] })
     });
-    msg.className = 'message show success'; msg.textContent = '✅ Quiz importé !';
-    document.getElementById('importJson').value = '';
-    rafraichirQuiz();
+    const data = await res.json();
+    document.getElementById(loadId).remove();
+    chat.innerHTML += `<div class="chat-msg bot">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
   } catch (e) {
-    msg.className = 'message show error'; msg.textContent = '❌ Format JSON invalide.';
+    document.getElementById(loadId).remove();
+    chat.innerHTML += `<div class="chat-msg bot" style="color:red">Erreur : ${e.message}</div>`;
   }
+  chat.scrollTop = chat.scrollHeight;
+};
+
+// --- QUIZ IA ---
+async function rafraichirSelectQuiz() {
+  const snap = await getDocs(colPdfs);
+  const select = document.getElementById('selectPdfQuiz');
+  select.innerHTML = ''; snap.forEach(d => { const p = d.data(); select.innerHTML += `<option value="${p.id}">${p.nom}</option>`; });
+}
+
+document.getElementById('btnGenQuiz').onclick = async () => {
+  const id = document.getElementById('selectPdfQuiz').value;
+  const key = getKey();
+  if (!key) return alert('Configurez la clé.');
+  const snap = await getDoc(doc(db, "pdfs", id));
+  const pdf = snap.data();
+  const msg = document.getElementById('quizMsg');
+  msg.className = 'message show info'; msg.textContent = 'Génération du quiz par l\'IA...';
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 QCM sur ce texte. Format JSON: [{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]\n\n${pdf.texte.substring(0, 30000)}`}]}], generationConfig: { responseMimeType: "application/json" } })
+    });
+    const data = await res.json();
+    const quiz = JSON.parse(data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/)[0]);
+    await setDoc(doc(db, "quiz", Date.now().toString()), { questions: quiz, date: new Date().toISOString() });
+    msg.className = 'message show success'; msg.textContent = '✅ Quiz généré !';
+    rafraichirQuiz();
+  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
 };
 
 onSnapshot(colQuiz, (snap) => {
   const quizzes = []; snap.forEach(d => quizzes.push(d.data()));
   const container = document.getElementById('quizContainer');
   if (quizzes.length === 0) return container.innerHTML = '<p class="muted center">Aucun quiz.</p>';
-  
   container.innerHTML = quizzes.sort((a,b) => b.date.localeCompare(a.date)).map((qz, idx) => `
-    <div class="card">
-      <h2>Quiz du ${new Date(qz.date).toLocaleDateString()}</h2>
-      ${qz.questions.map((q, i) => {
-        if (q.type === 'casus') {
-          return `<div class="quiz-item" style="border-left-color:#eab308">
-            <div class="quiz-question">Cas pratique ${i+1} : ${q.enonce}</div>
-            <div class="quiz-explication show"><strong>Solution :</strong> ${q.solution}</div>
-          </div>`;
-        } else {
-          return `<div class="quiz-item">
-            <div class="quiz-question">${i+1}. ${q.question}</div>
-            <div id="opt-${idx}-${i}">
-              ${q.options.map((opt, j) => `<div class="quiz-option" onclick="verifierReponse(${idx}, ${i}, ${j}, ${q.reponse})">${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}
-            </div>
-            <div class="quiz-explication" id="exp-${idx}-${i}"><strong>Explication :</strong> ${q.explication}</div>
-          </div>`;
-        }
-      }).join('')}
-    </div>
-  `).join('');
+    <div class="card"><h2>Quiz du ${new Date(qz.date).toLocaleDateString()}</h2>
+      ${qz.questions.map((q, i) => `
+        <div class="quiz-item"><div class="quiz-question">${i+1}. ${q.question}</div>
+          <div id="opt-${idx}-${i}">${q.options.map((opt, j) => `<div class="quiz-option" onclick="verifierReponse(${idx},${i},${j},${q.reponse})">${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}</div>
+          <div class="quiz-explication" id="exp-${idx}-${i}"><strong>Explication :</strong> ${q.explication}</div>
+        </div>`).join('')}
+    </div>`).join('');
 });
 
-window.verifierReponse = function(quizIdx, qIdx, choix, bonneReponse) {
-  const container = document.getElementById(`opt-${quizIdx}-${qIdx}`);
-  if (container.dataset.done) return;
-  container.dataset.done = "true";
-  container.querySelectorAll('.quiz-option').forEach((opt, i) => {
-    if (i === bonneReponse) opt.classList.add('correct');
-    else if (i === choix) opt.classList.add('incorrect');
-  });
-  document.getElementById(`exp-${quizIdx}-${qIdx}`).classList.add('show');
+window.verifierReponse = (qi, qj, choix, bonne) => {
+  const c = document.getElementById(`opt-${qi}-${qj}`);
+  if (c.dataset.done) return; c.dataset.done = "true";
+  c.querySelectorAll('.quiz-option').forEach((o, i) => { if (i === bonne) o.classList.add('correct'); else if (i === choix) o.classList.add('incorrect'); });
+  document.getElementById(`exp-${qi}-${qj}`).classList.add('show');
 };
 
-// --- MODE FOCUS (POMODORO) ---
-let pomodoroInterval = null, pomodoroSecondes = 25 * 60, pomodoroRunning = false;
-function updatePomodoroDisplay() {
-  document.getElementById('pomodoroDisplay').textContent = `${String(Math.floor(pomodoroSecondes / 60)).padStart(2, '0')}:${String(pomodoroSecondes % 60).padStart(2, '0')}`;
-}
-document.getElementById('btnStartTimer').onclick = () => {
-  if (pomodoroRunning) {
-    clearInterval(pomodoroInterval);
-    pomodoroRunning = false;
-    document.getElementById('btnStartTimer').textContent = '▶️ Démarrer';
-  } else {
-    pomodoroRunning = true;
-    document.getElementById('btnStartTimer').textContent = '⏸️ Pause';
-    pomodoroInterval = setInterval(() => {
-      if (pomodoroSecondes > 0) {
-        pomodoroSecondes--;
-        updatePomodoroDisplay();
-      } else {
-        clearInterval(pomodoroInterval);
-        pomodoroRunning = false;
-        document.getElementById('btnStartTimer').textContent = '▶️ Démarrer';
-        alert('⏰ Temps écoulé ! Prenez une pause de 5 minutes.');
-        pomodoroSecondes = 25 * 60;
-        updatePomodoroDisplay();
-      }
-    }, 1000);
-  }
-};
-document.getElementById('btnResetTimer').onclick = () => {
-  clearInterval(pomodoroInterval);
-  pomodoroRunning = false;
-  pomodoroSecondes = 25 * 60;
-  updatePomodoroDisplay();
-  document.getElementById('btnStartTimer').textContent = '▶️ Démarrer';
-};
-
-// --- TABLEAU DE BORD ---
-async function rafraichirDashboard() {
-  const tempsSnap = await getDocs(colTemps);
-  const temps = []; tempsSnap.forEach(d => temps.push(d.data()));
-  let total = 0, today = 0, week = 0;
-  const todayStr = new Date().toISOString().split('T')[0];
-  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString();
-  temps.forEach(t => {
-    total += t.secondes;
-    if (t.date.startsWith(todayStr)) today += t.secondes;
-    if (t.date > weekAgo) week += t.secondes;
-  });
-  document.getElementById('statTotalTime').textContent = (total/3600).toFixed(1) + 'h';
-  document.getElementById('statTodayTime').textContent = Math.round(today/60) + 'min';
-  document.getElementById('statWeekTime').textContent = (week/3600).toFixed(1) + 'h';
-
-  const ctx = document.getElementById('chartEvolution').getContext('2d');
-  if (window.myChart) window.myChart.destroy();
-  const labels = [], data = [];
-  for(let i=6; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    labels.push(d.toLocaleDateString('fr-FR', {weekday:'short'}));
-    let sec = 0;
-    temps.forEach(t => { if(t.date.startsWith(d.toISOString().split('T')[0])) sec += t.secondes; });
-    data.push((sec/60).toFixed(0));
-  }
-  window.myChart = new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Minutes', data, backgroundColor: '#1e3a5f', borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
+// --- FLASHCARDS IA ---
+async function rafraichirSelectFlash() {
+  const snap = await getDocs(colPdfs);
+  const select = document.getElementById('selectPdfFlash');
+  select.innerHTML = ''; snap.forEach(d => { const p = d.data(); select.innerHTML += `<option value="${p.id}">${p.nom}</option>`; });
 }
 
-rafraichirDashboard();
+document.getElementById('btnGenFlash').onclick = async () => {
+  const id = document.getElementById('selectPdfFlash').value;
+  const key = getKey();
+  if (!key) return alert('Configurez la clé.');
+  const snap = await getDoc(doc(db, "pdfs", id));
+  const pdf = snap.data();
+  const msg = document.getElementById('flashMsg');
+  msg.className = 'message show info'; msg.textContent = 'Génération des flashcards...';
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 flashcards (recto: concept, verso: définition) sur ce texte. Format JSON: [{"recto":"...","verso":"..."}]\n\n${pdf.texte.substring(0, 30000)}`}]}], generationConfig: { responseMimeType: "application/json" } })
+    });
+    const data = await res.json();
+    const flash = JSON.parse(data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/)[0]);
+    await setDoc(doc(db, "flashcards", Date.now().toString()), { cards: flash, date: new Date().toISOString() });
+    msg.className = 'message show success'; msg.textContent = '✅ Flashcards générées !';
+    rafraichirFlash();
+  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
+};
+
+onSnapshot(colFlash, (snap) => {
+  const sets = []; snap.forEach(d => sets.push(d.data()));
+  const container = document.getElementById('flashContainer');
+  if (sets.length === 0) return container.innerHTML = '<p class="muted center">Aucune flashcard.</p>';
+  let html = '';
+  sets.forEach(set => {
+    set.cards.forEach((c, i) => {
+      html += `<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front">${c.recto}</div><div class="flashcard-back">${c.verso}</div></div></div>`;
+    });
+  });
+  container.innerHTML = html;
+});
+
+rafraichirQuiz(); rafraichirFlash();
 </script>
 </body>
 </html>
