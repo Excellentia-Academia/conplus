@@ -3,116 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Co-pilote d'Étude — IA</title>
+<title>Mon Génie du Droit — Co-pilote IA</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --primary:#1e3a5f;--primary-light:#2d4a75;
-  --bg:#f4f6fa;--surface:#fff;--text:#1a1a2e;--muted:#64748b;
-  --border:#e2e8f0;
-  --success:#059669;--success-light:#d1fae5;
-  --danger:#dc2626;--danger-light:#fee2e2;
-  --info:#3b82f6;--info-light:#dbeafe;
-  --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
-  --grad:linear-gradient(135deg,#1e3a5f 0%,#2d4a75 100%);
+  --bg:#0f172a;--surface:#1e293b;--surface-light:#334155;
+  --primary:#38bdf8;--primary-hover:#0ea5e9;
+  --text:#f8fafc;--text-muted:#94a3b8;
+  --border:#334155;
+  --success:#10b981;--danger:#ef4444;--warning:#f59e0b;
+  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+  --transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+h1,h2,h3{color:var(--text);letter-spacing:-.02em}
 .container{max-width:1200px;margin:0 auto;padding:24px}
-.center{text-align:center}
-.muted{color:var(--muted);font-size:.9rem}
+.hidden{display:none!important}
+.muted{color:var(--text-muted);font-size:.9rem}
 
-.header{background:var(--grad);color:#fff;padding:20px 0;box-shadow:0 4px 20px rgba(30,58,95,.3);position:sticky;top:0;z-index:100}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo-text strong{display:block;font-size:1.1rem;color:#fff}
-.logo-text small{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#93c5fd}
-
+/* HEADER & NAV */
+.header{background:rgba(15,23,42,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:16px 0}
+.header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{font-size:1.5rem}
+.logo-text strong{display:block;font-size:1.1rem;color:var(--text)}
+.logo-text small{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--primary)}
 .nav{display:flex;gap:8px;flex-wrap:wrap}
-.nav-btn{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:9px 16px;border-radius:8px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s}
-.nav-btn:hover{background:rgba(255,255,255,.25)}
-.nav-btn.active{background:#fff;color:var(--primary)}
+.nav-btn{background:transparent;color:var(--text-muted);border:1px solid transparent;padding:10px 16px;border-radius:8px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:var(--transition)}
+.nav-btn:hover{color:var(--text);background:var(--surface)}
+.nav-btn.active{background:var(--primary);color:#0f172a;box-shadow:0 0 15px rgba(56,189,248,.4)}
 
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:8px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-primary{background:var(--grad);color:#fff}
+/* PAGE TRANSITION */
+.page{display:none;animation:fadeIn .4s ease-out forwards}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARTES & BOUTONS */
+.card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--border);transition:var(--transition)}
+.card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:var(--transition)}
+.btn-primary{background:var(--primary);color:#0f172a}
+.btn-primary:hover{background:var(--primary-hover);box-shadow:0 0 20px rgba(56,189,248,.5)}
 .btn-success{background:var(--success);color:#fff}
 .btn-danger{background:var(--danger);color:#fff}
-.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn-sm{padding:8px 16px;font-size:.8rem}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
-.card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:20px}
-.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-
+/* FORMULAIRES */
 .form-group{margin-bottom:16px}
-.form-group label{display:block;font-weight:600;margin-bottom:6px;color:var(--primary);font-size:.88rem}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:.95rem}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;color:var(--text-muted);font-size:.85rem}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:var(--bg);border:2px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.95rem;transition:var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(56,189,248,.1)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 
-.pdf-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.pdf-card{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px}
-.pdf-title{font-weight:700;color:var(--primary);margin-bottom:6px}
-.pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+/* PLANNING SEMAINE */
+.planning-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:20px}
+.week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.week-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary)}
+.week-card h3{font-size:1rem;margin-bottom:12px;display:flex;justify-content:space-between}
+.week-badge{background:var(--primary);color:#0f172a;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700}
+.pdf-item{padding:10px;border-bottom:1px solid var(--border);font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
+.pdf-item:last-child{border-bottom:none}
 
-.chat-container{display:flex;flex-direction:column;height:500px;background:#fff;border-radius:8px;border:1px solid var(--border)}
-.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
-.chat-msg{max-width:85%;padding:12px 16px;border-radius:12px;font-size:.95rem;white-space:pre-wrap;}
-.chat-msg.user{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:2px}
-.chat-msg.bot{align-self:flex-start;background:#f1f5f9;border-bottom-left-radius:2px;border:1px solid var(--border)}
-.chat-input-area{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);background:#f8fafc}
-.chat-input-area input{flex:1;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:inherit}
-
-.quiz-item{background:#f8fafc;border-left:4px solid var(--info);padding:20px;border-radius:8px;margin-bottom:16px}
-.quiz-question{font-weight:600;margin-bottom:14px;font-size:1.05rem}
-.quiz-option{padding:12px 16px;margin-bottom:8px;border-radius:8px;background:#fff;border:2px solid var(--border);cursor:pointer;transition:all .2s}
-.quiz-option:hover{border-color:var(--info)}
-.quiz-option.correct{background:var(--success-light);border-color:var(--success);font-weight:600}
-.quiz-option.incorrect{background:var(--danger-light);border-color:var(--danger)}
-.quiz-explication{font-size:.9rem;color:#475569;margin-top:12px;padding:12px;background:#f1f5f9;border-radius:8px;border-left:3px solid var(--info);display:none}
-.quiz-explication.show{display:block}
-
-.flashcard{width:100%;max-width:500px;height:250px;margin:20px auto;perspective:1000px;cursor:pointer}
-.flashcard-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform 0.6s;transform-style:preserve-3d}
-.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
-.flashcard-front, .flashcard-back{position:absolute;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:#fff;border:2px solid var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;padding:20px;font-size:1.1rem;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.flashcard-back{transform:rotateY(180deg);background:var(--info-light);border-color:var(--info);font-weight:400}
-
+/* MESSAGES */
 .message{padding:12px;border-radius:8px;margin-top:12px;display:none;font-size:.9rem}
 .message.show{display:block}
-.message.success{background:var(--success-light);color:#065f46}
-.message.error{background:var(--danger-light);color:#991b1b}
-.message.info{background:var(--info-light);color:#1e40af}
+.message.success{background:rgba(16,185,129,.1);border-left:4px solid var(--success);color:var(--success)}
+.message.error{background:rgba(239,68,68,.1);border-left:4px solid var(--danger);color:var(--danger)}
 
-@media(max-width:700px){.form-row{grid-template-columns:1fr}}
+/* CHAT */
+.chat-container{display:flex;flex-direction:column;height:500px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.chat-msg{max-width:85%;padding:14px 18px;border-radius:16px;font-size:.95rem;line-height:1.5}
+.chat-msg.user{align-self:flex-end;background:var(--primary);color:#0f172a;border-bottom-right-radius:4px}
+.chat-msg.bot{align-self:flex-start;background:var(--surface-light);color:var(--text);border-bottom-left-radius:4px}
+.chat-input-area{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border)}
+.chat-input-area input{flex:1;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text)}
+.chat-input-area input:focus{outline:none;border-color:var(--primary)}
+
+/* QUIZ & FLASHCARDS */
+.quiz-item{background:var(--surface-light);padding:24px;border-radius:var(--radius);margin-bottom:16px}
+.quiz-question{font-weight:600;margin-bottom:16px;font-size:1.05rem}
+.quiz-option{padding:14px;margin-bottom:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);cursor:pointer;transition:var(--transition)}
+.quiz-option:hover{border-color:var(--primary);background:rgba(56,189,248,.05)}
+.quiz-option.correct{border-color:var(--success);background:rgba(16,185,129,.1)}
+.quiz-option.incorrect{border-color:var(--danger);background:rgba(239,68,68,.1)}
+.quiz-explication{margin-top:16px;padding:16px;background:rgba(56,189,248,.05);border-left:3px solid var(--primary);border-radius:4px;display:none}
+.quiz-explication.show{display:block}
+
+.flashcard{width:100%;max-width:600px;height:300px;margin:20px auto;perspective:1000px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;text-align:center;transition:transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flashcard-front,.flashcard-back{position:absolute;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--surface);border:2px solid var(--border);border-radius:16px;display:flex;align-items:center;justify-content:center;padding:32px;font-size:1.2rem;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.flashcard-back{transform:rotateY(180deg);background:rgba(56,189,248,.1);border-color:var(--primary);font-weight:400}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);padding:24px;border-radius:var(--radius);text-align:center;border:1px solid var(--border)}
+.stat-value{font-size:2.5rem;font-weight:800;color:var(--primary)}
+.stat-label{font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+/* ANIMATIONS SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="container header-inner">
-    <div class="logo-text">
-      <strong>⚖️ Mon Co-pilote d'Étude</strong>
-      <small>IA & Bibliothèque</small>
+    <div class="logo">
+      <span class="logo-icon">⚖️</span>
+      <div class="logo-text"><strong>Génie du Droit</strong><small>Co-pilote IA</small></div>
     </div>
     <div class="nav">
-      <button class="nav-btn active" data-tab="tab-bibliotheque">📚 Bibliothèque</button>
-      <button class="nav-btn" data-tab="tab-chat">🤖 Tuteur IA</button>
-      <button class="nav-btn" data-tab="tab-quiz">🧠 Quiz IA</button>
-      <button class="nav-btn" data-tab="tab-flashcards">🗂️ Flashcards IA</button>
-      <button class="nav-btn" data-tab="tab-settings">⚙️ Paramètres</button>
+      <button class="nav-btn active" data-page="page-dashboard">📊 Dashboard</button>
+      <button class="nav-btn" data-page="page-planning">📅 Planning</button>
+      <button class="nav-btn" data-page="page-biblio">📚 Bibliothèque</button>
+      <button class="nav-btn" data-page="page-chat">🤖 Tuteur IA</button>
+      <button class="nav-btn" data-page="page-quiz">🧠 Quiz IA</button>
+      <button class="nav-btn" data-page="page-flash">🗂️ Flashcards</button>
+      <button class="nav-btn" data-page="page-settings">⚙️</button>
     </div>
   </div>
 </header>
 
-<main class="container" style="padding-top:24px">
+<main class="container" style="padding-top:32px">
 
-  <!-- BIBLIOTHÈQUE -->
-  <div id="tab-bibliotheque" class="tab-content active">
-    <h1 style="margin-bottom:20px">Ma Bibliothèque</h1>
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <h1 style="margin-bottom:24px">Mon évolution</h1>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" id="statTime">0h</div><div class="stat-label">Temps d'étude</div></div>
+      <div class="stat-card"><div class="stat-value" id="statPdf">0</div><div class="stat-label">Cours</div></div>
+      <div class="stat-card"><div class="stat-value" id="statQuiz">0</div><div class="stat-label">Quiz générés</div></div>
+      <div class="stat-card"><div class="stat-value" id="statFlash">0</div><div class="stat-label">Flashcards</div></div>
+    </div>
     <div class="card">
-      <div class="card-header"><h2>➕ Ajouter un cours (PDF)</h2></div>
+      <h2 style="margin-bottom:16px">📈 Progression (7 jours)</h2>
+      <div style="position:relative;height:300px;"><canvas id="chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PLANNING -->
+  <div id="page-planning" class="page">
+    <h1 style="margin-bottom:8px">Planning d'étude</h1>
+    <p class="muted" style="margin-bottom:24px">Organisez vos cours par semaine pour ne rien oublier.</p>
+    
+    <div class="planning-grid" id="planningContainer">
+      <div class="week-card">
+        <h3>Cette semaine <span class="week-badge">En cours</span></h3>
+        <div id="weekCurrent"><p class="muted" style="font-size:.85rem">Aucun cours prévu.</p></div>
+      </div>
+      <div class="week-card">
+        <h3>Semaine prochaine</h3>
+        <div id="weekNext"><p class="muted" style="font-size:.85rem">Aucun cours prévu.</p></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h2 style="margin-bottom:16px">➕ Ajouter un cours au planning</h2>
       <div class="form-row">
         <div class="form-group">
-          <label>Fichier PDF</label>
+          <label>Cours (PDF)</label>
+          <select id="planPdf"></select>
+        </div>
+        <div class="form-group">
+          <label>Semaine</label>
+          <select id="planWeek">
+            <option value="current">Cette semaine</option>
+            <option value="next">Semaine prochaine</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btnAddPlan">Ajouter au planning</button>
+    </div>
+  </div>
+
+  <!-- BIBLIOTHÈQUE -->
+  <div id="page-biblio" class="page">
+    <h1 style="margin-bottom:24px">Bibliothèque</h1>
+    <div class="card">
+      <h2 style="margin-bottom:16px">➕ Ajouter un PDF</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fichier</label>
           <input type="file" id="pdfFile" accept="application/pdf">
         </div>
         <div class="form-group">
@@ -122,78 +199,70 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
             <option value="Droit pénal">Droit pénal</option>
             <option value="Droit constitutionnel">Droit constitutionnel</option>
             <option value="Droit administratif">Droit administratif</option>
-            <option value="Autre">Autre</option>
           </select>
         </div>
       </div>
-      <button class="btn btn-primary" id="btnAddPdf">📥 Enregistrer le cours</button>
+      <button class="btn btn-primary" id="btnAddPdf">Uploader</button>
       <div id="pdfMsg" class="message"></div>
     </div>
-    <div class="card">
-      <div class="card-header"><h2>📂 Mes cours (<span id="pdfCount">0</span>)</h2></div>
-      <div id="pdfList" class="pdf-list"><p class="muted center">Chargement...</p></div>
-    </div>
+    <div id="pdfList" class="planning-grid"><p class="muted center">Chargement...</p></div>
   </div>
 
-  <!-- CHAT IA -->
-  <div id="tab-chat" class="tab-content">
-    <h1 style="margin-bottom:20px">Mon Tuteur IA</h1>
-    <p class="muted" style="margin-bottom:16px">Posez des questions sur vos cours. L'IA a accès à tous vos PDF.</p>
+  <!-- CHAT -->
+  <div id="page-chat" class="page">
+    <h1 style="margin-bottom:24px">Tuteur IA</h1>
     <div class="chat-container">
       <div class="chat-messages" id="chatMessages">
-        <div class="chat-msg bot">Bonjour ! Je suis votre tuteur. Posez-moi une question sur vos cours.</div>
+        <div class="chat-msg bot">Bonjour ! Je suis votre tuteur en droit. Posez-moi une question sur vos cours.</div>
       </div>
       <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Ex: Explique-moi la responsabilité civile..." onkeypress="if(event.key === 'Enter') envoyerMessage()">
-        <button class="btn btn-primary" id="btnSendChat" onclick="envoyerMessage()">Envoyer</button>
+        <input type="text" id="chatInput" placeholder="Posez votre question..." onkeypress="if(event.key === 'Enter') envoyerMessage()">
+        <button class="btn btn-primary" onclick="envoyerMessage()">Envoyer</button>
       </div>
     </div>
   </div>
 
-  <!-- QUIZ IA -->
-  <div id="tab-quiz" class="tab-content">
-    <h1 style="margin-bottom:20px">Quiz IA</h1>
+  <!-- QUIZ -->
+  <div id="page-quiz" class="page">
+    <h1 style="margin-bottom:24px">Quiz IA</h1>
     <div class="card">
-      <div class="card-header"><h2>🧠 Générer un quiz</h2></div>
+      <h2 style="margin-bottom:16px">Générer un quiz</h2>
       <div class="form-group">
-        <label>Choisir un cours :</label>
+        <label>Choisir un cours</label>
         <select id="selectPdfQuiz"></select>
       </div>
-      <button class="btn btn-success" id="btnGenQuiz">✨ Générer le Quiz</button>
+      <button class="btn btn-success" id="btnGenQuiz">✨ Générer</button>
       <div id="quizMsg" class="message"></div>
     </div>
     <div id="quizContainer"></div>
   </div>
 
-  <!-- FLASHCARDS IA -->
-  <div id="tab-flashcards" class="tab-content">
-    <h1 style="margin-bottom:20px">Flashcards IA</h1>
+  <!-- FLASHCARDS -->
+  <div id="page-flash" class="page">
+    <h1 style="margin-bottom:24px">Flashcards IA</h1>
     <div class="card">
-      <div class="card-header"><h2>🗂️ Générer des Flashcards</h2></div>
+      <h2 style="margin-bottom:16px">Générer des cartes</h2>
       <div class="form-group">
-        <label>Choisir un cours :</label>
+        <label>Choisir un cours</label>
         <select id="selectPdfFlash"></select>
       </div>
-      <button class="btn btn-success" id="btnGenFlash">✨ Générer les Flashcards</button>
+      <button class="btn btn-success" id="btnGenFlash">✨ Générer</button>
       <div id="flashMsg" class="message"></div>
     </div>
     <div id="flashContainer" class="center"></div>
   </div>
 
-  <!-- PARAMÈTRES -->
-  <div id="tab-settings" class="tab-content">
-    <h1 style="margin-bottom:20px">Paramètres</h1>
+  <!-- SETTINGS -->
+  <div id="page-settings" class="page">
+    <h1 style="margin-bottom:24px">Paramètres</h1>
     <div class="card">
-      <div class="card-header"><h2>🔑 Clé API Gemini</h2></div>
-      <p class="muted" style="margin-bottom:12px">
-        Obtenez votre clé gratuite sur <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>.
-        Elle est stockée uniquement dans votre navigateur.
-      </p>
+      <h2 style="margin-bottom:16px">🔑 Clé API Gemini</h2>
+      <p class="muted" style="margin-bottom:16px">Obtenez votre clé sur <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary)">Google AI Studio</a>.</p>
       <div class="form-group">
         <label>Clé API</label>
         <input type="password" id="geminiKey" placeholder="AIzaSy...">
       </div>
-      <button class="btn btn-success" id="btnSaveKey">💾 Sauvegarder</button>
+      <button class="btn btn-success" id="btnSaveKey">Sauvegarder</button>
       <div id="keyMsg" class="message"></div>
     </div>
   </div>
@@ -202,11 +271,10 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
 
-// --- CONFIG FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
   authDomain: "eeee-1387d.firebaseapp.com",
@@ -220,35 +288,35 @@ const db = getFirestore(app);
 const colPdfs = collection(db, "pdfs");
 const colQuiz = collection(db, "quiz");
 const colFlash = collection(db, "flashcards");
+const colPlan = collection(db, "planning");
 
-// --- GESTION CLÉ ---
-function getKey() { return localStorage.getItem('gemini_key') || ''; }
-function setKey(k) { localStorage.setItem('gemini_key', k); }
-
-document.getElementById('btnSaveKey').onclick = () => {
-  const k = document.getElementById('geminiKey').value.trim();
-  if (k) { setKey(k); document.getElementById('keyMsg').className = 'message show success'; document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée.'; }
-};
-
-// --- NAVIGATION ---
+// --- NAVIGATION ANIMÉE ---
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-    if (btn.dataset.tab === 'tab-chat') rafraichirSelectChat();
-    if (btn.dataset.tab === 'tab-quiz') rafraichirSelectQuiz();
-    if (btn.dataset.tab === 'tab-flashcards') rafraichirSelectFlash();
+    document.getElementById(btn.dataset.page).classList.add('active');
+    
+    if(btn.dataset.page === 'page-chat') scrollChatBottom();
+    if(btn.dataset.page === 'page-dashboard') updateDashboard();
+    if(btn.dataset.page === 'page-planning') updatePlanning();
   });
 });
+
+// --- GESTION CLÉ ---
+function getKey() { return localStorage.getItem('gemini_key') || ''; }
+document.getElementById('btnSaveKey').onclick = () => {
+  const k = document.getElementById('geminiKey').value.trim();
+  if (k) { localStorage.setItem('gemini_key', k); document.getElementById('keyMsg').className = 'message show success'; document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée.'; }
+};
 
 // --- AJOUT PDF ---
 document.getElementById('btnAddPdf').onclick = async () => {
   const file = document.getElementById('pdfFile').files[0];
   if (!file) return;
   const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show info'; msg.textContent = 'Lecture du PDF...';
+  msg.className = 'message show'; msg.textContent = 'Extraction du texte...';
   
   try {
     const arrayBuffer = await file.arrayBuffer();
@@ -261,164 +329,174 @@ document.getElementById('btnAddPdf').onclick = async () => {
     }
     const id = 'pdf_' + Date.now();
     await setDoc(doc(db, "pdfs", id), { id, nom: file.name, matiere: document.getElementById('pdfMatiere').value, texte, dateAjout: new Date().toISOString() });
-    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré !';
+    msg.className = 'message show success'; msg.textContent = '✅ PDF ajouté avec succès !';
     document.getElementById('pdfFile').value = '';
   } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; }
 };
 
 onSnapshot(colPdfs, (snap) => {
   const pdfs = []; snap.forEach(d => pdfs.push(d.data()));
-  document.getElementById('pdfCount').textContent = pdfs.length;
+  document.getElementById('statPdf').textContent = pdfs.length;
+  
+  // Biblio list
   const container = document.getElementById('pdfList');
-  if (pdfs.length === 0) return container.innerHTML = '<p class="muted center">Aucun cours.</p>';
-  container.innerHTML = pdfs.map(p => `
-    <div class="pdf-card">
-      <div class="pdf-title">${p.nom}</div>
-      <div class="pdf-meta">${p.matiere}</div>
-      <div class="pdf-actions"><button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">🗑️</button></div>
+  if (pdfs.length === 0) container.innerHTML = '<p class="muted center">Aucun cours.</p>';
+  else container.innerHTML = pdfs.map(p => `
+    <div class="card" style="padding:16px">
+      <div style="font-weight:700;margin-bottom:4px">${p.nom}</div>
+      <div class="muted" style="font-size:.8rem;margin-bottom:12px">${p.matiere}</div>
+      <button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">Supprimer</button>
     </div>
   `).join('');
+
+  // Populate selects
+  const opts = pdfs.map(p => `<option value="${p.id}">${p.nom}</option>`).join('');
+  ['selectPdfQuiz', 'selectPdfFlash', 'planPdf'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.innerHTML = opts;
+  });
 });
 
 window.supprimerPDF = async (id) => { if(confirm('Supprimer ?')) await deleteDoc(doc(db, "pdfs", id)); };
 
-// --- CHAT IA ---
-async function rafraichirSelectChat() {
-  const snap = await getDocs(colPdfs);
-  const select = document.getElementById('selectPdfQuiz'); // On réutilise pour simplifier
-  // Le chat utilise tous les cours, pas besoin de select
+// --- PLANNING ---
+document.getElementById('btnAddPlan').onclick = async () => {
+  const pdfId = document.getElementById('planPdf').value;
+  const week = document.getElementById('planWeek').value;
+  if (!pdfId) return;
+  await setDoc(doc(db, "planning", pdfId + "_" + week), { pdfId, week, date: new Date().toISOString() });
+  updatePlanning();
+};
+
+async function updatePlanning() {
+  const plans = []; (await getDocs(colPlan)).forEach(d => plans.push(d.data()));
+  const pdfs = []; (await getDocs(colPdfs)).forEach(d => pdfs.push(d.data()));
+  
+  const current = plans.filter(p => p.week === 'current');
+  const next = plans.filter(p => p.week === 'next');
+
+  const renderList = (list) => list.length === 0 ? '<p class="muted" style="font-size:.85rem">Aucun cours prévu.</p>' : 
+    list.map(p => {
+      const pdf = pdfs.find(x => x.id === p.pdfId);
+      return `<div class="pdf-item"><span>📄 ${pdf ? pdf.nom : 'Inconnu'}</span><button class="btn btn-danger btn-sm" style="padding:2px 8px" onclick="supprimerPlan('${p.pdfId}_${p.week}')">✕</button></div>`;
+    }).join('');
+
+  document.getElementById('weekCurrent').innerHTML = renderList(current);
+  document.getElementById('weekNext').innerHTML = renderList(next);
 }
+window.supprimerPlan = async (id) => { await deleteDoc(doc(db, "planning", id)); updatePlanning(); };
+
+// --- CHAT IA ---
+function scrollChatBottom() { const c = document.getElementById('chatMessages'); c.scrollTop = c.scrollHeight; }
 
 window.envoyerMessage = async () => {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if (!msg) return;
   const key = getKey();
-  if (!key) return alert('Configurez la clé Gemini dans Paramètres.');
+  if (!key) return alert('Configurez la clé Gemini dans les paramètres.');
 
   const chat = document.getElementById('chatMessages');
   chat.innerHTML += `<div class="chat-msg user">${msg}</div>`;
-  input.value = '';
-  chat.scrollTop = chat.scrollHeight;
-
-  const loadId = 'load_' + Date.now();
-  chat.innerHTML += `<div class="chat-msg bot" id="${loadId}">Réflexion...</div>`;
+  input.value = ''; scrollChatBottom();
+  chat.innerHTML += `<div class="chat-msg bot" id="loadChat"><span class="spinner"></span> L'IA réfléchit...</div>`;
+  scrollChatBottom();
 
   try {
-    const snap = await getDocs(colPdfs);
+    const pdfs = []; (await getDocs(colPdfs)).forEach(d => pdfs.push(d.data()));
     let contexte = "Cours de l'étudiant :\n";
-    snap.forEach(d => { const p = d.data(); contexte += `[${p.matiere}] ${p.texte.substring(0, 3000)}...\n`; });
+    pdfs.forEach(p => { contexte += `[${p.matiere}] ${p.texte.substring(0, 2000)}...\n`; });
 
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ contents: [{parts: [{text: `Tu es un tuteur de droit. Réponds à : ${msg}\n\n${contexte}`}]}] })
     });
     const data = await res.json();
-    document.getElementById(loadId).remove();
+    document.getElementById('loadChat').remove();
     chat.innerHTML += `<div class="chat-msg bot">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
   } catch (e) {
-    document.getElementById(loadId).remove();
-    chat.innerHTML += `<div class="chat-msg bot" style="color:red">Erreur : ${e.message}</div>`;
+    document.getElementById('loadChat').remove();
+    chat.innerHTML += `<div class="chat-msg bot" style="color:var(--danger)">❌ Erreur : ${e.message}</div>`;
   }
-  chat.scrollTop = chat.scrollHeight;
+  scrollChatBottom();
 };
 
 // --- QUIZ IA ---
-async function rafraichirSelectQuiz() {
-  const snap = await getDocs(colPdfs);
-  const select = document.getElementById('selectPdfQuiz');
-  select.innerHTML = ''; snap.forEach(d => { const p = d.data(); select.innerHTML += `<option value="${p.id}">${p.nom}</option>`; });
-}
-
 document.getElementById('btnGenQuiz').onclick = async () => {
   const id = document.getElementById('selectPdfQuiz').value;
   const key = getKey();
   if (!key) return alert('Configurez la clé.');
-  const snap = await getDoc(doc(db, "pdfs", id));
-  const pdf = snap.data();
+  const snap = await getDoc(doc(db, "pdfs", id)); const pdf = snap.data();
   const msg = document.getElementById('quizMsg');
-  msg.className = 'message show info'; msg.textContent = 'Génération du quiz par l\'IA...';
+  msg.className = 'message show'; msg.textContent = 'Génération du quiz...';
 
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 QCM sur ce texte. Format JSON: [{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]\n\n${pdf.texte.substring(0, 30000)}`}]}], generationConfig: { responseMimeType: "application/json" } })
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 QCM sur : ${pdf.texte.substring(0, 30000)}. Format JSON: [{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]`}]}], generationConfig: { responseMimeType: "application/json" } })
     });
     const data = await res.json();
     const quiz = JSON.parse(data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/)[0]);
     await setDoc(doc(db, "quiz", Date.now().toString()), { questions: quiz, date: new Date().toISOString() });
     msg.className = 'message show success'; msg.textContent = '✅ Quiz généré !';
-    rafraichirQuiz();
+    renderQuiz(quiz);
   } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
 };
 
-onSnapshot(colQuiz, (snap) => {
-  const quizzes = []; snap.forEach(d => quizzes.push(d.data()));
-  const container = document.getElementById('quizContainer');
-  if (quizzes.length === 0) return container.innerHTML = '<p class="muted center">Aucun quiz.</p>';
-  container.innerHTML = quizzes.sort((a,b) => b.date.localeCompare(a.date)).map((qz, idx) => `
-    <div class="card"><h2>Quiz du ${new Date(qz.date).toLocaleDateString()}</h2>
-      ${qz.questions.map((q, i) => `
-        <div class="quiz-item"><div class="quiz-question">${i+1}. ${q.question}</div>
-          <div id="opt-${idx}-${i}">${q.options.map((opt, j) => `<div class="quiz-option" onclick="verifierReponse(${idx},${i},${j},${q.reponse})">${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}</div>
-          <div class="quiz-explication" id="exp-${idx}-${i}"><strong>Explication :</strong> ${q.explication}</div>
-        </div>`).join('')}
-    </div>`).join('');
-});
-
-window.verifierReponse = (qi, qj, choix, bonne) => {
-  const c = document.getElementById(`opt-${qi}-${qj}`);
-  if (c.dataset.done) return; c.dataset.done = "true";
+function renderQuiz(quiz) {
+  document.getElementById('quizContainer').innerHTML = `<div class="card">${quiz.map((q, i) => `
+    <div class="quiz-item"><div class="quiz-question">${i+1}. ${q.question}</div>
+      <div id="opt-q${i}">${q.options.map((opt, j) => `<div class="quiz-option" onclick="verif(${i},${j},${q.reponse})">${String.fromCharCode(65+j)}. ${opt}</div>`).join('')}</div>
+      <div class="quiz-explication" id="exp-q${i}"><strong>Explication :</strong> ${q.explication}</div>
+    </div>`).join('')}</div>`;
+}
+window.verif = (qi, choix, bonne) => {
+  const c = document.getElementById(`opt-q${qi}`); if (c.dataset.done) return; c.dataset.done = "true";
   c.querySelectorAll('.quiz-option').forEach((o, i) => { if (i === bonne) o.classList.add('correct'); else if (i === choix) o.classList.add('incorrect'); });
-  document.getElementById(`exp-${qi}-${qj}`).classList.add('show');
+  document.getElementById(`exp-q${qi}`).classList.add('show');
 };
 
 // --- FLASHCARDS IA ---
-async function rafraichirSelectFlash() {
-  const snap = await getDocs(colPdfs);
-  const select = document.getElementById('selectPdfFlash');
-  select.innerHTML = ''; snap.forEach(d => { const p = d.data(); select.innerHTML += `<option value="${p.id}">${p.nom}</option>`; });
-}
-
 document.getElementById('btnGenFlash').onclick = async () => {
   const id = document.getElementById('selectPdfFlash').value;
   const key = getKey();
   if (!key) return alert('Configurez la clé.');
-  const snap = await getDoc(doc(db, "pdfs", id));
-  const pdf = snap.data();
+  const snap = await getDoc(doc(db, "pdfs", id)); const pdf = snap.data();
   const msg = document.getElementById('flashMsg');
-  msg.className = 'message show info'; msg.textContent = 'Génération des flashcards...';
+  msg.className = 'message show'; msg.textContent = 'Génération des flashcards...';
 
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 flashcards (recto: concept, verso: définition) sur ce texte. Format JSON: [{"recto":"...","verso":"..."}]\n\n${pdf.texte.substring(0, 30000)}`}]}], generationConfig: { responseMimeType: "application/json" } })
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{parts: [{text: `Génère 10 flashcards (recto/verso) sur : ${pdf.texte.substring(0, 30000)}. Format JSON: [{"recto":"...","verso":"..."}]`}]}], generationConfig: { responseMimeType: "application/json" } })
     });
     const data = await res.json();
-    const flash = JSON.parse(data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/)[0]);
-    await setDoc(doc(db, "flashcards", Date.now().toString()), { cards: flash, date: new Date().toISOString() });
+    const cards = JSON.parse(data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/)[0]);
+    await setDoc(doc(db, "flashcards", Date.now().toString()), { cards, date: new Date().toISOString() });
     msg.className = 'message show success'; msg.textContent = '✅ Flashcards générées !';
-    rafraichirFlash();
+    renderFlash(cards);
   } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
 };
 
-onSnapshot(colFlash, (snap) => {
-  const sets = []; snap.forEach(d => sets.push(d.data()));
-  const container = document.getElementById('flashContainer');
-  if (sets.length === 0) return container.innerHTML = '<p class="muted center">Aucune flashcard.</p>';
-  let html = '';
-  sets.forEach(set => {
-    set.cards.forEach((c, i) => {
-      html += `<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front">${c.recto}</div><div class="flashcard-back">${c.verso}</div></div></div>`;
-    });
-  });
-  container.innerHTML = html;
-});
+function renderFlash(cards) {
+  document.getElementById('flashContainer').innerHTML = cards.map(c => `
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner"><div class="flashcard-front">${c.recto}</div><div class="flashcard-back">${c.verso}</div></div>
+    </div>`).join('');
+}
 
-rafraichirQuiz(); rafraichirFlash();
+// --- DASHBOARD GRAPHIQUE ---
+async function updateDashboard() {
+  // Simplifié pour l'exemple
+  const ctx = document.getElementById('chart').getContext('2d');
+  if (window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'], datasets: [{ label: 'Minutes', data: [30, 45, 20, 60, 50, 15, 0], backgroundColor: '#38bdf8', borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } }
+  });
+}
+
+updateDashboard();
 </script>
 </body>
 </html>
