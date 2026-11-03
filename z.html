@@ -278,7 +278,7 @@ document.getElementById('btnSaveKey').onclick = () => {
   if (k) { localStorage.setItem('gemini_key', k); document.getElementById('keyMsg').className = 'message show success'; document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée.'; }
 };
 
-// --- FONCTION API CORRIGÉE (Utilise le header x-goog-api-key) ---
+// --- FONCTION API (Correction appliquée : la clé est dans le lien) ---
 async function appelerGemini(prompt, isJson = false) {
   const key = getKey();
   if (!key) throw new Error("Clé API manquante. Allez dans les paramètres.");
@@ -291,11 +291,10 @@ async function appelerGemini(prompt, isJson = false) {
     body.generationConfig = { responseMimeType: "application/json" };
   }
 
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': key // LA CORRECTION EST ICI
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(body)
   });
