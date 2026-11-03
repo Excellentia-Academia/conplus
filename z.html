@@ -77,12 +77,13 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 .viewer-header{background:var(--primary);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 .viewer-timer{font-size:1.2rem;font-weight:800;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:8px}
 .viewer-content{flex:1;overflow:auto;background:#525659;position:relative}
-.viewer-text{font-family:serif;font-size:1.2rem;line-height:1.8;padding:40px;background:#fff;max-width:900px;margin:20px auto;border-radius:8px;color:#1a1a2e}
+.viewer-text{font-family:serif;font-size:1.2rem;line-height:1.8;padding:40px;background:#fff;max-width:900px;margin:20px auto;border-radius:8px;color:#1a1a2e;white-space:pre-wrap;}
 
 .message{padding:12px;border-radius:8px;margin-top:12px;display:none;font-size:.9rem}
 .message.show{display:block}
 .message.success{background:var(--success-light);color:#065f46}
 .message.error{background:var(--danger-light);color:#991b1b}
+.message.info{background:var(--info-light);color:#1e40af}
 
 @media(max-width:700px){.form-row{grid-template-columns:1fr}}
 </style>
@@ -107,6 +108,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 <main class="container" style="padding-top:24px">
 
+  <!-- DASHBOARD -->
   <div id="tab-dashboard" class="tab-content active">
     <h1 style="margin-bottom:20px">Mon évolution</h1>
     <div class="grid-stats">
@@ -121,6 +123,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
     </div>
   </div>
 
+  <!-- BIBLIOTHÈQUE -->
   <div id="tab-bibliotheque" class="tab-content">
     <h1 style="margin-bottom:20px">Ma Bibliothèque</h1>
     <div class="card">
@@ -150,6 +153,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
     </div>
   </div>
 
+  <!-- GÉNÉRATEUR CHATGPT -->
   <div id="tab-chatgpt" class="tab-content">
     <h1 style="margin-bottom:20px">Générateur de questions</h1>
     <div class="card">
@@ -164,15 +168,17 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
         <label>Choisir un cours :</label>
         <select id="selectPdfChatGpt"></select>
       </div>
-      <button class="btn btn-primary" id="btnGenererPrompt">✨ Générer le Prompt</button>
+      <button class="btn btn-primary" id="btnGenererPrompt">✨ Générer le Prompt (Texte Complet)</button>
       <div class="form-group" style="margin-top:16px">
         <label>Texte à copier dans ChatGPT :</label>
         <textarea id="promptOutput" rows="8" readonly placeholder="Le texte apparaîtra ici..."></textarea>
       </div>
       <button class="btn btn-success" onclick="navigator.clipboard.writeText(document.getElementById('promptOutput').value); alert('Copié !')">📋 Copier le texte</button>
+      <button class="btn btn-primary" onclick="telechargerTexte()">💾 Télécharger en .txt</button>
     </div>
   </div>
 
+  <!-- MES QUIZ -->
   <div id="tab-quiz" class="tab-content">
     <h1 style="margin-bottom:20px">Mes Quiz</h1>
     <div class="card">
@@ -185,6 +191,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
     <div id="quizContainer"></div>
   </div>
 
+  <!-- MODE FOCUS -->
   <div id="tab-focus" class="tab-content">
     <h1 style="margin-bottom:20px">Mode Focus (Pomodoro)</h1>
     <div class="card">
@@ -201,6 +208,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 </main>
 
+<!-- LECTEUR PDF & VOCAL -->
 <div id="viewerOverlay" class="viewer-overlay">
   <div class="viewer-header">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -219,7 +227,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
       <button class="btn btn-sm" style="background:#dc2626;color:#fff" id="btnCloseViewer">✕ Fermer</button>
     </div>
   </div>
-  <div class="viewer-content">
+  <div class="viewer-content" id="viewerContent">
     <div class="viewer-text" id="viewerText"></div>
   </div>
 </div>
@@ -230,6 +238,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSn
 import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
 
+// --- CONFIG FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
   authDomain: "eeee-1387d.firebaseapp.com",
@@ -244,6 +253,7 @@ const colPdfs = collection(db, "pdfs");
 const colTemps = collection(db, "temps");
 const colQuiz = collection(db, "quiz");
 
+// --- NAVIGATION ---
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -255,27 +265,31 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
+// --- AJOUT PDF (Texte complet) ---
 document.getElementById('btnAddPdf').addEventListener('click', async () => {
   const file = document.getElementById('pdfFile').files[0];
   if (!file) return;
   const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show info'; msg.textContent = 'Lecture en cours...';
+  msg.className = 'message show info'; msg.textContent = 'Lecture du PDF (peut prendre du temps pour 2000 pages)...';
   
   try {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
     let texte = '';
+    
+    // On boucle sur TOUTES les pages
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const contenu = await page.getTextContent();
       texte += contenu.items.map(it => it.str).join(' ') + '\n\n';
     }
+    
     const id = 'pdf_' + Date.now();
     await setDoc(doc(db, "pdfs", id), {
       id, nom: file.name, matiere: document.getElementById('pdfMatiere').value,
       texte: texte, dateAjout: new Date().toISOString()
     });
-    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré !';
+    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré avec succès !';
     document.getElementById('pdfFile').value = '';
   } catch (e) { 
     msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; 
@@ -305,10 +319,8 @@ window.supprimerPDF = async function(id) {
   if (confirm('Supprimer ce cours ?')) await deleteDoc(doc(db, "pdfs", id));
 };
 
-// --- LECTEUR PDF & VOCAL ---
+// --- LECTEUR & VOCAL ---
 let timerInterval = null, timerSecondes = 0, timerPaused = false, currentPdfId = null;
-let phrasesAudio = [];
-let indexPhraseActuelle = 0;
 
 window.ouvrirPDF = async function(id) {
   const snap = await getDoc(doc(db, "pdfs", id));
@@ -322,8 +334,11 @@ window.ouvrirPDF = async function(id) {
   const viewerText = document.getElementById('viewerText');
   viewerText.innerHTML = pdf.texte.replace(/\n/g, '<br>');
   
-  // Récupère la position de l'audio sauvegardée
-  indexPhraseActuelle = parseInt(localStorage.getItem('audio_pos_' + id) || '0');
+  // Position de lecture sauvegardée
+  const savedPos = localStorage.getItem('pos_' + id);
+  if (savedPos) {
+    document.getElementById('viewerContent').scrollTop = parseInt(savedPos);
+  }
   
   // Timer
   timerSecondes = 0; timerPaused = false;
@@ -336,6 +351,13 @@ window.ouvrirPDF = async function(id) {
     if (timerSecondes % 30 === 0) await setDoc(doc(db, "temps", Date.now().toString()), { secondes: 30, date: new Date().toISOString() });
   }, 1000);
 };
+
+// Sauvegarde position
+document.getElementById('viewerContent').addEventListener('scroll', (e) => {
+  if (currentPdfId) {
+    localStorage.setItem('pos_' + currentPdfId, e.target.scrollTop);
+  }
+});
 
 document.getElementById('btnPauseTimer').onclick = () => {
   timerPaused = !timerPaused;
@@ -350,7 +372,7 @@ document.getElementById('btnCloseViewer').onclick = async () => {
   rafraichirDashboard();
 };
 
-// --- LECTURE VOCALE AVEC REPRISE EXACTE ---
+// --- LECTURE VOCALE (Lente & Contrôlable) ---
 document.getElementById('btnReadAloud').onclick = async () => {
   if (speechSynthesis.speaking) {
     speechSynthesis.cancel();
@@ -362,41 +384,17 @@ document.getElementById('btnReadAloud').onclick = async () => {
   if (!snap.exists()) return;
   const pdf = snap.data();
   
-  // Découper le texte en phrases pour une lecture fluide
-  if (phrasesAudio.length === 0) {
-    phrasesAudio = pdf.texte.match(/[^.!?]+[.!?]+/g) || [pdf.texte];
-  }
-  
   const speed = parseFloat(document.getElementById('speedSelect').value);
+  const utterance = new SpeechSynthesisUtterance(pdf.texte);
+  utterance.lang = 'fr-FR';
+  utterance.rate = speed; 
+  
+  utterance.onend = () => { document.getElementById('btnReadAloud').textContent = '🗣️ Lecture'; };
+  speechSynthesis.speak(utterance);
   document.getElementById('btnReadAloud').textContent = '⏹️ Arrêter';
-  
-  const lirePhrase = (index) => {
-    if (index >= phrasesAudio.length) {
-      document.getElementById('btnReadAloud').textContent = '🗣️ Lecture';
-      indexPhraseActuelle = 0; // Fin du texte, on repart au début
-      localStorage.setItem('audio_pos_' + currentPdfId, '0');
-      return;
-    }
-    
-    // Sauvegarder la position actuelle
-    indexPhraseActuelle = index;
-    localStorage.setItem('audio_pos_' + currentPdfId, index.toString());
-    
-    const utterance = new SpeechSynthesisUtterance(phrasesAudio[index]);
-    utterance.lang = 'fr-FR';
-    utterance.rate = speed;
-    
-    utterance.onend = () => {
-      if (speechSynthesis.speaking) lirePhrase(index + 1);
-    };
-    
-    speechSynthesis.speak(utterance);
-  };
-  
-  lirePhrase(indexPhraseActuelle);
 };
 
-// --- GÉNÉRATEUR CHATGPT ---
+// --- GÉNÉRATEUR CHATGPT (Texte complet) ---
 async function rafraichirSelectChatGpt() {
   const snap = await getDocs(colPdfs);
   const select = document.getElementById('selectPdfChatGpt');
@@ -413,6 +411,7 @@ document.getElementById('btnGenererPrompt').onclick = async () => {
   if (!snap.exists()) return;
   const pdf = snap.data();
 
+  // On met TOUT le texte
   const prompt = `Tu es un professeur de droit expert en ${pdf.matiere}. 
 À partir du texte ci-dessous, génère 10 questions QCM et 2 cas pratiques (casus) avec leurs corrections détaillées.
 
@@ -428,6 +427,20 @@ ${pdf.texte}`;
   document.getElementById('promptOutput').value = prompt;
 };
 
+// Télécharger le texte
+window.telechargerTexte = function() {
+  const text = document.getElementById('promptOutput').value;
+  if (!text) return alert('Générez d\'abord le prompt.');
+  const blob = new Blob([text], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'prompt_cours.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+// --- IMPORTATEUR DE QUIZ ---
 document.getElementById('btnImportQuiz').onclick = async () => {
   const txt = document.getElementById('importJson').value;
   const msg = document.getElementById('importMsg');
