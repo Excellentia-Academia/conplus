@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Génie du Droit — Étude & Révision</title>
+<title>Mon Génie du Droit — Étude Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -72,12 +72,12 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 .timer-container{text-align:center;padding:40px}
 .timer-display{font-size:5rem;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums}
 
-.viewer-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;display:none;flex-direction:column}
+.viewer-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:1000;display:none;flex-direction:column}
 .viewer-overlay.show{display:flex}
-.viewer-header{background:var(--primary);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.viewer-header{background:var(--primary);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 .viewer-timer{font-size:1.2rem;font-weight:800;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:8px}
-.viewer-content{flex:1;overflow:auto;background:#525659}
-.viewer-content iframe{width:100%;height:100%;border:none}
+.viewer-content{flex:1;overflow:auto;background:#525659;position:relative}
+.viewer-text{font-family:serif;font-size:1.2rem;line-height:1.8;padding:40px;background:#fff;max-width:900px;margin:20px auto;border-radius:8px;color:#1a1a2e}
 
 .message{padding:12px;border-radius:8px;margin-top:12px;display:none;font-size:.9rem}
 .message.show{display:block}
@@ -93,7 +93,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
   <div class="container header-inner">
     <div class="logo-text">
       <strong>⚖️ Mon Génie du Droit</strong>
-      <small>Étude, Quiz & Focus</small>
+      <small>Étude Pro & Outils</small>
     </div>
     <div class="nav">
       <button class="nav-btn active" data-tab="tab-dashboard">📊 Progrès</button>
@@ -154,13 +154,13 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
   <!-- GÉNÉRATEUR CHATGPT -->
   <div id="tab-chatgpt" class="tab-content">
-    <h1 style="margin-bottom:20px">Générateur de questions (via ChatGPT)</h1>
+    <h1 style="margin-bottom:20px">Générateur de questions</h1>
     <div class="card">
       <p class="muted" style="margin-bottom:16px">
         <strong>Comment ça marche ?</strong><br>
         1. Sélectionnez un cours ci-dessous.<br>
         2. Cliquez sur "Générer le Prompt".<br>
-        3. Copiez le texte obtenu et collez-le dans ChatGPT (ou Gemini).<br>
+        3. Copiez le texte obtenu et collez-le dans ChatGPT.<br>
         4. Copiez la réponse de ChatGPT, puis collez-la dans l'onglet "Mes Quiz".
       </p>
       <div class="form-group">
@@ -182,7 +182,7 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
     <div class="card">
       <div class="card-header"><h2>📝 Importer un quiz depuis ChatGPT</h2></div>
       <p class="muted" style="margin-bottom:12px">Collez ici la réponse JSON générée par ChatGPT :</p>
-      <textarea id="importJson" rows="6" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;" placeholder='[{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]'></textarea>
+      <textarea id="importJson" rows="6" style="width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;" placeholder='[{"type":"qcm","question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."},{"type":"casus","enonce":"...","solution":"..."}]'></textarea>
       <button class="btn btn-success" style="margin-top:12px;" id="btnImportQuiz">📥 Importer le Quiz</button>
       <div id="importMsg" class="message"></div>
     </div>
@@ -206,21 +206,27 @@ h1,h2,h3{color:var(--primary);letter-spacing:-.02em}
 
 </main>
 
-<!-- LECTEUR PDF -->
+<!-- LECTEUR PDF & VOCAL -->
 <div id="viewerOverlay" class="viewer-overlay">
   <div class="viewer-header">
-    <div style="display:flex;align-items:center;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <strong id="viewerTitle">Document</strong>
       <span class="viewer-timer">⏱️ <span id="viewerTimer">00:00</span></span>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="btnReadAloud">🗣️ Lire à voix haute</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="btnReadAloud">🗣️ Lecture</button>
+      <select id="speedSelect" class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:none;padding:6px;border-radius:6px;">
+        <option value="0.5">0.5x (Lent)</option>
+        <option value="0.75" selected>0.75x (Doux)</option>
+        <option value="1">1x (Normal)</option>
+        <option value="1.25">1.25x (Rapide)</option>
+      </select>
       <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="btnPauseTimer">⏸️ Pause</button>
       <button class="btn btn-sm" style="background:#dc2626;color:#fff" id="btnCloseViewer">✕ Fermer</button>
     </div>
   </div>
   <div class="viewer-content">
-    <iframe id="viewerIframe"></iframe>
+    <div class="viewer-text" id="viewerText"></div>
   </div>
 </div>
 
@@ -245,7 +251,7 @@ const colPdfs = collection(db, "pdfs");
 const colTemps = collection(db, "temps");
 const colQuiz = collection(db, "quiz");
 
-// --- NAVIGATION ---
+// --- NAVIGATION (Affichage propre) ---
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -257,30 +263,36 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
-// --- AJOUT PDF ---
+// --- AJOUT PDF (avec texte complet) ---
 document.getElementById('btnAddPdf').addEventListener('click', async () => {
   const file = document.getElementById('pdfFile').files[0];
   if (!file) return;
   const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show success'; msg.textContent = 'Lecture...';
+  msg.className = 'message show info'; msg.textContent = 'Lecture du PDF en cours... (Patientez)';
   
   try {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
     let texte = '';
+    
+    // On boucle sur TOUTES les pages
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const contenu = await page.getTextContent();
-      texte += contenu.items.map(it => it.str).join(' ') + '\n';
+      texte += contenu.items.map(it => it.str).join(' ') + '\n\n';
     }
+    
     const id = 'pdf_' + Date.now();
+    // On stocke tout le texte (sans limite de 100 000 caractères pour les gros PDF)
     await setDoc(doc(db, "pdfs", id), {
       id, nom: file.name, matiere: document.getElementById('pdfMatiere').value,
-      texte: texte.substring(0, 100000), dateAjout: new Date().toISOString()
+      texte: texte, dateAjout: new Date().toISOString()
     });
-    msg.textContent = '✅ Enregistré !';
+    msg.className = 'message show success'; msg.textContent = '✅ PDF enregistré avec succès !';
     document.getElementById('pdfFile').value = '';
-  } catch (e) { msg.className = 'message show error'; msg.textContent = e.message; }
+  } catch (e) { 
+    msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; 
+  }
 });
 
 onSnapshot(colPdfs, (snap) => {
@@ -303,20 +315,32 @@ onSnapshot(colPdfs, (snap) => {
 });
 
 window.supprimerPDF = async function(id) {
-  if (confirm('Supprimer ?')) await deleteDoc(doc(db, "pdfs", id));
+  if (confirm('Supprimer ce cours ?')) await deleteDoc(doc(db, "pdfs", id));
 };
 
-// --- LECTEUR PDF & VOCAL ---
+// --- LECTEUR & VOCAL (Avec mémoire de position) ---
 let timerInterval = null, timerSecondes = 0, timerPaused = false, currentPdfId = null;
+
 window.ouvrirPDF = async function(id) {
   const snap = await getDoc(doc(db, "pdfs", id));
   if (!snap.exists()) return;
   const pdf = snap.data();
   currentPdfId = id;
+  
   document.getElementById('viewerTitle').textContent = pdf.nom;
   document.getElementById('viewerOverlay').classList.add('show');
-  document.getElementById('viewerIframe').srcdoc = `<html><body style="font-family:sans-serif;padding:40px;line-height:1.8;background:#fff;"><h1>${pdf.nom}</h1><hr><p id="pdfText" style="white-space:pre-wrap;">${pdf.texte}</p></body></html>`;
   
+  // On charge le texte dans le lecteur
+  const viewerText = document.getElementById('viewerText');
+  viewerText.innerHTML = pdf.texte.replace(/\n/g, '<br>');
+  
+  // On récupère la position de lecture sauvegardée
+  const savedPos = localStorage.getItem('pos_' + id);
+  if (savedPos) {
+    viewerText.scrollTop = parseInt(savedPos);
+  }
+  
+  // Timer
   timerSecondes = 0; timerPaused = false;
   document.getElementById('viewerTimer').textContent = '00:00';
   if (timerInterval) clearInterval(timerInterval);
@@ -328,6 +352,13 @@ window.ouvrirPDF = async function(id) {
   }, 1000);
 };
 
+// Sauvegarde automatique de la position de défilement
+document.querySelector('.viewer-content').addEventListener('scroll', (e) => {
+  if (currentPdfId) {
+    localStorage.setItem('pos_' + currentPdfId, e.target.scrollTop);
+  }
+});
+
 document.getElementById('btnPauseTimer').onclick = () => {
   timerPaused = !timerPaused;
   document.getElementById('btnPauseTimer').textContent = timerPaused ? '▶️ Reprendre' : '⏸️ Pause';
@@ -337,31 +368,33 @@ document.getElementById('btnCloseViewer').onclick = async () => {
   if (timerSecondes % 30 > 0) await setDoc(doc(db, "temps", Date.now().toString()), { secondes: timerSecondes % 30, date: new Date().toISOString() });
   clearInterval(timerInterval);
   speechSynthesis.cancel();
-  document.getElementById('viewerIframe').srcdoc = '';
   document.getElementById('viewerOverlay').classList.remove('show');
   rafraichirDashboard();
 };
 
-// --- LECTURE VOCALE (TEXT-TO-SPEECH) ---
+// --- LECTURE VOCALE (Contrôle de la vitesse) ---
 document.getElementById('btnReadAloud').onclick = async () => {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    document.getElementById('btnReadAloud').textContent = '🗣️ Lecture';
+    return;
+  }
+  
   const snap = await getDoc(doc(db, "pdfs", currentPdfId));
   if (!snap.exists()) return;
   const pdf = snap.data();
   
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    document.getElementById('btnReadAloud').textContent = '🗣️ Lire à voix haute';
-  } else {
-    const utterance = new SpeechSynthesisUtterance(pdf.texte);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 1;
-    utterance.onend = () => { document.getElementById('btnReadAloud').textContent = '🗣️ Lire à voix haute'; };
-    speechSynthesis.speak(utterance);
-    document.getElementById('btnReadAloud').textContent = '⏹️ Arrêter la lecture';
-  }
+  const speed = parseFloat(document.getElementById('speedSelect').value);
+  const utterance = new SpeechSynthesisUtterance(pdf.texte);
+  utterance.lang = 'fr-FR';
+  utterance.rate = speed; // La vitesse est contrôlée ici
+  
+  utterance.onend = () => { document.getElementById('btnReadAloud').textContent = '🗣️ Lecture'; };
+  speechSynthesis.speak(utterance);
+  document.getElementById('btnReadAloud').textContent = '⏹️ Arrêter';
 };
 
-// --- GÉNÉRATEUR CHATGPT ---
+// --- GÉNÉRATEUR CHATGPT (Texte complet) ---
 async function rafraichirSelectChatGpt() {
   const snap = await getDocs(colPdfs);
   const select = document.getElementById('selectPdfChatGpt');
@@ -378,6 +411,7 @@ document.getElementById('btnGenererPrompt').onclick = async () => {
   if (!snap.exists()) return;
   const pdf = snap.data();
 
+  // On met TOUT le texte (pas de limite)
   const prompt = `Tu es un professeur de droit expert en ${pdf.matiere}. 
 À partir du texte ci-dessous, génère 10 questions QCM et 2 cas pratiques (casus) avec leurs corrections détaillées.
 
@@ -388,7 +422,7 @@ Format de réponse STRICT (JSON uniquement, sans texte autour) :
 ]
 
 Texte du cours :
-${pdf.texte.substring(0, 25000)}`;
+${pdf.texte}`;
 
   document.getElementById('promptOutput').value = prompt;
 };
@@ -451,16 +485,10 @@ window.verifierReponse = function(quizIdx, qIdx, choix, bonneReponse) {
 };
 
 // --- MODE FOCUS (POMODORO) ---
-let pomodoroInterval = null;
-let pomodoroSecondes = 25 * 60;
-let pomodoroRunning = false;
-
+let pomodoroInterval = null, pomodoroSecondes = 25 * 60, pomodoroRunning = false;
 function updatePomodoroDisplay() {
-  const min = String(Math.floor(pomodoroSecondes / 60)).padStart(2, '0');
-  const sec = String(pomodoroSecondes % 60).padStart(2, '0');
-  document.getElementById('pomodoroDisplay').textContent = `${min}:${sec}`;
+  document.getElementById('pomodoroDisplay').textContent = `${String(Math.floor(pomodoroSecondes / 60)).padStart(2, '0')}:${String(pomodoroSecondes % 60).padStart(2, '0')}`;
 }
-
 document.getElementById('btnStartTimer').onclick = () => {
   if (pomodoroRunning) {
     clearInterval(pomodoroInterval);
@@ -484,7 +512,6 @@ document.getElementById('btnStartTimer').onclick = () => {
     }, 1000);
   }
 };
-
 document.getElementById('btnResetTimer').onclick = () => {
   clearInterval(pomodoroInterval);
   pomodoroRunning = false;
