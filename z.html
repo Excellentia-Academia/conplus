@@ -22,6 +22,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
 .container{max-width:1200px;margin:0 auto;padding:24px}
 .hidden{display:none!important}
 .muted{color:var(--text-muted);font-size:.9rem}
+
 .header{background:rgba(15,23,42,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:16px 0}
 .header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px}
 .logo{display:flex;align-items:center;gap:12px}
@@ -110,6 +111,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
 </header>
 
 <main class="container" style="padding-top:32px">
+  <!-- DASHBOARD -->
   <div id="page-dashboard" class="page active">
     <h1 style="margin-bottom:24px">Mon évolution</h1>
     <div class="stats-grid">
@@ -124,6 +126,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     </div>
   </div>
 
+  <!-- PLANNING -->
   <div id="page-planning" class="page">
     <h1 style="margin-bottom:8px">Planning d'étude</h1>
     <p class="muted" style="margin-bottom:24px">Organisez vos cours par semaine pour ne rien oublier.</p>
@@ -156,6 +159,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     </div>
   </div>
 
+  <!-- BIBLIOTHÈQUE -->
   <div id="page-biblio" class="page">
     <h1 style="margin-bottom:24px">Bibliothèque</h1>
     <div class="card">
@@ -181,6 +185,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     <div id="pdfList" class="planning-grid"><p class="muted center">Chargement...</p></div>
   </div>
 
+  <!-- TUTEUR IA -->
   <div id="page-chat" class="page">
     <h1 style="margin-bottom:24px">Tuteur IA</h1>
     <div class="chat-container">
@@ -194,6 +199,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     </div>
   </div>
 
+  <!-- QUIZ IA -->
   <div id="page-quiz" class="page">
     <h1 style="margin-bottom:24px">Quiz IA</h1>
     <div class="card">
@@ -208,6 +214,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     <div id="quizContainer"></div>
   </div>
 
+  <!-- FLASHCARDS -->
   <div id="page-flash" class="page">
     <h1 style="margin-bottom:24px">Flashcards IA</h1>
     <div class="card">
@@ -222,6 +229,7 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
     <div id="flashContainer" class="center"></div>
   </div>
 
+  <!-- PARAMÈTRES -->
   <div id="page-settings" class="page">
     <h1 style="margin-bottom:24px">Paramètres</h1>
     <div class="card">
@@ -238,11 +246,13 @@ h1,h2,h3{color:var(--text);letter-spacing:-.02em}
 </main>
 
 <script type="module">
+// --- IMPORTS FIREBASE & PDF.JS ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
 
+// --- CONFIGURATION FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
   authDomain: "eeee-1387d.firebaseapp.com",
@@ -253,6 +263,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 const colPdfs = collection(db, "pdfs");
 const colQuiz = collection(db, "quiz");
 const colFlash = collection(db, "flashcards");
@@ -265,46 +276,49 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.page).classList.add('active');
+    
     if(btn.dataset.page === 'page-chat') scrollChatBottom();
     if(btn.dataset.page === 'page-dashboard') updateDashboard();
     if(btn.dataset.page === 'page-planning') updatePlanning();
   });
 });
 
-// --- CLÉ ---
+// --- GESTION DE LA CLÉ ---
 function getKey() { return localStorage.getItem('gemini_key') || ''; }
 document.getElementById('btnSaveKey').onclick = () => {
   const k = document.getElementById('geminiKey').value.trim();
-  if (k) { localStorage.setItem('gemini_key', k); document.getElementById('keyMsg').className = 'message show success'; document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée.'; }
+  if (k) { 
+    localStorage.setItem('gemini_key', k); 
+    document.getElementById('keyMsg').className = 'message show success'; 
+    document.getElementById('keyMsg').textContent = '✅ Clé sauvegardée avec succès.'; 
+  }
 };
 
-// --- FONCTION API (Correction finale : gemini-3.8-flash) ---
+// --- APPEL API GEMINI (Sécurisé) ---
 async function appelerGemini(prompt, isJson = false) {
   const key = getKey();
-  if (!key) throw new Error("Clé API manquante. Allez dans les paramètres.");
+  if (!key) throw new Error("Clé API manquante. Allez dans les paramètres ⚙️ pour l'ajouter.");
 
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }]
-  };
-  
-  if (isJson) {
-    body.generationConfig = { responseMimeType: "application/json" };
-  }
+  const body = { contents: [{ parts: [{ text: prompt }] }] };
+  if (isJson) body.generationConfig = { responseMimeType: "application/json" };
 
-  // LA CORRECTION EST ICI : gemini-3.8-flash
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${key}`, {
+  // Modèle mis à jour pour éviter les erreurs de "modèle introuvable"
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+
+  const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.error?.message || "Erreur API");
+    throw new Error(err.error?.message || "Erreur inconnue de l'API Gemini");
   }
+  
   const data = await res.json();
+  if (!data.candidates || data.candidates.length === 0) throw new Error("L'IA n'a pas pu générer de réponse.");
+  
   return data.candidates[0].content.parts[0].text;
 }
 
@@ -313,41 +327,62 @@ document.getElementById('btnAddPdf').onclick = async () => {
   const file = document.getElementById('pdfFile').files[0];
   if (!file) return;
   const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show'; msg.textContent = 'Extraction du texte...';
+  msg.className = 'message show'; msg.textContent = 'Extraction du texte en cours...';
+  
   try {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
     let texte = '';
+    
+    // Lecture de toutes les pages
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const contenu = await page.getTextContent();
       texte += contenu.items.map(it => it.str).join(' ') + '\n\n';
     }
+    
     const id = 'pdf_' + Date.now();
-    await setDoc(doc(db, "pdfs", id), { id, nom: file.name, matiere: document.getElementById('pdfMatiere').value, texte, dateAjout: new Date().toISOString() });
+    await setDoc(doc(db, "pdfs", id), { 
+      id, 
+      nom: file.name, 
+      matiere: document.getElementById('pdfMatiere').value, 
+      texte, 
+      dateAjout: new Date().toISOString() 
+    });
+    
     msg.className = 'message show success'; msg.textContent = '✅ PDF ajouté avec succès !';
     document.getElementById('pdfFile').value = '';
-  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; }
+  } catch (e) { 
+    msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; 
+  }
 };
 
+// --- AFFICHAGE DES PDF ---
 onSnapshot(colPdfs, (snap) => {
   const pdfs = []; snap.forEach(d => pdfs.push(d.data()));
   document.getElementById('statPdf').textContent = pdfs.length;
+  
   const container = document.getElementById('pdfList');
-  if (pdfs.length === 0) container.innerHTML = '<p class="muted center">Aucun cours.</p>';
-  else container.innerHTML = pdfs.map(p => `
-    <div class="card" style="padding:16px">
-      <div style="font-weight:700;margin-bottom:4px">${p.nom}</div>
-      <div class="muted" style="font-size:.8rem;margin-bottom:12px">${p.matiere}</div>
-      <button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">Supprimer</button>
-    </div>
-  `).join('');
+  if (pdfs.length === 0) {
+    container.innerHTML = '<p class="muted center">Aucun cours. Ajoutez-en un.</p>';
+  } else {
+    container.innerHTML = pdfs.map(p => `
+      <div class="card" style="padding:16px">
+        <div style="font-weight:700;margin-bottom:4px">${p.nom}</div>
+        <div class="muted" style="font-size:.8rem;margin-bottom:12px">${p.matiere}</div>
+        <button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">🗑️ Supprimer</button>
+      </div>
+    `).join('');
+  }
+  
   const opts = pdfs.map(p => `<option value="${p.id}">${p.nom}</option>`).join('');
   ['selectPdfQuiz', 'selectPdfFlash', 'planPdf'].forEach(id => {
     const el = document.getElementById(id); if(el) el.innerHTML = opts;
   });
 });
-window.supprimerPDF = async (id) => { if(confirm('Supprimer ?')) await deleteDoc(doc(db, "pdfs", id)); };
+window.supprimerPDF = async (id) => { 
+  if(confirm('Supprimer définitivement ce cours ?')) await deleteDoc(doc(db, "pdfs", id)); 
+};
 
 // --- PLANNING ---
 document.getElementById('btnAddPlan').onclick = async () => {
@@ -357,60 +392,81 @@ document.getElementById('btnAddPlan').onclick = async () => {
   await setDoc(doc(db, "planning", pdfId + "_" + week), { pdfId, week, date: new Date().toISOString() });
   updatePlanning();
 };
+
 async function updatePlanning() {
   const plans = []; (await getDocs(colPlan)).forEach(d => plans.push(d.data()));
   const pdfs = []; (await getDocs(colPdfs)).forEach(d => pdfs.push(d.data()));
+  
   const current = plans.filter(p => p.week === 'current');
   const next = plans.filter(p => p.week === 'next');
+  
   const renderList = (list) => list.length === 0 ? '<p class="muted" style="font-size:.85rem">Aucun cours prévu.</p>' : 
     list.map(p => {
       const pdf = pdfs.find(x => x.id === p.pdfId);
       return `<div class="pdf-item"><span>📄 ${pdf ? pdf.nom : 'Inconnu'}</span><button class="btn btn-danger btn-sm" style="padding:2px 8px" onclick="supprimerPlan('${p.pdfId}_${p.week}')">✕</button></div>`;
     }).join('');
+    
   document.getElementById('weekCurrent').innerHTML = renderList(current);
   document.getElementById('weekNext').innerHTML = renderList(next);
 }
 window.supprimerPlan = async (id) => { await deleteDoc(doc(db, "planning", id)); updatePlanning(); };
 
-// --- CHAT ---
+// --- CHAT TUTEUR IA ---
 function scrollChatBottom() { const c = document.getElementById('chatMessages'); c.scrollTop = c.scrollHeight; }
+
 window.envoyerMessage = async () => {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if (!msg) return;
+  
   const chat = document.getElementById('chatMessages');
   chat.innerHTML += `<div class="chat-msg user">${msg}</div>`;
   input.value = ''; scrollChatBottom();
-  chat.innerHTML += `<div class="chat-msg bot" id="loadChat"><span class="spinner"></span> L'IA réfléchit...</div>`;
+  
+  const loadingId = 'load_' + Date.now();
+  chat.innerHTML += `<div class="chat-msg bot" id="${loadingId}"><span class="spinner"></span> L'IA réfléchit...</div>`;
   scrollChatBottom();
+
   try {
     const pdfs = []; (await getDocs(colPdfs)).forEach(d => pdfs.push(d.data()));
-    let contexte = "Cours :\n";
-    pdfs.forEach(p => { contexte += `[${p.matiere}] ${p.texte.substring(0, 2000)}...\n`; });
-    const reponse = await appelerGemini(`Tu es un tuteur de droit. Réponds à : ${msg}\n\n${contexte}`);
-    document.getElementById('loadChat').remove();
+    let contexte = "Cours de l'étudiant :\n";
+    pdfs.forEach(p => { contexte += `[${p.matiere}] ${p.texte.substring(0, 3000)}...\n`; });
+    
+    const reponse = await appelerGemini(`Tu es un tuteur de droit expert. Réponds à la question de l'étudiant de manière claire et pédagogue. Base-toi sur ses cours si pertinent.\n\n${contexte}\n\nQuestion : ${msg}`);
+    
+    document.getElementById(loadingId).remove();
     chat.innerHTML += `<div class="chat-msg bot">${reponse.replace(/\n/g, '<br>')}</div>`;
   } catch (e) {
-    document.getElementById('loadChat').remove();
+    document.getElementById(loadingId).remove();
     chat.innerHTML += `<div class="chat-msg bot" style="color:var(--danger)">❌ Erreur : ${e.message}</div>`;
   }
   scrollChatBottom();
 };
 
-// --- QUIZ ---
+// --- GÉNÉRATION DE QUIZ ---
 document.getElementById('btnGenQuiz').onclick = async () => {
   const id = document.getElementById('selectPdfQuiz').value;
-  const snap = await getDoc(doc(db, "pdfs", id)); const pdf = snap.data();
+  if(!id) return alert("Ajoutez d'abord un PDF.");
+  
+  const snap = await getDoc(doc(db, "pdfs", id)); 
+  const pdf = snap.data();
   const msg = document.getElementById('quizMsg');
-  msg.className = 'message show'; msg.textContent = 'Génération...';
+  msg.className = 'message show'; msg.textContent = 'Génération du Quiz...';
+  
   try {
-    const txt = await appelerGemini(`Génère 10 QCM sur : ${pdf.texte.substring(0, 30000)}. Format JSON: [{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]`, true);
+    const prompt = `Génère 10 questions QCM sur le texte suivant. Format JSON strict: [{"question":"...","options":["A","B","C","D"],"reponse":0,"explication":"..."}]. Texte : ${pdf.texte.substring(0, 30000)}`;
+    const txt = await appelerGemini(prompt, true);
+    
     const quiz = JSON.parse(txt.match(/\[[\s\S]*\]/)[0]);
     await setDoc(doc(db, "quiz", Date.now().toString()), { questions: quiz, date: new Date().toISOString() });
+    
     msg.className = 'message show success'; msg.textContent = '✅ Quiz généré !';
     renderQuiz(quiz);
-  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
+  } catch (e) { 
+    msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; 
+  }
 };
+
 function renderQuiz(quiz) {
   document.getElementById('quizContainer').innerHTML = `<div class="card">${quiz.map((q, i) => `
     <div class="quiz-item"><div class="quiz-question">${i+1}. ${q.question}</div>
@@ -418,26 +474,41 @@ function renderQuiz(quiz) {
       <div class="quiz-explication" id="exp-q${i}"><strong>Explication :</strong> ${q.explication}</div>
     </div>`).join('')}</div>`;
 }
+
 window.verif = (qi, choix, bonne) => {
-  const c = document.getElementById(`opt-q${qi}`); if (c.dataset.done) return; c.dataset.done = "true";
-  c.querySelectorAll('.quiz-option').forEach((o, i) => { if (i === bonne) o.classList.add('correct'); else if (i === choix) o.classList.add('incorrect'); });
+  const c = document.getElementById(`opt-q${qi}`); 
+  if (c.dataset.done) return; c.dataset.done = "true";
+  c.querySelectorAll('.quiz-option').forEach((o, i) => { 
+    if (i === bonne) o.classList.add('correct'); 
+    else if (i === choix) o.classList.add('incorrect'); 
+  });
   document.getElementById(`exp-q${qi}`).classList.add('show');
 };
 
-// --- FLASHCARDS ---
+// --- GÉNÉRATION DE FLASHCARDS ---
 document.getElementById('btnGenFlash').onclick = async () => {
   const id = document.getElementById('selectPdfFlash').value;
-  const snap = await getDoc(doc(db, "pdfs", id)); const pdf = snap.data();
+  if(!id) return alert("Ajoutez d'abord un PDF.");
+  
+  const snap = await getDoc(doc(db, "pdfs", id)); 
+  const pdf = snap.data();
   const msg = document.getElementById('flashMsg');
-  msg.className = 'message show'; msg.textContent = 'Génération...';
+  msg.className = 'message show'; msg.textContent = 'Génération des Flashcards...';
+  
   try {
-    const txt = await appelerGemini(`Génère 10 flashcards (recto/verso) sur : ${pdf.texte.substring(0, 30000)}. Format JSON: [{"recto":"...","verso":"..."}]`, true);
+    const prompt = `Génère 10 flashcards de révision (recto: concept, verso: définition) sur ce texte. Format JSON strict: [{"recto":"...","verso":"..."}]. Texte : ${pdf.texte.substring(0, 30000)}`;
+    const txt = await appelerGemini(prompt, true);
+    
     const cards = JSON.parse(txt.match(/\[[\s\S]*\]/)[0]);
     await setDoc(doc(db, "flashcards", Date.now().toString()), { cards, date: new Date().toISOString() });
+    
     msg.className = 'message show success'; msg.textContent = '✅ Flashcards générées !';
     renderFlash(cards);
-  } catch (e) { msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; }
+  } catch (e) { 
+    msg.className = 'message show error'; msg.textContent = '❌ ' + e.message; 
+  }
 };
+
 function renderFlash(cards) {
   document.getElementById('flashContainer').innerHTML = cards.map(c => `
     <div class="flashcard" onclick="this.classList.toggle('flipped')">
@@ -445,16 +516,26 @@ function renderFlash(cards) {
     </div>`).join('');
 }
 
-// --- DASHBOARD ---
+// --- DASHBOARD (Graphique) ---
 async function updateDashboard() {
   const ctx = document.getElementById('chart').getContext('2d');
   if (window.myChart) window.myChart.destroy();
+  
   window.myChart = new Chart(ctx, {
     type: 'bar',
-    data: { labels: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'], datasets: [{ label: 'Minutes', data: [30, 45, 20, 60, 50, 15, 0], backgroundColor: '#38bdf8', borderRadius: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } }
+    data: { 
+      labels: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'], 
+      datasets: [{ label: 'Minutes', data: [30, 45, 20, 60, 50, 15, 0], backgroundColor: '#38bdf8', borderRadius: 6 }] 
+    },
+    options: { 
+      responsive: true, maintainAspectRatio: false, 
+      plugins: { legend: { display: false } }, 
+      scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } 
+    }
   });
 }
+
+// Initialisation
 updateDashboard();
 </script>
 </body>
