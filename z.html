@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Coach Chill</title>
+<title>Coach Chill — Kéo & Lya</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -15,6 +15,43 @@
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: #e8f0ff;
     overflow: hidden;
+    transition: background 0.6s;
+  }
+  body.girl {
+    background: linear-gradient(135deg, #3a1e3a, #5a2a4a, #3a1a2a);
+  }
+
+  /* ---------- Sélecteur ---------- */
+  .selector {
+    position: fixed;
+    top: 24px;
+    display: flex;
+    gap: 10px;
+    background: rgba(255,255,255,0.07);
+    padding: 6px;
+    border-radius: 40px;
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+  }
+  .selector button {
+    padding: 8px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    background: transparent;
+    color: #cfe3ff;
+    transition: all 0.25s;
+  }
+  .selector button.active {
+    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
+    color: #0a1628;
+    box-shadow: 0 4px 14px rgba(79,195,247,0.4);
+  }
+  body.girl .selector button.active {
+    background: linear-gradient(135deg, #f48fb1, #ce93d8);
+    box-shadow: 0 4px 14px rgba(244,143,177,0.4);
   }
 
   /* ---------- Personnage ---------- */
@@ -23,6 +60,7 @@
     width: 180px;
     height: 220px;
     animation: float 3s ease-in-out infinite;
+    margin-top: 20px;
   }
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -34,9 +72,19 @@
     top: 0; left: 50%;
     transform: translateX(-50%);
     width: 110px; height: 110px;
-    background: radial-gradient(circle at 35% 30%, #ffe0b2, #ffb74d);
     border-radius: 50%;
-    box-shadow: 0 0 40px rgba(255, 200, 120, 0.35);
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+
+  /* Garçon */
+  .head.boy {
+    background: radial-gradient(circle at 35% 30%, #ffe0b2, #ffb74d);
+    box-shadow: 0 0 40px rgba(255,200,120,0.35);
+  }
+  /* Fille */
+  .head.girl {
+    background: radial-gradient(circle at 35% 30%, #ffe4ec, #f8bbd0);
+    box-shadow: 0 0 40px rgba(244,143,177,0.45);
   }
 
   .eye {
@@ -74,30 +122,66 @@
     to   { height: 22px; }
   }
 
+  /* Cheveux garçon (courts) */
+  .hair-boy {
+    position: absolute;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    width: 116px; height: 60px;
+    background: #3e2723;
+    border-radius: 60px 60px 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% 60%, 85% 70%, 70% 55%, 50% 70%, 30% 55%, 15% 70%, 0 60%);
+  }
+  /* Cheveux fille (longs + frange) */
+  .hair-girl {
+    position: absolute;
+    top: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 128px; height: 150px;
+    background: #4e342e;
+    border-radius: 64px 64px 30px 30px;
+    z-index: -1;
+  }
+  .hair-girl::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 55px;
+    background: #5d4037;
+    border-radius: 64px 64px 30px 30px;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 80% 90%, 60% 70%, 40% 90%, 20% 70%, 0 90%);
+  }
+
   .body {
     position: absolute;
     bottom: 0; left: 50%;
     transform: translateX(-50%);
     width: 130px; height: 100px;
-    background: linear-gradient(180deg, #4fc3f7, #0288d1);
     border-radius: 60px 60px 20px 20px;
-    box-shadow: 0 10px 30px rgba(0, 150, 220, 0.4);
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .body.boy {
+    background: linear-gradient(180deg, #4fc3f7, #0288d1);
+    box-shadow: 0 10px 30px rgba(0,150,220,0.4);
+  }
+  .body.girl {
+    background: linear-gradient(180deg, #f48fb1, #ad1457);
+    box-shadow: 0 10px 30px rgba(244,143,177,0.4);
   }
 
-  /* ---------- Halos d'animation ---------- */
   .pulse-ring {
     position: absolute;
     top: 50%; left: 50%;
     width: 160px; height: 160px;
     margin: -80px 0 0 -80px;
-    border: 2px solid rgba(79, 195, 247, 0.5);
+    border: 2px solid rgba(79,195,247,0.5);
     border-radius: 50%;
     opacity: 0;
     pointer-events: none;
+    transition: border-color 0.4s;
   }
-  .pulse-ring.active {
-    animation: pulse 1.5s ease-out infinite;
-  }
+  body.girl .pulse-ring { border-color: rgba(244,143,177,0.5); }
+  .pulse-ring.active { animation: pulse 1.5s ease-out infinite; }
   @keyframes pulse {
     0%   { transform: scale(0.7); opacity: 0.8; }
     100% { transform: scale(1.6); opacity: 0; }
@@ -112,57 +196,77 @@
     gap: 16px;
     z-index: 10;
   }
+  .name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: color 0.4s;
+  }
+  body.girl .name { color: #f8bbd0; }
 
   .bubble {
     max-width: 340px;
     min-height: 54px;
     padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 18px;
     backdrop-filter: blur(8px);
     text-align: center;
     font-size: 15px;
     line-height: 1.5;
-    transition: opacity 0.3s;
   }
 
-  button {
+  #btnSpeak {
     padding: 12px 28px;
     font-size: 16px;
     font-weight: 600;
     color: #0a1628;
-    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.4s;
   }
-  button:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(79, 195, 247, 0.55); }
-  button:active { transform: translateY(0); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  body:not(.girl) #btnSpeak {
+    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
+    box-shadow: 0 6px 20px rgba(79,195,247,0.4);
+  }
+  body.girl #btnSpeak {
+    background: linear-gradient(135deg, #f48fb1, #ce93d8);
+    box-shadow: 0 6px 20px rgba(244,143,177,0.4);
+  }
+  #btnSpeak:hover { transform: translateY(-2px); }
+  #btnSpeak:active { transform: translateY(0); }
+  #btnSpeak:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
 </head>
 <body>
 
+  <div class="selector">
+    <button id="selBoy" class="active">Kéo 👦</button>
+    <button id="selGirl">Lya 👧</button>
+  </div>
+
   <div class="coach">
     <div class="pulse-ring" id="ring"></div>
-    <div class="head">
+    <div class="head boy" id="head">
+      <div class="hair-boy" id="hairBoy"></div>
+      <div class="hair-girl" id="hairGirl" style="display:none"></div>
       <div class="eye left"></div>
       <div class="eye right"></div>
       <div class="mouth" id="mouth"></div>
     </div>
-    <div class="body"></div>
+    <div class="body boy" id="bodyEl"></div>
   </div>
 
   <div class="panel">
+    <div class="name" id="name">Kéo</div>
     <div class="bubble" id="bubble">Salut, moi c'est Kéo, ton coach chill. Prêt à te motiver ?</div>
-    <button id="btn">Parle-moi, Kéo 🎧</button>
+    <button id="btnSpeak">Parle-moi, Kéo 🎧</button>
   </div>
 
 <script>
-  const phrases = [
+  const phrasesBoy = [
     "Respire un grand coup. Tu gères déjà plus que tu ne le crois.",
     "Un petit pas aujourd'hui vaut mieux qu'un grand saut jamais fait.",
     "Relâche les épaules. Souris. Maintenant, avance tranquillement.",
@@ -173,58 +277,125 @@
     "Sois indulgent avec toi-même. La progression n'est pas une ligne droite."
   ];
 
-  const bubble = document.getElementById('bubble');
-  const btn = document.getElementById('btn');
-  const mouth = document.getElementById('mouth');
-  const ring = document.getElementById('ring');
+  const phrasesGirl = [
+    "Coucou, c'est Lya. Pose tes épaules, respire, et écoute-moi.",
+    "Tu n'as pas à tout faire aujourd'hui. Choisis une seule petite chose.",
+    "Sois douce avec toi. La bienveillance, c'est aussi une force.",
+    "Ton rythme est le bon. Ne compare pas ta route à celle des autres.",
+    "Un sourire, une grande inspiration, et tu repars. Tu peux le faire.",
+    "Les petits pas tranquilles mènent aussi très loin. Vraiment.",
+    "Tu mérites le repos autant que l'effort. Équilibre, ma belle.",
+    "Aujourd'hui, sois fière de ce que tu es déjà. Le reste suivra."
+  ];
 
-  let index = 0;
+  const state = {
+    who: 'boy',
+    idxBoy: 0,
+    idxGirl: 0,
+    voiceBoy: null,
+    voiceGirl: null
+  };
 
-  // Sélection d'une voix française si disponible
-  let chillVoice = null;
-  function pickVoice() {
+  const els = {
+    head: document.getElementById('head'),
+    bodyEl: document.getElementById('bodyEl'),
+    hairBoy: document.getElementById('hairBoy'),
+    hairGirl: document.getElementById('hairGirl'),
+    mouth: document.getElementById('mouth'),
+    ring: document.getElementById('ring'),
+    bubble: document.getElementById('bubble'),
+    name: document.getElementById('name'),
+    btnSpeak: document.getElementById('btnSpeak'),
+    selBoy: document.getElementById('selBoy'),
+    selGirl: document.getElementById('selGirl')
+  };
+
+  /* ---------- Sélection des voix ---------- */
+  function pickVoices() {
     const voices = speechSynthesis.getVoices();
-    chillVoice =
-      voices.find(v => v.lang.startsWith('fr') && /female|femme|amelie|audrey|marie/i.test(v.name)) ||
-      voices.find(v => v.lang.startsWith('fr')) ||
-      voices[0];
-  }
-  speechSynthesis.onvoiceschanged = pickVoice;
-  pickVoice();
+    const fr = voices.filter(v => v.lang.startsWith('fr'));
 
-  function speak(text) {
+    // Voix garçon : préférence masculine, sinon première FR
+    state.voiceBoy =
+      fr.find(v => /male|homme|thomas|paul|daniel|henri/i.test(v.name)) ||
+      fr[0] || voices[0] || null;
+
+    // Voix fille : préférence féminine
+    state.voiceGirl =
+      fr.find(v => /female|femme|amelie|audrey|marie|julie|lea/i.test(v.name)) ||
+      fr[fr.length - 1] || voices[0] || null;
+  }
+  speechSynthesis.onvoiceschanged = pickVoices;
+  pickVoices();
+
+  /* ---------- Changement de personnage ---------- */
+  function setCharacter(who) {
+    state.who = who;
+    const isGirl = who === 'girl';
+
+    document.body.classList.toggle('girl', isGirl);
+    els.head.className = 'head ' + who;
+    els.bodyEl.className = 'body ' + who;
+    els.hairBoy.style.display = isGirl ? 'none' : 'block';
+    els.hairGirl.style.display = isGirl ? 'block' : 'none';
+    els.name.textContent = isGirl ? 'Lya' : 'Kéo';
+    els.btnSpeak.textContent = isGirl ? 'Parle-moi, Lya 🎧' : 'Parle-moi, Kéo 🎧';
+    els.bubble.textContent = isGirl
+      ? "Coucou, moi c'est Lya, ta coach chill. On respire ensemble ?"
+      : "Salut, moi c'est Kéo, ton coach chill. Prêt à te motiver ?";
+
+    els.selBoy.classList.toggle('active', !isGirl);
+    els.selGirl.classList.toggle('active', isGirl);
+
+    // Coupe la voix en cours pour éviter le mélange
+    speechSynthesis.cancel();
+  }
+
+  els.selBoy.addEventListener('click', () => setCharacter('boy'));
+  els.selGirl.addEventListener('click', () => setCharacter('girl'));
+
+  /* ---------- Parole ---------- */
+  function speak(text, who) {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    if (chillVoice) u.voice = chillVoice;
+
+    if (who === 'boy') {
+      if (state.voiceBoy) u.voice = state.voiceBoy;
+      u.pitch = 0.92;
+      u.rate  = 0.92;
+    } else {
+      if (state.voiceGirl) u.voice = state.voiceGirl;
+      u.pitch = 1.28;
+      u.rate  = 0.96;
+    }
     u.lang = 'fr-FR';
-    u.rate = 0.92;    // plus lent = plus chill
-    u.pitch = 1.05;
     u.volume = 1;
 
     u.onstart = () => {
-      mouth.classList.add('talking');
-      ring.classList.add('active');
-      btn.disabled = true;
+      els.mouth.classList.add('talking');
+      els.ring.classList.add('active');
+      els.btnSpeak.disabled = true;
     };
-    u.onend = () => {
-      mouth.classList.remove('talking');
-      ring.classList.remove('active');
-      btn.disabled = false;
-    };
-    u.onerror = () => {
-      mouth.classList.remove('talking');
-      ring.classList.remove('active');
-      btn.disabled = false;
+    u.onend = u.onerror = () => {
+      els.mouth.classList.remove('talking');
+      els.ring.classList.remove('active');
+      els.btnSpeak.disabled = false;
     };
 
     speechSynthesis.speak(u);
   }
 
-  btn.addEventListener('click', () => {
-    const text = phrases[index % phrases.length];
-    index++;
-    bubble.textContent = text;
-    speak(text);
+  els.btnSpeak.addEventListener('click', () => {
+    let text;
+    if (state.who === 'boy') {
+      text = phrasesBoy[state.idxBoy % phrasesBoy.length];
+      state.idxBoy++;
+    } else {
+      text = phrasesGirl[state.idxGirl % phrasesGirl.length];
+      state.idxGirl++;
+    }
+    els.bubble.textContent = text;
+    speak(text, state.who);
   });
 </script>
 </body>
