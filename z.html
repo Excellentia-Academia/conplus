@@ -3,491 +3,552 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Génie du Droit — Co-pilote Ultime</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Espace Coach — Formation Nodasa</title>
 <style>
-:root{
-  --bg:#0f172a;--surface:#1e293b;--surface-light:#334155;
-  --primary:#38bdf8;--primary-hover:#0ea5e9;
-  --text:#f8fafc;--text-muted:#94a3b8;
-  --border:#334155;
-  --success:#10b981;--danger:#ef4444;--warning:#f59e0b;
-  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
-  --transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-h1,h2,h3{color:var(--text);letter-spacing:-.02em}
-.container{max-width:1200px;margin:0 auto;padding:24px}
-.muted{color:var(--text-muted);font-size:.9rem}
-.center{text-align:center}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: #f4f6fa;
+    color: #1a1a2e;
+    line-height: 1.6;
+  }
 
-.header{background:rgba(15,23,42,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:16px 0}
-.header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-icon{font-size:1.5rem}
-.logo-text strong{display:block;font-size:1.1rem;color:var(--text)}
-.logo-text small{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--primary)}
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #4f46e5 100%);
+    color: white;
+    padding: 2.5rem 1rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  header h1 { font-size: 2rem; margin-bottom: .4rem; letter-spacing: -.5px; }
+  header p  { opacity: .85; font-size: .95rem; }
 
-.nav{display:flex;gap:8px;flex-wrap:wrap}
-.nav-btn{background:transparent;color:var(--text-muted);border:1px solid transparent;padding:10px 16px;border-radius:8px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:var(--transition)}
-.nav-btn:hover{color:var(--text);background:var(--surface)}
-.nav-btn.active{background:var(--primary);color:#0f172a;box-shadow:0 0 15px rgba(56,189,248,.4)}
-.page{display:none;animation:fadeIn .4s ease-out forwards}
-.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  /* ===== BARRE D'ONGLETS ===== */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    background: white;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e4ef;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  }
+  .tab {
+    padding: .6rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e4ef;
+    background: white;
+    color: #1a1a2e;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 500;
+    transition: all .2s;
+  }
+  .tab:hover { border-color: #4f46e5; color: #4f46e5; }
+  .tab.actif {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+  }
 
-.card{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--border);transition:var(--transition)}
-.card:hover{border-color:var(--primary);transform:translateY(-2px)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:var(--transition)}
-.btn-primary{background:var(--primary);color:#0f172a}
-.btn-primary:hover{background:var(--primary-hover);box-shadow:0 0 20px rgba(56,189,248,.5)}
-.btn-success{background:var(--success);color:#fff}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-sm{padding:8px 16px;font-size:.8rem}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+  /* ===== CONTENU ===== */
+  main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .vue { display: none; }
+  .vue.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-weight:600;margin-bottom:8px;color:var(--text-muted);font-size:.85rem}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:var(--bg);border:2px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.95rem;transition:var(--transition)}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(56,189,248,.1)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid #e0e4ef;
+  }
 
-.pdf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.pdf-card{background:var(--surface-light);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;transition:var(--transition)}
-.pdf-card:hover{border-color:var(--primary)}
-.pdf-title{font-weight:700;margin-bottom:8px;color:var(--text)}
-.pdf-meta{font-size:.8rem;color:var(--text-muted);margin-bottom:16px}
-.pdf-actions{display:flex;gap:8px;flex-wrap:wrap}
-.badge-lu{position:absolute;top:-10px;right:-10px;background:var(--success);color:#fff;padding:4px 12px;border-radius:12px;font-size:.75rem;font-weight:700}
+  /* ===== RECHERCHE ===== */
+  .search-box {
+    margin-bottom: 2rem;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e0e4ef;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+  }
+  .search-box input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+  }
 
-/* PLANNING */
-.planning-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.week-card{background:var(--surface-light);padding:20px;border-radius:var(--radius);border-left:4px solid var(--primary)}
-.week-card h3{font-size:1rem;margin-bottom:12px;display:flex;justify-content:space-between}
-.pdf-item{padding:10px;border-bottom:1px solid var(--border);font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
-.pdf-item:last-child{border-bottom:none}
+  /* ===== LISTE DES COACHS ===== */
+  .coach-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e0e4ef;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: all .2s;
+  }
+  .coach-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+  .coach-card.premier {
+    border: 2px solid #f59e0b;
+    background: linear-gradient(90deg, #fffbeb 0%, white 60%);
+    position: relative;
+  }
+  .coach-card.premier::before {
+    content: "👑 Coach Principal";
+    position: absolute;
+    top: -10px; left: 1.5rem;
+    background: #f59e0b;
+    color: white;
+    font-size: .7rem;
+    font-weight: 700;
+    padding: .2rem .7rem;
+    border-radius: 20px;
+    letter-spacing: .5px;
+  }
+  .coach-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #4f46e5;
+    min-width: 50px;
+    text-align: center;
+  }
+  .coach-card.premier .coach-num { color: #f59e0b; }
+  .coach-info { flex: 1; }
+  .coach-info .nom { font-weight: 700; font-size: 1.1rem; }
+  .coach-info .role { font-size: .85rem; color: #666; }
+  .coach-info .specialite {
+    display: inline-block;
+    font-size: .75rem;
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: .15rem .6rem;
+    border-radius: 20px;
+    margin-top: .35rem;
+  }
+  .coach-actions { display: flex; gap: .5rem; }
+  .btn {
+    padding: .5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e4ef;
+    background: white;
+    cursor: pointer;
+    font-size: .85rem;
+    transition: all .2s;
+  }
+  .btn:hover { border-color: #4f46e5; color: #4f46e5; }
+  .btn.primary { background: #4f46e5; color: white; border-color: #4f46e5; }
+  .btn.primary:hover { background: #4338ca; }
 
-/* FLASHCARDS */
-.flashcard-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-.flashcard{perspective:1000px;cursor:pointer;height:200px}
-.flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.6s;transform-style:preserve-3d}
-.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
-.flashcard-front,.flashcard-back{position:absolute;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--surface-light);border:2px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;font-size:1.05rem;box-shadow:var(--shadow)}
-.flashcard-back{transform:rotateY(180deg);background:rgba(56,189,248,.1);border-color:var(--primary);font-weight:400}
+  /* ===== GRILLE DE PAGES ===== */
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .carte {
+    background: white;
+    border-radius: 10px;
+    padding: 1.1rem;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e0e4ef;
+    transition: all .2s;
+  }
+  .carte:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    border-color: #4f46e5;
+  }
+  .carte .titre { font-weight: 600; font-size: 1rem; display: block; margin-bottom: .3rem; }
+  .carte .desc  { font-size: .82rem; color: #666; }
 
-.message{padding:12px;border-radius:8px;margin-top:12px;display:none;font-size:.9rem}
-.message.show{display:block}
-.message.success{background:rgba(16,185,129,.1);border-left:4px solid var(--success);color:var(--success)}
-.message.error{background:rgba(239,68,68,.1);border-left:4px solid var(--danger);color:var(--danger)}
+  /* ===== STATS ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #e0e4ef;
+  }
+  .stat .num { font-size: 1.8rem; font-weight: 800; color: #4f46e5; }
+  .stat .label { font-size: .8rem; color: #666; margin-top: .2rem; }
 
-/* LECTEUR PRO */
-.viewer-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:1000;display:none;flex-direction:column}
-.viewer-overlay.show{display:flex}
-.viewer-header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.viewer-title{font-weight:700;color:var(--primary);font-size:1.1rem}
-.viewer-controls{display:flex;gap:8px;align-items:center;background:var(--bg);padding:6px;border-radius:12px;border:1px solid var(--border)}
-.viewer-controls select{background:var(--surface);color:var(--text);border:none;padding:8px;border-radius:6px;font-weight:600;outline:none}
-.viewer-content{flex:1;overflow-y:auto;background:var(--bg);padding:32px 16px;display:flex;flex-direction:column;align-items:center}
-.viewer-page{background:#fff;color:#1a1a2e;max-width:800px;width:100%;padding:40px;border-radius:12px;font-family:serif;font-size:1.15rem;line-height:1.8;box-shadow:0 10px 30px rgba(0,0,0,.5);white-space:pre-wrap;margin-bottom:24px;position:relative}
-.viewer-footer{background:var(--surface);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+  /* ===== FORM AJOUT COACH ===== */
+  .form-ajout {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #e0e4ef;
+    margin-bottom: 2rem;
+  }
+  .form-ajout h3 { margin-bottom: 1rem; font-size: 1.05rem; }
+  .form-row { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .form-row input {
+    flex: 1;
+    min-width: 160px;
+    padding: .7rem 1rem;
+    border: 1px solid #e0e4ef;
+    border-radius: 8px;
+    font-size: .9rem;
+  }
+  .form-row input:focus { outline: none; border-color: #4f46e5; }
+
+  .compteur { text-align: center; color: #888; font-size: .9rem; margin-bottom: 1.5rem; }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="container header-inner">
-    <div class="logo">
-      <span class="logo-icon">⚖️</span>
-      <div class="logo-text"><strong>Génie du Droit</strong><small>Co-pilote Ultime</small></div>
-    </div>
-    <div class="nav">
-      <button class="nav-btn active" data-page="page-biblio">📚 Bibliothèque</button>
-      <button class="nav-btn" data-page="page-planning">📅 Planning</button>
-      <button class="nav-btn" data-page="page-flash">🗂️ Flashcards</button>
-      <button class="nav-btn" data-page="page-add">➕ Ajouter un PDF</button>
-    </div>
-  </div>
+<header>
+  <h1>🎓 Espace Coach — Formation Nodasa</h1>
+  <p>Centre de contrôle : coachs, pages, programme</p>
 </header>
 
-<main class="container" style="padding-top:32px">
-  
-  <!-- BIBLIOTHÈQUE -->
-  <div id="page-biblio" class="page active">
-    <h1 style="margin-bottom:24px">Ma Bibliothèque</h1>
-    <div id="pdfList" class="pdf-grid">
-      <p class="muted center" style="grid-column:1/-1">Chargement...</p>
-    </div>
-  </div>
+<!-- ONGLETS -->
+<div class="tabs">
+  <button class="tab actif" data-vue="coachs">👥 Liste des Coachs</button>
+  <button class="tab" data-vue="pages">📚 Toutes les Pages</button>
+  <button class="tab" data-vue="guide">📘 Guide du Coach</button>
+  <button class="tab" data-vue="stats">📊 Statistiques</button>
+</div>
 
-  <!-- PLANNING -->
-  <div id="page-planning" class="page">
-    <h1 style="margin-bottom:24px">Mon Planning</h1>
-    <div class="planning-grid">
-      <div class="week-card">
-        <h3>Cette semaine <span style="color:var(--primary)">En cours</span></h3>
-        <div id="weekCurrent"><p class="muted">Aucun cours.</p></div>
-      </div>
-      <div class="week-card">
-        <h3>Semaine prochaine <span style="color:var(--warning)">À venir</span></h3>
-        <div id="weekNext"><p class="muted">Aucun cours.</p></div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:24px">
-      <h3 style="margin-bottom:16px">Assigner un cours à une semaine</h3>
+<main>
+
+  <!-- ===== VUE 1 : COACHS ===== -->
+  <section class="vue active" id="vue-coachs">
+    <h2 class="section-title">👥 Liste des Coachs (du premier au dernier)</h2>
+
+    <!-- Formulaire d'ajout -->
+    <div class="form-ajout">
+      <h3>➕ Ajouter un nouveau coach</h3>
       <div class="form-row">
-        <div class="form-group">
-          <select id="planPdf"></select>
-        </div>
-        <div class="form-group">
-          <select id="planWeek">
-            <option value="current">Cette semaine</option>
-            <option value="next">Semaine prochaine</option>
-          </select>
-        </div>
+        <input type="text" id="nouveau-nom" placeholder="Nom du coach">
+        <input type="text" id="nouveau-role" placeholder="Rôle (ex: Coach adjoint)">
+        <input type="text" id="nouvelle-specialite" placeholder="Spécialité (ex: Dictées)">
+        <button class="btn primary" onclick="ajouterCoach()">Ajouter</button>
       </div>
-      <button class="btn btn-primary" onclick="ajouterPlanning()">Ajouter au planning</button>
     </div>
-  </div>
 
-  <!-- FLASHCARDS -->
-  <div id="page-flash" class="page">
-    <h1 style="margin-bottom:24px">Mes Flashcards</h1>
-    <div class="card">
-      <h3 style="margin-bottom:16px">Créer une nouvelle carte</h3>
-      <div class="form-row">
-        <div class="form-group"><label>Recto (Question)</label><input type="text" id="flashRecto" placeholder="Ex: Qu'est-ce que la responsabilité civile ?"></div>
-        <div class="form-group"><label>Verso (Réponse)</label><input type="text" id="flashVerso" placeholder="Ex: L'obligation de réparer le dommage causé à autrui."></div>
-      </div>
-      <button class="btn btn-success" onclick="creerFlashcard()">Créer la carte</button>
-    </div>
-    <div class="flashcard-container" id="flashList"></div>
-  </div>
+    <div id="liste-coachs"></div>
+  </section>
 
-  <!-- AJOUT PDF -->
-  <div id="page-add" class="page">
-    <h1 style="margin-bottom:24px">Ajouter un cours</h1>
-    <div class="card">
-      <div class="form-group">
-        <label>Fichier PDF</label>
-        <input type="file" id="pdfFile" accept="application/pdf">
-      </div>
-      <div class="form-group">
-        <label>Matière</label>
-        <select id="pdfMatiere">
-          <option value="Droit civil">Droit civil</option>
-          <option value="Droit pénal">Droit pénal</option>
-          <option value="Droit constitutionnel">Droit constitutionnel</option>
-          <option value="Droit administratif">Droit administratif</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" id="btnAddPdf" style="width:100%">📥 Enregistrer le cours</button>
-      <div id="pdfMsg" class="message"></div>
+  <!-- ===== VUE 2 : PAGES ===== -->
+  <section class="vue" id="vue-pages">
+    <h2 class="section-title">📚 Toutes les pages du site</h2>
+    <div class="search-box">
+      <input type="text" id="recherche" placeholder="🔍 Rechercher une page…">
     </div>
-  </div>
+    <p class="compteur" id="compteur-pages"></p>
+    <div id="zones"></div>
+  </section>
+
+  <!-- ===== VUE 3 : GUIDE ===== -->
+  <section class="vue" id="vue-guide">
+    <h2 class="section-title">📘 Guide du Coach — Parcours recommandé</h2>
+
+    <div class="carte" style="margin-bottom:1rem;">
+      <strong>Étape 1 — Découverte (semaine 1)</strong><br>
+      <span class="desc">
+        <a href="accueil.html">Accueil</a> · 
+        <a href="info.html">Info</a> · 
+        <a href="Instruction.html">Instructions</a>
+      </span>
+    </div>
+
+    <div class="carte" style="margin-bottom:1rem;">
+      <strong>Étape 2 — Fondamentaux (semaines 2-3)</strong><br>
+      <span class="desc">
+        <a href="credo.html">Credo</a> · 
+        <a href="bible.html">Bible</a> · 
+        <a href="Cate.html">Catéchèse</a> · 
+        <a href="DICO.html">Dictionnaire</a>
+      </span>
+    </div>
+
+    <div class="carte" style="margin-bottom:1rem;">
+      <strong>Étape 3 — Programme annuel</strong><br>
+      <span class="desc">
+        <a href="2025.html">2025</a> → 
+        <a href="2026.html">2026</a> → 
+        <a href="2027.html">2027</a> → 
+        <a href="2028.html">2028</a> → 
+        <a href="2029.html">2029</a> → 
+        <a href="2030.html">2030</a>
+      </span>
+    </div>
+
+    <div class="carte" style="margin-bottom:1rem;">
+      <strong>Étape 4 — Exercices & entraînement</strong><br>
+      <span class="desc">
+        <a href="Dictée.html">Dictée</a> · 
+        <a href="Anagramme.html">Anagramme</a> · 
+        <a href="Math.html">Math</a> · 
+        <a href="Test.html">Test</a> · 
+        <a href="Devoir.html">Devoir</a>
+      </span>
+    </div>
+
+    <div class="carte" style="margin-bottom:1rem;">
+      <strong>Étape 5 — Outils avancés</strong><br>
+      <span class="desc">
+        <a href="Coach.html">Coach</a> · 
+        <a href="Vote.html">Vote</a> · 
+        <a href="Choix.html">Choix</a> · 
+        <a href="Elo.html">Éloquence</a>
+      </span>
+    </div>
+  </section>
+
+  <!-- ===== VUE 4 : STATS ===== -->
+  <section class="vue" id="vue-stats">
+    <h2 class="section-title">📊 Statistiques</h2>
+    <div class="stats" id="stats-container"></div>
+  </section>
 
 </main>
 
-<!-- LECTEUR PRO OVERLAY -->
-<div id="viewerOverlay" class="viewer-overlay">
-  <div class="viewer-header">
-    <div class="viewer-title" id="viewerTitle">Document</div>
-    <div class="viewer-controls">
-      <button class="btn btn-sm btn-primary" id="btnReadAloud">▶️ Écouter</button>
-      <button class="btn btn-sm" style="background:var(--border);color:var(--text)" onclick="stopAudio()">⏹️ Stop</button>
-      <select id="speedSelect">
-        <option value="0.6">0.6x (Très lent)</option>
-        <option value="0.8" selected>0.8x (Lent)</option>
-        <option value="1">1x (Normal)</option>
-        <option value="1.2">1.2x (Rapide)</option>
-      </select>
-    </div>
-    <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="fermerLecteur()">✕ Fermer</button>
-  </div>
-  
-  <div class="viewer-content" id="viewerContent"></div>
-  
-  <div class="viewer-footer">
-    <div class="muted" id="progressionText">Page 1 / 1</div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" onclick="exportTexteChatGPT()">📋 Copier pour ChatGPT</button>
-      <button class="btn btn-success" id="btnMarquerLu">✅ Marquer comme lu</button>
-    </div>
-  </div>
-</div>
+<!-- ===== DONNÉES CENTRALES ===== -->
+<script>
+// ============================================
+// CONFIGURATION CENTRALE
+// ============================================
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.min.mjs';
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/build/pdf.worker.min.mjs';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
-  authDomain: "eeee-1387d.firebaseapp.com",
-  projectId: "eeee-1387d",
-  storageBucket: "eeee-1387d.firebasestorage.app",
-  messagingSenderId: "777961527724",
-  appId: "1:777961527724:web:5c222e42be24af0ab38209"
+const SITE = {
+  nom: "Formation Nodasa",
+  version: "2025"
 };
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const colPdfs = collection(db, "pdfs");
-const colFlash = collection(db, "flashcards");
-const colPlan = collection(db, "planning");
 
-// --- NAVIGATION ---
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.page).classList.add('active');
-    if(btn.dataset.page === 'page-planning') updatePlanning();
-    if(btn.dataset.page === 'page-flash') updateFlashcards();
+// ===== LISTE DES COACHS (du premier au dernier) =====
+// Le premier de cette liste est TOI (le coach principal)
+let COACHS = [
+  { nom: "Coach Principal", role: "Fondateur & Responsable", specialite: "Toutes les matières" },
+  { nom: "Coach N°2",       role: "Coach adjoint",           specialite: "Dictées & Orthographe" },
+  { nom: "Coach N°3",       role: "Coach adjoint",           specialite: "Mathématiques" },
+  { nom: "Coach N°4",       role: "Coach adjoint",           specialite: "Anagrammes" },
+  { nom: "Coach N°5",       role: "Coach adjoint",           specialite: "Bible & Catéchèse" }
+];
+
+// ===== CATÉGORIES DE PAGES =====
+const CATEGORIES = {
+  "📖 Fondamentaux": [
+    { f: "accueil.html",     t: "Accueil",       d: "Page d'entrée" },
+    { f: "credo.html",       t: "Credo",         d: "Le Credo" },
+    { f: "bible.html",       t: "Bible",         d: "Introduction à la Bible" },
+    { f: "Cate.html",        t: "Catéchèse",     d: "Enseignement catéchétique" },
+    { f: "DICO.html",        t: "Dictionnaire",  d: "Lexique" },
+    { f: "info.html",        t: "Info",          d: "Informations" },
+    { f: "Instruction.html", t: "Instructions",  d: "Consignes coach" }
+  ],
+  "🗓️ Années": [
+    { f: "2025.html", t: "2025", d: "Programme 2025" },
+    { f: "2026.html", t: "2026", d: "Programme 2026" },
+    { f: "2027.html", t: "2027", d: "Programme 2027" },
+    { f: "2028.html", t: "2028", d: "Programme 2028" },
+    { f: "2029.html", t: "2029", d: "Programme 2029" },
+    { f: "2030.html", t: "2030", d: "Programme 2030" }
+  ],
+  "✍️ Dictées": [
+    { f: "Dictée.html",            t: "Dictée",             d: "Dictée classique" },
+    { f: "Dictéevocale.html",      t: "Dictée vocale",      d: "Dictée audio" },
+    { f: "dictéeinitiatique.html", t: "Dictée initiatique", d: "Initiation" },
+    { f: "choixdedictée.html",     t: "Choix de dictée",    d: "Sélection" },
+    { f: "choix eppelation.html",  t: "Épellation",         d: "Choix d'épellation" }
+  ],
+  "🔤 Anagrammes": [
+    { f: "Anagramme.html",       t: "Anagramme",        d: "Jeu d'anagrammes" },
+    { f: "Anagrammevocale.html", t: "Anagramme vocale", d: "Anagrammes audio" }
+  ],
+  "🧮 Mathématiques": [
+    { f: "Math.html",       t: "Math",       d: "Exercices" },
+    { f: "Mathvocal.html",  t: "Math vocal", d: "Math audio" },
+    { f: "math_ecrit.html", t: "Math écrit", d: "Math écrit" }
+  ],
+  "⛪ Diocèses & Bible": [
+    { f: "diocèse0.html",  t: "Diocèse 0",      d: "Intro diocèses" },
+    { f: "diocèse1.html",  t: "Diocèse 1",      d: "Diocèse 1" },
+    { f: "Diobible1.html", t: "Dio Bible 1",    d: "Bible 1" },
+    { f: "Diobible2.html", t: "Dio Bible 2",    d: "Bible 2" },
+    { f: "Diodico.html",   t: "Dio Dico",       d: "Dico diocésain" },
+    { f: "Diodico2.html",  t: "Dio Dico 2",     d: "Dico 2" },
+    { f: "Diodictée.html", t: "Dio Dictée",     d: "Dictée diocésaine" },
+    { f: "Epebible.html",  t: "Épellation Bible", d: "Épellation" },
+    { f: "Epedico.html",   t: "Épellation Dico",  d: "Épellation Dico" }
+  ],
+  "🎓 Entraînement & Tests": [
+    { f: "entrainement.html",  t: "Entraînement",     d: "Exercices" },
+    { f: "exercices.html",     t: "Exercices",        d: "Banque" },
+    { f: "Test.html",          t: "Test",             d: "Test niveau" },
+    { f: "Testn.html",         t: "Test N",           d: "Test N" },
+    { f: "Devoir.html",        t: "Devoir",           d: "Devoirs" },
+    { f: "Dev1.html",          t: "Devoir 1",         d: "Devoir 1" },
+    { f: "Dev2.html",          t: "Devoir 2",         d: "Devoir 2" },
+    { f: "Dev3.html",          t: "Devoir 3",         d: "Devoir 3" },
+    { f: "Vote.html",          t: "Vote",             d: "Vote" },
+    { f: "Choix.html",         t: "Choix",            d: "Choix multiples" },
+    { f: "Code01.html",        t: "Code 01",          d: "Codes" },
+    { f: "Coach.html",         t: "Coach",            d: "Espace coach" },
+    { f: "Elo.html",           t: "Éloquence",        d: "Éloquence" },
+    { f: "Exprimez-vous.Html", t: "Exprimez-vous",    d: "Prise de parole" },
+    { f: "initiation.html",    t: "Initiation",       d: "Initiation" },
+    { f: "inivocale.html",     t: "Initiation vocale",d: "Audio" }
+  ],
+  "📚 Compilations": [
+    { f: "Toute1.html", t: "Toute 1", d: "Compilation 1" },
+    { f: "toute2.html", t: "Toute 2", d: "Compilation 2" },
+    { f: "toute3.html", t: "Toute 3", d: "Compilation 3" },
+    { f: "toute4.html", t: "Toute 4", d: "Compilation 4" },
+    { f: "tt.html",     t: "TT",      d: "Page TT" }
+  ],
+  "👥 Personnes & Accès": [
+    { f: "Guest.html",   t: "Invités",     d: "Espace invités" },
+    { f: "Domi.html",    t: "Domi",        d: "Page Domi" },
+    { f: "login.html",   t: "Connexion",   d: "Login" },
+    { f: "Lien000.html", t: "Liens",       d: "Liens utiles" }
+  ]
+};
+
+// ============================================
+// GESTION DES ONGLETS
+// ============================================
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("actif"));
+    document.querySelectorAll(".vue").forEach(v => v.classList.remove("active"));
+    tab.classList.add("actif");
+    document.getElementById("vue-" + tab.dataset.vue).classList.add("active");
   });
 });
 
-// --- AJOUT PDF & DECOUPAGE INTELLIGENT ---
-document.getElementById('btnAddPdf').onclick = async () => {
-  const file = document.getElementById('pdfFile').files[0];
-  if (!file) return;
-  const msg = document.getElementById('pdfMsg');
-  msg.className = 'message show'; msg.textContent = 'Extraction en cours... (Patientez pour les gros PDF)';
-  
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
-    let fullText = '';
-    
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      fullText += content.items.map(it => it.str).join(' ') + '\n\n';
-    }
-    
-    // Découpage en pages de 1500 caractères
-    const pages = [];
-    let currentPageText = '';
-    const words = fullText.split(' ');
-    
-    for (let word of words) {
-      currentPageText += word + ' ';
-      if (currentPageText.length > 1500) {
-        pages.push(currentPageText.trim());
-        currentPageText = '';
-      }
-    }
-    if (currentPageText) pages.push(currentPageText.trim());
+// ============================================
+// AFFICHAGE DES COACHS
+// ============================================
+function afficherCoachs() {
+  const liste = document.getElementById("liste-coachs");
+  liste.innerHTML = "";
 
-    const id = 'pdf_' + Date.now();
-    await setDoc(doc(db, "pdfs", id), { 
-      id, nom: file.name, matiere: document.getElementById('pdfMatiere').value, 
-      pages: pages, totalPages: pages.length, isLu: false, dernierePage: 0, dateAjout: new Date().toISOString() 
-    });
-    
-    msg.className = 'message show success'; msg.textContent = '✅ Cours ajouté !';
-    document.getElementById('pdfFile').value = '';
-    document.querySelector('.nav-btn[data-page="page-biblio"]').click();
-  } catch (e) { 
-    msg.className = 'message show error'; msg.textContent = '❌ Erreur : ' + e.message; 
-  }
-};
-
-// --- BIBLIOTHÈQUE ---
-onSnapshot(colPdfs, (snap) => {
-  const pdfs = []; snap.forEach(d => pdfs.push(d.data()));
-  const container = document.getElementById('pdfList');
-  
-  if (pdfs.length === 0) {
-    container.innerHTML = '<p class="muted center" style="grid-column:1/-1">Aucun cours.</p>';
-    return;
-  }
-  
-  pdfs.sort((a, b) => b.dateAjout.localeCompare(a.dateAjout));
-  container.innerHTML = pdfs.map(p => {
-    const badgeLu = p.isLu ? '<div class="badge-lu">Lu ✅</div>' : '';
-    const progress = p.dernierePage > 0 && !p.isLu ? `Page ${p.dernierePage} / ${p.totalPages}` : `${p.totalPages} pages`;
-    return `
-      <div class="pdf-card">
-        ${badgeLu}
-        <div class="pdf-title">${p.nom}</div>
-        <div class="pdf-meta">${p.matiere} · ${progress}</div>
-        <div class="pdf-actions">
-          <button class="btn btn-primary btn-sm" onclick="ouvrirLecteur('${p.id}')">📖 Lire</button>
-          <button class="btn btn-danger btn-sm" onclick="supprimerPDF('${p.id}')">🗑️</button>
-        </div>
+  COACHS.forEach((c, i) => {
+    const card = document.createElement("div");
+    card.className = "coach-card" + (i === 0 ? " premier" : "");
+    card.innerHTML = `
+      <div class="coach-num">${i === 0 ? "👑" : i + 1}</div>
+      <div class="coach-info">
+        <div class="nom">${c.nom}</div>
+        <div class="role">${c.role}</div>
+        <span class="specialite">${c.specialite}</span>
+      </div>
+      <div class="coach-actions">
+        ${i !== 0 ? `<button class="btn" onclick="supprimerCoach(${i})">🗑️</button>` : ""}
       </div>
     `;
-  }).join('');
-  
-  const opts = pdfs.map(p => `<option value="${p.id}">${p.nom}</option>`).join('');
-  document.getElementById('planPdf').innerHTML = opts;
-});
-window.supprimerPDF = async (id) => { if(confirm('Supprimer ?')) await deleteDoc(doc(db, "pdfs", id)); };
+    liste.appendChild(card);
+  });
+}
 
-// --- LECTEUR PRO & AUDIO ---
-let currentPdf = null;
-let currentPageIndex = 0;
-let isReading = false;
-let speechQueue = [];
+function ajouterCoach() {
+  const nom = document.getElementById("nouveau-nom").value.trim();
+  const role = document.getElementById("nouveau-role").value.trim() || "Coach adjoint";
+  const spe  = document.getElementById("nouvelle-specialite").value.trim() || "Généraliste";
 
-window.ouvrirLecteur = async function(id) {
-  const snap = await getDoc(doc(db, "pdfs", id));
-  if (!snap.exists()) return;
-  currentPdf = snap.data();
-  
-  document.getElementById('viewerTitle').textContent = currentPdf.nom;
-  document.getElementById('btnMarquerLu').style.display = currentPdf.isLu ? 'none' : 'inline-flex';
-  currentPageIndex = currentPdf.dernierePage || 0;
-  
-  renderPage();
-  document.getElementById('viewerOverlay').classList.add('show');
-};
+  if (!nom) { alert("Entre un nom pour le coach."); return; }
 
-function renderPage() {
-  const container = document.getElementById('viewerContent');
-  const text = currentPdf.pages[currentPageIndex];
-  container.innerHTML = `<div class="viewer-page"><div style="position:absolute;top:16px;right:16px;font-size:.8rem;color:#94a3b8">Page ${currentPageIndex + 1} / ${currentPdf.totalPages}</div>${text}</div>`;
-  document.getElementById('progressionText').textContent = `Page ${currentPageIndex + 1} / ${currentPdf.totalPages}`;
-  container.scrollTop = 0;
-  
-  if (currentPdf.dernierePage !== currentPageIndex) {
-    updateDoc(doc(db, "pdfs", currentPdf.id), { dernierePage: currentPageIndex });
-    currentPdf.dernierePage = currentPageIndex;
+  COACHS.push({ nom, role, specialite: spe });
+  document.getElementById("nouveau-nom").value = "";
+  document.getElementById("nouveau-role").value = "";
+  document.getElementById("nouvelle-specialite").value = "";
+  afficherCoachs();
+}
+
+function supprimerCoach(index) {
+  if (confirm("Supprimer ce coach ?")) {
+    COACHS.splice(index, 1);
+    afficherCoachs();
   }
-  if (isReading) stopAudio();
 }
 
-document.getElementById('viewerContent').addEventListener('scroll', (e) => {
-  const el = e.target;
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
-    if (currentPageIndex < currentPdf.totalPages - 1 && !isReading) {
-      setTimeout(() => { currentPageIndex++; renderPage(); }, 800);
-    }
-  }
-});
+// ============================================
+// AFFICHAGE DES PAGES
+// ============================================
+let totalPages = 0;
+Object.values(CATEGORIES).forEach(l => totalPages += l.length);
 
-document.getElementById('btnMarquerLu').onclick = async () => {
-  if (!currentPdf) return;
-  await updateDoc(doc(db, "pdfs", currentPdf.id), { isLu: true });
-  alert('🎉 Félicitations, cours terminé !');
-  fermerLecteur();
-};
+function afficherPages(filtre = "") {
+  const zones = document.getElementById("zones");
+  const compteur = document.getElementById("compteur-pages");
+  zones.innerHTML = "";
+  let affichees = 0;
 
-window.fermerLecteur = () => {
-  stopAudio();
-  document.getElementById('viewerOverlay').classList.remove('show');
-  currentPdf = null;
-};
+  Object.entries(CATEGORIES).forEach(([nomCat, pages]) => {
+    const filtrees = pages.filter(p =>
+      p.t.toLowerCase().includes(filtre.toLowerCase()) ||
+      p.d.toLowerCase().includes(filtre.toLowerCase())
+    );
+    if (filtrees.length === 0) return;
 
-// --- AUDIO ANTI-PLANTAGE ---
-const btnRead = document.getElementById('btnReadAloud');
-btnRead.onclick = () => { if (isReading) stopAudio(); else startAudio(); };
+    const section = document.createElement("section");
+    section.style.marginBottom = "2rem";
+    section.innerHTML = `<h3 style="margin-bottom:.8rem;font-size:1.1rem;padding-bottom:.4rem;border-bottom:1px solid #e0e4ef;">${nomCat}</h3>`;
 
-function startAudio() {
-  if (!currentPdf) return;
-  isReading = true;
-  btnRead.innerHTML = '⏸️ Pause';
-  speechQueue = currentPdf.pages[currentPageIndex].split('. ').map(s => s.trim()).filter(s => s.length > 0);
-  playNextInQueue();
+    const grille = document.createElement("div");
+    grille.className = "grille";
+
+    filtrees.forEach(p => {
+      const lien = document.createElement("a");
+      lien.className = "carte";
+      lien.href = p.f;
+      lien.innerHTML = `
+        <span class="titre">${p.t}</span>
+        <span class="desc">${p.d}</span>
+      `;
+      grille.appendChild(lien);
+      affichees++;
+    });
+
+    section.appendChild(grille);
+    zones.appendChild(section);
+  });
+
+  compteur.textContent = `${affichees} page(s) affichée(s) sur ${totalPages}`;
 }
 
-function playNextInQueue() {
-  if (!isReading || speechQueue.length === 0) {
-    if (speechQueue.length === 0 && currentPageIndex < currentPdf.totalPages - 1) {
-      currentPageIndex++;
-      renderPage();
-      startAudio();
-    } else {
-      stopAudio();
-    }
-    return;
-  }
-  const text = speechQueue.shift();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'fr-FR';
-  utterance.rate = parseFloat(document.getElementById('speedSelect').value);
-  utterance.onend = () => { if (isReading) playNextInQueue(); };
-  utterance.onerror = () => { if (isReading) playNextInQueue(); };
-  window.speechSynthesis.speak(utterance);
+// ============================================
+// STATISTIQUES
+// ============================================
+function afficherStats() {
+  const container = document.getElementById("stats-container");
+  container.innerHTML = `
+    <div class="stat"><div class="num">${COACHS.length}</div><div class="label">Coachs</div></div>
+    <div class="stat"><div class="num">${totalPages}</div><div class="label">Pages</div></div>
+    <div class="stat"><div class="num">${Object.keys(CATEGORIES).length}</div><div class="label">Catégories</div></div>
+    <div class="stat"><div class="num">6</div><div class="label">Années (2025-2030)</div></div>
+  `;
 }
 
-window.stopAudio = () => {
-  isReading = false;
-  speechQueue = [];
-  window.speechSynthesis.cancel();
-  btnRead.innerHTML = '▶️ Écouter';
-};
+// ============================================
+// INITIALISATION
+// ============================================
+document.getElementById("recherche").addEventListener("input", e => afficherPages(e.target.value));
 
-// --- EXPORT CHATGPT ---
-window.exportTexteChatGPT = async () => {
-  if (!currentPdf) return;
-  const fullText = currentPdf.pages.join(' ');
-  const prompt = `Voici mon cours de droit. Génère-moi 10 questions QCM et 2 cas pratiques avec corrections.\n\n${fullText}`;
-  navigator.clipboard.writeText(prompt);
-  alert('✅ Texte copié ! Colle-le dans ChatGPT.');
-};
-
-// --- FLASHCARDS ---
-async function updateFlashcards() {
-  const snap = await getDocs(colFlash);
-  const cards = []; snap.forEach(d => cards.push(d.data()));
-  const container = document.getElementById('flashList');
-  
-  if (cards.length === 0) {
-    container.innerHTML = '<p class="muted center" style="grid-column:1/-1">Aucune flashcard.</p>';
-    return;
-  }
-  
-  container.innerHTML = cards.map(c => `
-    <div class="flashcard" onclick="this.classList.toggle('flipped')">
-      <div class="flashcard-inner">
-        <div class="flashcard-front">${c.recto}</div>
-        <div class="flashcard-back">${c.verso}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-window.creerFlashcard = async () => {
-  const recto = document.getElementById('flashRecto').value.trim();
-  const verso = document.getElementById('flashVerso').value.trim();
-  if (!recto || !verso) return alert('Remplissez les deux champs.');
-  
-  await setDoc(doc(db, "flashcards", Date.now().toString()), { recto, verso, date: new Date().toISOString() });
-  document.getElementById('flashRecto').value = '';
-  document.getElementById('flashVerso').value = '';
-  updateFlashcards();
-};
-
-// --- PLANNING ---
-async function updatePlanning() {
-  const plans = []; (await getDocs(colPlan)).forEach(d => plans.push(d.data()));
-  const pdfs = []; (await getDocs(colPdfs)).forEach(d => pdfs.push(d.data()));
-  
-  const current = plans.filter(p => p.week === 'current');
-  const next = plans.filter(p => p.week === 'next');
-  
-  const renderList = (list) => list.length === 0 ? '<p class="muted">Aucun cours prévu.</p>' : 
-    list.map(p => {
-      const pdf = pdfs.find(x => x.id === p.pdfId);
-      return `<div class="pdf-item"><span>📄 ${pdf ? pdf.nom : 'Inconnu'}</span><button class="btn btn-danger btn-sm" style="padding:2px 8px" onclick="supprimerPlan('${p.pdfId}_${p.week}')">✕</button></div>`;
-    }).join('');
-    
-  document.getElementById('weekCurrent').innerHTML = renderList(current);
-  document.getElementById('weekNext').innerHTML = renderList(next);
-}
-
-window.ajouterPlanning = async () => {
-  const pdfId = document.getElementById('planPdf').value;
-  const week = document.getElementById('planWeek').value;
-  if (!pdfId) return;
-  await setDoc(doc(db, "planning", pdfId + "_" + week), { pdfId, week, date: new Date().toISOString() });
-  updatePlanning();
-};
-
-window.supprimerPlan = async (id) => { await deleteDoc(doc(db, "planning", id)); updatePlanning(); };
+afficherCoachs();
+afficherPages();
+afficherStats();
 </script>
+
 </body>
 </html>
