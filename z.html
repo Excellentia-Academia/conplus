@@ -2,553 +2,230 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Espace Coach — Formation Nodasa</title>
+<title>Coach Chill</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: #f4f6fa;
-    color: #1a1a2e;
-    line-height: 1.6;
-  }
-
-  /* ===== HEADER ===== */
-  header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #4f46e5 100%);
-    color: white;
-    padding: 2.5rem 1rem 2rem;
-    text-align: center;
-    position: relative;
-  }
-  header h1 { font-size: 2rem; margin-bottom: .4rem; letter-spacing: -.5px; }
-  header p  { opacity: .85; font-size: .95rem; }
-
-  /* ===== BARRE D'ONGLETS ===== */
-  .tabs {
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    gap: .5rem;
-    flex-wrap: wrap;
-    background: white;
-    padding: 1rem;
-    border-bottom: 1px solid #e0e4ef;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,.04);
-  }
-  .tab {
-    padding: .6rem 1.2rem;
-    border-radius: 8px;
-    border: 1px solid #e0e4ef;
-    background: white;
-    color: #1a1a2e;
-    cursor: pointer;
-    font-size: .9rem;
-    font-weight: 500;
-    transition: all .2s;
-  }
-  .tab:hover { border-color: #4f46e5; color: #4f46e5; }
-  .tab.actif {
-    background: #4f46e5;
-    color: white;
-    border-color: #4f46e5;
-  }
-
-  /* ===== CONTENU ===== */
-  main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-  .vue { display: none; }
-  .vue.active { display: block; animation: fadeIn .3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-  h2.section-title {
-    font-size: 1.4rem;
-    margin-bottom: 1.25rem;
-    padding-bottom: .5rem;
-    border-bottom: 2px solid #e0e4ef;
-  }
-
-  /* ===== RECHERCHE ===== */
-  .search-box {
-    margin-bottom: 2rem;
-  }
-  .search-box input {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    border: 1px solid #e0e4ef;
-    border-radius: 10px;
-    font-size: 1rem;
-    background: white;
-  }
-  .search-box input:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79,70,229,.12);
-  }
-
-  /* ===== LISTE DES COACHS ===== */
-  .coach-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #e0e4ef;
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
-    transition: all .2s;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e2a4a, #3b2a5a, #1a3a3a);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #e8f0ff;
+    overflow: hidden;
   }
-  .coach-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.06); }
-  .coach-card.premier {
-    border: 2px solid #f59e0b;
-    background: linear-gradient(90deg, #fffbeb 0%, white 60%);
+
+  /* ---------- Personnage ---------- */
+  .coach {
     position: relative;
+    width: 180px;
+    height: 220px;
+    animation: float 3s ease-in-out infinite;
   }
-  .coach-card.premier::before {
-    content: "👑 Coach Principal";
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .head {
     position: absolute;
-    top: -10px; left: 1.5rem;
-    background: #f59e0b;
-    color: white;
-    font-size: .7rem;
-    font-weight: 700;
-    padding: .2rem .7rem;
-    border-radius: 20px;
-    letter-spacing: .5px;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 110px;
+    background: radial-gradient(circle at 35% 30%, #ffe0b2, #ffb74d);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255, 200, 120, 0.35);
   }
-  .coach-num {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #4f46e5;
-    min-width: 50px;
+
+  .eye {
+    position: absolute;
+    top: 42px;
+    width: 16px; height: 16px;
+    background: #2a1a0a;
+    border-radius: 50%;
+    animation: blink 4s infinite;
+  }
+  .eye.left { left: 26px; }
+  .eye.right { right: 26px; }
+  @keyframes blink {
+    0%, 94%, 100% { transform: scaleY(1); }
+    97% { transform: scaleY(0.1); }
+  }
+
+  .mouth {
+    position: absolute;
+    bottom: 26px; left: 50%;
+    transform: translateX(-50%);
+    width: 34px; height: 8px;
+    background: #8d4a2a;
+    border-radius: 0 0 20px 20px;
+    transition: all 0.15s;
+  }
+  .mouth.talking {
+    height: 20px;
+    width: 26px;
+    border-radius: 50%;
+    animation: talk 0.18s infinite alternate;
+  }
+  @keyframes talk {
+    from { height: 8px; }
+    to   { height: 22px; }
+  }
+
+  .body {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 130px; height: 100px;
+    background: linear-gradient(180deg, #4fc3f7, #0288d1);
+    border-radius: 60px 60px 20px 20px;
+    box-shadow: 0 10px 30px rgba(0, 150, 220, 0.4);
+  }
+
+  /* ---------- Halos d'animation ---------- */
+  .pulse-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 160px; height: 160px;
+    margin: -80px 0 0 -80px;
+    border: 2px solid rgba(79, 195, 247, 0.5);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pulse-ring.active {
+    animation: pulse 1.5s ease-out infinite;
+  }
+  @keyframes pulse {
+    0%   { transform: scale(0.7); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ---------- UI ---------- */
+  .panel {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .bubble {
+    max-width: 340px;
+    min-height: 54px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    backdrop-filter: blur(8px);
     text-align: center;
+    font-size: 15px;
+    line-height: 1.5;
+    transition: opacity 0.3s;
   }
-  .coach-card.premier .coach-num { color: #f59e0b; }
-  .coach-info { flex: 1; }
-  .coach-info .nom { font-weight: 700; font-size: 1.1rem; }
-  .coach-info .role { font-size: .85rem; color: #666; }
-  .coach-info .specialite {
-    display: inline-block;
-    font-size: .75rem;
-    background: #eef2ff;
-    color: #4f46e5;
-    padding: .15rem .6rem;
-    border-radius: 20px;
-    margin-top: .35rem;
-  }
-  .coach-actions { display: flex; gap: .5rem; }
-  .btn {
-    padding: .5rem 1rem;
-    border-radius: 8px;
-    border: 1px solid #e0e4ef;
-    background: white;
+
+  button {
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0a1628;
+    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
+    border: none;
+    border-radius: 30px;
     cursor: pointer;
-    font-size: .85rem;
-    transition: all .2s;
+    box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  .btn:hover { border-color: #4f46e5; color: #4f46e5; }
-  .btn.primary { background: #4f46e5; color: white; border-color: #4f46e5; }
-  .btn.primary:hover { background: #4338ca; }
-
-  /* ===== GRILLE DE PAGES ===== */
-  .grille {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-  }
-  .carte {
-    background: white;
-    border-radius: 10px;
-    padding: 1.1rem;
-    text-decoration: none;
-    color: inherit;
-    border: 1px solid #e0e4ef;
-    transition: all .2s;
-  }
-  .carte:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0,0,0,.08);
-    border-color: #4f46e5;
-  }
-  .carte .titre { font-weight: 600; font-size: 1rem; display: block; margin-bottom: .3rem; }
-  .carte .desc  { font-size: .82rem; color: #666; }
-
-  /* ===== STATS ===== */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .stat {
-    background: white;
-    border-radius: 10px;
-    padding: 1rem;
-    text-align: center;
-    border: 1px solid #e0e4ef;
-  }
-  .stat .num { font-size: 1.8rem; font-weight: 800; color: #4f46e5; }
-  .stat .label { font-size: .8rem; color: #666; margin-top: .2rem; }
-
-  /* ===== FORM AJOUT COACH ===== */
-  .form-ajout {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    border: 1px solid #e0e4ef;
-    margin-bottom: 2rem;
-  }
-  .form-ajout h3 { margin-bottom: 1rem; font-size: 1.05rem; }
-  .form-row { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .form-row input {
-    flex: 1;
-    min-width: 160px;
-    padding: .7rem 1rem;
-    border: 1px solid #e0e4ef;
-    border-radius: 8px;
-    font-size: .9rem;
-  }
-  .form-row input:focus { outline: none; border-color: #4f46e5; }
-
-  .compteur { text-align: center; color: #888; font-size: .9rem; margin-bottom: 1.5rem; }
+  button:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(79, 195, 247, 0.55); }
+  button:active { transform: translateY(0); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🎓 Espace Coach — Formation Nodasa</h1>
-  <p>Centre de contrôle : coachs, pages, programme</p>
-</header>
-
-<!-- ONGLETS -->
-<div class="tabs">
-  <button class="tab actif" data-vue="coachs">👥 Liste des Coachs</button>
-  <button class="tab" data-vue="pages">📚 Toutes les Pages</button>
-  <button class="tab" data-vue="guide">📘 Guide du Coach</button>
-  <button class="tab" data-vue="stats">📊 Statistiques</button>
-</div>
-
-<main>
-
-  <!-- ===== VUE 1 : COACHS ===== -->
-  <section class="vue active" id="vue-coachs">
-    <h2 class="section-title">👥 Liste des Coachs (du premier au dernier)</h2>
-
-    <!-- Formulaire d'ajout -->
-    <div class="form-ajout">
-      <h3>➕ Ajouter un nouveau coach</h3>
-      <div class="form-row">
-        <input type="text" id="nouveau-nom" placeholder="Nom du coach">
-        <input type="text" id="nouveau-role" placeholder="Rôle (ex: Coach adjoint)">
-        <input type="text" id="nouvelle-specialite" placeholder="Spécialité (ex: Dictées)">
-        <button class="btn primary" onclick="ajouterCoach()">Ajouter</button>
-      </div>
+  <div class="coach">
+    <div class="pulse-ring" id="ring"></div>
+    <div class="head">
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="mouth" id="mouth"></div>
     </div>
+    <div class="body"></div>
+  </div>
 
-    <div id="liste-coachs"></div>
-  </section>
+  <div class="panel">
+    <div class="bubble" id="bubble">Salut, moi c'est Kéo, ton coach chill. Prêt à te motiver ?</div>
+    <button id="btn">Parle-moi, Kéo 🎧</button>
+  </div>
 
-  <!-- ===== VUE 2 : PAGES ===== -->
-  <section class="vue" id="vue-pages">
-    <h2 class="section-title">📚 Toutes les pages du site</h2>
-    <div class="search-box">
-      <input type="text" id="recherche" placeholder="🔍 Rechercher une page…">
-    </div>
-    <p class="compteur" id="compteur-pages"></p>
-    <div id="zones"></div>
-  </section>
-
-  <!-- ===== VUE 3 : GUIDE ===== -->
-  <section class="vue" id="vue-guide">
-    <h2 class="section-title">📘 Guide du Coach — Parcours recommandé</h2>
-
-    <div class="carte" style="margin-bottom:1rem;">
-      <strong>Étape 1 — Découverte (semaine 1)</strong><br>
-      <span class="desc">
-        <a href="accueil.html">Accueil</a> · 
-        <a href="info.html">Info</a> · 
-        <a href="Instruction.html">Instructions</a>
-      </span>
-    </div>
-
-    <div class="carte" style="margin-bottom:1rem;">
-      <strong>Étape 2 — Fondamentaux (semaines 2-3)</strong><br>
-      <span class="desc">
-        <a href="credo.html">Credo</a> · 
-        <a href="bible.html">Bible</a> · 
-        <a href="Cate.html">Catéchèse</a> · 
-        <a href="DICO.html">Dictionnaire</a>
-      </span>
-    </div>
-
-    <div class="carte" style="margin-bottom:1rem;">
-      <strong>Étape 3 — Programme annuel</strong><br>
-      <span class="desc">
-        <a href="2025.html">2025</a> → 
-        <a href="2026.html">2026</a> → 
-        <a href="2027.html">2027</a> → 
-        <a href="2028.html">2028</a> → 
-        <a href="2029.html">2029</a> → 
-        <a href="2030.html">2030</a>
-      </span>
-    </div>
-
-    <div class="carte" style="margin-bottom:1rem;">
-      <strong>Étape 4 — Exercices & entraînement</strong><br>
-      <span class="desc">
-        <a href="Dictée.html">Dictée</a> · 
-        <a href="Anagramme.html">Anagramme</a> · 
-        <a href="Math.html">Math</a> · 
-        <a href="Test.html">Test</a> · 
-        <a href="Devoir.html">Devoir</a>
-      </span>
-    </div>
-
-    <div class="carte" style="margin-bottom:1rem;">
-      <strong>Étape 5 — Outils avancés</strong><br>
-      <span class="desc">
-        <a href="Coach.html">Coach</a> · 
-        <a href="Vote.html">Vote</a> · 
-        <a href="Choix.html">Choix</a> · 
-        <a href="Elo.html">Éloquence</a>
-      </span>
-    </div>
-  </section>
-
-  <!-- ===== VUE 4 : STATS ===== -->
-  <section class="vue" id="vue-stats">
-    <h2 class="section-title">📊 Statistiques</h2>
-    <div class="stats" id="stats-container"></div>
-  </section>
-
-</main>
-
-<!-- ===== DONNÉES CENTRALES ===== -->
 <script>
-// ============================================
-// CONFIGURATION CENTRALE
-// ============================================
+  const phrases = [
+    "Respire un grand coup. Tu gères déjà plus que tu ne le crois.",
+    "Un petit pas aujourd'hui vaut mieux qu'un grand saut jamais fait.",
+    "Relâche les épaules. Souris. Maintenant, avance tranquillement.",
+    "La régularité bat le talent. Sois régulier, pas parfait.",
+    "Tu n'as pas besoin d'être motivé tout le temps. Juste de commencer.",
+    "Ferme les yeux deux secondes. Voilà, tu es déjà plus calme.",
+    "Chaque effort compte, même le plus petit. Surtout le plus petit.",
+    "Sois indulgent avec toi-même. La progression n'est pas une ligne droite."
+  ];
 
-const SITE = {
-  nom: "Formation Nodasa",
-  version: "2025"
-};
+  const bubble = document.getElementById('bubble');
+  const btn = document.getElementById('btn');
+  const mouth = document.getElementById('mouth');
+  const ring = document.getElementById('ring');
 
-// ===== LISTE DES COACHS (du premier au dernier) =====
-// Le premier de cette liste est TOI (le coach principal)
-let COACHS = [
-  { nom: "Coach Principal", role: "Fondateur & Responsable", specialite: "Toutes les matières" },
-  { nom: "Coach N°2",       role: "Coach adjoint",           specialite: "Dictées & Orthographe" },
-  { nom: "Coach N°3",       role: "Coach adjoint",           specialite: "Mathématiques" },
-  { nom: "Coach N°4",       role: "Coach adjoint",           specialite: "Anagrammes" },
-  { nom: "Coach N°5",       role: "Coach adjoint",           specialite: "Bible & Catéchèse" }
-];
+  let index = 0;
 
-// ===== CATÉGORIES DE PAGES =====
-const CATEGORIES = {
-  "📖 Fondamentaux": [
-    { f: "accueil.html",     t: "Accueil",       d: "Page d'entrée" },
-    { f: "credo.html",       t: "Credo",         d: "Le Credo" },
-    { f: "bible.html",       t: "Bible",         d: "Introduction à la Bible" },
-    { f: "Cate.html",        t: "Catéchèse",     d: "Enseignement catéchétique" },
-    { f: "DICO.html",        t: "Dictionnaire",  d: "Lexique" },
-    { f: "info.html",        t: "Info",          d: "Informations" },
-    { f: "Instruction.html", t: "Instructions",  d: "Consignes coach" }
-  ],
-  "🗓️ Années": [
-    { f: "2025.html", t: "2025", d: "Programme 2025" },
-    { f: "2026.html", t: "2026", d: "Programme 2026" },
-    { f: "2027.html", t: "2027", d: "Programme 2027" },
-    { f: "2028.html", t: "2028", d: "Programme 2028" },
-    { f: "2029.html", t: "2029", d: "Programme 2029" },
-    { f: "2030.html", t: "2030", d: "Programme 2030" }
-  ],
-  "✍️ Dictées": [
-    { f: "Dictée.html",            t: "Dictée",             d: "Dictée classique" },
-    { f: "Dictéevocale.html",      t: "Dictée vocale",      d: "Dictée audio" },
-    { f: "dictéeinitiatique.html", t: "Dictée initiatique", d: "Initiation" },
-    { f: "choixdedictée.html",     t: "Choix de dictée",    d: "Sélection" },
-    { f: "choix eppelation.html",  t: "Épellation",         d: "Choix d'épellation" }
-  ],
-  "🔤 Anagrammes": [
-    { f: "Anagramme.html",       t: "Anagramme",        d: "Jeu d'anagrammes" },
-    { f: "Anagrammevocale.html", t: "Anagramme vocale", d: "Anagrammes audio" }
-  ],
-  "🧮 Mathématiques": [
-    { f: "Math.html",       t: "Math",       d: "Exercices" },
-    { f: "Mathvocal.html",  t: "Math vocal", d: "Math audio" },
-    { f: "math_ecrit.html", t: "Math écrit", d: "Math écrit" }
-  ],
-  "⛪ Diocèses & Bible": [
-    { f: "diocèse0.html",  t: "Diocèse 0",      d: "Intro diocèses" },
-    { f: "diocèse1.html",  t: "Diocèse 1",      d: "Diocèse 1" },
-    { f: "Diobible1.html", t: "Dio Bible 1",    d: "Bible 1" },
-    { f: "Diobible2.html", t: "Dio Bible 2",    d: "Bible 2" },
-    { f: "Diodico.html",   t: "Dio Dico",       d: "Dico diocésain" },
-    { f: "Diodico2.html",  t: "Dio Dico 2",     d: "Dico 2" },
-    { f: "Diodictée.html", t: "Dio Dictée",     d: "Dictée diocésaine" },
-    { f: "Epebible.html",  t: "Épellation Bible", d: "Épellation" },
-    { f: "Epedico.html",   t: "Épellation Dico",  d: "Épellation Dico" }
-  ],
-  "🎓 Entraînement & Tests": [
-    { f: "entrainement.html",  t: "Entraînement",     d: "Exercices" },
-    { f: "exercices.html",     t: "Exercices",        d: "Banque" },
-    { f: "Test.html",          t: "Test",             d: "Test niveau" },
-    { f: "Testn.html",         t: "Test N",           d: "Test N" },
-    { f: "Devoir.html",        t: "Devoir",           d: "Devoirs" },
-    { f: "Dev1.html",          t: "Devoir 1",         d: "Devoir 1" },
-    { f: "Dev2.html",          t: "Devoir 2",         d: "Devoir 2" },
-    { f: "Dev3.html",          t: "Devoir 3",         d: "Devoir 3" },
-    { f: "Vote.html",          t: "Vote",             d: "Vote" },
-    { f: "Choix.html",         t: "Choix",            d: "Choix multiples" },
-    { f: "Code01.html",        t: "Code 01",          d: "Codes" },
-    { f: "Coach.html",         t: "Coach",            d: "Espace coach" },
-    { f: "Elo.html",           t: "Éloquence",        d: "Éloquence" },
-    { f: "Exprimez-vous.Html", t: "Exprimez-vous",    d: "Prise de parole" },
-    { f: "initiation.html",    t: "Initiation",       d: "Initiation" },
-    { f: "inivocale.html",     t: "Initiation vocale",d: "Audio" }
-  ],
-  "📚 Compilations": [
-    { f: "Toute1.html", t: "Toute 1", d: "Compilation 1" },
-    { f: "toute2.html", t: "Toute 2", d: "Compilation 2" },
-    { f: "toute3.html", t: "Toute 3", d: "Compilation 3" },
-    { f: "toute4.html", t: "Toute 4", d: "Compilation 4" },
-    { f: "tt.html",     t: "TT",      d: "Page TT" }
-  ],
-  "👥 Personnes & Accès": [
-    { f: "Guest.html",   t: "Invités",     d: "Espace invités" },
-    { f: "Domi.html",    t: "Domi",        d: "Page Domi" },
-    { f: "login.html",   t: "Connexion",   d: "Login" },
-    { f: "Lien000.html", t: "Liens",       d: "Liens utiles" }
-  ]
-};
-
-// ============================================
-// GESTION DES ONGLETS
-// ============================================
-document.querySelectorAll(".tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("actif"));
-    document.querySelectorAll(".vue").forEach(v => v.classList.remove("active"));
-    tab.classList.add("actif");
-    document.getElementById("vue-" + tab.dataset.vue).classList.add("active");
-  });
-});
-
-// ============================================
-// AFFICHAGE DES COACHS
-// ============================================
-function afficherCoachs() {
-  const liste = document.getElementById("liste-coachs");
-  liste.innerHTML = "";
-
-  COACHS.forEach((c, i) => {
-    const card = document.createElement("div");
-    card.className = "coach-card" + (i === 0 ? " premier" : "");
-    card.innerHTML = `
-      <div class="coach-num">${i === 0 ? "👑" : i + 1}</div>
-      <div class="coach-info">
-        <div class="nom">${c.nom}</div>
-        <div class="role">${c.role}</div>
-        <span class="specialite">${c.specialite}</span>
-      </div>
-      <div class="coach-actions">
-        ${i !== 0 ? `<button class="btn" onclick="supprimerCoach(${i})">🗑️</button>` : ""}
-      </div>
-    `;
-    liste.appendChild(card);
-  });
-}
-
-function ajouterCoach() {
-  const nom = document.getElementById("nouveau-nom").value.trim();
-  const role = document.getElementById("nouveau-role").value.trim() || "Coach adjoint";
-  const spe  = document.getElementById("nouvelle-specialite").value.trim() || "Généraliste";
-
-  if (!nom) { alert("Entre un nom pour le coach."); return; }
-
-  COACHS.push({ nom, role, specialite: spe });
-  document.getElementById("nouveau-nom").value = "";
-  document.getElementById("nouveau-role").value = "";
-  document.getElementById("nouvelle-specialite").value = "";
-  afficherCoachs();
-}
-
-function supprimerCoach(index) {
-  if (confirm("Supprimer ce coach ?")) {
-    COACHS.splice(index, 1);
-    afficherCoachs();
+  // Sélection d'une voix française si disponible
+  let chillVoice = null;
+  function pickVoice() {
+    const voices = speechSynthesis.getVoices();
+    chillVoice =
+      voices.find(v => v.lang.startsWith('fr') && /female|femme|amelie|audrey|marie/i.test(v.name)) ||
+      voices.find(v => v.lang.startsWith('fr')) ||
+      voices[0];
   }
-}
+  speechSynthesis.onvoiceschanged = pickVoice;
+  pickVoice();
 
-// ============================================
-// AFFICHAGE DES PAGES
-// ============================================
-let totalPages = 0;
-Object.values(CATEGORIES).forEach(l => totalPages += l.length);
+  function speak(text) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (chillVoice) u.voice = chillVoice;
+    u.lang = 'fr-FR';
+    u.rate = 0.92;    // plus lent = plus chill
+    u.pitch = 1.05;
+    u.volume = 1;
 
-function afficherPages(filtre = "") {
-  const zones = document.getElementById("zones");
-  const compteur = document.getElementById("compteur-pages");
-  zones.innerHTML = "";
-  let affichees = 0;
+    u.onstart = () => {
+      mouth.classList.add('talking');
+      ring.classList.add('active');
+      btn.disabled = true;
+    };
+    u.onend = () => {
+      mouth.classList.remove('talking');
+      ring.classList.remove('active');
+      btn.disabled = false;
+    };
+    u.onerror = () => {
+      mouth.classList.remove('talking');
+      ring.classList.remove('active');
+      btn.disabled = false;
+    };
 
-  Object.entries(CATEGORIES).forEach(([nomCat, pages]) => {
-    const filtrees = pages.filter(p =>
-      p.t.toLowerCase().includes(filtre.toLowerCase()) ||
-      p.d.toLowerCase().includes(filtre.toLowerCase())
-    );
-    if (filtrees.length === 0) return;
+    speechSynthesis.speak(u);
+  }
 
-    const section = document.createElement("section");
-    section.style.marginBottom = "2rem";
-    section.innerHTML = `<h3 style="margin-bottom:.8rem;font-size:1.1rem;padding-bottom:.4rem;border-bottom:1px solid #e0e4ef;">${nomCat}</h3>`;
-
-    const grille = document.createElement("div");
-    grille.className = "grille";
-
-    filtrees.forEach(p => {
-      const lien = document.createElement("a");
-      lien.className = "carte";
-      lien.href = p.f;
-      lien.innerHTML = `
-        <span class="titre">${p.t}</span>
-        <span class="desc">${p.d}</span>
-      `;
-      grille.appendChild(lien);
-      affichees++;
-    });
-
-    section.appendChild(grille);
-    zones.appendChild(section);
+  btn.addEventListener('click', () => {
+    const text = phrases[index % phrases.length];
+    index++;
+    bubble.textContent = text;
+    speak(text);
   });
-
-  compteur.textContent = `${affichees} page(s) affichée(s) sur ${totalPages}`;
-}
-
-// ============================================
-// STATISTIQUES
-// ============================================
-function afficherStats() {
-  const container = document.getElementById("stats-container");
-  container.innerHTML = `
-    <div class="stat"><div class="num">${COACHS.length}</div><div class="label">Coachs</div></div>
-    <div class="stat"><div class="num">${totalPages}</div><div class="label">Pages</div></div>
-    <div class="stat"><div class="num">${Object.keys(CATEGORIES).length}</div><div class="label">Catégories</div></div>
-    <div class="stat"><div class="num">6</div><div class="label">Années (2025-2030)</div></div>
-  `;
-}
-
-// ============================================
-// INITIALISATION
-// ============================================
-document.getElementById("recherche").addEventListener("input", e => afficherPages(e.target.value));
-
-afficherCoachs();
-afficherPages();
-afficherStats();
 </script>
-
 </body>
 </html>
