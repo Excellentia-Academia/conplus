@@ -2,401 +2,687 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Coach Chill — Kéo & Lya</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ya Coach — Maître du Jeu</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #1e2a4a, #3b2a5a, #1a3a3a);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: #e8f0ff;
-    overflow: hidden;
-    transition: background 0.6s;
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:flex-start;padding:24px 16px 40px;
+    background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+    font-family:'Segoe UI',system-ui,sans-serif;color:#e8f0ff;overflow-x:hidden;
   }
-  body.girl {
-    background: linear-gradient(135deg, #3a1e3a, #5a2a4a, #3a1a2a);
-  }
+  h1{font-size:1.6rem;margin-bottom:4px;background:linear-gradient(90deg,#4fc3f7,#ce93d8);
+     -webkit-background-clip:text;background-clip:text;color:transparent;text-align:center}
+  .sub{font-size:.9rem;opacity:.75;margin-bottom:18px;text-align:center}
 
-  /* ---------- Sélecteur ---------- */
-  .selector {
-    position: fixed;
-    top: 24px;
-    display: flex;
-    gap: 10px;
-    background: rgba(255,255,255,0.07);
-    padding: 6px;
-    border-radius: 40px;
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-  }
-  .selector button {
-    padding: 8px 22px;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    background: transparent;
-    color: #cfe3ff;
-    transition: all 0.25s;
-  }
-  .selector button.active {
-    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
-    color: #0a1628;
-    box-shadow: 0 4px 14px rgba(79,195,247,0.4);
-  }
-  body.girl .selector button.active {
-    background: linear-gradient(135deg, #f48fb1, #ce93d8);
-    box-shadow: 0 4px 14px rgba(244,143,177,0.4);
-  }
+  /* Avatar */
+  .coach{position:relative;width:150px;height:180px;animation:float 3s ease-in-out infinite;margin-bottom:10px}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:90px;height:90px;
+        background:radial-gradient(circle at 35% 30%,#ffe0b2,#ffb74d);border-radius:50%;
+        box-shadow:0 0 40px rgba(255,200,120,.35)}
+  .eye{position:absolute;top:34px;width:13px;height:13px;background:#2a1a0a;border-radius:50%;animation:blink 4s infinite}
+  .eye.l{left:22px}.eye.r{right:22px}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+  .mouth{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:28px;height:7px;
+         background:#8d4a2a;border-radius:0 0 20px 20px;transition:all .15s}
+  .mouth.talk{height:18px;width:22px;border-radius:50%;animation:talk .18s infinite alternate}
+  @keyframes talk{from{height:7px}to{height:20px}}
+  .body{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:110px;height:85px;
+        background:linear-gradient(180deg,#b39ddb,#6a1b9a);border-radius:55px 55px 18px 18px;
+        box-shadow:0 10px 30px rgba(106,27,154,.5)}
+  .hat{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;
+       border-left:48px solid transparent;border-right:48px solid transparent;border-bottom:34px solid #4a148c;
+       filter:drop-shadow(0 0 8px rgba(179,157,219,.6))}
+  .ring{position:absolute;top:50%;left:50%;width:140px;height:140px;margin:-70px 0 0 -70px;
+        border:2px solid rgba(179,157,219,.5);border-radius:50%;opacity:0;pointer-events:none}
+  .ring.on{animation:pulse 1.5s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(.7);opacity:.8}100%{transform:scale(1.6);opacity:0}}
 
-  /* ---------- Personnage ---------- */
-  .coach {
-    position: relative;
-    width: 180px;
-    height: 220px;
-    animation: float 3s ease-in-out infinite;
-    margin-top: 20px;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
+  /* Panneau */
+  .panel{width:min(720px,94vw);display:flex;flex-direction:column;gap:12px}
+  .bubble{min-height:70px;padding:14px 18px;background:rgba(255,255,255,.08);
+          border:1px solid rgba(255,255,255,.15);border-radius:16px;backdrop-filter:blur(8px);
+          font-size:1rem;line-height:1.5;text-align:center}
+  .prefix{font-size:2rem;font-weight:900;letter-spacing:.2em;text-align:center;color:#ce93d8;
+          text-shadow:0 0 14px rgba(206,147,216,.6);min-height:2.4rem}
+  .timer{font-size:2.2rem;font-weight:800;text-align:center;color:#4fc3f7;min-height:2.6rem;
+         transition:color .2s}
+  .timer.hot{color:#ff5252;animation:shake .3s infinite}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-  .head {
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 110px; height: 110px;
-    border-radius: 50%;
-    transition: background 0.4s, box-shadow 0.4s;
-  }
+  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  button{padding:12px;font-size:1rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;
+         background:linear-gradient(135deg,#4fc3f7,#81d4fa);color:#0a1628;
+         transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(79,195,247,.35)}
+  button:hover{transform:translateY(-2px)}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  button.purple{background:linear-gradient(135deg,#ce93d8,#ab47bc);color:#1a0a20;
+                box-shadow:0 4px 14px rgba(206,147,216,.35)}
 
-  /* Garçon */
-  .head.boy {
-    background: radial-gradient(circle at 35% 30%, #ffe0b2, #ffb74d);
-    box-shadow: 0 0 40px rgba(255,200,120,0.35);
-  }
-  /* Fille */
-  .head.girl {
-    background: radial-gradient(circle at 35% 30%, #ffe4ec, #f8bbd0);
-    box-shadow: 0 0 40px rgba(244,143,177,0.45);
-  }
+  /* Mode question */
+  .ask{display:flex;gap:8px;margin-top:6px}
+  .ask input{flex:1;padding:12px 14px;border-radius:12px;border:none;font-size:1rem;
+             background:rgba(255,255,255,.92);color:#111;outline:none}
+  .ask input:focus{box-shadow:0 0 0 2px #ce93d8}
+  .ask button{flex:0 0 auto;padding:12px 18px}
 
-  .eye {
-    position: absolute;
-    top: 42px;
-    width: 16px; height: 16px;
-    background: #2a1a0a;
-    border-radius: 50%;
-    animation: blink 4s infinite;
-  }
-  .eye.left { left: 26px; }
-  .eye.right { right: 26px; }
-  @keyframes blink {
-    0%, 94%, 100% { transform: scaleY(1); }
-    97% { transform: scaleY(0.1); }
-  }
-
-  .mouth {
-    position: absolute;
-    bottom: 26px; left: 50%;
-    transform: translateX(-50%);
-    width: 34px; height: 8px;
-    background: #8d4a2a;
-    border-radius: 0 0 20px 20px;
-    transition: all 0.15s;
-  }
-  .mouth.talking {
-    height: 20px;
-    width: 26px;
-    border-radius: 50%;
-    animation: talk 0.18s infinite alternate;
-  }
-  @keyframes talk {
-    from { height: 8px; }
-    to   { height: 22px; }
-  }
-
-  /* Cheveux garçon (courts) */
-  .hair-boy {
-    position: absolute;
-    top: -6px; left: 50%;
-    transform: translateX(-50%);
-    width: 116px; height: 60px;
-    background: #3e2723;
-    border-radius: 60px 60px 0 0;
-    clip-path: polygon(0 0, 100% 0, 100% 60%, 85% 70%, 70% 55%, 50% 70%, 30% 55%, 15% 70%, 0 60%);
-  }
-  /* Cheveux fille (longs + frange) */
-  .hair-girl {
-    position: absolute;
-    top: -8px; left: 50%;
-    transform: translateX(-50%);
-    width: 128px; height: 150px;
-    background: #4e342e;
-    border-radius: 64px 64px 30px 30px;
-    z-index: -1;
-  }
-  .hair-girl::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 55px;
-    background: #5d4037;
-    border-radius: 64px 64px 30px 30px;
-    clip-path: polygon(0 0, 100% 0, 100% 70%, 80% 90%, 60% 70%, 40% 90%, 20% 70%, 0 90%);
-  }
-
-  .body {
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 130px; height: 100px;
-    border-radius: 60px 60px 20px 20px;
-    transition: background 0.4s, box-shadow 0.4s;
-  }
-  .body.boy {
-    background: linear-gradient(180deg, #4fc3f7, #0288d1);
-    box-shadow: 0 10px 30px rgba(0,150,220,0.4);
-  }
-  .body.girl {
-    background: linear-gradient(180deg, #f48fb1, #ad1457);
-    box-shadow: 0 10px 30px rgba(244,143,177,0.4);
-  }
-
-  .pulse-ring {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 160px; height: 160px;
-    margin: -80px 0 0 -80px;
-    border: 2px solid rgba(79,195,247,0.5);
-    border-radius: 50%;
-    opacity: 0;
-    pointer-events: none;
-    transition: border-color 0.4s;
-  }
-  body.girl .pulse-ring { border-color: rgba(244,143,177,0.5); }
-  .pulse-ring.active { animation: pulse 1.5s ease-out infinite; }
-  @keyframes pulse {
-    0%   { transform: scale(0.7); opacity: 0.8; }
-    100% { transform: scale(1.6); opacity: 0; }
-  }
-
-  /* ---------- UI ---------- */
-  .panel {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    z-index: 10;
-  }
-  .name {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    transition: color 0.4s;
-  }
-  body.girl .name { color: #f8bbd0; }
-
-  .bubble {
-    max-width: 340px;
-    min-height: 54px;
-    padding: 14px 20px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 18px;
-    backdrop-filter: blur(8px);
-    text-align: center;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-
-  #btnSpeak {
-    padding: 12px 28px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #0a1628;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s, background 0.4s;
-  }
-  body:not(.girl) #btnSpeak {
-    background: linear-gradient(135deg, #4fc3f7, #81d4fa);
-    box-shadow: 0 6px 20px rgba(79,195,247,0.4);
-  }
-  body.girl #btnSpeak {
-    background: linear-gradient(135deg, #f48fb1, #ce93d8);
-    box-shadow: 0 6px 20px rgba(244,143,177,0.4);
-  }
-  #btnSpeak:hover { transform: translateY(-2px); }
-  #btnSpeak:active { transform: translateY(0); }
-  #btnSpeak:disabled { opacity: 0.5; cursor: not-allowed; }
+  .small{font-size:.82rem;opacity:.7;text-align:center;margin-top:8px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.12);
+         font-size:.75rem;margin:0 3px}
 </style>
 </head>
 <body>
 
-  <div class="selector">
-    <button id="selBoy" class="active">Kéo 👦</button>
-    <button id="selGirl">Lya 👧</button>
-  </div>
+  <h1>Ya Coach — Maître du Jeu</h1>
+  <div class="sub">Champ lexical · 4 secondes de réflexion · réponse vocale</div>
 
   <div class="coach">
-    <div class="pulse-ring" id="ring"></div>
-    <div class="head boy" id="head">
-      <div class="hair-boy" id="hairBoy"></div>
-      <div class="hair-girl" id="hairGirl" style="display:none"></div>
-      <div class="eye left"></div>
-      <div class="eye right"></div>
+    <div class="ring" id="ring"></div>
+    <div class="head">
+      <div class="hat"></div>
+      <div class="eye l"></div><div class="eye r"></div>
       <div class="mouth" id="mouth"></div>
     </div>
-    <div class="body boy" id="bodyEl"></div>
+    <div class="body"></div>
   </div>
 
   <div class="panel">
-    <div class="name" id="name">Kéo</div>
-    <div class="bubble" id="bubble">Salut, moi c'est Kéo, ton coach chill. Prêt à te motiver ?</div>
-    <button id="btnSpeak">Parle-moi, Kéo 🎧</button>
+    <div class="prefix" id="prefix">--</div>
+    <div class="bubble" id="bubble">Appuie sur « Démarrer » : je donne la définition, tu as 4 secondes, puis j'annonce la réponse.</div>
+    <div class="timer" id="timer">4</div>
+
+    <div class="controls">
+      <button id="btnStart">▶ Démarrer</button>
+      <button id="btnNext" class="purple">⏭ Suivant</button>
+      <button id="btnStop">⏹ Stop</button>
+    </div>
+
+    <div class="ask">
+      <input id="askInput" placeholder="Ou pose une question (ex : c'est quoi la méthode des loci ?)">
+      <button id="btnAsk" class="purple">Demander</button>
+    </div>
+
+    <div class="small">
+      <span class="badge">Voix chill</span>
+      <span class="badge">4 s de réflexion</span>
+      <span class="badge">Champs lexicaux</span>
+    </div>
   </div>
 
 <script>
-  const phrasesBoy = [
-    "Respire un grand coup. Tu gères déjà plus que tu ne le crois.",
-    "Un petit pas aujourd'hui vaut mieux qu'un grand saut jamais fait.",
-    "Relâche les épaules. Souris. Maintenant, avance tranquillement.",
-    "La régularité bat le talent. Sois régulier, pas parfait.",
-    "Tu n'as pas besoin d'être motivé tout le temps. Juste de commencer.",
-    "Ferme les yeux deux secondes. Voilà, tu es déjà plus calme.",
-    "Chaque effort compte, même le plus petit. Surtout le plus petit.",
-    "Sois indulgent avec toi-même. La progression n'est pas une ligne droite."
-  ];
+/* ============================================================
+   1) BASE DES CHAMPS LEXICAUX (extraite du document Word)
+   Chaque entrée : { mot, def }
+   La clé du champ = les 2 premières lettres (ex. "Pr")
+   ============================================================ */
+const FIELDS = {
+  "Pr": [
+    {mot:"Précision", def:"Le fait de donner des détails exacts et précis sur quelque chose."},
+    {mot:"Profond", def:"Qui se rapporte à la profondeur ou à une intensité importante."},
+    {mot:"Profession", def:"Domaine d'activité ou métier dans lequel une personne travaille."},
+    {mot:"Progrès", def:"Avancement ou amélioration dans une situation ou un domaine."},
+    {mot:"Promesse", def:"Engagement ou parole donnée de faire quelque chose."},
+    {mot:"Proverbe", def:"Expression populaire qui contient une sagesse ou un conseil."},
+    {mot:"Précieux", def:"Qui a une grande valeur ou importance."},
+    {mot:"Préparation", def:"Action de se préparer en vue d'une activité."},
+    {mot:"Précaution", def:"Mesure prise pour éviter un danger ou un problème."},
+    {mot:"Privilège", def:"Avantage ou droit spécial accordé à certaines personnes."}
+  ],
+  "Se": [
+    {mot:"Sensation", def:"Perception ou ressenti d'un stimulus par les sens."},
+    {mot:"Séduction", def:"Charme ou pouvoir d'attraction envers quelqu'un."},
+    {mot:"Sérénité", def:"État de calme et de tranquillité."},
+    {mot:"Secret", def:"Quelque chose qui est caché ou inconnu du public."},
+    {mot:"Séparation", def:"Acte de se séparer ou de se diviser."},
+    {mot:"Sérieux", def:"État de responsabilité et de gravité."},
+    {mot:"Sentiment", def:"Émotion ou affection ressentie envers quelqu'un ou quelque chose."},
+    {mot:"Service", def:"Action d'aider ou d'assister quelqu'un."},
+    {mot:"Seconde", def:"Unité de temps ou rang après la première."},
+    {mot:"Septième", def:"Position dans une série après le sixième."}
+  ],
+  "Tr": [
+    {mot:"Transformation", def:"Changement ou métamorphose d'une chose en une autre."},
+    {mot:"Tristesse", def:"État de chagrin ou de mélancolie."},
+    {mot:"Travail", def:"Emploi ou activité professionnelle."},
+    {mot:"Traitement", def:"Action de soigner ou de procéder à une procédure médicale."},
+    {mot:"Tradition", def:"Coutume transmise de génération en génération."},
+    {mot:"Tragédie", def:"Drame qui provoque de la tristesse ou du désespoir."},
+    {mot:"Trentième", def:"Position dans une série après le vingt-neuvième."},
+    {mot:"Triomphe", def:"Victoire éclatante à l'issue d'une lutte."},
+    {mot:"Transparence", def:"Clarté d'une substance ou d'une situation."},
+    {mot:"Trésor", def:"Richesse ou bien précieux à valeur sentimentale ou matérielle."}
+  ],
+  "Ac": [
+    {mot:"Accompagnement", def:"Soutien ou aide fournie à quelqu'un."},
+    {mot:"Accès", def:"Possibilité d'entrer dans un lieu ou d'obtenir quelque chose."},
+    {mot:"Action", def:"Acte de faire quelque chose."},
+    {mot:"Activité", def:"Occupation ou exercice d'une action."},
+    {mot:"Achat", def:"Acquisition d'un bien."},
+    {mot:"Accident", def:"Événement imprévu, souvent tragique."},
+    {mot:"Accord", def:"Entente ou consensus entre plusieurs personnes."},
+    {mot:"Acquisition", def:"Obtention d'une chose."},
+    {mot:"Acteur", def:"Personne qui joue un rôle au théâtre ou au cinéma."},
+    {mot:"Acclamation", def:"Applaudissements ou éloges enthousiastes."}
+  ],
+  "Ca": [
+    {mot:"Caractère", def:"Ensemble de traits distinctifs d'une personne ou d'une chose."},
+    {mot:"Carte", def:"Document représentant une région ou un territoire."},
+    {mot:"Cascade", def:"Chute d'eau sur une pente."},
+    {mot:"Cadeau", def:"Objet offert pour une occasion ou par affection."},
+    {mot:"Caisse", def:"Contenant destiné au transport d'objets."},
+    {mot:"Caméra", def:"Appareil pour prendre des photos ou filmer."},
+    {mot:"Campagne", def:"Région rurale, éloignée de la ville."},
+    {mot:"Canal", def:"Voie d'eau artificielle pour le transport."},
+    {mot:"Capacité", def:"Aptitude à faire, comprendre ou apprendre."},
+    {mot:"Capitale", def:"Ville principale d'un pays ou d'une région."}
+  ],
+  "Me": [
+    {mot:"Mémoire", def:"Capacité de se souvenir et de rappeler des informations."},
+    {mot:"Méthode", def:"Manière spécifique d'effectuer une tâche."},
+    {mot:"Mélodie", def:"Séquence agréable de notes musicales."},
+    {mot:"Menu", def:"Liste de plats ou d'options dans un programme."},
+    {mot:"Mécontentement", def:"Sentiment de ne pas être satisfait."},
+    {mot:"Mesure", def:"Quantité ou échelle pour évaluer quelque chose."},
+    {mot:"Merveille", def:"Chose très impressionnante ou étonnante."},
+    {mot:"Méditation", def:"Pratique de relaxation et de concentration."},
+    {mot:"Messagerie", def:"Système d'envoi et de réception de messages."},
+    {mot:"Mémorable", def:"Qui mérite d'être rappelé."}
+  ],
+  "Di": [
+    {mot:"Direction", def:"Position ou trajectoire d'un mouvement."},
+    {mot:"Difficulté", def:"Obstacle ou défi qui complique quelque chose."},
+    {mot:"Discipline", def:"Obéissance à des règles pour atteindre un objectif."},
+    {mot:"Dialogue", def:"Conversation entre deux personnes ou plus."},
+    {mot:"Diversité", def:"Variété dans un groupe ou une société."},
+    {mot:"Diplomatie", def:"Art de négocier et résoudre les conflits."},
+    {mot:"Dictionnaire", def:"Livre listant les mots et leurs définitions."},
+    {mot:"Disparition", def:"Fait de ne plus être présent ou visible."},
+    {mot:"Dimension", def:"Mesure de la taille ou de la portée d'un objet."},
+    {mot:"Divertissement", def:"Ce qui procure du plaisir ou de l'amusement."}
+  ],
+  "Em": [
+    {mot:"Emotion", def:"Réaction affective intense."},
+    {mot:"Empathie", def:"Capacité de comprendre et partager les sentiments d'autrui."},
+    {mot:"Emploi", def:"Travail ou occupation rémunéré."},
+    {mot:"Empreinte", def:"Marque laissée par un objet ou une personne."},
+    {mot:"Émotionnel", def:"Lié aux émotions."},
+    {mot:"Empire", def:"Vaste territoire gouverné par un seul souverain."},
+    {mot:"Emblème", def:"Symbole représentant une idée ou une organisation."},
+    {mot:"Empressement", def:"Enthousiasme à faire quelque chose rapidement."},
+    {mot:"Émergence", def:"Processus par lequel quelque chose devient visible."},
+    {mot:"Émancipation", def:"Fait de se libérer de contraintes pour plus d'autonomie."}
+  ],
+  "No": [
+    {mot:"Nourriture", def:"Substances consommées pour se nourrir."},
+    {mot:"Nouvelle", def:"Information sur des événements récents."},
+    {mot:"Nostalgie", def:"Désir ou tristesse envers le passé."},
+    {mot:"Normalité", def:"État conforme aux normes."},
+    {mot:"Notoriété", def:"Renommée d'une personne ou d'une chose."},
+    {mot:"Nocif", def:"Qui peut causer des dommages."},
+    {mot:"Novice", def:"Personne inexpérimentée."},
+    {mot:"Nourrir", def:"Donner à manger."},
+    {mot:"Nomade", def:"Qui se déplace souvent sans domicile fixe."}
+  ],
+  "La": [
+    {mot:"Langage", def:"Système de communication humaine."},
+    {mot:"Labyrinthe", def:"Dédale complexe de passages."},
+    {mot:"Lampe", def:"Appareil d'éclairage."},
+    {mot:"Laconique", def:"Qui s'exprime de manière brève."},
+    {mot:"Larme", def:"Goutte d'eau produite par les glandes lacrymales."},
+    {mot:"Lavage", def:"Action de nettoyer avec de l'eau."},
+    {mot:"Lancinant", def:"Douleur vive et persistante."},
+    {mot:"Languissant", def:"Faible ou manquant d'énergie."}
+  ],
+  "Ch": [
+    {mot:"Chaleur", def:"Sensation de température élevée."},
+    {mot:"Chambre", def:"Pièce où l'on dort."},
+    {mot:"Chanson", def:"Composition musicale avec paroles."},
+    {mot:"Chapeau", def:"Coiffure protégeant du soleil ou de la pluie."},
+    {mot:"Charité", def:"Aide apportée aux personnes dans le besoin."},
+    {mot:"Château", def:"Bâtiment fortifié, résidence noble."},
+    {mot:"Chauffage", def:"Système pour chauffer une pièce."},
+    {mot:"Chaussure", def:"Accessoire qui recouvre le pied."},
+    {mot:"Chiffre", def:"Symbole numérique."},
+    {mot:"Chocolat", def:"Produit alimentaire à base de cacao."},
+    {mot:"Choix", def:"Action de choisir."},
+    {mot:"Chute", def:"Action de tomber."}
+  ],
+  "Ci": [
+    {mot:"Ciel", def:"Espace atmosphérique au-dessus de la Terre."},
+    {mot:"Cire", def:"Substance solide pour bougies ou polir."},
+    {mot:"Cigogne", def:"Grand oiseau migrateur aux longues pattes."},
+    {mot:"Ciseaux", def:"Outil tranchant pour couper."},
+    {mot:"Ciment", def:"Poudre liant des matériaux de construction."},
+    {mot:"Cité", def:"Zone urbaine avec bâtiments et population."},
+    {mot:"Citation", def:"Phrase ou extrait tiré d'un texte."},
+    {mot:"Circulation", def:"Mouvement des véhicules et piétons."},
+    {mot:"Citadelle", def:"Forteresse sur une hauteur."},
+    {mot:"Cible", def:"Objet à atteindre au tir ou lancer."},
+    {mot:"Cinéma", def:"Art et projection des films."}
+  ],
+  "Jo": [
+    {mot:"Jovial", def:"Enjoué, gai, plein d'entrain."},
+    {mot:"Joli", def:"Agréable à regarder."},
+    {mot:"Jouet", def:"Objet de divertissement."},
+    {mot:"Journée", def:"Période de vingt-quatre heures."},
+    {mot:"Joie", def:"État de bonheur."},
+    {mot:"Journal", def:"Document rapportant des informations."},
+    {mot:"Joueur", def:"Personne qui participe à un jeu ou sport."},
+    {mot:"Jogging", def:"Course à rythme lent."},
+    {mot:"Joaillerie", def:"Art de fabriquer des bijoux."},
+    {mot:"Jonquille", def:"Plante à fleurs jaunes du printemps."}
+  ],
+  "In": [
+    {mot:"Insecte", def:"Petit animal à six pattes, souvent ailé."},
+    {mot:"Inconnu", def:"Qui n'est pas reconnu ou identifié."},
+    {mot:"Innovant", def:"Qui apporte des idées ou méthodes nouvelles."},
+    {mot:"Innovation", def:"Introduction de nouvelles idées ou produits."},
+    {mot:"Injustice", def:"Absence d'équité."},
+    {mot:"Information", def:"Faits ou connaissances sur un sujet."},
+    {mot:"Inspection", def:"Action d'examiner attentivement."},
+    {mot:"Intégrité", def:"Respect de principes moraux."},
+    {mot:"Inviter", def:"Demander à quelqu'un de venir."},
+    {mot:"Invention", def:"Création d'une chose nouvelle."},
+    {mot:"Invitation", def:"Demande de participer à quelque chose."},
+    {mot:"Inédit", def:"Jamais publié ou montré."},
+    {mot:"Interdit", def:"Non autorisé."}
+  ],
+  "Ge": [
+    {mot:"Géant", def:"Très grand ou imposant."},
+    {mot:"Géographie", def:"Étude de la Terre et de ses habitants."},
+    {mot:"Gérer", def:"S'occuper de, diriger une situation."},
+    {mot:"Géologie", def:"Étude des roches et de la structure de la Terre."},
+    {mot:"Genre", def:"Catégorie de choses similaires."},
+    {mot:"Géométrie", def:"Branche des mathématiques des formes."},
+    {mot:"Générosité", def:"Qualité de donner sans attendre en retour."},
+    {mot:"Gestion", def:"Action de diriger une organisation."},
+    {mot:"Génétique", def:"Étude des gènes et de l'hérédité."}
+  ],
+  "Fa": [
+    {mot:"Famille", def:"Groupe de personnes liées par le sang ou l'adoption."},
+    {mot:"Fabuleux", def:"Incroyablement merveilleux."},
+    {mot:"Facteur", def:"Variable qui influence un résultat."},
+    {mot:"Façon", def:"Manière dont quelque chose est fait."},
+    {mot:"Face", def:"Partie antérieure de la tête humaine."},
+    {mot:"Fabrication", def:"Production de biens à grande échelle."},
+    {mot:"Fable", def:"Court récit imaginaire avec une morale."},
+    {mot:"Faim", def:"Sensation de besoin de nourriture."},
+    {mot:"Faune", def:"Ensemble des animaux d'une région."}
+  ],
+  "Ce": [
+    {mot:"Céréale", def:"Plante cultivée pour ses graines comestibles."},
+    {mot:"Cérémonie", def:"Rites solennels d'un événement."},
+    {mot:"Cétacé", def:"Animal marin à nageoires, comme la baleine."},
+    {mot:"Célibataire", def:"Personne non mariée."},
+    {mot:"Cercle", def:"Figure géométrique fermée."},
+    {mot:"Césure", def:"Pause dans le vers poétique."},
+    {mot:"Cession", def:"Action de céder quelque chose."},
+    {mot:"Ceinture", def:"Bande autour de la taille pour maintenir un vêtement."}
+  ],
+  "Cl": [
+    {mot:"Classe", def:"Groupe partageant une fonction ou idéologie."},
+    {mot:"Clavier", def:"Ensemble de touches d'un appareil."},
+    {mot:"Climat", def:"Conditions atmosphériques d'une région."},
+    {mot:"Clinique", def:"Établissement de soins médicaux."},
+    {mot:"Clonage", def:"Technique de reproduction de clones."},
+    {mot:"Cloche", def:"Instrument produisant un son."},
+    {mot:"Clou", def:"Petit objet pointu pour fixer."},
+    {mot:"Club", def:"Association de personnes aux intérêts communs."},
+    {mot:"Clown", def:"Personnage comique de cirque."},
+    {mot:"Clôture", def:"Barrière délimitant une propriété."},
+    {mot:"Clémentine", def:"Fruit hybride entre mandarine et orange."}
+  ],
+  "Be": [
+    {mot:"Bébé", def:"Enfant en très bas âge."},
+    {mot:"Beauté", def:"Qualité d'être beau."},
+    {mot:"Bélier", def:"Signe astrologique; aussi l'animal."},
+    {mot:"Berceau", def:"Lit pour bébé."},
+    {mot:"Besoin", def:"Nécessité ou exigence."},
+    {mot:"Bête", def:"Animal; par extension, qui manque de jugement."},
+    {mot:"Beurre", def:"Produit laitier de la crème."},
+    {mot:"Bénéfice", def:"Profit ou avantage tiré d'une activité."},
+    {mot:"Béatitude", def:"Bonheur parfait et durable."}
+  ],
+  "Bl": [
+    {mot:"Blague", def:"Histoire drôle ou plaisanterie."},
+    {mot:"Blanc", def:"Couleur somme de toutes les couleurs (lumière)."},
+    {mot:"Blessure", def:"Lésion physique ou morale."},
+    {mot:"Blocage", def:"Action de bloquer."},
+    {mot:"Blog", def:"Site personnel de publications."},
+    {mot:"Blouse", def:"Vêtement de travail ample."},
+    {mot:"Bluff", def:"Attitude pour impressionner sans moyens réels."},
+    {mot:"Blancheur", def:"Qualité d'être blanc."}
+  ],
+  "Bo": [
+    {mot:"Bonbon", def:"Petite sucrerie."},
+    {mot:"Bonheur", def:"État de contentement."},
+    {mot:"Boîte", def:"Récipient rigide."},
+    {mot:"Bouteille", def:"Récipient pour liquides."},
+    {mot:"Boussole", def:"Instrument indiquant le nord magnétique."},
+    {mot:"Bougie", def:"Objet en cire servant à éclairer."},
+    {mot:"Boule", def:"Objet sphérique."},
+    {mot:"Bouquet", def:"Ensemble de fleurs arrangées."},
+    {mot:"Bouton", def:"Pièce en relief pour fermer un vêtement."},
+    {mot:"Boxe", def:"Sport de combat aux poings."},
+    {mot:"Bois", def:"Matériau provenant des arbres."}
+  ],
+  "Bi": [
+    {mot:"Bibliothèque", def:"Lieu de conservation des livres."},
+    {mot:"Bicyclette", def:"Véhicule à deux roues à pédales."},
+    {mot:"Biographie", def:"Récit de la vie d'une personne."},
+    {mot:"Bijou", def:"Objet ornemental porté sur le corps."},
+    {mot:"Bilan", def:"État des lieux ou compte rendu."},
+    {mot:"Bilingue", def:"Qui parle deux langues."},
+    {mot:"Biologie", def:"Science des êtres vivants."},
+    {mot:"Bisou", def:"Baiser amical ou affectueux."},
+    {mot:"Biscuit", def:"Petit gâteau sec."},
+    {mot:"Bistrot", def:"Petit restaurant ou café."},
+    {mot:"Bipède", def:"Animal qui marche sur deux pattes."}
+  ],
+  "Cr": [
+    {mot:"Crayon", def:"Instrument d'écriture ou de dessin."},
+    {mot:"Crème", def:"Substance onctueuse pour hydrater la peau."},
+    {mot:"Croissant", def:"Pâtisserie en forme de croissant."},
+    {mot:"Cravate", def:"Accessoire vestimentaire pour le cou."},
+    {mot:"Créativité", def:"Capacité à imaginer et inventer."},
+    {mot:"Crédit", def:"Somme d'argent empruntée."},
+    {mot:"Crise", def:"Période difficile ou de changement."},
+    {mot:"Crier", def:"Émettre un son fort."},
+    {mot:"Cristal", def:"Matériau transparent et brillant."},
+    {mot:"Crocodile", def:"Grand reptile semi-aquatique."}
+  ],
+  "Pl": [
+    {mot:"Plage", def:"Étendue de sable ou galets au bord de la mer."},
+    {mot:"Plaisir", def:"Sensation de satisfaction."},
+    {mot:"Plateau", def:"Surface plane pour transporter."},
+    {mot:"Plomb", def:"Métal lourd gris."},
+    {mot:"Plongée", def:"Action d'explorer sous l'eau."},
+    {mot:"Pluie", def:"Précipitation en gouttes d'eau."},
+    {mot:"Plume", def:"Objet pour écrire ou décorer."},
+    {mot:"Pluriel", def:"Forme grammaticale du multiple."},
+    {mot:"Pluvieux", def:"Caractérisé par la pluie."},
+    {mot:"Plante", def:"Être vivant végétal."}
+  ],
+  "Gl": [
+    {mot:"Glace", def:"Eau solidifiée; aussi dessert froid."},
+    {mot:"Globe", def:"Sphère terrestre ou céleste."},
+    {mot:"Glisser", def:"Se déplacer sur surface lisse."},
+    {mot:"Gladiateur", def:"Combattant de l'arène romaine."},
+    {mot:"Glorieux", def:"Digne d'éloges."},
+    {mot:"Glande", def:"Organe sécréteur."},
+    {mot:"Glacière", def:"Récipient isolé pour garder au froid."},
+    {mot:"Glauque", def:"De couleur verdâtre ou grisâtre."},
+    {mot:"Glissade", def:"Action de glisser."},
+    {mot:"Glucide", def:"Source d'énergie pour le corps."},
+    {mot:"Glaçon", def:"Morceau de glace."}
+  ],
+  "Fr": [
+    {mot:"Fraise", def:"Fruit rouge et sucré."},
+    {mot:"Frère", def:"Membre masculin de la fratrie."},
+    {mot:"Frontière", def:"Ligne séparant deux pays ou régions."},
+    {mot:"Frisson", def:"Sensation de froid ou de peur."},
+    {mot:"Frange", def:"Mèche de cheveux sur le front."},
+    {mot:"Frigo", def:"Appareil pour conserver au froid."},
+    {mot:"Frapper", def:"Donner des coups."},
+    {mot:"Fraternité", def:"Solidarité entre êtres humains."},
+    {mot:"Friser", def:"Faire des boucles aux cheveux."},
+    {mot:"Frissonner", def:"Trembler de froid ou de peur."},
+    {mot:"Fracas", def:"Bruit violent et soudain."},
+    {mot:"Fréquence", def:"Nombre de répétitions par unité de temps."}
+  ],
+  "Ba": [
+    {mot:"Baccalauréat", def:"Examen de fin d'études secondaires."},
+    {mot:"Banque", def:"Institution de services financiers."},
+    {mot:"Baroque", def:"Style artistique orné et extravagant."},
+    {mot:"Base", def:"Fondement sur lequel on construit."},
+    {mot:"Bataille", def:"Conflit armé entre groupes."},
+    {mot:"Bague", def:"Bijou porté au doigt."},
+    {mot:"Balle", def:"Objet sphérique de certains sports."},
+    {mot:"Banane", def:"Fruit jaune et courbé."},
+    {mot:"Barbe", def:"Pilosité faciale."},
+    {mot:"Barrière", def:"Obstacle qui empêche le passage."},
+    {mot:"Bateau", def:"Embarcation naviguant sur l'eau."},
+    {mot:"Bâton", def:"Objet allongé et fin."},
+    {mot:"Bandit", def:"Criminel ou hors-la-loi."}
+  ],
+  "De": [
+    {mot:"Définition", def:"Explication précise d'un mot ou concept."},
+    {mot:"Démocratie", def:"Système où le peuple exerce le pouvoir."},
+    {mot:"Dérision", def:"Moquerie ouverte."},
+    {mot:"Désespoir", def:"Tristesse profonde et perte d'espoir."},
+    {mot:"Détective", def:"Enquêteur résolvant des mystères."},
+    {mot:"Décision", def:"Choix pris après réflexion."},
+    {mot:"Désir", def:"Envie d'obtenir quelque chose."},
+    {mot:"Début", def:"Commencement d'une période ou action."},
+    {mot:"Découvrir", def:"Trouver ou faire connaître du nouveau."},
+    {mot:"Défaut", def:"Manque ou imperfection."},
+    {mot:"Détail", def:"Élément composant un ensemble."},
+    {mot:"Détente", def:"Moment de repos et de relaxation."},
+    {mot:"Dentiste", def:"Praticien spécialisé des dents."},
+    {mot:"Décennie", def:"Période de dix ans."},
+    {mot:"Décor", def:"Éléments qui ornent un lieu."},
+    {mot:"Déclin", def:"Affaiblissement progressif."},
+    {mot:"Défi", def:"Provocation à une épreuve."}
+  ],
+  "Ma": [
+    {mot:"Magie", def:"Utilisation de pouvoirs surnaturels."},
+    {mot:"Maison", def:"Bâtiment où l'on vit."},
+    {mot:"Mariage", def:"Union légale de partenaires de vie."},
+    {mot:"Maladie", def:"Altération de la santé."},
+    {mot:"Matin", def:"Première partie de la journée."},
+    {mot:"Masque", def:"Objet porté sur le visage."},
+    {mot:"Matière", def:"Substance composant les objets."},
+    {mot:"Marché", def:"Lieu d'achat et de vente."},
+    {mot:"Magasin", def:"Endroit où l'on vend des produits."},
+    {mot:"Main", def:"Partie du corps pour saisir."},
+    {mot:"Machine", def:"Appareil réalisant une tâche."},
+    {mot:"Macabre", def:"Qui évoque la mort, sinistre."},
+    {mot:"Manifestation", def:"Rassemblement public d'expression."},
+    {mot:"Management", def:"Gestion d'une organisation."}
+  ],
+  "Su": [
+    {mot:"Subvention", def:"Aide financière pour soutenir un projet."},
+    {mot:"Survie", def:"Fait de rester en vie dans la difficulté."},
+    {mot:"Subtil", def:"Délicat, peu évident."},
+    {mot:"Succès", def:"Réalisation d'un résultat positif."},
+    {mot:"Sujet", def:"Thème principal d'un discours ou texte."},
+    {mot:"Surnaturel", def:"Au-delà des lois naturelles."},
+    {mot:"Suspendre", def:"Arrêter temporairement."},
+    {mot:"Supprimer", def:"Effacer ou enlever définitivement."},
+    {mot:"Surprise", def:"Événement inattendu."}
+  ],
+  "Co": [
+    {mot:"Concombre", def:"Légume vert allongé."},
+    {mot:"Connaissance", def:"Savoir acquis."},
+    {mot:"Coopération", def:"Action de travailler ensemble."},
+    {mot:"Coquillage", def:"Mollusque à coquille; objet décoratif."},
+    {mot:"Coriandre", def:"Plante aromatique condimentaire."},
+    {mot:"Corps", def:"Partie physique d'un être vivant."},
+    {mot:"Cordonnier", def:"Artisan qui répare des chaussures."},
+    {mot:"Coûteux", def:"Qui coûte cher."},
+    {mot:"Couverture", def:"Pièce pour couvrir; ou page d'un livre."},
+    {mot:"Couteau", def:"Outil tranchant pour couper."},
+    {mot:"Couleur", def:"Perception visuelle (teinte, saturation, valeur)."},
+    {mot:"Conflit", def:"Opposition entre parties."}
+  ]
+};
 
-  const phrasesGirl = [
-    "Coucou, c'est Lya. Pose tes épaules, respire, et écoute-moi.",
-    "Tu n'as pas à tout faire aujourd'hui. Choisis une seule petite chose.",
-    "Sois douce avec toi. La bienveillance, c'est aussi une force.",
-    "Ton rythme est le bon. Ne compare pas ta route à celle des autres.",
-    "Un sourire, une grande inspiration, et tu repars. Tu peux le faire.",
-    "Les petits pas tranquilles mènent aussi très loin. Vraiment.",
-    "Tu mérites le repos autant que l'effort. Équilibre, ma belle.",
-    "Aujourd'hui, sois fière de ce que tu es déjà. Le reste suivra."
-  ];
+/* ============================================================
+   2) BASE DE CONNAISSANCES (questions libres)
+   ============================================================ */
+const KNOWLEDGE = [
+  {q:["methode des loci","loci","palais de memoire"], a:"La méthode des loci consiste à associer chaque mot à un lieu familier. Tu imagines un parcours dans ta maison, et tu places chaque mot à un endroit précis. Pour le retrouver, tu refais mentalement le trajet."},
+  {q:["repetition espacee","espacee"], a:"La répétition espacée : tu révises un mot à intervalles croissants (J+1, J+3, J+7, J+15). C'est la technique la plus efficace pour la mémoire à long terme."},
+  {q:["segmentation","segmenter"], a:"La segmentation : tu découpes un mot long en morceaux mémorisables. Exemple : 'anticonstitutionnellement' → anti / constitution / nellement."},
+  {q:["association d'images","image mentale","association d images"], a:"L'association d'images : tu crées une image mentale bizarre ou drôle pour chaque mot difficile. Plus l'image est étrange, mieux tu la retiens."},
+  {q:["clan nodasa","nodasa"], a:"Le Clan Nodasa est une académie d'excellence centrée sur la dictée, l'épellation et les champs lexicaux bibliques. Son but : former des champions de la parole et de l'écrit."},
+  {q:["diction","epellation","dictee"], a:"En dictée/épellation, les 3 piliers sont : 1) la mémoire visuelle des mots, 2) la maîtrise des règles (accords, accents), 3) l'entraînement régulier avec répétition espacée."},
+  {q:["champ lexical","champs lexicaux"], a:"Un champ lexical regroupe des mots autour d'une même idée ou d'un même préfixe. Ici, les mots d'un champ partagent leurs 2 premières lettres."},
+  {q:["qui es tu","ton nom","ya coach"], a:"Je suis Ya Coach, le maître du jeu. Je connais les champs lexicaux, la dictée, l'épellation, et je forme les meilleurs coachs du Clan Nodasa."},
+  {q:["former un coach","former des coachs","formation"], a:"Pour former un coach : 1) maîtriser les 10 techniques de mémorisation, 2) connaître les champs lexicaux, 3) savoir animer une séance de 4 secondes de réflexion, 4) corriger avec bienveillance, 5) répéter chaque jour."},
+  {q:["4 secondes","quatre secondes","reflexion"], a:"Je lis la définition, je laisse 4 secondes de réflexion silencieuse, puis j'annonce la réponse. C'est le rythme du maître du jeu."}
+];
 
-  const state = {
-    who: 'boy',
-    idxBoy: 0,
-    idxGirl: 0,
-    voiceBoy: null,
-    voiceGirl: null
-  };
+/* ============================================================
+   3) VOIX + AVATAR
+   ============================================================ */
+const mouth = document.getElementById('mouth');
+const ring = document.getElementById('ring');
+let voice = null;
+function pickVoice(){
+  const v = speechSynthesis.getVoices();
+  voice = v.find(x=>x.lang.startsWith('fr') && /thomas|paul|male|homme/i.test(x.name))
+       || v.find(x=>x.lang.startsWith('fr')) || v[0] || null;
+}
+speechSynthesis.onvoiceschanged = pickVoice;
+pickVoice();
 
-  const els = {
-    head: document.getElementById('head'),
-    bodyEl: document.getElementById('bodyEl'),
-    hairBoy: document.getElementById('hairBoy'),
-    hairGirl: document.getElementById('hairGirl'),
-    mouth: document.getElementById('mouth'),
-    ring: document.getElementById('ring'),
-    bubble: document.getElementById('bubble'),
-    name: document.getElementById('name'),
-    btnSpeak: document.getElementById('btnSpeak'),
-    selBoy: document.getElementById('selBoy'),
-    selGirl: document.getElementById('selGirl')
-  };
+function speak(text, cb){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  if(voice) u.voice = voice;
+  u.lang='fr-FR'; u.rate=0.92; u.pitch=0.95; u.volume=1;
+  u.onstart=()=>{mouth.classList.add('talk');ring.classList.add('on');};
+  u.onend=()=>{mouth.classList.remove('talk');ring.classList.remove('on'); if(cb)cb();};
+  u.onerror=()=>{mouth.classList.remove('talk');ring.classList.remove('on'); if(cb)cb();};
+  speechSynthesis.speak(u);
+}
 
-  /* ---------- Sélection des voix ---------- */
-  function pickVoices() {
-    const voices = speechSynthesis.getVoices();
-    const fr = voices.filter(v => v.lang.startsWith('fr'));
+/* ============================================================
+   4) MOTEUR DE JEU
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const prefixEl=$('prefix'), bubble=$('bubble'), timerEl=$('timer');
+const btnStart=$('btnStart'), btnNext=$('btnNext'), btnStop=$('btnStop');
 
-    // Voix garçon : préférence masculine, sinon première FR
-    state.voiceBoy =
-      fr.find(v => /male|homme|thomas|paul|daniel|henri/i.test(v.name)) ||
-      fr[0] || voices[0] || null;
+let keys=[], kIdx=0, mIdx=0, state='idle', timerId=null, countdown=4;
 
-    // Voix fille : préférence féminine
-    state.voiceGirl =
-      fr.find(v => /female|femme|amelie|audrey|marie|julie|lea/i.test(v.name)) ||
-      fr[fr.length - 1] || voices[0] || null;
-  }
-  speechSynthesis.onvoiceschanged = pickVoices;
-  pickVoices();
+function normalize(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+          .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
 
-  /* ---------- Changement de personnage ---------- */
-  function setCharacter(who) {
-    state.who = who;
-    const isGirl = who === 'girl';
+function resetUI(){
+  clearInterval(timerId); timerId=null; state='idle';
+  timerEl.textContent='4'; timerEl.classList.remove('hot');
+  btnStart.disabled=false; btnNext.disabled=true;
+}
 
-    document.body.classList.toggle('girl', isGirl);
-    els.head.className = 'head ' + who;
-    els.bodyEl.className = 'body ' + who;
-    els.hairBoy.style.display = isGirl ? 'none' : 'block';
-    els.hairGirl.style.display = isGirl ? 'block' : 'none';
-    els.name.textContent = isGirl ? 'Lya' : 'Kéo';
-    els.btnSpeak.textContent = isGirl ? 'Parle-moi, Lya 🎧' : 'Parle-moi, Kéo 🎧';
-    els.bubble.textContent = isGirl
-      ? "Coucou, moi c'est Lya, ta coach chill. On respire ensemble ?"
-      : "Salut, moi c'est Kéo, ton coach chill. Prêt à te motiver ?";
+function startGame(){
+  keys = Object.keys(FIELDS);
+  kIdx=0; mIdx=0; state='running';
+  btnStart.disabled=true; btnNext.disabled=false;
+  nextRound(true);
+}
 
-    els.selBoy.classList.toggle('active', !isGirl);
-    els.selGirl.classList.toggle('active', isGirl);
+function nextRound(first=false){
+  if(state!=='running') return;
+  clearInterval(timerId); timerId=null;
+  timerEl.classList.remove('hot'); timerEl.textContent='4';
 
-    // Coupe la voix en cours pour éviter le mélange
-    speechSynthesis.cancel();
-  }
+  const key = keys[kIdx];
+  const list = FIELDS[key];
+  const item = list[mIdx];
 
-  els.selBoy.addEventListener('click', () => setCharacter('boy'));
-  els.selGirl.addEventListener('click', () => setCharacter('girl'));
+  prefixEl.textContent = key;
+  bubble.textContent = 'Définition : ' + item.def;
+  btnNext.disabled = true;
 
-  /* ---------- Parole ---------- */
-  function speak(text, who) {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+  const intro = "Champ " + key + ". " + item.def;
+  speak(intro, ()=>runCountdown(key, item));
+}
 
-    if (who === 'boy') {
-      if (state.voiceBoy) u.voice = state.voiceBoy;
-      u.pitch = 0.92;
-      u.rate  = 0.92;
-    } else {
-      if (state.voiceGirl) u.voice = state.voiceGirl;
-      u.pitch = 1.28;
-      u.rate  = 0.96;
+function runCountdown(key, item){
+  countdown = 4;
+  timerEl.textContent = countdown;
+  timerEl.classList.remove('hot');
+
+  timerId = setInterval(()=>{
+    countdown--;
+    timerEl.textContent = countdown;
+    if(countdown<=1) timerEl.classList.add('hot');
+    if(countdown<=0){
+      clearInterval(timerId); timerId=null;
+      reveal(key, item);
     }
-    u.lang = 'fr-FR';
-    u.volume = 1;
+  },1000);
+}
 
-    u.onstart = () => {
-      els.mouth.classList.add('talking');
-      els.ring.classList.add('active');
-      els.btnSpeak.disabled = true;
-    };
-    u.onend = u.onerror = () => {
-      els.mouth.classList.remove('talking');
-      els.ring.classList.remove('active');
-      els.btnSpeak.disabled = false;
-    };
-
-    speechSynthesis.speak(u);
-  }
-
-  els.btnSpeak.addEventListener('click', () => {
-    let text;
-    if (state.who === 'boy') {
-      text = phrasesBoy[state.idxBoy % phrasesBoy.length];
-      state.idxBoy++;
-    } else {
-      text = phrasesGirl[state.idxGirl % phrasesGirl.length];
-      state.idxGirl++;
-    }
-    els.bubble.textContent = text;
-    speak(text, state.who);
+function reveal(key, item){
+  bubble.textContent = '✅ Réponse : ' + item.mot + ' — ' + item.def;
+  timerEl.textContent = '✔';
+  timerEl.classList.remove('hot');
+  speak("La réponse est : " + item.mot, ()=>{
+    // prépare la suite
+    mIdx++;
+    if(mIdx >= FIELDS[key].length){ mIdx=0; kIdx++; }
+    if(kIdx >= keys.length){ kIdx=0; }
+    btnNext.disabled=false;
   });
+}
+
+btnStart.addEventListener('click', ()=>{ resetUI(); startGame(); });
+btnNext.addEventListener('click', ()=>{ if(state==='running'){ clearInterval(timerId); nextRound(); } });
+btnStop.addEventListener('click', ()=>{ resetUI(); speechSynthesis.cancel(); bubble.textContent='Jeu arrêté. Appuie sur « Démarrer » pour rejouer.'; prefixEl.textContent='--'; });
+
+/* ============================================================
+   5) MODE QUESTION LIBRE (mots-clés)
+   ============================================================ */
+$('btnAsk').addEventListener('click', ask);
+$('askInput').addEventListener('keydown', e=>{ if(e.key==='Enter') ask(); });
+
+function ask(){
+  const raw = $('askInput').value.trim();
+  if(!raw) return;
+  const q = normalize(raw);
+
+  // 1) chercher dans KNOWLEDGE
+  let best=null, bestScore=0;
+  for(const k of KNOWLEDGE){
+    for(const kw of k.q){
+      const nkw = normalize(kw);
+      if(q.includes(nkw)){
+        const score = nkw.length;
+        if(score>bestScore){ bestScore=score; best=k; }
+      }
+    }
+  }
+  if(best){
+    bubble.textContent = best.a;
+    speak(best.a);
+    return;
+  }
+
+  // 2) chercher un mot dans les champs
+  for(const key of Object.keys(FIELDS)){
+    for(const it of FIELDS[key]){
+      if(q.includes(normalize(it.mot))){
+        const rep = it.mot + " : " + it.def;
+        bubble.textContent = rep;
+        speak(rep);
+        return;
+      }
+    }
+  }
+
+  // 3) chercher une définition (mots de la question dans la def)
+  for(const key of Object.keys(FIELDS)){
+    for(const it of FIELDS[key]){
+      if(normalize(it.def).includes(q)){
+        const rep = it.mot + " : " + it.def;
+        bubble.textContent = rep;
+        speak(rep);
+        return;
+      }
+    }
+  }
+
+  const fallback = "Je n'ai pas encore cette connaissance dans ma base. Ajoute-la dans la section KNOWLEDGE du fichier, et je saurai répondre.";
+  bubble.textContent = fallback;
+  speak(fallback);
+}
 </script>
 </body>
 </html>
