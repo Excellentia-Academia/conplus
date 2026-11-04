@@ -36,19 +36,39 @@
   .footnote{text-align:center;opacity:.8;font-size:.85rem;margin-top:16px}
   #msg,#msg2,#msg3{min-height:24px;text-align:center;font-weight:700;margin:8px 0}
   #progressBar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(0,0,0,.2);border-radius:12px;margin:10px 0;font-size:.85rem;font-weight:600;flex-wrap:wrap;gap:8px}
+  .code-display{font-family:monospace;font-size:2.5rem;letter-spacing:.3em;text-align:center;margin:12px 0;background:rgba(0,0,0,.3);padding:16px;border-radius:14px;font-weight:900}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🎯 Josef – Quiz multijoueur</h1>
 
+  <!-- ============ ACCUEIL ============ -->
   <div id="screenHome">
     <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
-    <div class="row"><button id="btnStart">🚀 Rejoindre la partie</button></div>
+    <div class="row">
+      <button id="btnCreate">➕ Créer une salle</button>
+      <input id="joinCode" type="text" placeholder="Code à 4 chiffres" maxlength="4" inputmode="numeric" style="max-width:180px" />
+      <button id="btnJoin">🔗 Rejoindre</button>
+    </div>
     <div id="msg"></div>
-    <div class="footnote">Un seul match à la fois · premier à 200 pts 🏆</div>
+    <div class="footnote">Crée une salle et partage le code aux autres joueurs</div>
   </div>
 
+  <!-- ============ LOBBY (attente) ============ -->
+  <div id="screenLobby" class="hidden">
+    <h2 style="text-align:center;margin-bottom:12px">Salle d'attente</h2>
+    <p style="text-align:center;opacity:.85">Partage ce code à tes amis :</p>
+    <div class="code-display" id="lobbyCode">----</div>
+    <p class="status" id="lobbyStatus">Chargement…</p>
+    <div class="scoreboard" id="lobbyPlayers"></div>
+    <div class="row" id="hostControls">
+      <button id="btnStart">🚀 Lancer la partie</button>
+    </div>
+    <div id="msg2" class="status"></div>
+  </div>
+
+  <!-- ============ JEU ============ -->
   <div id="screenGame" class="hidden">
     <div class="status">
       <span class="pill" id="qCounter">Question 1/20</span>
@@ -70,17 +90,17 @@
       <button id="btnSubmit" style="max-width:140px">Valider</button>
     </div>
     <div id="msg3" class="status"></div>
-    <div class="row" id="hostControls">
-      <button id="btnHostStart">▶️ Lancer la partie</button>
+    <div class="row" id="hostControlsGame">
       <button id="btnHostNext">⏭ Question suivante</button>
       <button id="btnHostEnd">⏹ Terminer</button>
     </div>
   </div>
 
+  <!-- ============ FIN ============ -->
   <div id="screenEnd" class="hidden">
     <div class="big" id="endTitle">Partie terminée</div>
     <div class="scoreboard" id="finalScoreboard"></div>
-    <div class="row"><button id="btnLeave">🏠 Quitter</button></div>
+    <div class="row"><button id="btnLeave">🏠 Retour à l'accueil</button></div>
   </div>
 </div>
 
@@ -93,7 +113,7 @@
    🔥 CONFIG FIREBASE — PROJET eeee-1387d
    ============================================================ */
 const FIREBASE_CONFIG = {
-  apiKey: "REMPLACE_PAR_TA_NOUVELLE_CLE",
+  apiKey: "REMPLACE_PAR_TA_CLE",
   authDomain: "eeee-1387d.firebaseapp.com",
   projectId: "eeee-1387d",
   storageBucket: "eeee-1387d.firebasestorage.app",
@@ -106,7 +126,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ============================================================
-   BANQUE DE QUESTIONS
+   BANQUE DE QUESTIONS (raccourcie ici — garde ta version complète)
    ============================================================ */
 const FIELDS = {
   "Pr":[{"mot":"Précision","def":"Le fait de donner des détails exacts et précis."},{"mot":"Profond","def":"Qui se rapporte à la profondeur."},{"mot":"Profession","def":"Domaine d'activité ou métier."},{"mot":"Progrès","def":"Avancement ou amélioration."},{"mot":"Promesse","def":"Engagement ou parole donnée."},{"mot":"Proverbe","def":"Expression populaire qui contient une sagesse."}],
@@ -190,35 +210,7 @@ const FIELDS = {
   "Eq":[{"mot":"Équilibre","def":"État de stabilité entre forces opposées."},{"mot":"Équation","def":"Égalité entre deux expressions mathématiques."},{"mot":"Équateur","def":"Ligne entourant la Terre à mi-distance des pôles."},{"mot":"Équité","def":"Justice impartiale; traitement égal."},{"mot":"Équipement","def":"Ensemble d'outils nécessaires à une activité."},{"mot":"Équipe","def":"Groupe collaborant à un objectif commun."}],
   "Ed":[{"mot":"Éducation","def":"Acquisition de connaissances et de compétences."},{"mot":"Édification","def":"Construction; formation morale/intellectuelle."},{"mot":"Édifice","def":"Bâtiment imposant."},{"mot":"Édition","def":"Publication/version d'une œuvre."},{"mot":"Éditeur","def":"Personne ou entreprise publiant des œuvres."},{"mot":"Éducatif","def":"Qui vise l'apprentissage."}],
   "Si":[{"mot":"Signal","def":"Signe transmis pour informer ou commander."},{"mot":"Signification","def":"Sens d'un mot, symbole ou événement."},{"mot":"Sismique","def":"Relatif aux séismes."},{"mot":"Situation","def":"Ensemble des circonstances; position."},{"mot":"Simulation","def":"Reproduction artificielle d'un processus."},{"mot":"Simplicité","def":"Caractère de ce qui est simple."}],
-  "Po":[{"mot":"Pouvoir","def":"Capacité ou autorité d'agir."},{"mot":"Politesse","def":"Comportement courtois et respectueux."},{"mot":"Pollution","def":"Dégradation de l'environnement."},{"mot":"Politique","def":"Gestion des affaires publiques."},{"mot":"Population","def":"Ensemble des habitants d'une zone."},{"mot":"Poésie","def":"Genre littéraire jouant sur la langue et le rythme."}],
-  "Xe":[{"mot":"Xénophobie","def":"Rejet ou peur de l'étranger."},{"mot":"Xénogreffe","def":"Transplantation entre espèces différentes."},{"mot":"Xénon","def":"Gaz noble utilisé en lampes et lasers."},{"mot":"Xérès","def":"Vin fortifié espagnol (Jerez)."},{"mot":"Xénomorphe","def":"D'aspect étranger à l'habitude."},{"mot":"Xénobiotique","def":"Substance étrangère à l'organisme."}],
-  "Xy":[{"mot":"Xylophone","def":"Instrument à lames de bois."},{"mot":"Xylographe","def":"Graveur sur bois."},{"mot":"Xylographie","def":"Technique de gravure sur bois."},{"mot":"Xylologie","def":"Étude du bois."},{"mot":"Xylophage","def":"Qui se nourrit de bois."},{"mot":"Xylème","def":"Tissu végétal conducteur de sève brute."}],
-  "Yo":[{"mot":"Yoga","def":"Pratique physique et spirituelle venue d'Inde."},{"mot":"Yod","def":"Plus petite lettre de l'alphabet hébreu."},{"mot":"Yodel","def":"Technique de chant à ruptures rapides."},{"mot":"Yogi","def":"Pratiquant du yoga."},{"mot":"Yole","def":"Petit bateau à voile."},{"mot":"Yougoslave","def":"Relatif à l'ex-Yougoslavie."}],
-  "Ye":[{"mot":"Yen","def":"Monnaie du Japon."},{"mot":"Yeux","def":"Organes de la vision."},{"mot":"Yeshiva","def":"École/séminaire d'études juives."},{"mot":"Yeoman","def":"Sous-officier dans le monde anglophone."},{"mot":"Yersiniose","def":"Infection due à des bactéries Yersinia."},{"mot":"Yéti","def":"Créature légendaire de l'Himalaya."}],
-  "Ox":[{"mot":"Oxygène","def":"Élément chimique O, essentiel à la respiration."},{"mot":"Oxydation","def":"Réaction avec l'oxygène."},{"mot":"Oxyde","def":"Composé de l'oxygène avec un autre élément."},{"mot":"Oxymore","def":"Figure associant deux termes opposés."},{"mot":"Oxymètre","def":"Appareil mesurant la saturation en oxygène."},{"mot":"Oxford","def":"Ville anglaise et université prestigieuse."}],
-  "Fo":[{"mot":"Folklore","def":"Traditions et contes transmis oralement."},{"mot":"Forêt","def":"Grande étendue couverte d'arbres."},{"mot":"Formation","def":"Acquisition de connaissances."},{"mot":"Forgeron","def":"Artisan qui façonne le métal."},{"mot":"Fossile","def":"Reste d'un organisme conservé dans une roche."},{"mot":"Fourmi","def":"Insecte social vivant en colonie."}],
-  "Fu":[{"mot":"Fusion","def":"Combinaison de plusieurs éléments en un seul."},{"mot":"Fusée","def":"Véhicule propulsé vers l'espace."},{"mot":"Furieux","def":"Qui est dans une grande colère."},{"mot":"Fugitif","def":"Personne en fuite."},{"mot":"Fusain","def":"Outil de dessin fait de charbon de bois."},{"mot":"Fumée","def":"Particules en suspension issues d'une combustion."}],
-  "Mu":[{"mot":"Musique","def":"Art d'organiser les sons."},{"mot":"Muse","def":"Source d'inspiration artistique."},{"mot":"Musée","def":"Lieu d'exposition d'objets culturels."},{"mot":"Mutation","def":"Modification du patrimoine génétique."},{"mot":"Muraille","def":"Fortification épaisse en maçonnerie."},{"mot":"Municipalité","def":"Administration locale d'une commune."}],
-  "Dy":[{"mot":"Dynamique","def":"En mouvement, en évolution."},{"mot":"Dynamite","def":"Explosif puissant."},{"mot":"Dyslexie","def":"Trouble d'apprentissage de la lecture."},{"mot":"Dynamo","def":"Générateur convertissant l'énergie mécanique en électrique."},{"mot":"Dystopie","def":"Société imaginaire négative et oppressante."},{"mot":"Dynastie","def":"Suite de souverains d'une même famille."}],
-  "Us":[{"mot":"Usage","def":"Action d'utiliser; manière d'employer."},{"mot":"Usine","def":"Établissement de production industrielle."},{"mot":"Usurpation","def":"Saisie illégale d'un pouvoir."},{"mot":"Ustensile","def":"Outil domestique, surtout de cuisine."},{"mot":"Usager","def":"Personne utilisant un service/équipement."},{"mot":"Usure","def":"Altération due à l'usage répété."}],
-  "Gu":[{"mot":"Guerre","def":"Conflit armé entre États ou groupes."},{"mot":"Guépard","def":"Félin très rapide d'Afrique."},{"mot":"Guichet","def":"Comptoir pour transactions."},{"mot":"Guilde","def":"Corporation d'artisans ou marchands."},{"mot":"Guitare","def":"Instrument à cordes pincées."},{"mot":"Guide","def":"Personne/document qui oriente."}],
-  "My":[{"mot":"Mystique","def":"Relatif à une expérience spirituelle intense."},{"mot":"Myopie","def":"Difficulté à voir de loin."},{"mot":"Mythe","def":"Récit traditionnel explicatif/symbolique."},{"mot":"Mycologie","def":"Étude scientifique des champignons."},{"mot":"Mythologie","def":"Ensemble des mythes d'une culture."},{"mot":"Mystère","def":"Ce qui reste caché/difficile à comprendre."}],
-  "Lo":[{"mot":"Logique","def":"Science du raisonnement correct."},{"mot":"Longévité","def":"Durée de vie prolongée."},{"mot":"Loi","def":"Règle édictée par une autorité."},{"mot":"Locomotion","def":"Faculté de se déplacer."},{"mot":"Lointain","def":"Éloigné dans l'espace/le temps."},{"mot":"Logarithme","def":"Exposant auquel élever une base pour obtenir un nombre."}],
-  "Oc":[{"mot":"Océan","def":"Vaste étendue d'eau salée."},{"mot":"Occasion","def":"Circonstance favorable."},{"mot":"Occupation","def":"Activité exercée; prise de possession."},{"mot":"Occulte","def":"Caché, mystérieux."},{"mot":"Occident","def":"Ensemble des pays occidentaux."},{"mot":"Occiput","def":"Partie arrière du crâne."}],
-  "Op":[{"mot":"Optimisme","def":"Attitude positive."},{"mot":"Opération","def":"Action organisée pour un but."},{"mot":"Opposition","def":"Action/état de s'opposer."},{"mot":"Opportunité","def":"Moment favorable."},{"mot":"Opulence","def":"Grande richesse."},{"mot":"Opinion","def":"Avis/jugement personnel."}],
-  "Od":[{"mot":"Odeur","def":"Sensation perçue par l'odorat."},{"mot":"Ode","def":"Poème lyrique célébrant un sujet."},{"mot":"Odyssée","def":"Voyage long et aventureux."},{"mot":"Odieux","def":"Qui inspire le dégoût."},{"mot":"Odorat","def":"Sens des odeurs."},{"mot":"Odomètre","def":"Compteur de distance parcourue."}],
-  "Ep":[{"mot":"Épisode","def":"Partie d'une série/histoire."},{"mot":"Épicéa","def":"Conifère des régions tempérées."},{"mot":"Épilepsie","def":"Affection neurologique à crises."},{"mot":"Épitaphe","def":"Inscription funéraire."},{"mot":"Épilogue","def":"Conclusion d'une œuvre."},{"mot":"Épiderme","def":"Couche externe de la peau."}],
-  "Sy":[{"mot":"Symbiose","def":"Relation bénéfique entre deux organismes."},{"mot":"Système","def":"Ensemble d'éléments organisés."},{"mot":"Synergie","def":"Action combinée produisant plus que la somme."},{"mot":"Syndrome","def":"Ensemble de symptômes."},{"mot":"Symbole","def":"Signe représentant une idée."},{"mot":"Synonyme","def":"Mot de sens proche."}],
-  "Py":[{"mot":"Pygmée","def":"Membre de peuples d'Afrique centrale de petite taille."},{"mot":"Pyjama","def":"Vêtement de nuit."},{"mot":"Pyramide","def":"Construction/forme géométrique à sommet pointu."},{"mot":"Python","def":"Grand serpent constricteur non venimeux."},{"mot":"Pyrite","def":"Minéral appelé « or des fous »."},{"mot":"Pyromane","def":"Personne qui met volontairement le feu."}],
-  "Cu":[{"mot":"Cube","def":"Solide à six faces carrées égales."},{"mot":"Cuillère","def":"Ustensile pour manger/mesurer."},{"mot":"Culture","def":"Pratiques et valeurs d'une société."},{"mot":"Cuisson","def":"Action de cuire des aliments."},{"mot":"Cuir","def":"Peau d'animal tannée."},{"mot":"Cuisine","def":"Pièce où l'on prépare les repas."}],
-  "Cy":[{"mot":"Cycle","def":"Suite d'événements se répétant régulièrement."},{"mot":"Cyclone","def":"Perturbation avec vents violents."},{"mot":"Cylindre","def":"Solide à base circulaire et surface courbe."},{"mot":"Cynisme","def":"Attitude méprisante envers les valeurs morales."},{"mot":"Cygne","def":"Grand oiseau aquatique au long cou."},{"mot":"Cyprès","def":"Arbre à feuillage persistant."}],
-  "Bu":[{"mot":"Budget","def":"Prévision des recettes et dépenses."},{"mot":"Buffle","def":"Grand bovidé domestique ou sauvage."},{"mot":"Bureau","def":"Pièce ou meuble pour travailler."},{"mot":"Bus","def":"Transport en commun routier."},{"mot":"But","def":"Objectif à atteindre."},{"mot":"Buanderie","def":"Pièce destinée à la lessive."}],
-  "Do":[{"mot":"Domaine","def":"Ensemble de connaissances; champ d'activité."},{"mot":"Docteur","def":"Titulaire du plus haut grade universitaire."},{"mot":"Document","def":"Support d'information écrit/visuel."},{"mot":"Doctrine","def":"Ensemble de principes d'un système de pensée."},{"mot":"Domicile","def":"Lieu de résidence."},{"mot":"Dossier","def":"Ensemble de documents relatifs à un sujet."}],
-  "Fl":[{"mot":"Fleur","def":"Organe reproducteur des plantes à fleurs."},{"mot":"Flamme","def":"Partie lumineuse d'un feu."},{"mot":"Flegme","def":"Calme, impassibilité."},{"mot":"Flocon","def":"Cristal de neige."},{"mot":"Fluide","def":"Qui s'écoule facilement; liquide/gaz."},{"mot":"Flore","def":"Ensemble des végétaux d'une région."}],
-  "J":[{"mot":"Joker","def":"Carte spéciale remplaçant une autre carte."},{"mot":"Jubilation","def":"Grande joie, allégresse."},{"mot":"Juteux","def":"Plein de jus; très rentable."},{"mot":"Jingle","def":"Courte mélodie publicitaire."},{"mot":"Jovial","def":"Gai, enjoué."},{"mot":"Jungle","def":"Forêt dense tropicale."}],
-  "Ic":[{"mot":"Icône","def":"Image symbolique d'une personne/chose."},{"mot":"Iceberg","def":"Masse de glace flottante."},{"mot":"Iconographie","def":"Étude/ensemble des représentations visuelles."},{"mot":"Ichtyologie","def":"Branche de la zoologie sur les poissons."}],
-  "Ig":[{"mot":"Ignorer","def":"Ne pas tenir compte de."},{"mot":"Igloo","def":"Abri de neige en dôme."},{"mot":"Ignoble","def":"Très méprisable, indigne."},{"mot":"Igname","def":"Tubercule comestible tropical."},{"mot":"Ignifuge","def":"Qui résiste au feu."},{"mot":"Ignition","def":"Mise à feu d'un moteur/carburant."}],
-  "Ne":[{"mot":"Nectar","def":"Liquide sucré produit par les fleurs."},{"mot":"Nébuleuse","def":"Nuage interstellaire de gaz et poussières."},{"mot":"Néologisme","def":"Mot ou expression nouvellement créé."},{"mot":"Nénuphar","def":"Plante aquatique à larges feuilles flottantes."},{"mot":"Nécrologie","def":"Rubrique listant les personnes décédées."},{"mot":"Néophyte","def":"Personne débutante dans un domaine."}]
+  "Po":[{"mot":"Pouvoir","def":"Capacité ou autorité d'agir."},{"mot":"Politesse","def":"Comportement courtois et respectueux."},{"mot":"Pollution","def":"Dégradation de l'environnement."},{"mot":"Politique","def":"Gestion des affaires publiques."},{"mot":"Population","def":"Ensemble des habitants d'une zone."},{"mot":"Poésie","def":"Genre littéraire jouant sur la langue et le rythme."}]
 };
 
 /* ============================================================
@@ -234,12 +226,12 @@ const QUESTION_DURATION_MS = 30000;
    ============================================================ */
 let uid = null;
 let pseudo = '';
+let roomCode = null;
 let isHost = false;
-let unsubscribeGame = null;
-let currentGame = null;
+let unsubscribeRoom = null;
+let currentRoom = null;
 let timerInterval = null;
 let lastAnsweredQ = -1;
-let currentQuestionStart = 0;
 
 const $ = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
@@ -266,6 +258,10 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+function genCode(){
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
+
 /* ============================================================
    INIT
    ============================================================ */
@@ -273,8 +269,7 @@ async function initAuth(){
   try {
     await auth.signInAnonymously();
     uid = auth.currentUser.uid;
-    console.log('✅ Auth anonyme OK :', uid);
-    listenGame();
+    console.log('✅ Auth OK :', uid);
   } catch(e) {
     console.error(e);
     setMsg('msg', '❌ Auth échouée : ' + e.message, '#ff5252');
@@ -282,66 +277,141 @@ async function initAuth(){
 }
 
 /* ============================================================
-   ÉCOUTE DU DOCUMENT game/current
+   CRÉER UNE SALLE
    ============================================================ */
-function listenGame(){
-  unsubscribeGame = db.collection('game').doc('current').onSnapshot(
+async function createRoom(){
+  let code = null;
+  for (let i = 0; i < 10; i++) {
+    const testCode = genCode();
+    const snap = await db.collection('rooms').doc(testCode).get();
+    if (!snap.exists) { code = testCode; break; }
+  }
+  if (!code) return setMsg('msg', '❌ Impossible de créer la salle, réessaie.', '#ff5252');
+
+  await db.collection('rooms').doc(code).set({
+    state: 'lobby',
+    hostName: pseudo,
+    players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1 } },
+    questions: [],
+    currentQ: 0,
+    qStartAt: 0,
+    winnerName: null,
+    createdAt: Date.now()
+  });
+  isHost = true;
+  roomCode = code;
+  enterLobby();
+}
+
+/* ============================================================
+   REJOINDRE UNE SALLE
+   ============================================================ */
+async function joinRoom(code){
+  const ref = db.collection('rooms').doc(code);
+  const snap = await ref.get();
+  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', '#ff5252');
+  const data = snap.data();
+  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', '#ff5252');
+
+  await ref.update({
+    [`players.${pseudo}`]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1 }
+  });
+  isHost = false;
+  roomCode = code;
+  enterLobby();
+}
+
+/* ============================================================
+   LOBBY
+   ============================================================ */
+function enterLobby(){
+  hide('screenHome'); show('screenLobby'); hide('screenGame'); hide('screenEnd');
+  $('lobbyCode').textContent = roomCode;
+
+  unsubscribeRoom = db.collection('rooms').doc(roomCode).onSnapshot(
     (doc) => {
-      if (!doc.exists) {
-        currentGame = null;
-        return;
-      }
-      currentGame = doc.data();
-      renderAll(currentGame);
+      if (!doc.exists) return;
+      currentRoom = doc.data();
+      renderRoom(currentRoom);
     },
     (err) => {
       console.error('❌ Erreur Firestore :', err);
-      setMsg('msg', '❌ Erreur lecture Firestore : ' + err.message, '#ff5252');
+      setMsg('msg2', '❌ Erreur : ' + err.message, '#ff5252');
     }
   );
 }
 
-/* ============================================================
-   AFFICHAGE
-   ============================================================ */
-function renderAll(game){
-  if (!game || !game.state || game.state === 'idle') {
-    show('screenHome'); hide('screenGame'); hide('screenEnd');
-    return;
-  }
-  if (game.state === 'ended') {
-    hide('screenHome'); hide('screenGame'); show('screenEnd');
-    renderEnd(game);
-    return;
-  }
-  if (game.state === 'lobby' || game.state === 'playing') {
-    hide('screenHome'); show('screenGame'); hide('screenEnd');
+function renderRoom(game){
+  if (game.state === 'lobby') {
+    hide('screenGame'); hide('screenEnd'); show('screenLobby');
+    renderLobby(game);
+  } else if (game.state === 'playing') {
+    hide('screenLobby'); hide('screenEnd'); show('screenGame');
     renderGame(game);
+  } else if (game.state === 'ended') {
+    hide('screenLobby'); hide('screenGame'); show('screenEnd');
+    renderEnd(game);
   }
 }
 
+function renderLobby(game){
+  const players = game.players || {};
+  const names = Object.keys(players);
+  $('lobbyPlayers').innerHTML = names.map(name => `
+    <div class="player-card ${name===pseudo?'me':''}">
+      <span class="player-name">${escapeHtml(name)}${name===game.hostName?' 👑':''}</span>
+      <span class="pill">${name===pseudo?'toi':'prêt'}</span>
+    </div>
+  `).join('');
+
+  $('hostControls').style.display = game.hostName === pseudo ? 'flex' : 'none';
+  $('btnStart').disabled = names.length < 2;
+  $('lobbyStatus').textContent = names.length < 2
+    ? "⏳ Attends au moins 1 autre joueur…"
+    : `✅ ${names.length} joueur(s) prêt(s) — l'hôte peut lancer.`;
+}
+
+$('btnStart').addEventListener('click', async () => {
+  if (!currentRoom || currentRoom.hostName !== pseudo) return;
+  const names = Object.keys(currentRoom.players || {});
+  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', '#ffb300');
+  const questions = pickRandomQuestions(TOTAL_QUESTIONS);
+  const updates = {
+    state: 'playing',
+    currentQ: 0,
+    questions,
+    qStartAt: Date.now(),
+    winnerName: null
+  };
+  names.forEach(n => {
+    updates[`players.${n}.score`] = 0;
+    updates[`players.${n}.lastAnswerQ`] = -1;
+    updates[`players.${n}.lastWrongQ`] = -1;
+  });
+  try { await db.collection('rooms').doc(roomCode).update(updates); }
+  catch(e){ console.error(e); }
+});
+
+/* ============================================================
+   JEU
+   ============================================================ */
 function renderGame(game){
-  // Scoreboard
   const players = game.players || {};
   const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-  const scoreHtml = entries.map(([name,p]) => `
+  $('scoreboard').innerHTML = entries.map(([name,p]) => `
     <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''}">
       <span class="player-name">${escapeHtml(name)}</span>
       <span class="player-score">${p.score||0}</span>
     </div>
   `).join('');
-  $('scoreboard').innerHTML = scoreHtml;
 
-  // Barre de progression
   let answered = 0;
   for (const name of Object.keys(players)) {
-    const p = players[name];
-    if (p.lastAnswerQ === game.currentQ) answered++;
+    if (players[name].lastAnswerQ === game.currentQ) answered++;
   }
   $('answeredCount').textContent = answered;
   $('totalPlayers').textContent = Object.keys(players).length;
 
-  // Question
   const questions = game.questions || [];
   const qIdx = game.currentQ || 0;
   $('qCounter').textContent = `Question ${qIdx+1}/${questions.length}`;
@@ -349,28 +419,143 @@ function renderGame(game){
   if (q) {
     $('prefixBig').textContent = q.prefix.toUpperCase();
     $('definitionText').textContent = q.def;
-  } else {
-    $('prefixBig').textContent = '–';
-    $('definitionText').textContent = game.state === 'lobby' ? 'Lance la partie…' : 'En attente…';
   }
 
-  // Hôte
   $('hostTag').textContent = game.hostName ? `Hôte : ${game.hostName}` : '';
-  const isMeHost = game.hostName === pseudo;
-  $('hostControls').style.display = isMeHost ? 'flex' : 'none';
+  $('hostControlsGame').style.display = game.hostName === pseudo ? 'flex' : 'none';
 
-  // Inputs
   if (qIdx !== lastAnsweredQ) {
     $('answer').disabled = false;
     $('btnSubmit').disabled = false;
   }
 
-  if (game.state === 'lobby') {
-    $('answer').disabled = true;
-    $('btnSubmit').disabled = true;
+  startTimerLoop();
+}
+
+function startTimerLoop(){
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!currentRoom || currentRoom.state !== 'playing') return;
+    const elapsed = Date.now() - (currentRoom.qStartAt || 0);
+    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
+    const pct = (remain / QUESTION_DURATION_MS) * 100;
+    $('timerFill').style.width = pct + '%';
+    $('timerText').textContent = Math.ceil(remain/1000) + 's';
+    $('timerBar').classList.toggle('timer-danger', remain < 10000);
+    if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
+  }, 250);
+}
+
+async function handleTimeout(){
+  if (!currentRoom || currentRoom.state !== 'playing') return;
+  if (currentRoom.qStartAt_processed === currentRoom.qStartAt) return;
+  const qIdx = currentRoom.currentQ;
+  const questions = currentRoom.questions || [];
+  const updates = { qStartAt_processed: currentRoom.qStartAt };
+  if (qIdx + 1 >= questions.length) {
+    updates.state = 'ended';
+    updates.winnerName = null;
+    updates.endReason = 'out_of_questions';
+  } else {
+    updates.currentQ = qIdx + 1;
+    updates.qStartAt = Date.now();
+  }
+  try { await db.collection('rooms').doc(roomCode).update(updates); }
+  catch(e){ console.error(e); }
+}
+
+/* ============================================================
+   HÔTE : contrôles en jeu
+   ============================================================ */
+$('btnHostNext').addEventListener('click', async () => {
+  if (!currentRoom || currentRoom.hostName !== pseudo) return;
+  const qIdx = currentRoom.currentQ;
+  const questions = currentRoom.questions || [];
+  const updates = {};
+  if (qIdx + 1 >= questions.length) {
+    updates.state = 'ended';
+    updates.winnerName = null;
+    updates.endReason = 'out_of_questions';
+  } else {
+    updates.currentQ = qIdx + 1;
+    updates.qStartAt = Date.now();
+  }
+  try { await db.collection('rooms').doc(roomCode).update(updates); }
+  catch(e){ console.error(e); }
+});
+
+$('btnHostEnd').addEventListener('click', async () => {
+  if (!currentRoom || currentRoom.hostName !== pseudo) return;
+  try {
+    await db.collection('rooms').doc(roomCode).update({
+      state: 'ended', winnerName: null, endReason: 'manual'
+    });
+  } catch(e){ console.error(e); }
+});
+
+/* ============================================================
+   SOUMETTRE
+   ============================================================ */
+$('btnSubmit').addEventListener('click', submitAnswer);
+$('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
+
+async function submitAnswer(){
+  if (!currentRoom || currentRoom.state !== 'playing') return;
+  const qIdx = currentRoom.currentQ;
+  if (lastAnsweredQ === qIdx) return;
+  const userVal = normalize($('answer').value);
+  if (!userVal) return;
+  const q = currentRoom.questions[qIdx];
+  if (!q) return;
+
+  const correct = userVal === normalize(q.mot);
+  lastAnsweredQ = qIdx;
+  $('answer').disabled = true;
+  $('btnSubmit').disabled = true;
+
+  const ref = db.collection('rooms').doc(roomCode);
+
+  if (correct) {
+    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, '#00e676');
+    const myScore = (currentRoom.players[pseudo]?.score || 0) + POINTS_PER_CORRECT;
+    const updates = {
+      [`players.${pseudo}.score`]: myScore,
+      [`players.${pseudo}.lastAnswerQ`]: qIdx
+    };
+    if (myScore >= WIN_SCORE) {
+      updates.state = 'ended';
+      updates.winnerName = pseudo;
+    } else if (qIdx + 1 >= currentRoom.questions.length) {
+      updates.state = 'ended';
+      updates.winnerName = null;
+      updates.endReason = 'out_of_questions';
+    } else {
+      updates.currentQ = qIdx + 1;
+      updates.qStartAt = Date.now();
+    }
+    try { await ref.update(updates); }
+    catch(e){ console.error(e); }
+  } else {
+    setMsg('msg3', `❌ Mauvaise réponse.`, '#ff5252');
+    try {
+      await ref.update({
+        [`players.${pseudo}.lastWrongQ`]: qIdx,
+        [`players.${pseudo}.lastAnswerQ`]: qIdx
+      });
+      const snap = await ref.get();
+      const data = snap.data();
+      const players = data.players || {};
+      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
+      if (allWrong) {
+        await ref.update({ state: 'ended', winnerName: null, endReason: 'all_wrong' });
+      }
+    } catch(e){ console.error(e); }
   }
 }
 
+/* ============================================================
+   FIN
+   ============================================================ */
 function renderEnd(game){
   const players = game.players || {};
   const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
@@ -381,192 +566,35 @@ function renderEnd(game){
     </div>
   `).join('');
   if (game.winnerName) {
-    const w = players[game.winnerName];
-    $('endTitle').textContent = `🏆 ${game.winnerName} gagne avec ${w.score} pts !`;
+    $('endTitle').textContent = `🏆 ${game.winnerName} gagne avec ${game.players[game.winnerName].score} pts !`;
   } else {
-    $('endTitle').textContent = game.endReason === 'all_wrong' ? "❌ Tout le monde a raté — aucun gagnant" : "⏱ Plus de questions — aucun gagnant";
+    $('endTitle').textContent = game.endReason === 'all_wrong' ? "❌ Tout le monde a raté — aucun gagnant" : "⏱ Fin de partie — aucun gagnant";
   }
-}
-
-/* ============================================================
-   CHRONO
-   ============================================================ */
-function startTimerLoop(){
   if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    if (!currentGame || currentGame.state !== 'playing') return;
-    const elapsed = Date.now() - (currentGame.qStartAt || 0);
-    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
-    const pct = (remain / QUESTION_DURATION_MS) * 100;
-    $('timerFill').style.width = pct + '%';
-    $('timerText').textContent = Math.ceil(remain/1000) + 's';
-    $('timerBar').classList.toggle('timer-danger', remain < 10000);
-    if (remain <= 0 && currentGame.hostName === pseudo) handleTimeout();
-  }, 250);
-}
-
-async function handleTimeout(){
-  if (!currentGame || currentGame.state !== 'playing') return;
-  if (currentGame.qStartAt_processed === currentGame.qStartAt) return;
-  const qIdx = currentGame.currentQ;
-  const questions = currentGame.questions || [];
-  const updates = { qStartAt_processed: currentGame.qStartAt };
-  if (qIdx + 1 >= questions.length) {
-    updates.state = 'ended';
-    updates.winnerName = null;
-    updates.endReason = 'out_of_questions';
-  } else {
-    updates.currentQ = qIdx + 1;
-    updates.qStartAt = Date.now();
-  }
-  try { await db.collection('game').doc('current').update(updates); }
-  catch(e){ console.error(e); }
 }
 
 /* ============================================================
-   ACCUEIL
+   NAVIGATION ACCUEIL
    ============================================================ */
-$('btnStart').addEventListener('click', async () => {
+$('btnCreate').addEventListener('click', async () => {
   const p = $('pseudo').value.trim();
-  if (!p) return setMsg('msg','Entre un pseudo.', '#ffb300');
+  if (!p) return setMsg('msg', 'Entre un pseudo.', '#ffb300');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', '#ffb300');
   pseudo = p;
-  if (!uid) return setMsg('msg','Connexion Firebase en cours…', '#ffb300');
-  try {
-    const doc = await db.collection('game').doc('current').get();
-    if (!doc.exists || !doc.data().state || doc.data().state === 'idle' || doc.data().state === 'ended') {
-      // Créer nouveau match
-      await db.collection('game').doc('current').set({
-        state: 'lobby',
-        hostName: pseudo,
-        players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1 } },
-        questions: [],
-        currentQ: 0,
-        qStartAt: 0,
-        createdAt: Date.now()
-      });
-      isHost = true;
-    } else {
-      // Rejoindre
-      const data = doc.data();
-      const players = data.players || {};
-      if (!players[pseudo]) {
-        await db.collection('game').doc('current').update({
-          [`players.${pseudo}`]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1 }
-        });
-      }
-    }
-    startTimerLoop();
-  } catch(e) {
-    console.error(e);
-    setMsg('msg', '❌ Erreur : ' + e.message, '#ff5252');
-  }
+  try { await createRoom(); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, '#ff5252'); }
 });
 
-/* ============================================================
-   HÔTE : LANCER / SUIVANT / TERMINER
-   ============================================================ */
-$('btnHostStart').addEventListener('click', async () => {
-  if (!currentGame || currentGame.hostName !== pseudo) return;
-  const questions = pickRandomQuestions(TOTAL_QUESTIONS);
-  const updates = {
-    state: 'playing',
-    currentQ: 0,
-    questions,
-    qStartAt: Date.now(),
-    winnerName: null,
-    endReason: null
-  };
-  try { await db.collection('game').doc('current').update(updates); }
-  catch(e){ console.error(e); }
+$('btnJoin').addEventListener('click', async () => {
+  const p = $('pseudo').value.trim();
+  const code = $('joinCode').value.trim();
+  if (!p) return setMsg('msg', 'Entre un pseudo.', '#ffb300');
+  if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', '#ffb300');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', '#ffb300');
+  pseudo = p;
+  try { await joinRoom(code); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, '#ff5252'); }
 });
-
-$('btnHostNext').addEventListener('click', async () => {
-  if (!currentGame || currentGame.hostName !== pseudo) return;
-  const qIdx = currentGame.currentQ;
-  const questions = currentGame.questions || [];
-  const updates = {};
-  if (qIdx + 1 >= questions.length) {
-    updates.state = 'ended';
-    updates.winnerName = null;
-    updates.endReason = 'out_of_questions';
-  } else {
-    updates.currentQ = qIdx + 1;
-    updates.qStartAt = Date.now();
-  }
-  try { await db.collection('game').doc('current').update(updates); }
-  catch(e){ console.error(e); }
-});
-
-$('btnHostEnd').addEventListener('click', async () => {
-  if (!currentGame || currentGame.hostName !== pseudo) return;
-  try {
-    await db.collection('game').doc('current').update({
-      state: 'ended', winnerName: null, endReason: 'manual'
-    });
-  } catch(e){ console.error(e); }
-});
-
-/* ============================================================
-   SOUMETTRE UNE RÉPONSE
-   ============================================================ */
-$('btnSubmit').addEventListener('click', submitAnswer);
-$('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
-
-async function submitAnswer(){
-  if (!currentGame || currentGame.state !== 'playing') return;
-  const qIdx = currentGame.currentQ;
-  if (lastAnsweredQ === qIdx) return;
-  const userVal = normalize($('answer').value);
-  if (!userVal) return;
-  const q = currentGame.questions[qIdx];
-  if (!q) return;
-
-  const correct = userVal === normalize(q.mot);
-  lastAnsweredQ = qIdx;
-  $('answer').disabled = true;
-  $('btnSubmit').disabled = true;
-
-  if (correct) {
-    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, '#00e676');
-    const myScore = (currentGame.players[pseudo]?.score || 0) + POINTS_PER_CORRECT;
-    const updates = {
-      [`players.${pseudo}.score`]: myScore,
-      [`players.${pseudo}.lastAnswerQ`]: qIdx
-    };
-    if (myScore >= WIN_SCORE) {
-      updates.state = 'ended';
-      updates.winnerName = pseudo;
-    } else if (qIdx + 1 >= currentGame.questions.length) {
-      updates.state = 'ended';
-      updates.winnerName = null;
-      updates.endReason = 'out_of_questions';
-    } else {
-      updates.currentQ = qIdx + 1;
-      updates.qStartAt = Date.now();
-    }
-    try { await db.collection('game').doc('current').update(updates); }
-    catch(e){ console.error(e); }
-  } else {
-    setMsg('msg3', `❌ Mauvaise réponse.`, '#ff5252');
-    const updates = {
-      [`players.${pseudo}.lastWrongQ`]: qIdx,
-      [`players.${pseudo}.lastAnswerQ`]: qIdx
-    };
-    try {
-      await db.collection('game').doc('current').update(updates);
-      // Vérifier si tous ont raté
-      const snap = await db.collection('game').doc('current').get();
-      const data = snap.data();
-      const players = data.players || {};
-      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
-      if (allWrong) {
-        await db.collection('game').doc('current').update({
-          state: 'ended', winnerName: null, endReason: 'all_wrong'
-        });
-      }
-    } catch(e){ console.error(e); }
-  }
-}
 
 /* ============================================================
    QUITTER
