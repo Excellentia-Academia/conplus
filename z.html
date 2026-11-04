@@ -7,12 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --fond: #f8f9fa;
-    --texte: #212529;
+    --fond: #f4f4f4;
+    --texte: #111111;
     --dore: #cda434;
     --dore-hover: #b8902a;
     --blanc: #ffffff;
-    --gris: #e9ecef;
+    --gris: #e0e0e0;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -25,7 +25,7 @@
     max-width: 900px; width: 100%;
     background: var(--blanc);
     border-radius: 20px; padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border-top: 6px solid var(--dore);
   }
   h1 {
@@ -69,7 +69,7 @@
   
   .pill {
     display: inline-block; padding: 6px 14px; border-radius: 999px;
-    background: var(--gris); font-size: 0.9rem; margin: 3px;
+    background: var(--fond); font-size: 0.9rem; margin: 3px;
     font-weight: 700; color: var(--texte);
   }
   .status { text-align: center; margin: 12px 0; font-weight: 600; }
@@ -101,6 +101,12 @@
   }
   #definitionText { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5; font-weight: 600; }
   
+  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid #ccc; }
+  #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
+  .timer-danger #timerFill { background: #ef4444; animation: pulse-danger 1s infinite; }
+  @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  #timerText { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
+
   #progressBar {
     display: flex; justify-content: space-between; align-items: center;
     padding: 14px 20px; background: var(--fond); border-radius: 12px;
@@ -162,6 +168,9 @@
       <button id="btnVocal" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter la définition</button>
     </div>
     
+    <div id="timerBar"><div id="timerFill"></div></div>
+    <div id="timerText">30s</div>
+
     <div id="progressBar">
       <span>📊 Joueurs ayant répondu</span>
       <span><b id="answeredCount">0</b> / <b id="totalPlayers">0</b></span>
@@ -170,7 +179,6 @@
     <div class="row">
       <input id="answer" type="text" placeholder="Ta réponse…" autocomplete="off" />
       <button id="btnSubmit" class="btn-primaire" style="max-width:120px">Valider</button>
-      <button id="btnDontKnow" class="btn-secondaire" style="max-width:140px">Je ne sais pas</button>
     </div>
     
     <div id="msg3" class="status"></div>
@@ -308,6 +316,7 @@ const FIELDS = {
    ============================================================ */
 const TOTAL_QUESTIONS = 20;
 const POINTS_PER_CORRECT = 10;
+const QUESTION_DURATION_MS = 30000; // 30 secondes
 
 let uid = null;
 let pseudo = localStorage.getItem('josef_pseudo') || '';
@@ -315,12 +324,13 @@ let roomCode = null;
 let isHost = false;
 let unsubscribeRoom = null;
 let currentRoom = null;
+let timerInterval = null;
 let lastAnsweredQ = -1;
 
 const $ = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
-const setMsg = (id, text, color='#212529') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
+const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
 const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\-' ]/g,'').trim();
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function genCode(){ return String(Math.floor(1000 + Math.random() * 9000)); }
@@ -384,6 +394,7 @@ async function createRoom(){
     players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 } },
     questions: [],
     currentQ: 0,
+    qStartAt: 0,
     winnerName: null,
     createdAt: Date.now()
   });
@@ -483,6 +494,7 @@ $('btnStart').addEventListener('click', async () => {
     state: 'playing',
     currentQ: 0,
     questions,
+    qStartAt: Date.now(),
     winnerName: null
   };
   names.forEach(n => {
@@ -528,7 +540,6 @@ function renderGame(game){
       $('answer').value = ""; // Vide le clavier
       $('answer').disabled = false;
       $('btnSubmit').disabled = false;
-      $('btnDontKnow').disabled = false;
       setMsg('msg3', '');
       lastAnsweredQ = qIdx;
     }
@@ -536,6 +547,49 @@ function renderGame(game){
 
   $('hostTag').textContent = game.hostName ? `Hôte : ${game.hostName}` : '';
   $('hostControlsGame').style.display = game.hostName === pseudo ? 'flex' : 'none';
+
+  startTimerLoop();
+}
+
+function startTimerLoop(){
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!currentRoom || currentRoom.state !== 'playing') return;
+    const elapsed = Date.now() - (currentRoom.qStartAt || 0);
+    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
+    const pct = (remain / QUESTION_DURATION_MS) * 100;
+    $('timerFill').style.width = pct + '%';
+    $('timerText').textContent = Math.ceil(remain/1000) + 's';
+    $('timerBar').classList.toggle('timer-danger', remain < 5000);
+    
+    // Si le temps est écoulé, l'hôte force la révélation
+    if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
+  }, 250);
+}
+
+async function handleTimeout(){
+  if (!currentRoom || currentRoom.state !== 'playing') return;
+  if (currentRoom.qStartAt_processed === currentRoom.qStartAt) return;
+  
+  const qIdx = currentRoom.currentQ;
+  const q = currentRoom.questions[qIdx];
+  
+  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.mot}`, '#cda434');
+  speak("Temps écoulé. La réponse était " + q.mot);
+  
+  setTimeout(async () => {
+    const questions = currentRoom.questions || [];
+    const updates = { qStartAt_processed: currentRoom.qStartAt };
+    if (qIdx + 1 >= questions.length) {
+      updates.state = 'ended';
+      updates.winnerName = null;
+    } else {
+      updates.currentQ = qIdx + 1;
+      updates.qStartAt = Date.now();
+    }
+    try { await db.collection('rooms').doc(roomCode).update(updates); }
+    catch(e){ console.error(e); }
+  }, 3000);
 }
 
 /* ============================================================
@@ -546,12 +600,10 @@ $('btnHostNext').addEventListener('click', async () => {
   const qIdx = currentRoom.currentQ;
   const q = currentRoom.questions[qIdx];
   
-  // Affiche la réponse
   setMsg('msg3', `⏭ La réponse était : ${q.mot}`, '#cda434');
   speak("La réponse était " + q.mot);
   $('answer').disabled = true;
   $('btnSubmit').disabled = true;
-  $('btnDontKnow').disabled = true;
   
   setTimeout(async () => {
     const questions = currentRoom.questions || [];
@@ -561,6 +613,7 @@ $('btnHostNext').addEventListener('click', async () => {
       updates.winnerName = null;
     } else {
       updates.currentQ = qIdx + 1;
+      updates.qStartAt = Date.now();
     }
     try { await db.collection('rooms').doc(roomCode).update(updates); }
     catch(e){ console.error(e); }
@@ -581,18 +634,6 @@ $('btnHostEnd').addEventListener('click', async () => {
    ============================================================ */
 $('btnSubmit').addEventListener('click', submitAnswer);
 $('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
-$('btnDontKnow').addEventListener('click', () => {
-  setMsg('msg3', "⏭ Tu as passé la question.", "#6c757d");
-  $('answer').disabled = true;
-  $('btnSubmit').disabled = true;
-  $('btnDontKnow').disabled = true;
-  
-  const ref = db.collection('rooms').doc(roomCode);
-  ref.update({
-    [`players.${pseudo}.lastAnswerQ`]: currentRoom.currentQ,
-    [`players.${pseudo}.lastWrongQ`]: currentRoom.currentQ
-  });
-});
 
 $('btnVocal').addEventListener('click', () => {
   if (currentRoom && currentRoom.questions) {
@@ -612,7 +653,6 @@ async function submitAnswer(){
   const correct = userVal === normalize(q.mot);
   $('answer').disabled = true;
   $('btnSubmit').disabled = true;
-  $('btnDontKnow').disabled = true;
 
   const ref = db.collection('rooms').doc(roomCode);
 
@@ -624,11 +664,24 @@ async function submitAnswer(){
     const myScore = (pData.score || 0) + POINTS_PER_CORRECT;
     const myCorrects = (pData.correctAnswers || 0) + 1;
 
-    await ref.update({
+    const updates = {
       [`players.${pseudo}.score`]: myScore,
       [`players.${pseudo}.lastAnswerQ`]: qIdx,
       [`players.${pseudo}.correctAnswers`]: myCorrects
-    });
+    };
+    
+    // Si un joueur trouve, on passe automatiquement à la suite (après 2s pour qu'il voit son score)
+    setTimeout(async () => {
+      if (qIdx + 1 >= currentRoom.questions.length) {
+        updates.state = 'ended';
+        updates.winnerName = pseudo;
+      } else {
+        updates.currentQ = qIdx + 1;
+        updates.qStartAt = Date.now();
+      }
+      try { await ref.update(updates); } catch(e){ console.error(e); }
+    }, 2000);
+    
   } else {
     setMsg('msg3', `❌ Mauvaise réponse.`, '#ef4444');
     speak("Mauvaise réponse.");
@@ -636,11 +689,36 @@ async function submitAnswer(){
     const pData = currentRoom.players[pseudo] || { wrongAnswers: 0 };
     const myWrongs = (pData.wrongAnswers || 0) + 1;
 
-    await ref.update({
-      [`players.${pseudo}.lastWrongQ`]: qIdx,
-      [`players.${pseudo}.lastAnswerQ`]: qIdx,
-      [`players.${pseudo}.wrongAnswers`]: myWrongs
-    });
+    try {
+      await ref.update({
+        [`players.${pseudo}.lastWrongQ`]: qIdx,
+        [`players.${pseudo}.lastAnswerQ`]: qIdx,
+        [`players.${pseudo}.wrongAnswers`]: myWrongs
+      });
+      
+      // Vérifier si TOUT LE MONDE a raté
+      const snap = await ref.get();
+      const data = snap.data();
+      const players = data.players || {};
+      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
+      
+      if (allWrong) {
+        const q = data.questions[qIdx];
+        setMsg('msg3', `❌ Tout le monde a raté ! La réponse était : ${q.mot}`, '#cda434');
+        speak("Tout le monde a raté. La réponse était " + q.mot);
+        
+        setTimeout(async () => {
+          const updates = {};
+          if (qIdx + 1 >= data.questions.length) {
+            updates.state = 'ended';
+          } else {
+            updates.currentQ = qIdx + 1;
+            updates.qStartAt = Date.now();
+          }
+          await ref.update(updates);
+        }, 3000);
+      }
+    } catch(e){ console.error(e); }
   }
 }
 
@@ -648,6 +726,8 @@ async function submitAnswer(){
    FIN DE PARTIE
    ============================================================ */
 function renderEnd(game){
+  if (timerInterval) clearInterval(timerInterval);
+  
   const players = game.players || {};
   const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
   
