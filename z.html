@@ -6,7 +6,6 @@
 <title>Josef – Quiz Multijoueur</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  /* Variables pour le thème clair (par défaut) */
   :root {
     --fond: #f4f4f4;
     --texte: #111111;
@@ -18,7 +17,6 @@
     --msg-vert: #10b981;
   }
 
-  /* Variables pour le thème sombre */
   body.dark-mode {
     --fond: #121212;
     --texte: #f4f4f4;
@@ -48,7 +46,6 @@
     transition: background 0.3s, border-color 0.3s;
   }
 
-  /* Bouton pour basculer le thème */
   #themeToggle {
     position: absolute; top: 20px; right: 20px;
     background: var(--gris); border: none; border-radius: 50%;
@@ -158,7 +155,6 @@
 </head>
 <body>
 <div class="container">
-  <!-- Bouton Mode Sombre -->
   <button id="themeToggle" title="Changer de thème">🌙</button>
 
   <h1>👑 Josef – Quiz Multijoueur</h1>
@@ -184,6 +180,10 @@
     <div class="scoreboard" id="lobbyPlayers"></div>
     <div class="row" id="hostControls">
       <button id="btnStart" class="btn-primaire">🚀 Lancer la partie</button>
+      <button id="btnLobbyLeave" class="btn-danger" style="max-width:180px;">Quitter</button>
+    </div>
+    <div class="row" id="guestLeave" style="display:none;">
+      <button id="btnLobbyLeaveGuest" class="btn-danger">Quitter la salle</button>
     </div>
     <div id="msg2" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
   </div>
@@ -220,6 +220,11 @@
     <div class="row" id="hostControlsGame">
       <button id="btnHostNext" class="btn-primaire">⏭ Afficher la réponse & Suite</button>
       <button id="btnHostEnd" class="btn-danger">⏹ Terminer</button>
+    </div>
+
+    <!-- Bouton Retour en jeu pour tous les joueurs -->
+    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
+      <button id="btnGameLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter la partie</button>
     </div>
   </div>
 
@@ -380,7 +385,7 @@ function speak(text) {
 }
 
 /* ============================================================
-   GESTION DU THÈME (MODE SOMBRE)
+   GESTION DU THÈME
    ============================================================ */
 function initTheme() {
   const savedTheme = localStorage.getItem('josef_theme');
@@ -405,7 +410,6 @@ async function initAuth(){
   
   if (pseudo) $('pseudo').value = pseudo;
   
-  // Tentative de restauration de session
   const savedRoom = localStorage.getItem('josef_room');
   if (savedRoom) {
     try {
@@ -426,7 +430,7 @@ async function initAuth(){
     uid = auth.currentUser.uid;
   } catch(e) {
     console.error(e);
-    setMsg('msg', '❌ Auth échouée : ' + e.message, '#ef4444');
+    setMsg('msg', '❌ Auth échouée : ' + e.message, 'var(--msg-rouge)');
   }
 }
 
@@ -440,7 +444,7 @@ async function createRoom(){
     const snap = await db.collection('rooms').doc(testCode).get();
     if (!snap.exists) { code = testCode; break; }
   }
-  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', '#ef4444');
+  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
 
   await db.collection('rooms').doc(code).set({
     state: 'lobby',
@@ -462,9 +466,9 @@ async function createRoom(){
 async function joinRoom(code){
   const ref = db.collection('rooms').doc(code);
   const snap = await ref.get();
-  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', '#ef4444');
+  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', 'var(--msg-rouge)');
   const data = snap.data();
-  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', '#ef4444');
+  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', 'var(--msg-rouge)');
 
   if (!data.players[pseudo]) {
     await ref.update({
@@ -494,7 +498,7 @@ function enterLobby(){
     },
     (err) => {
       console.error('❌ Erreur Firestore :', err);
-      setMsg('msg2', '❌ Erreur : ' + err.message, '#ef4444');
+      setMsg('msg2', '❌ Erreur : ' + err.message, 'var(--msg-rouge)');
     }
   );
 }
@@ -522,7 +526,13 @@ function renderLobby(game){
     </div>
   `).join('');
 
-  $('hostControls').style.display = game.hostName === pseudo ? 'flex' : 'none';
+  if (game.hostName === pseudo) {
+    $('hostControls').style.display = 'flex';
+    $('guestLeave').style.display = 'none';
+  } else {
+    $('hostControls').style.display = 'none';
+    $('guestLeave').style.display = 'flex';
+  }
   $('btnStart').disabled = names.length < 2;
   $('lobbyStatus').textContent = names.length < 2
     ? "⏳ Attends au moins 1 autre joueur…"
@@ -532,18 +542,47 @@ function renderLobby(game){
 $('btnStart').addEventListener('click', async () => {
   if (!currentRoom || currentRoom.hostName !== pseudo) return;
   const names = Object.keys(currentRoom.players || {});
-  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', '#ef4444');
+  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
   
-  const all = [];
+  // --- ALÉATOIRE AVANCÉ & ANTI-RÉPÉTITION ---
+  const historySnap = await db.collection('config').doc('history').get();
+  let history = historySnap.exists ? historySnap.data().asked || [] : [];
+
+  let all = [];
   for (const prefix of Object.keys(FIELDS)) {
-    for (const item of FIELDS[prefix]) all.push({ prefix, mot: item.mot, def: item.def });
+    for (const item of FIELDS[prefix]) {
+      const qId = `${prefix}-${item.mot}`;
+      if (!history.includes(qId)) {
+        all.push({ id: qId, prefix, mot: item.mot, def: item.def });
+      }
+    }
   }
+
+  // Si on a moins de 20 questions, on réinitialise
+  if (all.length < TOTAL_QUESTIONS) {
+    history = [];
+    all = [];
+    for (const prefix of Object.keys(FIELDS)) {
+      for (const item of FIELDS[prefix]) {
+        all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
+  // Vrai mélange Fisher-Yates
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [all[i], all[j]] = [all[j], all[i]];
   }
+  
   const questions = all.slice(0, TOTAL_QUESTIONS);
+  
+  // Enregistre l'historique
+  const newAskedIds = questions.map(q => q.id);
+  const updatedHistory = [...history, ...newAskedIds];
+  await db.collection('config').doc('history').set({ asked: updatedHistory });
 
+  // --- LANCEMENT ---
   const updates = {
     state: 'playing',
     currentQ: 0,
@@ -616,7 +655,6 @@ function startTimerLoop(){
     $('timerText').textContent = Math.ceil(remain/1000) + 's';
     $('timerBar').classList.toggle('timer-danger', remain < 5000);
     
-    // Si le temps est écoulé, l'hôte force la révélation
     if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
   }, 250);
 }
@@ -724,7 +762,6 @@ async function submitAnswer(){
       [`players.${pseudo}.correctAnswers`]: myCorrects
     };
     
-    // Si un joueur trouve, on passe automatiquement à la suite (après 2s pour qu'il voit son score)
     setTimeout(async () => {
       if (qIdx + 1 >= currentRoom.questions.length) {
         updates.state = 'ended';
@@ -750,7 +787,6 @@ async function submitAnswer(){
         [`players.${pseudo}.wrongAnswers`]: myWrongs
       });
       
-      // Vérifier si TOUT LE MONDE a raté
       const snap = await ref.get();
       const data = snap.data();
       const players = data.players || {};
@@ -775,6 +811,25 @@ async function submitAnswer(){
     } catch(e){ console.error(e); }
   }
 }
+
+/* ============================================================
+   QUITTER LA PARTIE
+   ============================================================ */
+async function leaveRoom() {
+  if (roomCode && pseudo) {
+    try {
+      await db.collection('rooms').doc(roomCode).update({
+        [`players.${pseudo}`]: firebase.firestore.FieldValue.delete()
+      });
+    } catch(e) { console.error(e); }
+  }
+  localStorage.removeItem('josef_room');
+  location.reload();
+}
+
+$('btnLobbyLeave').addEventListener('click', leaveRoom);
+$('btnLobbyLeaveGuest').addEventListener('click', leaveRoom);
+$('btnGameLeave').addEventListener('click', leaveRoom);
 
 /* ============================================================
    FIN DE PARTIE
