@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Josef – Quiz Multijoueur</title>
+<title>Nodasa – Quiz Multijoueur</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -192,7 +192,7 @@
   <div id="screenGame" class="hidden">
     <div class="status">
       <span class="pill" id="qCounter">Question 1/20</span>
-      <span class="pill" id="hostTag"></span>
+      <!-- L'affichage de l'hôte a été retiré ici pour plus d'équité -->
     </div>
     <div class="scoreboard" id="scoreboard"></div>
     
@@ -217,10 +217,7 @@
     
     <div id="msg3" class="status"></div>
     
-    <div class="row" id="hostControlsGame">
-      <button id="btnHostNext" class="btn-primaire">⏭ Afficher la réponse & Suite</button>
-      <button id="btnHostEnd" class="btn-danger">⏹ Terminer</button>
-    </div>
+    <!-- Le bloc hostControlsGame a été entièrement supprimé ici -->
 
     <!-- Bouton Retour en jeu pour tous les joueurs -->
     <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
@@ -544,7 +541,6 @@ $('btnStart').addEventListener('click', async () => {
   const names = Object.keys(currentRoom.players || {});
   if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
   
-  // --- ALÉATOIRE AVANCÉ & ANTI-RÉPÉTITION ---
   const historySnap = await db.collection('config').doc('history').get();
   let history = historySnap.exists ? historySnap.data().asked || [] : [];
 
@@ -558,7 +554,6 @@ $('btnStart').addEventListener('click', async () => {
     }
   }
 
-  // Si on a moins de 20 questions, on réinitialise
   if (all.length < TOTAL_QUESTIONS) {
     history = [];
     all = [];
@@ -569,20 +564,16 @@ $('btnStart').addEventListener('click', async () => {
     }
   }
 
-  // Vrai mélange Fisher-Yates
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [all[i], all[j]] = [all[j], all[i]];
   }
   
   const questions = all.slice(0, TOTAL_QUESTIONS);
-  
-  // Enregistre l'historique
   const newAskedIds = questions.map(q => q.id);
   const updatedHistory = [...history, ...newAskedIds];
   await db.collection('config').doc('history').set({ asked: updatedHistory });
 
-  // --- LANCEMENT ---
   const updates = {
     state: 'playing',
     currentQ: 0,
@@ -638,9 +629,6 @@ function renderGame(game){
     }
   }
 
-  $('hostTag').textContent = game.hostName ? `Hôte : ${game.hostName}` : '';
-  $('hostControlsGame').style.display = game.hostName === pseudo ? 'flex' : 'none';
-
   startTimerLoop();
 }
 
@@ -655,6 +643,7 @@ function startTimerLoop(){
     $('timerText').textContent = Math.ceil(remain/1000) + 's';
     $('timerBar').classList.toggle('timer-danger', remain < 5000);
     
+    // Le chrono est géré par l'hôte pour tout le monde
     if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
   }, 250);
 }
@@ -683,43 +672,6 @@ async function handleTimeout(){
     catch(e){ console.error(e); }
   }, 3000);
 }
-
-/* ============================================================
-   HÔTE : Affichage de la réponse et passage à la suite
-   ============================================================ */
-$('btnHostNext').addEventListener('click', async () => {
-  if (!currentRoom || currentRoom.hostName !== pseudo) return;
-  const qIdx = currentRoom.currentQ;
-  const q = currentRoom.questions[qIdx];
-  
-  setMsg('msg3', `⏭ La réponse était : ${q.mot}`, 'var(--dore)');
-  speak("La réponse était " + q.mot);
-  $('answer').disabled = true;
-  $('btnSubmit').disabled = true;
-  
-  setTimeout(async () => {
-    const questions = currentRoom.questions || [];
-    const updates = {};
-    if (qIdx + 1 >= questions.length) {
-      updates.state = 'ended';
-      updates.winnerName = null;
-    } else {
-      updates.currentQ = qIdx + 1;
-      updates.qStartAt = Date.now();
-    }
-    try { await db.collection('rooms').doc(roomCode).update(updates); }
-    catch(e){ console.error(e); }
-  }, 3000);
-});
-
-$('btnHostEnd').addEventListener('click', async () => {
-  if (!currentRoom || currentRoom.hostName !== pseudo) return;
-  try {
-    await db.collection('rooms').doc(roomCode).update({
-      state: 'ended', winnerName: null
-    });
-  } catch(e){ console.error(e); }
-});
 
 /* ============================================================
    SOUMISSION DES RÉPONSES (Joueur)
@@ -762,6 +714,7 @@ async function submitAnswer(){
       [`players.${pseudo}.correctAnswers`]: myCorrects
     };
     
+    // Si un joueur trouve, on passe automatiquement à la suite (après 2s)
     setTimeout(async () => {
       if (qIdx + 1 >= currentRoom.questions.length) {
         updates.state = 'ended';
