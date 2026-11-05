@@ -6,28 +6,58 @@
 <title>Josef – Quiz Multijoueur</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
+  /* Variables pour le thème clair (par défaut) */
   :root {
     --fond: #f4f4f4;
     --texte: #111111;
     --dore: #cda434;
     --dore-hover: #b8902a;
-    --blanc: #ffffff;
+    --carte: #ffffff;
     --gris: #e0e0e0;
+    --msg-rouge: #ef4444;
+    --msg-vert: #10b981;
   }
+
+  /* Variables pour le thème sombre */
+  body.dark-mode {
+    --fond: #121212;
+    --texte: #f4f4f4;
+    --dore: #e5b83b;
+    --dore-hover: #f5c84c;
+    --carte: #1e1e1e;
+    --gris: #333333;
+    --msg-rouge: #f87171;
+    --msg-vert: #34d399;
+  }
+
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family: 'Montserrat', sans-serif;
     background: var(--fond);
     min-height: 100vh; color: var(--texte);
     padding: 16px; display: grid; place-items: center;
+    transition: background 0.3s, color 0.3s;
   }
   .container {
     max-width: 900px; width: 100%;
-    background: var(--blanc);
+    background: var(--carte);
     border-radius: 20px; padding: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border-top: 6px solid var(--dore);
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
   }
+
+  /* Bouton pour basculer le thème */
+  #themeToggle {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--gris); border: none; border-radius: 50%;
+    width: 44px; height: 44px; cursor: pointer;
+    font-size: 1.2rem; display: grid; place-items: center;
+    transition: all 0.2s; color: var(--texte);
+  }
+  #themeToggle:hover { transform: scale(1.1); }
+
   h1 {
     font-size: clamp(24px, 4vw, 32px);
     text-align: center; margin-bottom: 24px;
@@ -45,21 +75,21 @@
   }
   button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
   
-  .btn-primaire { background: var(--dore); color: var(--blanc); }
+  .btn-primaire { background: var(--dore); color: #111; }
   .btn-primaire:hover:not(:disabled) { background: var(--dore-hover); transform: translateY(-2px); }
   
   .btn-secondaire { background: var(--gris); color: var(--texte); }
-  .btn-secondaire:hover:not(:disabled) { background: #d1d5db; }
+  .btn-secondaire:hover:not(:disabled) { filter: brightness(0.9); }
 
-  .btn-danger { background: #ef4444; color: var(--blanc); }
-  .btn-danger:hover:not(:disabled) { background: #dc2626; }
+  .btn-danger { background: var(--msg-rouge); color: #fff; }
+  .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
 
   input[type=text] {
     font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
     border: 2px solid var(--gris); width: 100%; margin: 8px 0;
-    background: var(--blanc); color: var(--texte); outline: none;
+    background: var(--carte); color: var(--texte); outline: none;
     font-family: 'Montserrat', sans-serif; font-weight: 600;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.3s, color 0.3s;
   }
   input[type=text]:focus { border-color: var(--dore); }
   
@@ -69,7 +99,7 @@
   
   .pill {
     display: inline-block; padding: 6px 14px; border-radius: 999px;
-    background: var(--fond); font-size: 0.9rem; margin: 3px;
+    background: var(--gris); font-size: 0.9rem; margin: 3px;
     font-weight: 700; color: var(--texte);
   }
   .status { text-align: center; margin: 12px 0; font-weight: 600; }
@@ -83,16 +113,17 @@
     display: flex; justify-content: space-between; align-items: center;
     border: 2px solid var(--gris); transition: 0.3s;
   }
-  .player-card.me { border-color: var(--dore); background: #fffdf5; }
-  .player-card.winner { border-color: var(--dore); background: #fffdf5; box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
+  .player-card.me { border-color: var(--dore); background: var(--carte); }
+  .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
   .player-name { font-weight: 800; font-size: 1rem; }
   .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
 
   #questionBox {
-    background: var(--blanc); color: var(--texte);
+    background: var(--carte); color: var(--texte);
     border-radius: 16px; padding: 30px; margin: 20px 0;
     text-align: center; border: 2px solid var(--dore);
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: background 0.3s, color 0.3s;
   }
   #prefixBig {
     font-size: clamp(40px, 8vw, 72px); font-weight: 900;
@@ -101,9 +132,9 @@
   }
   #definitionText { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5; font-weight: 600; }
   
-  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid #ccc; }
+  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
   #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
-  .timer-danger #timerFill { background: #ef4444; animation: pulse-danger 1s infinite; }
+  .timer-danger #timerFill { background: var(--msg-rouge); animation: pulse-danger 1s infinite; }
   @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
   #timerText { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
 
@@ -122,11 +153,14 @@
   .recap-list { background: var(--fond); border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--gris); }
   .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
   .recap-item:last-child { border-bottom: none; }
-  .recap-good { color: #10b981; font-weight: 800; }
+  .recap-good { color: var(--msg-vert); font-weight: 800; }
 </style>
 </head>
 <body>
 <div class="container">
+  <!-- Bouton Mode Sombre -->
+  <button id="themeToggle" title="Changer de thème">🌙</button>
+
   <h1>👑 Josef – Quiz Multijoueur</h1>
 
   <!-- ACCUEIL -->
@@ -346,9 +380,29 @@ function speak(text) {
 }
 
 /* ============================================================
+   GESTION DU THÈME (MODE SOMBRE)
+   ============================================================ */
+function initTheme() {
+  const savedTheme = localStorage.getItem('josef_theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    $('themeToggle').textContent = '☀️';
+  }
+}
+
+$('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
+});
+
+/* ============================================================
    INITIALISATION
    ============================================================ */
 async function initAuth(){
+  initTheme();
+  
   if (pseudo) $('pseudo').value = pseudo;
   
   // Tentative de restauration de session
@@ -574,7 +628,7 @@ async function handleTimeout(){
   const qIdx = currentRoom.currentQ;
   const q = currentRoom.questions[qIdx];
   
-  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.mot}`, '#cda434');
+  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.mot}`, 'var(--dore)');
   speak("Temps écoulé. La réponse était " + q.mot);
   
   setTimeout(async () => {
@@ -600,7 +654,7 @@ $('btnHostNext').addEventListener('click', async () => {
   const qIdx = currentRoom.currentQ;
   const q = currentRoom.questions[qIdx];
   
-  setMsg('msg3', `⏭ La réponse était : ${q.mot}`, '#cda434');
+  setMsg('msg3', `⏭ La réponse était : ${q.mot}`, 'var(--dore)');
   speak("La réponse était " + q.mot);
   $('answer').disabled = true;
   $('btnSubmit').disabled = true;
@@ -657,7 +711,7 @@ async function submitAnswer(){
   const ref = db.collection('rooms').doc(roomCode);
 
   if (correct) {
-    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, '#10b981');
+    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
     speak("Correct !");
     
     const pData = currentRoom.players[pseudo] || { score: 0, correctAnswers: 0 };
@@ -683,7 +737,7 @@ async function submitAnswer(){
     }, 2000);
     
   } else {
-    setMsg('msg3', `❌ Mauvaise réponse.`, '#ef4444');
+    setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
     speak("Mauvaise réponse.");
     
     const pData = currentRoom.players[pseudo] || { wrongAnswers: 0 };
@@ -704,7 +758,7 @@ async function submitAnswer(){
       
       if (allWrong) {
         const q = data.questions[qIdx];
-        setMsg('msg3', `❌ Tout le monde a raté ! La réponse était : ${q.mot}`, '#cda434');
+        setMsg('msg3', `❌ Tout le monde a raté ! La réponse était : ${q.mot}`, 'var(--dore)');
         speak("Tout le monde a raté. La réponse était " + q.mot);
         
         setTimeout(async () => {
@@ -764,24 +818,24 @@ function renderEnd(game){
    ============================================================ */
 $('btnCreate').addEventListener('click', async () => {
   const p = $('pseudo').value.trim();
-  if (!p) return setMsg('msg', 'Entre un pseudo.', '#ef4444');
-  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', '#ef4444');
+  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
   pseudo = p;
   localStorage.setItem('josef_pseudo', pseudo);
   try { await createRoom(); }
-  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, '#ef4444'); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
 });
 
 $('btnJoin').addEventListener('click', async () => {
   const p = $('pseudo').value.trim();
   const code = $('joinCode').value.trim();
-  if (!p) return setMsg('msg', 'Entre un pseudo.', '#ef4444');
-  if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', '#ef4444');
-  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', '#ef4444');
+  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
+  if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', 'var(--msg-rouge)');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
   pseudo = p;
   localStorage.setItem('josef_pseudo', pseudo);
   try { await joinRoom(code); }
-  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, '#ef4444'); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
 });
 
 $('btnLeave').addEventListener('click', () => {
