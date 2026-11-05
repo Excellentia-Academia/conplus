@@ -258,7 +258,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ============================================================
-   BANQUE DE QUESTIONS
+   BANQUE DE QUESTIONS (Enrichie avec +100 nouvelles questions)
    ============================================================ */
 const FIELDS = {
   "Pr":[{"mot":"Précision","def":"Le fait de donner des détails exacts et précis."},{"mot":"Profond","def":"Qui se rapporte à la profondeur."},{"mot":"Profession","def":"Domaine d'activité ou métier."},{"mot":"Progrès","def":"Avancement ou amélioration."},{"mot":"Promesse","def":"Engagement ou parole donnée."},{"mot":"Proverbe","def":"Expression populaire qui contient une sagesse."}],
@@ -426,7 +426,7 @@ async function initAuth(){
     uid = auth.currentUser.uid;
   } catch(e) {
     console.error(e);
-    setMsg('msg', '❌ Auth échouée : ' + e.message, '#ef4444');
+    setMsg('msg', '❌ Auth échouée : ' + e.message, 'var(--msg-rouge)');
   }
 }
 
@@ -440,7 +440,7 @@ async function createRoom(){
     const snap = await db.collection('rooms').doc(testCode).get();
     if (!snap.exists) { code = testCode; break; }
   }
-  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', '#ef4444');
+  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
 
   await db.collection('rooms').doc(code).set({
     state: 'lobby',
@@ -462,9 +462,9 @@ async function createRoom(){
 async function joinRoom(code){
   const ref = db.collection('rooms').doc(code);
   const snap = await ref.get();
-  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', '#ef4444');
+  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', 'var(--msg-rouge)');
   const data = snap.data();
-  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', '#ef4444');
+  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', 'var(--msg-rouge)');
 
   if (!data.players[pseudo]) {
     await ref.update({
@@ -494,7 +494,7 @@ function enterLobby(){
     },
     (err) => {
       console.error('❌ Erreur Firestore :', err);
-      setMsg('msg2', '❌ Erreur : ' + err.message, '#ef4444');
+      setMsg('msg2', '❌ Erreur : ' + err.message, 'var(--msg-rouge)');
     }
   );
 }
@@ -532,18 +532,55 @@ function renderLobby(game){
 $('btnStart').addEventListener('click', async () => {
   if (!currentRoom || currentRoom.hostName !== pseudo) return;
   const names = Object.keys(currentRoom.players || {});
-  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', '#ef4444');
+  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
   
-  const all = [];
+  // 1. Récupérer les questions déjà posées (sauvegardées dans Firestore)
+  const historySnap = await db.collection('config').doc('history').get();
+  let history = historySnap.exists ? historySnap.data().asked || [] : [];
+
+  // 2. Créer la liste de TOUTES les questions disponibles
+  let all = [];
   for (const prefix of Object.keys(FIELDS)) {
-    for (const item of FIELDS[prefix]) all.push({ prefix, mot: item.mot, def: item.def });
+    for (const item of FIELDS[prefix]) {
+      // On crée un identifiant unique pour chaque question (ex: "Pr-Précision")
+      const qId = `${prefix}-${item.mot}`;
+      // On ne garde que si la question n'a JAMAIS été posée
+      if (!history.includes(qId)) {
+        all.push({ id: qId, prefix, mot: item.mot, def: item.def });
+      }
+    }
   }
+
+  // 3. Si on a moins de 20 questions inédites, on réinitialise la mémoire
+  if (all.length < TOTAL_QUESTIONS) {
+    console.log("Plus assez de questions inédites, réinitialisation de l'historique.");
+    history = []; // On vide l'historique
+    all = [];
+    // On recharge toutes les questions
+    for (const prefix of Object.keys(FIELDS)) {
+      for (const item of FIELDS[prefix]) {
+        all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
+  // 4. Mélanger les questions restantes
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [all[i], all[j]] = [all[j], all[i]];
   }
+  
+  // 5. Sélectionner les 20 questions
   const questions = all.slice(0, TOTAL_QUESTIONS);
+  
+  // 6. Mettre à jour l'historique avec ces nouvelles questions
+  const newAskedIds = questions.map(q => q.id);
+  const updatedHistory = [...history, ...newAskedIds];
+  
+  // On sauvegarde l'historique dans Firestore pour tous les joueurs
+  await db.collection('config').doc('history').set({ asked: updatedHistory });
 
+  // 7. Lancer la partie normalement
   const updates = {
     state: 'playing',
     currentQ: 0,
@@ -551,6 +588,7 @@ $('btnStart').addEventListener('click', async () => {
     qStartAt: Date.now(),
     winnerName: null
   };
+  
   names.forEach(n => {
     updates[`players.${n}.score`] = 0;
     updates[`players.${n}.lastAnswerQ`] = -1;
@@ -558,6 +596,7 @@ $('btnStart').addEventListener('click', async () => {
     updates[`players.${n}.correctAnswers`] = 0;
     updates[`players.${n}.wrongAnswers`] = 0;
   });
+  
   try { await db.collection('rooms').doc(roomCode).update(updates); }
   catch(e){ console.error(e); }
 });
