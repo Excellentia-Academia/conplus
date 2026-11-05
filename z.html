@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Nodasa – Quiz Multijoueur</title>
+<title>Josef – Quiz Multijoueur</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -192,7 +192,6 @@
   <div id="screenGame" class="hidden">
     <div class="status">
       <span class="pill" id="qCounter">Question 1/20</span>
-      <!-- L'affichage de l'hôte a été retiré ici pour plus d'équité -->
     </div>
     <div class="scoreboard" id="scoreboard"></div>
     
@@ -216,10 +215,7 @@
     </div>
     
     <div id="msg3" class="status"></div>
-    
-    <!-- Le bloc hostControlsGame a été entièrement supprimé ici -->
 
-    <!-- Bouton Retour en jeu pour tous les joueurs -->
     <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
       <button id="btnGameLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter la partie</button>
     </div>
@@ -643,7 +639,6 @@ function startTimerLoop(){
     $('timerText').textContent = Math.ceil(remain/1000) + 's';
     $('timerBar').classList.toggle('timer-danger', remain < 5000);
     
-    // Le chrono est géré par l'hôte pour tout le monde
     if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
   }, 250);
 }
@@ -714,7 +709,7 @@ async function submitAnswer(){
       [`players.${pseudo}.correctAnswers`]: myCorrects
     };
     
-    // Si un joueur trouve, on passe automatiquement à la suite (après 2s)
+    // Modifié : passage à 1 seconde (1000ms)
     setTimeout(async () => {
       if (qIdx + 1 >= currentRoom.questions.length) {
         updates.state = 'ended';
@@ -724,7 +719,7 @@ async function submitAnswer(){
         updates.qStartAt = Date.now();
       }
       try { await ref.update(updates); } catch(e){ console.error(e); }
-    }, 2000);
+    }, 1000);
     
   } else {
     setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
@@ -769,6 +764,9 @@ async function submitAnswer(){
    QUITTER LA PARTIE
    ============================================================ */
 async function leaveRoom() {
+  // Modifié : Confirmation avant de quitter
+  if (!confirm("Êtes-vous sûr de vouloir quitter ?")) return;
+
   if (roomCode && pseudo) {
     try {
       await db.collection('rooms').doc(roomCode).update({
