@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Josef – Calcul Mental Multijoueur</title>
+<title>Josef – Quiz Multijoueur</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -85,23 +85,15 @@
   .btn-danger { background: var(--msg-rouge); color: #fff; }
   .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
 
-  input[type=text], input[type=number] {
+  input[type=text] {
     font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
     border: 2px solid var(--gris); width: 100%; margin: 8px 0;
     background: var(--carte); color: var(--texte); outline: none;
     font-family: 'Montserrat', sans-serif; font-weight: 600;
     transition: border-color 0.2s, background 0.3s, color 0.3s;
-    text-align: center;
   }
-  input:focus { border-color: var(--dore); }
+  input[type=text]:focus { border-color: var(--dore); }
   
-  /* Pour cacher les flèches du input number */
-  input[type=number]::-webkit-inner-spin-button, 
-  input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none; margin: 0; 
-  }
-  input[type=number] { -moz-appearance: textfield; }
-
   .row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
   .row > * { flex: 1; min-width: 140px; }
   .hidden { display: none !important; }
@@ -113,6 +105,7 @@
   }
   .status { text-align: center; margin: 12px 0; font-weight: 600; }
   
+  /* Style du tableau des scores en jeu */
   .scoreboard {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px; margin: 20px 0;
@@ -125,7 +118,6 @@
   .player-card.me { border-color: var(--dore); background: var(--carte); }
   .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
   
-  /* Couleurs synchronisées en temps réel */
   .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
   .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
 
@@ -140,9 +132,11 @@
     transition: background 0.3s, color 0.3s;
   }
   #prefixBig {
-    font-size: clamp(32px, 6vw, 56px); font-weight: 900;
-    letter-spacing: 0.05em; margin-bottom: 16px; color: var(--dore);
+    font-size: clamp(40px, 8vw, 72px); font-weight: 900;
+    letter-spacing: 0.15em; margin-bottom: 16px; color: var(--dore);
+    text-transform: uppercase;
   }
+  #definitionText { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5; font-weight: 600; }
   
   #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
   #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
@@ -166,13 +160,62 @@
   .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
   .recap-item:last-child { border-bottom: none; }
   .recap-good { color: var(--msg-vert); font-weight: 800; }
+
+  /* --- TABLEAU DE CLASSEMENT FINAL PROFESSIONNEL --- */
+  .pro-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: var(--carte);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--gris);
+  }
+  .pro-table th {
+    background: var(--dore);
+    color: #111;
+    padding: 16px;
+    text-align: left;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  .pro-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--gris);
+    font-weight: 600;
+    color: var(--texte);
+  }
+  .pro-table tr:last-child td { border-bottom: none; }
+  .pro-table tr.winner-row {
+    background: rgba(205, 164, 52, 0.1);
+  }
+  .pro-table tr.winner-row td {
+    color: var(--dore);
+    font-weight: 900;
+  }
+  .rank-badge {
+    display: inline-block;
+    width: 32px; height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--gris);
+    color: var(--texte);
+    font-weight: 800;
+  }
+  .rank-badge.gold { background: #fbbf24; color: #111; }
+  .rank-badge.silver { background: #9ca3af; color: #111; }
+  .rank-badge.bronze { background: #d97706; color: #fff; }
 </style>
 </head>
 <body>
 <div class="container">
   <button id="themeToggle" title="Changer de thème">🌙</button>
 
-  <h1>👑 Josef – Calcul Mental</h1>
+  <h1>👑 Josef – Quiz Multijoueur</h1>
 
   <!-- ACCUEIL -->
   <div id="screenHome">
@@ -212,6 +255,8 @@
     
     <div id="questionBox">
       <div id="prefixBig">–</div>
+      <div id="definitionText">En attente…</div>
+      <button id="btnVocal" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter la définition</button>
     </div>
     
     <div id="timerBar"><div id="timerFill"></div></div>
@@ -223,7 +268,7 @@
     </div>
     
     <div class="row">
-      <input id="answer" type="number" placeholder="Ta réponse (chiffre)…" autocomplete="off" />
+      <input id="answer" type="text" placeholder="Ta réponse…" autocomplete="off" />
       <button id="btnSubmit" class="btn-primaire" style="max-width:120px">Valider</button>
     </div>
     
@@ -237,9 +282,23 @@
   <!-- FIN -->
   <div id="screenEnd" class="hidden">
     <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="endTitle">Partie terminée</div>
-    <div class="scoreboard" id="finalScoreboard"></div>
     
-    <h3 style="text-align:center; margin-top:24px; color:var(--texte);">Récapitulatif des réponses</h3>
+    <!-- Le tableau professionnel remplace l'ancien scoreboard -->
+    <table class="pro-table" id="finalScoreboard">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Joueur</th>
+          <th>Score</th>
+          <th>Stats (✅/❌)</th>
+        </tr>
+      </thead>
+      <tbody id="finalScoreboardBody">
+        <!-- Rempli par JS -->
+      </tbody>
+    </table>
+    
+    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des réponses</h3>
     <div class="recap-list" id="recapList"></div>
 
     <div class="row" style="margin-top:24px;">
@@ -254,7 +313,7 @@
 
 <script>
 /* ============================================================
-   🔥 CONFIG FIREBASE (Même projet)
+   🔥 CONFIG FIREBASE
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
@@ -269,498 +328,92 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ============================================================
-   BANQUE DE QUESTIONS (Adaptée de ton fichier)
+   BANQUE DE QUESTIONS
    ============================================================ */
-const MATH_QUESTIONS = [
-  { question: "81 ÷ 9", answer: 9 },
-  { question: "6 × 2 + 4 ÷ 2", answer: 14 },
-  { question: "12 × 3 - 4", answer: 32 },
-  { question: "25 × 4 ÷ 5", answer: 20 },
-  { question: "15 × 5", answer: 75 },
-  { question: "7 + 5 × 3", answer: 22 },
-  { question: "81 ÷ 9 + 3", answer: 12 },
-  { question: "100 ÷ 2 - 10", answer: 40 },
-  { question: "9 × 8 - 20", answer: 52 },
-  { question: "12 × 5 ÷ 3", answer: 20 },
-  { question: "10 ÷ 2 + 3 × 4", answer: 17 },
-  { question: "5 × 3 + 6 ÷ 2", answer: 18 },
-  { question: "12 ÷ 3 + 4 × 2", answer: 12 },
-  { question: "7 × 2 + 8 ÷ 4", answer: 16 },
-  { question: "8 ÷ 2 + 5 × 3", answer: 19 },
-  { question: "6 × 3 + 9 ÷ 3", answer: 21 },
-  { question: "16 ÷ 4 + 2 × 6", answer: 16 },
-  { question: "9 × 2 + 4 ÷ 2", answer: 20 },
-  { question: "12 ÷ 2 + 3 × 2", answer: 12 },
-  { question: "7 × 3 + 6 ÷ 3", answer: 23 },
-  { question: "10 ÷ 5 + 4 × 4", answer: 18 },
-  { question: "8 × 2 + 10 ÷ 2", answer: 21 },
-  { question: "18 ÷ 3 + 5 × 2", answer: 16 },
-  { question: "6 × 4 + 8 ÷ 4", answer: 26 },
-  { question: "15 ÷ 3 + 3 × 5", answer: 20 },
-  { question: "4 × 2 + 12 ÷ 3", answer: 12 },
-  { question: "16 ÷ 4 + 6 × 2", answer: 16 },
-  { question: "3 × 5 + 9 ÷ 3", answer: 18 },
-  { question: "20 ÷ 5 + 4 × 2", answer: 12 },
-  { question: "6 × 3 + 8 ÷ 4", answer: 20 },
-  { question: "12 ÷ 2 + 7 × 1", answer: 13 },
-  { question: "8 × 2 + 6 ÷ 3", answer: 18 },
-  { question: "9 ÷ 3 + 4 × 3", answer: 15 },
-  { question: "5 × 2 + 18 ÷ 6", answer: 13 },
-  { question: "14 ÷ 2 + 3 × 3", answer: 16 },
-  { question: "3 × 4 + 8 ÷ 4", answer: 14 },
-  { question: "18 ÷ 6 + 5 × 2", answer: 13 },
-  { question: "10 × 1 + 9 ÷ 3", answer: 13 },
-  { question: "6 ÷ 2 + 7 × 2", answer: 17 },
-  { question: "8 × 3 + 6 ÷ 2", answer: 27 },
-  { question: "15 ÷ 5 + 2 × 4", answer: 11 },
-  { question: "9 × 2 + 10 ÷ 5", answer: 22 },
-  { question: "12 ÷ 3 + 6 × 2", answer: 16 },
-  { question: "4 × 4 + 12 ÷ 3", answer: 20 },
-  { question: "18 ÷ 3 + 2 × 3", answer: 12 },
-  { question: "14 ÷ 2 + 3 × 4", answer: 19 },
-  { question: "7 × 2 + 10 ÷ 2", answer: 19 },
-  { question: "10 ÷ 2 + 6 × 2", answer: 17 },
-  { question: "6 × 2 ÷ 3 + 4", answer: 8 },
-  { question: "12 ÷ 3 × 2 + 5", answer: 13 },
-  { question: "8 × 3 ÷ 4 + 2", answer: 8 },
-  { question: "10 ÷ 2 × 3 + 1", answer: 16 },
-  { question: "4 × 5 ÷ 2 + 3", answer: 13 },
-  { question: "9 ÷ 3 × 4 + 2", answer: 14 },
-  { question: "7 × 2 ÷ 1 + 5", answer: 19 },
-  { question: "12 ÷ 4 × 2 + 6", answer: 12 },
-  { question: "16 ÷ 2 × 1 + 3", answer: 11 },
-  { question: "3 × 4 ÷ 2 + 7", answer: 13 },
-  { question: "8 ÷ 2 × 3 + 1", answer: 13 },
-  { question: "6 × 2 ÷ 1 + 5", answer: 17 },
-  { question: "10 ÷ 5 × 4 + 6", answer: 14 },
-  { question: "14 × 1 ÷ 2 + 3", answer: 10 },
-  { question: "18 ÷ 3 × 2 + 4", answer: 16 },
-  { question: "8 ÷ 2 × 5 + 2", answer: 22 },
-  { question: "6 ÷ 2 × 4 + 3", answer: 15 },
-  { question: "15 × 1 ÷ 5 + 8", answer: 11 },
-  { question: "20 ÷ 4 × 2 + 5", answer: 15 },
-  { question: "7 × 2 ÷ 1 + 3", answer: 17 },
-  { question: "8 ÷ 4 × 6 + 2", answer: 14 },
-  { question: "10 × 2 ÷ 5 + 3", answer: 7 },
-  { question: "6 ÷ 3 × 4 + 2", answer: 10 },
-  { question: "4 × 2 ÷ 2 + 7", answer: 11 },
-  { question: "16 ÷ 2 × 1 + 5", answer: 13 },
-  { question: "3 × 5 ÷ 1 + 2", answer: 17 },
-  { question: "12 ÷ 3 × 2 + 6", answer: 14 },
-  { question: "5 × 4 ÷ 2 + 3", answer: 13 },
-  { question: "9 ÷ 3 × 5 + 1", answer: 16 },
-  { question: "8 × 2 ÷ 4 + 5", answer: 9 },
-  { question: "14 ÷ 2 × 1 + 4", answer: 11 },
-  { question: "6 × 2 ÷ 3 + 7", answer: 11 },
-  { question: "20 ÷ 4 × 1 + 6", answer: 11 },
-  { question: "7 × 3 ÷ 1 + 2", answer: 23 },
-  { question: "15 + 25 - 10", answer: 30 },
-  { question: "50 ÷ 5 + 12", answer: 22 },
-  { question: "30 - 8 + 14", answer: 36 },
-  { question: "100 ÷ 4 - 15", answer: 10 },
-  { question: "75 + 25 ÷ 5", answer: 80 },
-  { question: "60 - 12 + 18", answer: 66 },
-  { question: "48 ÷ 6 + 10", answer: 18 },
-  { question: "120 - 40 ÷ 8", answer: 115 },
-  { question: "15 + 45 ÷ 9", answer: 20 },
-  { question: "72 - 24 + 8", answer: 56 },
-  { question: "84 ÷ 7 - 6", answer: 6 },
-  { question: "120 + 30 ÷ 6", answer: 125 },
-  { question: "45 + 36 ÷ 9", answer: 49 },
-  { question: "200 ÷ 10 + 5", answer: 25 },
-  { question: "80 - 16 + 4", answer: 68 },
-  { question: "56 ÷ 8 + 10", answer: 17 },
-  { question: "90 + 45 ÷ 9", answer: 95 },
-  { question: "18 - 3 + 10", answer: 25 },
-  { question: "150 ÷ 15 + 5", answer: 15 },
-  { question: "65 - 30 ÷ 5", answer: 59 },
-  { question: "45 + 38 - 22", answer: 61 },
-  { question: "120 ÷ 6 + 18", answer: 38 },
-  { question: "70 - 13 + 27", answer: 84 },
-  { question: "144 ÷ 12 - 7", answer: 5 },
-  { question: "90 + 48 ÷ 8", answer: 96 },
-  { question: "55 - 30 + 22", answer: 47 },
-  { question: "81 ÷ 9 + 6", answer: 15 },
-  { question: "200 - 56 ÷ 8", answer: 193 },
-  { question: "36 + 72 ÷ 9", answer: 44 },
-  { question: "150 - 40 + 30", answer: 140 },
-  { question: "25 + 40 - 15", answer: 50 },
-  { question: "96 ÷ 8 + 15", answer: 27 },
-  { question: "150 - 45 + 30", answer: 135 },
-  { question: "81 ÷ 9 - 5", answer: 4 },
-  { question: "36 + 54 ÷ 6", answer: 39 },
-  { question: "72 - 32 + 20", answer: 60 },
-  { question: "56 ÷ 7 + 9", answer: 13 },
-  { question: "100 + 60 ÷ 12", answer: 105 },
-  { question: "48 - 18 + 24", answer: 54 },
-  { question: "150 ÷ 5 + 10", answer: 40 },
-  { question: "72 + 18 - 24", answer: 66 },
-  { question: "120 ÷ 6 + 14", answer: 34 },
-  { question: "85 - 50 + 15", answer: 50 },
-  { question: "144 ÷ 12 - 9", answer: 3 },
-  { question: "36 + 48 ÷ 8", answer: 42 },
-  { question: "150 - 80 + 45", answer: 115 },
-  { question: "98 ÷ 7 + 10", answer: 24 },
-  { question: "200 - 120 ÷ 6", answer: 180 },
-  { question: "65 + 32 ÷ 8", answer: 69 },
-  { question: "135 - 45 + 18", answer: 108 },
-  { question: "24 + 36 ÷ 6", answer: 30 },
-  { question: "80 ÷ 4 + 27", answer: 47 },
-  { question: "63 - 21 + 9", answer: 51 },
-  { question: "250 ÷ 5 - 30", answer: 20 },
-  { question: "48 + 72 ÷ 9", answer: 56 },
-  { question: "210 - 56 ÷ 8", answer: 203 },
-  { question: "96 + 64 ÷ 8", answer: 104 },
-  { question: "50 - 18 + 12", answer: 44 },
-  { question: "180 ÷ 9 + 16", answer: 36 },
-  { question: "55 + 28 ÷ 7", answer: 59 },
-  { question: "7 × 6 + 8", answer: 50 },
-  { question: "9 × 5 + 4", answer: 49 },
-  { question: "12 × 3 + 15", answer: 51 },
-  { question: "8 × 4 + 6", answer: 38 },
-  { question: "5 × 9 + 11", answer: 56 },
-  { question: "6 × 7 + 13", answer: 55 },
-  { question: "3 × 12 + 18", answer: 54 },
-  { question: "4 × 8 + 17", answer: 49 },
-  { question: "11 × 2 + 25", answer: 47 },
-  { question: "10 × 6 + 7", answer: 67 },
-  { question: "8 × 7 - 5", answer: 51 },
-  { question: "6 × 9 - 10", answer: 44 },
-  { question: "15 × 4 - 20", answer: 40 },
-  { question: "10 × 5 - 9", answer: 41 },
-  { question: "7 × 8 - 12", answer: 44 },
-  { question: "9 × 6 - 18", answer: 36 },
-  { question: "11 × 5 - 8", answer: 47 },
-  { question: "13 × 4 - 14", answer: 38 },
-  { question: "6 × 12 - 20", answer: 52 },
-  { question: "14 × 3 - 22", answer: 20 },
-  { question: "5 × 3 + 2", answer: 17 },
-  { question: "7 × 4 + 9", answer: 37 },
-  { question: "6 × 8 + 5", answer: 53 },
-  { question: "9 × 2 + 7", answer: 25 },
-  { question: "4 × 6 + 11", answer: 35 },
-  { question: "3 × 5 + 8", answer: 23 },
-  { question: "8 × 3 + 10", answer: 34 },
-  { question: "6 × 7 + 4", answer: 46 },
-  { question: "2 × 9 + 15", answer: 33 },
-  { question: "5 × 5 + 3", answer: 28 },
-  { question: "8 × 6 - 4", answer: 44 },
-  { question: "7 × 9 - 5", answer: 58 },
-  { question: "3 × 4 - 6", answer: 6 },
-  { question: "5 × 5 - 8", answer: 17 },
-  { question: "9 × 3 - 7", answer: 20 },
-  { question: "6 × 8 - 3", answer: 45 },
-  { question: "4 × 7 - 9", answer: 19 },
-  { question: "8 × 5 - 12", answer: 28 },
-  { question: "2 × 6 - 9", answer: 3 },
-  { question: "7 × 3 - 5", answer: 16 },
-  { question: "12 × 3 ÷ 4", answer: 9 },
-  { question: "15 ÷ 5 × 6", answer: 18 },
-  { question: "7 × 8 ÷ 4", answer: 14 },
-  { question: "18 ÷ 3 × 2", answer: 12 },
-  { question: "9 × 4 ÷ 6", answer: 6 },
-  { question: "24 ÷ 8 × 3", answer: 9 },
-  { question: "5 × 10 ÷ 2", answer: 25 },
-  { question: "36 ÷ 6 × 7", answer: 42 },
-  { question: "6 × 9 ÷ 3", answer: 18 },
-  { question: "48 ÷ 12 × 2", answer: 8 },
-  { question: "8 × 7 ÷ 2", answer: 28 },
-  { question: "20 ÷ 4 × 5", answer: 25 },
-  { question: "30 × 2 ÷ 5", answer: 12 },
-  { question: "45 ÷ 9 × 6", answer: 30 },
-  { question: "10 × 3 ÷ 5", answer: 6 },
-  { question: "72 ÷ 8 × 9", answer: 81 },
-  { question: "16 × 5 ÷ 4", answer: 20 },
-  { question: "50 ÷ 10 × 2", answer: 10 },
-  { question: "14 × 2 ÷ 7", answer: 4 },
-  { question: "64 ÷ 8 × 3", answer: 24 },
-  { question: "14 × 4 ÷ 2", answer: 28 },
-  { question: "16 ÷ 4 × 3", answer: 12 },
-  { question: "9 × 7 ÷ 3", answer: 21 },
-  { question: "20 ÷ 5 × 6", answer: 24 },
-  { question: "25 × 2 ÷ 5", answer: 10 },
-  { question: "36 ÷ 12 × 8", answer: 24 },
-  { question: "12 × 9 ÷ 3", answer: 36 },
-  { question: "40 ÷ 8 × 5", answer: 25 },
-  { question: "24 × 3 ÷ 6", answer: 12 },
-  { question: "18 ÷ 3 × 5", answer: 30 },
-  { question: "21 × 2 ÷ 7", answer: 6 },
-  { question: "30 ÷ 6 × 4", answer: 20 },
-  { question: "10 × 8 ÷ 4", answer: 20 },
-  { question: "48 ÷ 6 × 3", answer: 24 },
-  { question: "72 ÷ 9 × 4", answer: 32 },
-  { question: "50 × 3 ÷ 10", answer: 15 },
-  { question: "60 ÷ 5 × 6", answer: 72 },
-  { question: "14 × 5 ÷ 10", answer: 7 },
-  { question: "8 × 12 ÷ 4", answer: 24 },
-  { question: "45 ÷ 15 × 6", answer: 18 },
-  { question: "30 ÷ 6 × 2", answer: 10 },
-  { question: "8 × 9 ÷ 6", answer: 12 },
-  { question: "36 ÷ 4 × 3", answer: 27 },
-  { question: "16 × 3 ÷ 8", answer: 6 },
-  { question: "24 ÷ 4 × 5", answer: 30 },
-  { question: "18 × 2 ÷ 6", answer: 6 },
-  { question: "48 ÷ 8 × 3", answer: 18 },
-  { question: "20 × 2 ÷ 10", answer: 4 },
-  { question: "72 ÷ 12 × 6", answer: 36 },
-  { question: "9 × 8 ÷ 4", answer: 18 },
-  { question: "28 ÷ 7 × 5", answer: 20 },
-  { question: "32 ÷ 8 × 2", answer: 8 },
-  { question: "10 × 5 ÷ 5", answer: 10 },
-  { question: "36 ÷ 6 × 4", answer: 24 },
-  { question: "12 × 7 ÷ 6", answer: 14 },
-  { question: "45 ÷ 5 × 4", answer: 36 },
-  { question: "24 × 5 ÷ 8", answer: 15 },
-  { question: "50 ÷ 10 × 9", answer: 45 },
-  { question: "56 ÷ 7 × 3", answer: 24 },
-  { question: "36 ÷ 9 × 7", answer: 28 },
-  { question: "56 ÷ 7 × 4", answer: 32 },
-  { question: "15 × 3 ÷ 5", answer: 9 },
-  { question: "45 ÷ 5 × 8", answer: 72 },
-  { question: "18 × 4 ÷ 6", answer: 12 },
-  { question: "72 ÷ 8 × 5", answer: 45 },
-  { question: "30 ÷ 6 × 3", answer: 15 },
-  { question: "50 × 4 ÷ 10", answer: 20 },
-  { question: "64 ÷ 8 × 6", answer: 48 },
-  { question: "12 × 5 ÷ 6", answer: 10 },
-  { question: "24 ÷ 3 × 2", answer: 16 },
-  { question: "48 ÷ 12 × 9", answer: 36 },
-  { question: "21 × 3 ÷ 7", answer: 9 },
-  { question: "27 ÷ 3 × 5", answer: 45 },
-  { question: "80 ÷ 10 × 2", answer: 16 },
-  { question: "18 × 2 ÷ 9", answer: 4 },
-  { question: "24 ÷ 6 × 4", answer: 16 },
-  { question: "10 × 7 ÷ 5", answer: 14 },
-  { question: "50 ÷ 10 × 6", answer: 30 },
-  { question: "36 × 2 ÷ 9", answer: 8 },
-  { question: "36 ÷ 4 × 5", answer: 45 },
-  { question: "24 × 3 ÷ 12", answer: 6 },
-  { question: "50 ÷ 5 × 6", answer: 60 },
-  { question: "72 ÷ 8 × 9", answer: 81 },
-  { question: "15 × 4 ÷ 3", answer: 20 },
-  { question: "36 ÷ 9 × 8", answer: 32 },
-  { question: "27 × 2 ÷ 9", answer: 6 },
-  { question: "63 ÷ 7 × 4", answer: 36 },
-  { question: "48 ÷ 6 × 5", answer: 40 },
-  { question: "25 × 6 ÷ 10", answer: 15 },
-  { question: "42 ÷ 7 × 8", answer: 48 },
-  { question: "64 ÷ 8 × 3", answer: 24 },
-  { question: "18 × 5 ÷ 9", answer: 10 },
-  { question: "12 × 6 ÷ 4", answer: 18 },
-  { question: "20 ÷ 5 × 4", answer: 16 },
-  { question: "56 ÷ 7 × 5", answer: 40 },
-  { question: "45 × 2 ÷ 5", answer: 18 },
-  { question: "36 ÷ 6 × 7", answer: 42 },
-  { question: "72 × 2 ÷ 9", answer: 16 },
-  { question: "54 ÷ 9 × 4", answer: 24 },
-  { question: "25 - 8 + 6 × 3", answer: 35 },
-  { question: "45 - 12 + 4 × 5", answer: 53 },
-  { question: "60 - 20 + 2 × 7", answer: 54 },
-  { question: "72 - 15 + 8 × 2", answer: 73 },
-  { question: "100 - 45 + 3 × 9", answer: 82 },
-  { question: "84 - 30 + 5 × 6", answer: 84 },
-  { question: "56 - 18 + 4 × 8", answer: 70 },
-  { question: "120 - 50 + 7 × 4", answer: 98 },
-  { question: "150 - 90 + 9 × 3", answer: 87 },
-  { question: "90 - 40 + 6 × 5", answer: 80 },
-  { question: "135 - 55 + 7 × 8", answer: 136 },
-  { question: "78 - 12 + 3 × 9", answer: 93 },
-  { question: "120 - 60 + 10 × 4", answer: 100 },
-  { question: "65 - 20 + 5 × 6", answer: 75 },
-  { question: "98 - 40 + 8 × 7", answer: 114 },
-  { question: "110 - 60 + 4 × 9", answer: 86 },
-  { question: "130 - 45 + 3 × 12", answer: 121 },
-  { question: "150 - 70 + 6 × 8", answer: 128 },
-  { question: "200 - 100 + 9 × 5", answer: 145 },
-  { question: "85 - 35 + 2 × 8", answer: 66 },
-  { question: "12 + 8 - 4 × 3", answer: 8 },
-  { question: "35 + 15 - 9 × 2", answer: 32 },
-  { question: "50 + 20 - 5 × 6", answer: 40 },
-  { question: "60 + 30 - 7 × 5", answer: 55 },
-  { question: "100 + 50 - 8 × 3", answer: 126 },
-  { question: "25 + 10 - 6 × 4", answer: 11 },
-  { question: "80 + 40 - 9 × 2", answer: 102 },
-  { question: "45 + 25 - 3 × 7", answer: 49 },
-  { question: "60 + 20 - 10 × 3", answer: 50 },
-  { question: "90 + 30 - 6 × 5", answer: 90 },
-  { question: "70 + 50 - 8 × 2", answer: 104 },
-  { question: "110 + 20 - 7 × 4", answer: 102 },
-  { question: "55 + 15 - 6 × 5", answer: 40 },
-  { question: "120 + 40 - 9 × 3", answer: 133 },
-  { question: "80 + 60 - 5 × 7", answer: 105 },
-  { question: "150 + 25 - 8 × 4", answer: 144 },
-  { question: "200 + 40 - 6 × 9", answer: 186 },
-  { question: "180 + 30 - 7 × 6", answer: 168 },
-  { question: "130 + 50 - 8 × 4", answer: 148 },
-  { question: "90 + 20 - 5 × 5", answer: 85 },
-  { question: "5 × 4 + 12 - 3", answer: 29 },
-  { question: "8 × 6 + 20 - 10", answer: 58 },
-  { question: "9 × 3 + 15 - 5", answer: 37 },
-  { question: "4 × 7 + 30 - 9", answer: 49 },
-  { question: "6 × 5 + 25 - 8", answer: 47 },
-  { question: "7 × 8 + 10 - 6", answer: 60 },
-  { question: "3 × 9 + 20 - 10", answer: 37 },
-  { question: "10 × 2 + 15 - 6", answer: 28 },
-  { question: "6 × 6 + 28 - 15", answer: 49 },
-  { question: "5 × 9 + 12 - 8", answer: 49 },
-  { question: "4 × 3 + 35 - 10", answer: 37 },
-  { question: "7 × 5 + 14 - 6", answer: 33 },
-  { question: "3 × 8 + 30 - 7", answer: 47 },
-  { question: "9 × 4 + 20 - 10", answer: 46 },
-  { question: "8 × 2 + 18 - 5", answer: 29 },
-  { question: "6 × 7 + 25 - 12", answer: 55 },
-  { question: "5 × 6 + 18 - 10", answer: 38 },
-  { question: "7 × 4 + 22 - 8", answer: 42 },
-  { question: "3 × 5 + 27 - 11", answer: 31 },
-  { question: "2 × 9 + 40 - 15", answer: 43 },
-  { question: "15 - 4 × 3 + 6", answer: 9 },
-  { question: "20 - 5 × 2 + 8", answer: 18 },
-  { question: "18 - 7 × 4 + 10", answer: 0 },
-  { question: "30 - 3 × 5 + 12", answer: 27 },
-  { question: "25 - 8 × 2 + 5", answer: 14 },
-  { question: "40 - 9 × 3 + 7", answer: 20 },
-  { question: "50 - 6 × 4 + 9", answer: 35 },
-  { question: "12 - 2 × 5 + 4", answer: 6 },
-  { question: "60 - 10 × 3 + 15", answer: 45 },
-  { question: "45 - 4 × 6 + 11", answer: 32 },
-  { question: "36 - 3 × 7 + 13", answer: 28 },
-  { question: "28 - 6 × 4 + 10", answer: 14 },
-  { question: "22 - 8 × 2 + 14", answer: 20 },
-  { question: "16 - 5 × 3 + 7", answer: 8 },
-  { question: "38 - 4 × 5 + 9", answer: 27 },
-  { question: "45 - 7 × 2 + 6", answer: 37 },
-  { question: "32 - 9 × 3 + 8", answer: 13 },
-  { question: "48 - 6 × 4 + 13", answer: 37 },
-  { question: "20 - 2 × 6 + 5", answer: 13 },
-  { question: "52 - 5 × 4 + 12", answer: 44 },
-  { question: "72 ÷ 8 + 5 - 3", answer: 11 },
-  { question: "45 ÷ 9 + 7 - 4", answer: 8 },
-  { question: "56 ÷ 7 + 8 - 2", answer: 14 },
-  { question: "36 ÷ 6 + 9 - 5", answer: 10 },
-  { question: "90 ÷ 10 + 3 - 1", answer: 11 },
-  { question: "63 ÷ 9 + 6 - 3", answer: 10 },
-  { question: "84 ÷ 7 + 4 - 2", answer: 14 },
-  { question: "48 ÷ 8 + 12 - 8", answer: 10 },
-  { question: "72 ÷ 9 + 5 - 2", answer: 11 },
-  { question: "60 ÷ 5 + 10 - 6", answer: 16 },
-  { question: "15 + 30 ÷ 5 - 3", answer: 18 },
-  { question: "40 + 50 ÷ 10 - 4", answer: 41 },
-  { question: "60 + 24 ÷ 8 - 2", answer: 61 },
-  { question: "100 + 36 ÷ 4 - 5", answer: 104 },
-  { question: "25 + 18 ÷ 3 - 2", answer: 29 },
-  { question: "90 + 72 ÷ 9 - 6", answer: 92 },
-  { question: "45 + 56 ÷ 7 - 8", answer: 45 },
-  { question: "36 + 18 ÷ 6 - 4", answer: 35 },
-  { question: "50 + 72 ÷ 8 - 9", answer: 50 },
-  { question: "120 + 84 ÷ 12 - 7", answer: 120 },
-  { question: "8 × 6 ÷ 3 - 4", answer: 12 },
-  { question: "12 × 5 ÷ 2 - 3", answer: 27 },
-  { question: "9 × 7 ÷ 7 - 2", answer: 7 },
-  { question: "15 × 4 ÷ 2 - 6", answer: 24 },
-  { question: "10 × 9 ÷ 3 - 5", answer: 25 },
-  { question: "20 × 3 ÷ 6 - 8", answer: 2 },
-  { question: "7 × 8 ÷ 4 - 3", answer: 11 },
-  { question: "18 × 5 ÷ 10 - 4", answer: 5 },
-  { question: "14 × 6 ÷ 2 - 5", answer: 37 },
-  { question: "11 × 6 ÷ 2 - 7", answer: 26 },
-  { question: "6 × 4 ÷ 2 + 3", answer: 15 },
-  { question: "9 × 5 ÷ 3 + 7", answer: 22 },
-  { question: "12 × 3 ÷ 6 + 8", answer: 14 },
-  { question: "8 × 7 ÷ 4 + 5", answer: 19 },
-  { question: "15 × 2 ÷ 5 + 6", answer: 12 },
-  { question: "10 × 9 ÷ 3 + 2", answer: 32 },
-  { question: "5 × 6 ÷ 2 + 9", answer: 24 },
-  { question: "14 × 2 ÷ 7 + 4", answer: 8 },
-  { question: "11 × 3 ÷ 3 + 10", answer: 10 },
-  { question: "7 × 8 ÷ 4 + 3", answer: 17 },
-  { question: "6 × 4 + 8 ÷ 2", answer: 28 },
-  { question: "9 × 5 + 12 ÷ 3", answer: 49 },
-  { question: "3 × 7 + 14 ÷ 7", answer: 23 },
-  { question: "8 × 6 + 18 ÷ 3", answer: 54 },
-  { question: "10 × 5 + 20 ÷ 4", answer: 55 },
-  { question: "4 × 3 + 24 ÷ 6", answer: 16 },
-  { question: "5 × 6 + 30 ÷ 5", answer: 36 },
-  { question: "7 × 2 + 18 ÷ 3", answer: 20 },
-  { question: "11 × 3 + 36 ÷ 6", answer: 39 },
-  { question: "12 × 2 + 24 ÷ 8", answer: 27 },
-  { question: "8 × 5 - 12 ÷ 4", answer: 37 },
-  { question: "6 × 7 - 18 ÷ 3", answer: 36 },
-  { question: "9 × 4 - 20 ÷ 5", answer: 32 },
-  { question: "10 × 3 - 24 ÷ 6", answer: 26 },
-  { question: "7 × 6 - 15 ÷ 3", answer: 37 },
-  { question: "5 × 8 - 30 ÷ 5", answer: 34 },
-  { question: "12 × 3 - 45 ÷ 9", answer: 31 },
-  { question: "6 × 9 - 36 ÷ 6", answer: 48 },
-  { question: "4 × 7 - 28 ÷ 7", answer: 24 },
-  { question: "3 × 5 - 18 ÷ 3", answer: 9 },
-  { question: "36 ÷ 6 + 4 × 5", answer: 26 },
-  { question: "48 ÷ 8 + 2 × 7", answer: 20 },
-  { question: "72 ÷ 9 + 3 × 6", answer: 26 },
-  { question: "84 ÷ 12 + 5 × 4", answer: 27 },
-  { question: "96 ÷ 8 + 7 × 3", answer: 24 },
-  { question: "60 ÷ 10 + 9 × 2", answer: 27 },
-  { question: "120 ÷ 15 + 6 × 8", answer: 56 },
-  { question: "90 ÷ 5 + 8 × 2", answer: 34 },
-  { question: "100 ÷ 20 + 4 × 6", answer: 29 },
-  { question: "54 ÷ 9 + 5 × 3", answer: 21 },
-  { question: "48 ÷ 8 × 3 + 5", answer: 23 },
-  { question: "36 ÷ 6 × 4 + 2", answer: 26 },
-  { question: "56 ÷ 7 × 5 + 8", answer: 48 },
-  { question: "72 ÷ 9 × 6 + 7", answer: 55 },
-  { question: "84 ÷ 12 × 8 + 9", answer: 65 },
-  { question: "90 ÷ 10 × 7 + 6", answer: 69 },
-  { question: "120 ÷ 15 × 9 + 4", answer: 76 },
-  { question: "64 ÷ 8 × 3 + 10", answer: 34 },
-  { question: "100 ÷ 25 × 6 + 11", answer: 35 },
-  { question: "54 ÷ 6 × 4 + 3", answer: 39 },
-  { question: "50 - 10 + 20 ÷ 5", answer: 44 },
-  { question: "72 - 15 + 30 ÷ 6", answer: 62 },
-  { question: "90 - 25 + 40 ÷ 8", answer: 70 },
-  { question: "60 - 10 + 36 ÷ 9", answer: 54 },
-  { question: "120 - 40 + 56 ÷ 7", answer: 88 },
-  { question: "80 - 20 + 48 ÷ 12", answer: 64 },
-  { question: "150 - 30 + 72 ÷ 9", answer: 128 },
-  { question: "110 - 45 + 36 ÷ 6", answer: 71 },
-  { question: "100 - 50 + 72 ÷ 12", answer: 56 },
-  { question: "200 - 75 + 54 ÷ 6", answer: 134 },
-  { question: "72 ÷ 8 × 5 - 12", answer: 33 },
-  { question: "84 ÷ 7 × 6 - 18", answer: 54 },
-  { question: "90 ÷ 9 × 4 - 15", answer: 25 },
-  { question: "96 ÷ 12 × 3 - 20", answer: 4 },
-  { question: "120 ÷ 10 × 7 - 25", answer: 59 },
-  { question: "144 ÷ 12 × 5 - 30", answer: 30 },
-  { question: "180 ÷ 15 × 6 - 40", answer: 32 },
-  { question: "225 ÷ 25 × 8 - 50", answer: 22 },
-  { question: "300 ÷ 30 × 4 - 40", answer: 0 },
-  { question: "450 ÷ 15 × 3 - 45", answer: 45 },
-  { question: "300 ÷ 10 + 25 × 2", answer: 80 },
-  { question: "144 ÷ 12 × 3 − 15", answer: 21 },
-  { question: "96 × 2 − 50 ÷ 5", answer: 182 },
-  { question: "180 ÷ 6 + 40 × 2", answer: 110 },
-  { question: "225 × 2 − 60 ÷ 3", answer: 430 },
-  { question: "400 ÷ 20 × 6 + 18", answer: 138 },
-  { question: "360 ÷ 12 − 15 × 3", answer: -15 },
-  { question: "150 × 2 + 100 ÷ 10", answer: 310 },
-  { question: "64 × 3 − 90 ÷ 6", answer: 177 },
-  { question: "500 ÷ 25 + 120 × 2", answer: 260 },
-  { question: "132 ÷ 11 + 45 × 3", answer: 147 },
-  { question: "84 × 2 − 36 ÷ 3", answer: 156 },
-  { question: "600 ÷ 20 × 2 + 80", answer: 140 },
-  { question: "256 × 1 − 48 ÷ 4", answer: 244 },
-  { question: "144 ÷ 12 + 90 × 2", answer: 192 },
-  { question: "240 × 2 − 60 ÷ 5", answer: 468 },
-  { question: "400 ÷ 8 + 100 × 2", answer: 250 },
-  { question: "180 × 3 − 120 ÷ 6", answer: 520 },
-  { question: "324 ÷ 18 × 5 + 25", answer: 115 },
-  { question: "96 × 4 − 64 ÷ 4", answer: 368 },
-  { question: "500 ÷ 10 + 120 × 1", answer: 170 },
-  { question: "128 × 2 − 72 ÷ 6", answer: 244 },
-  { question: "640 ÷ 8 × 2 + 30", answer: 190 },
-  { question: "144 ÷ 6 − 90 × 1", answer: -66 },
-  { question: "225 × 3 + 300 ÷ 10", answer: 705 },
-  { question: "5 × 4 + 8 ÷ 2", answer: 24 },
-  { question: "6 ÷ 3 + 7 × 3", answer: 23 }
-];
+const FIELDS = {
+  "Pr":[{"mot":"Précision","def":"Le fait de donner des détails exacts et précis."},{"mot":"Profond","def":"Qui se rapporte à la profondeur."},{"mot":"Profession","def":"Domaine d'activité ou métier."},{"mot":"Progrès","def":"Avancement ou amélioration."},{"mot":"Promesse","def":"Engagement ou parole donnée."},{"mot":"Proverbe","def":"Expression populaire qui contient une sagesse."}],
+  "Se":[{"mot":"Sensation","def":"Perception ou ressenti d'un stimulus."},{"mot":"Séduction","def":"Charme ou pouvoir d'attraction."},{"mot":"Sérénité","def":"État de calme et de tranquillité."},{"mot":"Secret","def":"Quelque chose qui est caché."},{"mot":"Sentiment","def":"Émotion ou affection ressentie."},{"mot":"Service","def":"Action d'aider ou d'assister."}],
+  "Tr":[{"mot":"Transformation","def":"Changement ou métamorphose."},{"mot":"Tristesse","def":"État de chagrin ou de mélancolie."},{"mot":"Travail","def":"Emploi ou activité professionnelle."},{"mot":"Tradition","def":"Coutume transmise de génération en génération."},{"mot":"Triomphe","def":"Victoire éclatante."},{"mot":"Trésor","def":"Richesse ou bien précieux."}],
+  "Ca":[{"mot":"Caractère","def":"Ensemble de traits distinctifs."},{"mot":"Carte","def":"Document représentant une région."},{"mot":"Cascade","def":"Chute d'eau sur une pente."},{"mot":"Cadeau","def":"Objet offert pour une occasion."},{"mot":"Caméra","def":"Appareil pour filmer."},{"mot":"Capitale","def":"Ville principale d'un pays."}],
+  "Br":[{"mot":"Branche","def":"Partie d'un arbre partant du tronc."},{"mot":"Briller","def":"Émettre de la lumière ou luire."},{"mot":"Brouillard","def":"Nuage au sol réduisant la visibilité."},{"mot":"Bras","def":"Membre supérieur de l'être humain."},{"mot":"Brume","def":"Nuage léger près du sol."},{"mot":"Bravoure","def":"Courage face au danger."}],
+  "Th":[{"mot":"Théâtre","def":"Art et lieu de représentation scénique."},{"mot":"Théorie","def":"Ensemble organisé de concepts explicatifs."},{"mot":"Thermomètre","def":"Appareil mesurant la température."},{"mot":"Thérapeute","def":"Professionnel qui soigne par thérapie."},{"mot":"Théorème","def":"Proposition mathématique démontrée."},{"mot":"Thym","def":"Plante aromatique utilisée en cuisine."}],
+  "Ch":[{"mot":"Chaleur","def":"Sensation de température élevée."},{"mot":"Chambre","def":"Pièce où l'on dort."},{"mot":"Chanson","def":"Composition musicale avec paroles."},{"mot":"Chapeau","def":"Coiffure protégeant du soleil."},{"mot":"Chat","def":"Animal domestique qui miaule."},{"mot":"Chocolat","def":"Produit alimentaire à base de cacao."},{"mot":"Chiffre","def":"Symbole numérique."},{"mot":"Chute","def":"Action de tomber."}],
+  "Me":[{"mot":"Mémoire","def":"Capacité de se souvenir."},{"mot":"Méthode","def":"Manière spécifique d'effectuer une tâche."},{"mot":"Mélodie","def":"Séquence agréable de notes musicales."},{"mot":"Menu","def":"Liste de plats ou d'options."},{"mot":"Mesure","def":"Quantité ou échelle pour évaluer."},{"mot":"Merveille","def":"Chose très impressionnante."}],
+  "Di":[{"mot":"Direction","def":"Position ou trajectoire d'un mouvement."},{"mot":"Difficulté","def":"Obstacle ou défi qui complique."},{"mot":"Discipline","def":"Obéissance à des règles."},{"mot":"Dialogue","def":"Conversation entre deux personnes."},{"mot":"Diversité","def":"Variété dans un groupe."},{"mot":"Dictionnaire","def":"Livre listant les mots et définitions."}],
+  "Em":[{"mot":"Empathie","def":"Capacité de comprendre les sentiments d'autrui."},{"mot":"Emploi","def":"Travail ou occupation rémunéré."},{"mot":"Empreinte","def":"Marque laissée par un objet."},{"mot":"Émotionnel","def":"Lié aux émotions."},{"mot":"Émancipation","def":"Fait de se libérer de contraintes."},{"mot":"Empire","def":"Vaste territoire gouverné par un souverain."}],
+  "No":[{"mot":"Nourriture","def":"Substances consommées pour se nourrir."},{"mot":"Nouvelle","def":"Information sur des événements récents."},{"mot":"Nostalgie","def":"Désir ou tristesse envers le passé."},{"mot":"Normalité","def":"État conforme aux normes."},{"mot":"Notoriété","def":"Renommée d'une personne ou d'une chose."},{"mot":"Nomade","def":"Qui se déplace souvent sans domicile fixe."}],
+  "La":[{"mot":"Langage","def":"Système de communication humaine."},{"mot":"Labyrinthe","def":"Dédale complexe de passages."},{"mot":"Lampe","def":"Appareil d'éclairage."},{"mot":"Larme","def":"Goutte d'eau produite par les glandes lacrymales."},{"mot":"Lavage","def":"Action de nettoyer avec de l'eau."},{"mot":"Lancinant","def":"Douleur vive et persistante."}],
+  "In":[{"mot":"Insecte","def":"Petit animal à six pattes."},{"mot":"Inconnu","def":"Qui n'est pas reconnu ou identifié."},{"mot":"Innovant","def":"Qui apporte des idées nouvelles."},{"mot":"Injustice","def":"Absence d'équité."},{"mot":"Information","def":"Faits ou connaissances sur un sujet."},{"mot":"Invention","def":"Création d'une chose nouvelle."}],
+  "Ge":[{"mot":"Géant","def":"Très grand ou imposant."},{"mot":"Géographie","def":"Étude de la Terre et de ses habitants."},{"mot":"Géologie","def":"Étude des roches et de la structure de la Terre."},{"mot":"Genre","def":"Catégorie de choses similaires."},{"mot":"Géométrie","def":"Branche des mathématiques des formes."},{"mot":"Générosité","def":"Qualité de donner sans attendre en retour."}],
+  "Fa":[{"mot":"Famille","def":"Groupe de personnes liées par le sang."},{"mot":"Fabuleux","def":"Incroyablement merveilleux."},{"mot":"Facteur","def":"Variable qui influence un résultat."},{"mot":"Façon","def":"Manière dont quelque chose est fait."},{"mot":"Face","def":"Partie antérieure de la tête humaine."},{"mot":"Fable","def":"Court récit imaginaire avec une morale."}],
+  "Be":[{"mot":"Bébé","def":"Enfant en très bas âge."},{"mot":"Beauté","def":"Qualité d'être beau."},{"mot":"Berceau","def":"Lit pour bébé."},{"mot":"Besoin","def":"Nécessité ou exigence."},{"mot":"Beurre","def":"Produit laitier de la crème."},{"mot":"Bénéfice","def":"Profit ou avantage."}],
+  "Bo":[{"mot":"Bonbon","def":"Petite sucrerie."},{"mot":"Bonheur","def":"État de contentement."},{"mot":"Boîte","def":"Récipient rigide."},{"mot":"Bouteille","def":"Récipient pour liquides."},{"mot":"Boussole","def":"Instrument indiquant le nord."},{"mot":"Bougie","def":"Objet en cire servant à éclairer."}],
+  "Bi":[{"mot":"Bibliothèque","def":"Lieu de conservation des livres."},{"mot":"Bicyclette","def":"Véhicule à deux roues."},{"mot":"Biographie","def":"Récit de la vie d'une personne."},{"mot":"Bijou","def":"Objet ornemental porté sur le corps."},{"mot":"Bilan","def":"État des lieux ou compte rendu."},{"mot":"Biologie","def":"Science des êtres vivants."}],
+  "Pl":[{"mot":"Plage","def":"Étendue de sable au bord de la mer."},{"mot":"Plaisir","def":"Sensation de satisfaction."},{"mot":"Plateau","def":"Surface plane pour transporter."},{"mot":"Pluie","def":"Précipitation en gouttes d'eau."},{"mot":"Plume","def":"Objet pour écrire ou décorer."},{"mot":"Plante","def":"Être vivant végétal."}],
+  "Fr":[{"mot":"Fraise","def":"Fruit rouge et sucré."},{"mot":"Frère","def":"Membre masculin de la fratrie."},{"mot":"Frontière","def":"Ligne séparant deux pays."},{"mot":"Frisson","def":"Sensation de froid ou de peur."},{"mot":"Fraternité","def":"Solidarité entre êtres humains."},{"mot":"Fréquence","def":"Nombre de répétitions par unité de temps."}],
+  "Ba":[{"mot":"Baccalauréat","def":"Examen de fin d'études secondaires."},{"mot":"Banque","def":"Institution de services financiers."},{"mot":"Base","def":"Fondement sur lequel on construit."},{"mot":"Bataille","def":"Conflit armé entre groupes."},{"mot":"Banane","def":"Fruit jaune et courbé."},{"mot":"Bateau","def":"Embarcation naviguant sur l'eau."}],
+  "De":[{"mot":"Définition","def":"Explication précise d'un mot."},{"mot":"Démocratie","def":"Système où le peuple exerce le pouvoir."},{"mot":"Décision","def":"Choix pris après réflexion."},{"mot":"Désir","def":"Envie d'obtenir quelque chose."},{"mot":"Début","def":"Commencement d'une période."},{"mot":"Défi","def":"Provocation à une épreuve."}],
+  "Ma":[{"mot":"Magie","def":"Utilisation de pouvoirs surnaturels."},{"mot":"Maison","def":"Bâtiment où l'on vit."},{"mot":"Mariage","def":"Union légale de partenaires."},{"mot":"Maladie","def":"Altération de la santé."},{"mot":"Matin","def":"Première partie de la journée."},{"mot":"Masque","def":"Objet porté sur le visage."}],
+  "Su":[{"mot":"Survie","def":"Fait de rester en vie dans la difficulté."},{"mot":"Succès","def":"Réalisation d'un résultat positif."},{"mot":"Sujet","def":"Thème principal d'un discours."},{"mot":"Surprise","def":"Événement inattendu."},{"mot":"Supprimer","def":"Effacer ou enlever définitivement."},{"mot":"Subtil","def":"Délicat, peu évident."}],
+  "Pa":[{"mot":"Parc","def":"Espace vert aménagé."},{"mot":"Parler","def":"Communiquer par le langage."},{"mot":"Passeport","def":"Document permettant de voyager."},{"mot":"Pain","def":"Aliment à base de farine."},{"mot":"Parapluie","def":"Objet pour se protéger de la pluie."},{"mot":"Paix","def":"Absence de guerre."}],
+  "Re":[{"mot":"Rêve","def":"Suite d'images pendant le sommeil."},{"mot":"Réalité","def":"Ensemble des choses existantes."},{"mot":"Région","def":"Territoire délimité."},{"mot":"Recherche","def":"Action de chercher des informations."},{"mot":"Résultat","def":"Conséquence d'une action."},{"mot":"Réussir","def":"Atteindre son objectif avec succès."}],
+  "Co":[{"mot":"Concombre","def":"Légume vert allongé."},{"mot":"Connaissance","def":"Savoir acquis."},{"mot":"Coopération","def":"Action de travailler ensemble."},{"mot":"Corps","def":"Partie physique d'un être vivant."},{"mot":"Couleur","def":"Perception visuelle."},{"mot":"Conflit","def":"Opposition entre parties."}],
+  "Na":[{"mot":"Nage","def":"Déplacement dans l'eau."},{"mot":"Naissance","def":"Venue au monde d'un être vivant."},{"mot":"Narrateur","def":"Personne qui raconte une histoire."},{"mot":"Nation","def":"Communauté humaine partageant histoire."},{"mot":"Nature","def":"Ensemble des éléments du monde physique."},{"mot":"Navire","def":"Grand bateau de transport."}],
+  "Ro":[{"mot":"Robot","def":"Machine programmable effectuant des tâches."},{"mot":"Rose","def":"Fleur parfumée à pétales."},{"mot":"Royaume","def":"Territoire gouverné par un monarque."},{"mot":"Route","def":"Voie de circulation pour véhicules."},{"mot":"Roman","def":"Œuvre littéraire de fiction."},{"mot":"Rocher","def":"Gros bloc de pierre."}],
+  "An":[{"mot":"Anatomie","def":"Étude de la structure des organismes."},{"mot":"Ange","def":"Être céleste spirituel."},{"mot":"Animal","def":"Être vivant non végétal."},{"mot":"Ananas","def":"Fruit tropical à écorce épineuse."},{"mot":"Analyse","def":"Examen détaillé d'un sujet."},{"mot":"Angle","def":"Ouverture entre deux lignes."}],
+  "Av":[{"mot":"Avion","def":"Aéronef transportant passagers."},{"mot":"Aventure","def":"Expérience excitante et imprévue."},{"mot":"Avenir","def":"Temps à venir."},{"mot":"Avocat","def":"Juriste représentant en justice."},{"mot":"Avantage","def":"Situation favorable."},{"mot":"Avide","def":"Qui désire ardemment."}],
+  "Ar":[{"mot":"Arbre","def":"Végétal ligneux avec tronc."},{"mot":"Artisan","def":"Travailleur manuel qualifié."},{"mot":"Artichaut","def":"Légume comestible."},{"mot":"Arène","def":"Lieu pour spectacles/sports."},{"mot":"Arôme","def":"Odeur agréable d'une substance."},{"mot":"Architecture","def":"Art de concevoir et bâtir."}],
+  "En":[{"mot":"Enfant","def":"Humain mineur."},{"mot":"Enseignement","def":"Action de transmettre des connaissances."},{"mot":"Environnement","def":"Milieu naturel et construit."},{"mot":"Enquête","def":"Recherche d'informations sur un sujet."},{"mot":"Enthousiasme","def":"Élan joyeux et motivé."},{"mot":"Enjeu","def":"Ce qui est en question/risque."}],
+  "Ha":[{"mot":"Habitat","def":"Lieu de vie d'un être ou groupe."},{"mot":"Handicap","def":"Limitation d'activité ou participation."},{"mot":"Harmonie","def":"Accord, juste combinaison d'éléments."},{"mot":"Hâte","def":"Empressement, précipitation."},{"mot":"Hauteur","def":"Dimension verticale."},{"mot":"Hachoir","def":"Outil pour hacher la viande."}],
+  "So":[{"mot":"Société","def":"Ensemble d'individus vivant en communauté."},{"mot":"Solitude","def":"Fait/ressenti d'être seul."},{"mot":"Solidarité","def":"Soutien mutuel au sein d'un groupe."},{"mot":"Sommeil","def":"État de repos périodique."},{"mot":"Soutien","def":"Aide, appui."},{"mot":"Souvenir","def":"Image/événement conservé en mémoire."}],
+  "Pi":[{"mot":"Piano","def":"Instrument de musique à clavier."},{"mot":"Pictogramme","def":"Symbole graphique informatif."},{"mot":"Piscine","def":"Bassin pour nager."},{"mot":"Piste","def":"Chemin ou voie tracée."},{"mot":"Pilote","def":"Personne qui conduit un véhicule."},{"mot":"Pinceau","def":"Outil pour peindre."}],
+  "Sc":[{"mot":"Scandale","def":"Événement causant indignation."},{"mot":"Sceptique","def":"Qui doute; incrédule."},{"mot":"Science","def":"Ensemble organisé de connaissances."},{"mot":"Score","def":"Résultat d'un jeu/épreuve."},{"mot":"Sculpture","def":"Art de créer des formes en volume."},{"mot":"Scénario","def":"Texte décrivant l'histoire d'un film."}],
+  "St":[{"mot":"Stupéfaction","def":"Surprise extrême."},{"mot":"Stabilité","def":"Capacité à rester constant."},{"mot":"Stratégie","def":"Plan d'action pour atteindre un objectif."},{"mot":"Stress","def":"Réponse à une contrainte/pression."},{"mot":"Structure","def":"Organisation des parties d'un tout."},{"mot":"Studio","def":"Lieu de création/enregistrement."}],
+  "Tu":[{"mot":"Tuba","def":"Instrument de musique à vent grave."},{"mot":"Tunique","def":"Vêtement ample descendant aux genoux."},{"mot":"Tumulte","def":"Agitation bruyante."},{"mot":"Turquoise","def":"Pierre fine bleu-vert."},{"mot":"Tunnel","def":"Passage souterrain."},{"mot":"Tutoriel","def":"Guide pas-à-pas pour réaliser une tâche."}],
+  "Va":[{"mot":"Vache","def":"Bovin femelle domestique."},{"mot":"Valise","def":"Bagage pour vêtements et effets."},{"mot":"Vague","def":"Ondulation de la surface de l'eau."},{"mot":"Vanille","def":"Épice issue d'orchidées."},{"mot":"Valeur","def":"Caractère de ce qui est estimable."},{"mot":"Vacances","def":"Période d'arrêt des activités habituelles."}],
+  "Vi":[{"mot":"Victoire","def":"Résultat gagnant d'une compétition."},{"mot":"Vibration","def":"Mouvement oscillatoire."},{"mot":"Vif","def":"Plein de vie et d'énergie."},{"mot":"Vision","def":"Capacité de voir."},{"mot":"Visage","def":"Partie antérieure de la tête."},{"mot":"Vitesse","def":"Rapidité d'un mouvement."}],
+  "He":[{"mot":"Héroïsme","def":"Bravoure exceptionnelle face au danger."},{"mot":"Hésitation","def":"Indécision dans le choix."},{"mot":"Héritage","def":"Biens, droits transmis par succession."},{"mot":"Hélicoptère","def":"Aéronef à voilure tournante."},{"mot":"Hérisson","def":"Petit mammifère couvert de piquants."},{"mot":"Heure","def":"Unité de temps égale à 60 minutes."}],
+  "Te":[{"mot":"Tendresse","def":"Sentiment d'affection douce."},{"mot":"Tempête","def":"Phénomène météorologique violent."},{"mot":"Ténacité","def":"Persévérance, résistance dans l'effort."},{"mot":"Terrasse","def":"Espace extérieur attenant à un bâtiment."},{"mot":"Téléphone","def":"Appareil de communication vocale à distance."},{"mot":"Texte","def":"Suite de mots formant un message écrit."}],
+  "Ta":[{"mot":"Tableau","def":"Surface pour écrire/dessiner."},{"mot":"Tache","def":"Marque salissante sur une surface."},{"mot":"Tâche","def":"Travail à accomplir."},{"mot":"Tactile","def":"Relatif au toucher."},{"mot":"Tapis","def":"Revêtement de sol souple."},{"mot":"Tasse","def":"Petit récipient pour boire."}],
+  "Li":[{"mot":"Liberté","def":"État d'une personne libre d'agir."},{"mot":"Ligne","def":"Trait continu; rangée d'éléments alignés."},{"mot":"Littoral","def":"Zone de contact terre/mer."},{"mot":"Limite","def":"Frontière séparant deux espaces."},{"mot":"Livre","def":"Ouvrage écrit relié."},{"mot":"Littérature","def":"Ensemble des œuvres écrites."}],
+  "Lu":[{"mot":"Lucide","def":"Clairvoyant, qui perçoit nettement la réalité."},{"mot":"Lune","def":"Satellite naturel de la Terre."},{"mot":"Lutte","def":"Combat; sport de combat."},{"mot":"Luminosité","def":"Intensité de la lumière."},{"mot":"Luxe","def":"Caractère de ce qui est somptueux."},{"mot":"Lumière","def":"Rayonnement rendant les objets visibles."}],
+  "Ru":[{"mot":"Ruban","def":"Bande étroite de tissu."},{"mot":"Rubrique","def":"Titre de section; catégorie d'articles."},{"mot":"Ruche","def":"Habitation artificielle des abeilles."},{"mot":"Ruisseau","def":"Petit cours d'eau."},{"mot":"Ruse","def":"Stratagème pour tromper ou contourner."},{"mot":"Rue","def":"Voie de circulation bordée de bâtiments."}],
+  "Hu":[{"mot":"Humanité","def":"Ensemble des êtres humains."},{"mot":"Humeur","def":"Disposition émotionnelle du moment."},{"mot":"Humilité","def":"Qualité de qui est modeste."},{"mot":"Humain","def":"Relatif à l'être humain."},{"mot":"Huile","def":"Substance grasse d'origine végétale."},{"mot":"Hurler","def":"Pousser des cris aigus et forts."}],
+  "Mo":[{"mot":"Monde","def":"Ensemble des êtres et des choses."},{"mot":"Montagne","def":"Relief élevé."},{"mot":"Monarque","def":"Souverain d'un État."},{"mot":"Monnaie","def":"Moyen d'échange."},{"mot":"Moteur","def":"Dispositif produisant un mouvement."},{"mot":"Monument","def":"Construction commémorative remarquable."}],
+  "Sp":[{"mot":"Spécial","def":"Différent de l'ordinaire."},{"mot":"Spectacle","def":"Représentation artistique publique."},{"mot":"Sphère","def":"Solide géométrique rond en 3D."},{"mot":"Spécialité","def":"Compétence ou produit propre à un domaine."},{"mot":"Spirale","def":"Courbe enroulée autour d'un point."},{"mot":"Spontané","def":"Qui se produit naturellement."}],
+  "Ab":[{"mot":"Abyssal","def":"Très profond."},{"mot":"Abolition","def":"Suppression d'une loi ou pratique."},{"mot":"Abrupt","def":"À pente raide; brusque."},{"mot":"Abondant","def":"Présent en grande quantité."},{"mot":"Absolu","def":"Total, sans restriction."},{"mot":"Absurde","def":"Dépourvu de logique."}],
+  "At":[{"mot":"Athlétisme","def":"Ensemble de disciplines de course, saut, lancer."},{"mot":"Attaquer","def":"Commencer une action offensive."},{"mot":"Attraction","def":"Force qui attire; attrait."},{"mot":"Attention","def":"Concentration de l'esprit sur un objet."},{"mot":"Atmosphère","def":"Couche gazeuse entourant la Terre."},{"mot":"Athlète","def":"Personne qui pratique un sport physique."}],
+  "Am":[{"mot":"Amour","def":"Sentiment d'affection intense."},{"mot":"Ambition","def":"Désir d'atteindre un haut objectif."},{"mot":"Ambiance","def":"Atmosphère d'un lieu ou d'un moment."},{"mot":"Amitié","def":"Lien d'affection réciproque."},{"mot":"Ampleur","def":"Grandeur, étendue."},{"mot":"Améliorer","def":"Rendre meilleur."}],
+  "Or":[{"mot":"Orage","def":"Perturbation atmosphérique avec éclairs."},{"mot":"Ornement","def":"Élément décoratif."},{"mot":"Orateur","def":"Personne qui parle en public."},{"mot":"Orchestre","def":"Ensemble d'instruments jouant ensemble."},{"mot":"Organisation","def":"Action de structurer; entité organisée."},{"mot":"Orientation","def":"Direction vers laquelle on se dirige."}],
+  "Hi":[{"mot":"Hilarant","def":"Qui fait beaucoup rire."},{"mot":"Hippocampe","def":"Petit poisson à tête de cheval."},{"mot":"Hibernation","def":"Dormance prolongée en hiver."},{"mot":"Historique","def":"Relatif à l'histoire; mémorable."},{"mot":"Histoire","def":"Récit d'événements passés."},{"mot":"Hiérarchie","def":"Organisation en niveaux d'autorité."}],
+  "Da":[{"mot":"Dague","def":"Arme blanche courte et pointue."},{"mot":"Danse","def":"Mouvements rythmiques du corps avec musique."},{"mot":"Date","def":"Indication du jour, mois et année."},{"mot":"Dangereux","def":"Qui expose à un risque."},{"mot":"Danser","def":"Exécuter des pas de danse."},{"mot":"Dard","def":"Organe piquant de certains animaux."}],
+  "Ga":[{"mot":"Galaxie","def":"Ensemble d'étoiles, gaz, poussières."},{"mot":"Galant","def":"Courtois, attentionné."},{"mot":"Galerie","def":"Passage couvert; espace d'exposition."},{"mot":"Gamin","def":"Enfant espiègle."},{"mot":"Gant","def":"Accessoire pour protéger les mains."},{"mot":"Gare","def":"Lieu de départ/arrivée des trains."}],
+  "Go":[{"mot":"Gomme","def":"Matière pour effacer."},{"mot":"Gorge","def":"Partie du cou en avant de la colonne."},{"mot":"Goudron","def":"Matière noire et visqueuse."},{"mot":"Gourmet","def":"Personne au goût raffiné pour la cuisine."},{"mot":"Goutte","def":"Petite quantité de liquide tombant."},{"mot":"Gouvernement","def":"Institutions dirigeant un pays."}],
+  "Ou":[{"mot":"Ouverture","def":"Action d'ouvrir; espace ouvert."},{"mot":"Ouïe","def":"Sens de l'audition."},{"mot":"Ouvrier","def":"Travailleur manuel."},{"mot":"Ouragan","def":"Tempête tropicale très violente."},{"mot":"Ouest","def":"Point cardinal du coucher du soleil."},{"mot":"Outil","def":"Instrument pour travailler la matière."}],
+  "Sa":[{"mot":"Sable","def":"Petits grains minéraux sur plages/déserts."},{"mot":"Sagesse","def":"Capacité à bien juger et agir."},{"mot":"Salade","def":"Plat de légumes crus/cuits mélangés."},{"mot":"Salle","def":"Pièce destinée à un usage donné."},{"mot":"Sanguin","def":"Relatif au sang; de couleur rouge vif."},{"mot":"Sardine","def":"Petit poisson marin."}],
+  "Ap":[{"mot":"Apaisement","def":"Action de calmer une tension."},{"mot":"Apogée","def":"Point culminant."},{"mot":"Apport","def":"Ce qui est ajouté ou contribué."},{"mot":"Appui","def":"Soutien."},{"mot":"Approche","def":"Méthode ou manière d'aborder un sujet."},{"mot":"Apprentissage","def":"Acquisition de connaissances/compétences."}],
+  "Ph":[{"mot":"Phare","def":"Tour de signalisation pour navires."},{"mot":"Phénomène","def":"Fait observable."},{"mot":"Philanthropie","def":"Générosité envers autrui."},{"mot":"Philosophie","def":"Étude des principes de l'être et du savoir."},{"mot":"Photographe","def":"Personne qui prend des photos."},{"mot":"Physique","def":"Science de la matière et de l'énergie."}],
+  "Ir":[{"mot":"Irrigation","def":"Apport d'eau aux cultures."},{"mot":"Ironie","def":"Expression du contraire de ce que l'on pense."},{"mot":"Irréel","def":"Qui n'existe pas dans la réalité."},{"mot":"Irritant","def":"Qui provoque une irritation."},{"mot":"Irlandais","def":"Relatif à l'Irlande."},{"mot":"Irrégulier","def":"Sans régularité."}],
+  "El":[{"mot":"Électricité","def":"Énergie due au mouvement des électrons."},{"mot":"Élection","def":"Choix d'un candidat à une fonction."},{"mot":"Élévation","def":"Hauteur; action d'élever."},{"mot":"Élégance","def":"Qualité de ce qui est gracieux/raffiné."},{"mot":"Élément","def":"Constituant de base d'un ensemble."},{"mot":"Éloquence","def":"Aisance persuasive à l'oral."}],
+  "Je":[{"mot":"Jeu","def":"Activité ludique ou d'apprentissage."},{"mot":"Jeter","def":"Lancer; se débarrasser de."},{"mot":"Jeunesse","def":"Période de la vie avant l'âge adulte."},{"mot":"Jeudi","def":"Quatrième jour ouvré de la semaine."},{"mot":"Jeune","def":"Qui est d'un âge peu avancé."},{"mot":"Jeûne","def":"Abstinence volontaire de nourriture."}],
+  "Nu":[{"mot":"Nudité","def":"État d'une personne sans vêtement."},{"mot":"Nutritif","def":"Qui fournit des nutriments."},{"mot":"Nuisible","def":"Qui cause un dommage."},{"mot":"Nuit","def":"Période d'obscurité entre coucher et lever."},{"mot":"Numérique","def":"Relatif aux technologies informatiques."},{"mot":"Nuage","def":"Amas de gouttelettes d'eau dans l'air."}],
+  "Ec":[{"mot":"Économie","def":"Étude de la production et répartition des richesses."},{"mot":"Écologie","def":"Étude des relations entre êtres vivants."},{"mot":"Éclipse","def":"Occultation d'un astre par un autre."},{"mot":"École","def":"Lieu d'enseignement."},{"mot":"Écran","def":"Surface d'affichage d'images."},{"mot":"Écriture","def":"Action de tracer des signes pour communiquer."}],
+  "Mi":[{"mot":"Migration","def":"Déplacement d'êtres vivants d'un lieu à un autre."},{"mot":"Milieu","def":"Environnement dans lequel on vit."},{"mot":"Militaire","def":"Relatif aux forces armées."},{"mot":"Ministre","def":"Membre du gouvernement."},{"mot":"Miracle","def":"Événement extraordinaire et inexpliqué."},{"mot":"Minorité","def":"Groupe numériquement inférieur."}],
+  "Ze":[{"mot":"Zen","def":"Relatif à la méditation, à la paix intérieure."},{"mot":"Zèbre","def":"Équidé reconnaissable à ses rayures."},{"mot":"Zénith","def":"Point du ciel situé à la verticale."},{"mot":"Zeste","def":"Fine pellicule d'un agrume."},{"mot":"Zéphyr","def":"Vent doux et léger."},{"mot":"Zébu","def":"Bovin domestique d'Asie et d'Afrique."}],
+  "Id":[{"mot":"Idéal","def":"Ce qui est parfait ou souhaitable."},{"mot":"Identité","def":"Caractéristiques qui définissent une personne."},{"mot":"Idée","def":"Pensée ou concept."},{"mot":"Idiot","def":"Personne jugée très peu intelligente."},{"mot":"Idéologie","def":"Système d'idées organisées."},{"mot":"Idéogramme","def":"Symbole représentant une idée/mot."}],
+  "Le":[{"mot":"Légal","def":"Conforme à la loi."},{"mot":"Léger","def":"De faible poids."},{"mot":"Légende","def":"Récit traditionnel."},{"mot":"Légion","def":"Grande unité militaire; multitude."},{"mot":"Légitime","def":"Conforme au droit ou justifié."},{"mot":"Lézard","def":"Reptile à quatre pattes et longue queue."}],
+  "Af":[{"mot":"Affectif","def":"Relatif aux émotions et aux sentiments."},{"mot":"Affable","def":"Aimable, facile d'accès."},{"mot":"Affamé","def":"Qui a faim; avide de."},{"mot":"Affection","def":"Attachement, tendresse."},{"mot":"Affichage","def":"Action d'afficher; éléments affichés."},{"mot":"Affirmation","def":"Proposition énoncée positivement."}],
+  "Al":[{"mot":"Alchimie","def":"Pratique visant la transmutation des métaux."},{"mot":"Alcool","def":"Substance des boissons alcoolisées."},{"mot":"Altruisme","def":"Souci désintéressé du bien d'autrui."},{"mot":"Alimentation","def":"Ensemble des aliments."},{"mot":"Alphabet","def":"Ensemble des lettres d'une langue."},{"mot":"Algorithme","def":"Suite d'instructions pour résoudre un problème."}],
+  "Et":[{"mot":"Étendue","def":"Surface vaste; amplitude."},{"mot":"Éthique","def":"Principes et valeurs morales."},{"mot":"Établissement","def":"Institution; lieu d'implantation."},{"mot":"Étudiant","def":"Personne poursuivant des études."},{"mot":"Étymologie","def":"Origine et évolution des mots."},{"mot":"Étude","def":"Recherche ou analyse systématique."}],
+  "Qu":[{"mot":"Qualité","def":"Degré d'excellence ou de conformité."},{"mot":"Question","def":"Demande d'information."},{"mot":"Quotidien","def":"Qui a lieu chaque jour."},{"mot":"Quotient","def":"Résultat d'une division."},{"mot":"Quartier","def":"Subdivision d'une ville ou région."},{"mot":"Quota","def":"Part fixée d'une ressource."}],
+  "Ob":[{"mot":"Obéir","def":"Suivre des ordres ou instructions."},{"mot":"Objet","def":"Chose matérielle perceptible par les sens."},{"mot":"Obligation","def":"Devoir à accomplir."},{"mot":"Obscurité","def":"Absence de lumière."},{"mot":"Observation","def":"Examen attentif d'un phénomène."},{"mot":"Obstacle","def":"Ce qui entrave un mouvement ou un projet."}],
+  "Pe":[{"mot":"Pêche","def":"Action de capturer des poissons; aussi fruit."},{"mot":"Pédagogie","def":"Art et science de l'enseignement."},{"mot":"Pénalité","def":"Punition ou sanction."},{"mot":"Perception","def":"Façon d'appréhender par les sens."},{"mot":"Pesticide","def":"Substance destinée à détruire les nuisibles."},{"mot":"Pérenne","def":"Qui dure dans le temps."}],
+  "Ad":[{"mot":"Adhésif","def":"Qui colle; substance collante."},{"mot":"Adjectif","def":"Mot qualifiant un nom."},{"mot":"Administration","def":"Gestion d'une organisation."},{"mot":"Admissible","def":"Qui peut être accepté."},{"mot":"Adorable","def":"Qui inspire l'affection."},{"mot":"Adoucir","def":"Rendre plus doux/agréable."}],
+  "Eq":[{"mot":"Équilibre","def":"État de stabilité entre forces opposées."},{"mot":"Équation","def":"Égalité entre deux expressions mathématiques."},{"mot":"Équateur","def":"Ligne entourant la Terre à mi-distance des pôles."},{"mot":"Équité","def":"Justice impartiale; traitement égal."},{"mot":"Équipement","def":"Ensemble d'outils nécessaires à une activité."},{"mot":"Équipe","def":"Groupe collaborant à un objectif commun."}],
+  "Ed":[{"mot":"Éducation","def":"Acquisition de connaissances et de compétences."},{"mot":"Édification","def":"Construction; formation morale/intellectuelle."},{"mot":"Édifice","def":"Bâtiment imposant."},{"mot":"Édition","def":"Publication/version d'une œuvre."},{"mot":"Éditeur","def":"Personne ou entreprise publiant des œuvres."},{"mot":"Éducatif","def":"Qui vise l'apprentissage."}],
+  "Si":[{"mot":"Signal","def":"Signe transmis pour informer ou commander."},{"mot":"Signification","def":"Sens d'un mot, symbole ou événement."},{"mot":"Sismique","def":"Relatif aux séismes."},{"mot":"Situation","def":"Ensemble des circonstances; position."},{"mot":"Simulation","def":"Reproduction artificielle d'un processus."},{"mot":"Simplicité","def":"Caractère de ce qui est simple."}],
+  "Po":[{"mot":"Pouvoir","def":"Capacité ou autorité d'agir."},{"mot":"Politesse","def":"Comportement courtois et respectueux."},{"mot":"Pollution","def":"Dégradation de l'environnement."},{"mot":"Politique","def":"Gestion des affaires publiques."},{"mot":"Population","def":"Ensemble des habitants d'une zone."},{"mot":"Poésie","def":"Genre littéraire jouant sur la langue et le rythme."}]
+};
 
 /* ============================================================
    CONSTANTES & ÉTAT GLOBAL
@@ -770,7 +423,7 @@ const POINTS_PER_CORRECT = 10;
 const QUESTION_DURATION_MS = 30000; // 30 secondes
 
 let uid = null;
-let pseudo = localStorage.getItem('josef_math_pseudo') || '';
+let pseudo = localStorage.getItem('josef_pseudo') || '';
 let roomCode = null;
 let isHost = false;
 let unsubscribeRoom = null;
@@ -782,11 +435,10 @@ const $ = id => document.getElementById(id);
 const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
 const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
-const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\-' ]/g,'').trim();
+const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\-' ]/g,'').trim();
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function genCode(){ return String(Math.floor(1000 + Math.random() * 9000)); }
 
-// Audio (facultatif)
 function speak(text) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
@@ -801,7 +453,7 @@ function speak(text) {
    GESTION DU THÈME
    ============================================================ */
 function initTheme() {
-  const savedTheme = localStorage.getItem('josef_math_theme');
+  const savedTheme = localStorage.getItem('josef_theme');
   if (savedTheme === 'dark') {
     document.body.classList.add('dark-mode');
     $('themeToggle').textContent = '☀️';
@@ -812,7 +464,7 @@ $('themeToggle').addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   $('themeToggle').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('josef_math_theme', isDark ? 'dark' : 'light');
+  localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
 });
 
 /* ============================================================
@@ -823,12 +475,12 @@ async function initAuth(){
   
   if (pseudo) $('pseudo').value = pseudo;
   
-  const savedRoom = localStorage.getItem('josef_math_room');
+  const savedRoom = localStorage.getItem('josef_room');
   if (savedRoom) {
     try {
       await auth.signInAnonymously();
       uid = auth.currentUser.uid;
-      const snap = await db.collection('math_rooms').doc(savedRoom).get();
+      const snap = await db.collection('rooms').doc(savedRoom).get();
       if (snap.exists && snap.data().players[pseudo]) {
         roomCode = savedRoom;
         isHost = (snap.data().hostName === pseudo);
@@ -854,12 +506,12 @@ async function createRoom(){
   let code = null;
   for (let i = 0; i < 10; i++) {
     const testCode = genCode();
-    const snap = await db.collection('math_rooms').doc(testCode).get();
+    const snap = await db.collection('rooms').doc(testCode).get();
     if (!snap.exists) { code = testCode; break; }
   }
   if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
 
-  await db.collection('math_rooms').doc(code).set({
+  await db.collection('rooms').doc(code).set({
     state: 'lobby',
     hostName: pseudo,
     players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 } },
@@ -870,14 +522,14 @@ async function createRoom(){
     createdAt: Date.now()
   });
   
-  localStorage.setItem('josef_math_room', code);
+  localStorage.setItem('josef_room', code);
   isHost = true;
   roomCode = code;
   enterLobby();
 }
 
 async function joinRoom(code){
-  const ref = db.collection('math_rooms').doc(code);
+  const ref = db.collection('rooms').doc(code);
   const snap = await ref.get();
   if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', 'var(--msg-rouge)');
   const data = snap.data();
@@ -889,7 +541,7 @@ async function joinRoom(code){
     });
   }
   
-  localStorage.setItem('josef_math_room', code);
+  localStorage.setItem('josef_room', code);
   isHost = false;
   roomCode = code;
   enterLobby();
@@ -903,7 +555,7 @@ function enterLobby(){
   $('lobbyCode').textContent = roomCode;
 
   if (unsubscribeRoom) unsubscribeRoom();
-  unsubscribeRoom = db.collection('math_rooms').doc(roomCode).onSnapshot(
+  unsubscribeRoom = db.collection('rooms').doc(roomCode).onSnapshot(
     (doc) => {
       if (!doc.exists) return;
       currentRoom = doc.data();
@@ -957,14 +609,38 @@ $('btnStart').addEventListener('click', async () => {
   const names = Object.keys(currentRoom.players || {});
   if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
   
-  // Aléatoire simple (pas de mémoire pour les maths, vu qu'il y en a beaucoup)
-  let all = [...MATH_QUESTIONS];
+  const historySnap = await db.collection('config').doc('history').get();
+  let history = historySnap.exists ? historySnap.data().asked || [] : [];
+
+  let all = [];
+  for (const prefix of Object.keys(FIELDS)) {
+    for (const item of FIELDS[prefix]) {
+      const qId = `${prefix}-${item.mot}`;
+      if (!history.includes(qId)) {
+        all.push({ id: qId, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
+  if (all.length < TOTAL_QUESTIONS) {
+    history = [];
+    all = [];
+    for (const prefix of Object.keys(FIELDS)) {
+      for (const item of FIELDS[prefix]) {
+        all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
   for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [all[i], all[j]] = [all[j], all[i]];
   }
   
   const questions = all.slice(0, TOTAL_QUESTIONS);
+  const newAskedIds = questions.map(q => q.id);
+  const updatedHistory = [...history, ...newAskedIds];
+  await db.collection('config').doc('history').set({ asked: updatedHistory });
 
   const updates = {
     state: 'playing',
@@ -980,7 +656,7 @@ $('btnStart').addEventListener('click', async () => {
     updates[`players.${n}.correctAnswers`] = 0;
     updates[`players.${n}.wrongAnswers`] = 0;
   });
-  try { await db.collection('math_rooms').doc(roomCode).update(updates); }
+  try { await db.collection('rooms').doc(roomCode).update(updates); }
   catch(e){ console.error(e); }
 });
 
@@ -1017,7 +693,8 @@ function renderGame(game){
   const q = questions[qIdx];
   if (q) {
     if (lastAnsweredQ !== qIdx) {
-      $('prefixBig').textContent = q.question;
+      $('prefixBig').textContent = q.prefix.toUpperCase();
+      $('definitionText').textContent = q.def;
       $('answer').value = ""; // Vide le clavier
       $('answer').disabled = false;
       $('btnSubmit').disabled = false;
@@ -1051,8 +728,8 @@ async function handleTimeout(){
   const qIdx = currentRoom.currentQ;
   const q = currentRoom.questions[qIdx];
   
-  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.answer}`, 'var(--dore)');
-  speak("Temps écoulé. La réponse était " + q.answer);
+  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.mot}`, 'var(--dore)');
+  speak("Temps écoulé. La réponse était " + q.mot);
   
   setTimeout(async () => {
     const questions = currentRoom.questions || [];
@@ -1064,7 +741,7 @@ async function handleTimeout(){
       updates.currentQ = qIdx + 1;
       updates.qStartAt = Date.now();
     }
-    try { await db.collection('math_rooms').doc(roomCode).update(updates); }
+    try { await db.collection('rooms').doc(roomCode).update(updates); }
     catch(e){ console.error(e); }
   }, 1000); // 1 seconde
 }
@@ -1075,19 +752,26 @@ async function handleTimeout(){
 $('btnSubmit').addEventListener('click', submitAnswer);
 $('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
 
+$('btnVocal').addEventListener('click', () => {
+  if (currentRoom && currentRoom.questions) {
+    const q = currentRoom.questions[currentRoom.currentQ];
+    if (q) speak("Trouvez le mot qui commence par " + q.prefix + ". " + q.def);
+  }
+});
+
 async function submitAnswer(){
   if (!currentRoom || currentRoom.state !== 'playing' || $('answer').disabled) return;
   const qIdx = currentRoom.currentQ;
-  const userVal = parseInt($('answer').value.trim(), 10);
-  if (isNaN(userVal)) return;
+  const userVal = normalize($('answer').value);
+  if (!userVal) return;
   const q = currentRoom.questions[qIdx];
   if (!q) return;
 
-  const correct = userVal === q.answer;
+  const correct = userVal === normalize(q.mot);
   $('answer').disabled = true;
   $('btnSubmit').disabled = true;
 
-  const ref = db.collection('math_rooms').doc(roomCode);
+  const ref = db.collection('rooms').doc(roomCode);
 
   if (correct) {
     setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
@@ -1135,6 +819,7 @@ async function submitAnswer(){
       
       if (allWrong) {
         setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
+        
         setTimeout(async () => {
           const updates = {};
           if (qIdx + 1 >= data.questions.length) {
@@ -1158,12 +843,12 @@ async function leaveRoom() {
 
   if (roomCode && pseudo) {
     try {
-      await db.collection('math_rooms').doc(roomCode).update({
+      await db.collection('rooms').doc(roomCode).update({
         [`players.${pseudo}`]: firebase.firestore.FieldValue.delete()
       });
     } catch(e) { console.error(e); }
   }
-  localStorage.removeItem('josef_math_room');
+  localStorage.removeItem('josef_room');
   location.reload();
 }
 
@@ -1172,7 +857,7 @@ $('btnLobbyLeaveGuest').addEventListener('click', leaveRoom);
 $('btnGameLeave').addEventListener('click', leaveRoom);
 
 /* ============================================================
-   FIN DE PARTIE
+   FIN DE PARTIE (TABLEAU PRO)
    ============================================================ */
 function renderEnd(game){
   if (timerInterval) clearInterval(timerInterval);
@@ -1184,12 +869,26 @@ function renderEnd(game){
   const winnerScore = winnerName ? entries[0][1].score : 0;
   const tied = entries.length > 1 && entries[1][1].score === winnerScore;
 
-  $('finalScoreboard').innerHTML = entries.map(([name,p],i) => `
-    <div class="player-card ${name===winnerName && !tied ? 'winner' : ''}">
-      <span class="player-name">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'  '} ${escapeHtml(name)}</span>
-      <span class="player-score">${p.score||0} pts (✅ ${p.correctAnswers||0} | ❌ ${p.wrongAnswers||0})</span>
-    </div>
-  `).join('');
+  const tbody = $('finalScoreboardBody');
+  tbody.innerHTML = entries.map(([name,p],i) => {
+    let rankIcon = '';
+    let rankClass = '';
+    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
+    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
+    else if (i === 2) { rankIcon = '🥉'; rankClass = 'bronze'; }
+    else { rankIcon = i + 1; }
+
+    const isWinner = name === winnerName && !tied;
+
+    return `
+      <tr class="${isWinner ? 'winner-row' : ''}">
+        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
+        <td>${escapeHtml(name)} ${isWinner ? '👑' : ''}</td>
+        <td style="color:var(--dore); font-size:1.2rem;">${p.score||0} pts</td>
+        <td>✅ ${p.correctAnswers||0} | ❌ ${p.wrongAnswers||0}</td>
+      </tr>
+    `;
+  }).join('');
   
   if (tied) {
     $('endTitle').textContent = `🤝 Égalité entre les joueurs à ${winnerScore} pts !`;
@@ -1202,8 +901,8 @@ function renderEnd(game){
   const questions = game.questions || [];
   $('recapList').innerHTML = questions.map((q, i) => `
     <div class="recap-item">
-      <span><b>Q${i+1}.</b> ${q.question}</span>
-      <span class="recap-good">= ${q.answer}</span>
+      <span><b>Q${i+1}.</b> (${q.prefix.toUpperCase()}) ${q.mot}</span>
+      <span class="recap-good">Réponse</span>
     </div>
   `).join('');
 }
@@ -1216,7 +915,7 @@ $('btnCreate').addEventListener('click', async () => {
   if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
   if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
   pseudo = p;
-  localStorage.setItem('josef_math_pseudo', pseudo);
+  localStorage.setItem('josef_pseudo', pseudo);
   try { await createRoom(); }
   catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
 });
@@ -1228,13 +927,13 @@ $('btnJoin').addEventListener('click', async () => {
   if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', 'var(--msg-rouge)');
   if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
   pseudo = p;
-  localStorage.setItem('josef_math_pseudo', pseudo);
+  localStorage.setItem('josef_pseudo', pseudo);
   try { await joinRoom(code); }
   catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
 });
 
 $('btnLeave').addEventListener('click', () => {
-  localStorage.removeItem('josef_math_room');
+  localStorage.removeItem('josef_room');
   location.reload();
 });
 
