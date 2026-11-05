@@ -112,13 +112,12 @@
   .player-card {
     background: var(--fond); border-radius: 12px; padding: 16px;
     display: flex; justify-content: space-between; align-items: center;
-    border: 2px solid var(--gris); transition: 0.3s;
+    border: 2px solid var(--gris); transition: all 0.3s ease;
   }
   .player-card.me { border-color: var(--dore); background: var(--carte); }
   .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
   
-  /* Nouvelles classes pour le feedback visuel */
-  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; }
+  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
   .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
 
   .player-name { font-weight: 800; font-size: 1rem; }
@@ -604,7 +603,6 @@ function renderGame(game){
   const players = game.players || {};
   const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
   
-  // Modification : ajout de la classe good/bad en fonction de la réponse
   $('scoreboard').innerHTML = entries.map(([name,p]) => {
     let stateClass = '';
     if (p.lastAnswerQ === game.currentQ) {
@@ -681,7 +679,7 @@ async function handleTimeout(){
     }
     try { await db.collection('rooms').doc(roomCode).update(updates); }
     catch(e){ console.error(e); }
-  }, 3000);
+  }, 1000); // 1 seconde
 }
 
 /* ============================================================
@@ -734,7 +732,7 @@ async function submitAnswer(){
         updates.qStartAt = Date.now();
       }
       try { await ref.update(updates); } catch(e){ console.error(e); }
-    }, 1000);
+    }, 1000); // 1 seconde
     
   } else {
     setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
@@ -756,7 +754,6 @@ async function submitAnswer(){
       const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
       
       if (allWrong) {
-        // Modification : ne pas afficher la réponse, passer à 1 seconde
         setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
         speak("Tout le monde a raté.");
         
@@ -769,7 +766,7 @@ async function submitAnswer(){
             updates.qStartAt = Date.now();
           }
           await ref.update(updates);
-        }, 1000);
+        }, 1000); // 1 seconde
       }
     } catch(e){ console.error(e); }
   }
