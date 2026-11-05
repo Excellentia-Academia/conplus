@@ -15,6 +15,8 @@
     --gris: #e0e0e0;
     --msg-rouge: #ef4444;
     --msg-vert: #10b981;
+    --carte-verte: #dcfce7;
+    --carte-rouge: #fee2e2;
   }
 
   body.dark-mode {
@@ -26,6 +28,8 @@
     --gris: #333333;
     --msg-rouge: #f87171;
     --msg-vert: #34d399;
+    --carte-verte: #064e3b;
+    --carte-rouge: #7f1d1d;
   }
 
   *{margin:0;padding:0;box-sizing:border-box}
@@ -112,6 +116,11 @@
   }
   .player-card.me { border-color: var(--dore); background: var(--carte); }
   .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
+  
+  /* Nouvelles classes pour le feedback visuel */
+  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; }
+  .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
+
   .player-name { font-weight: 800; font-size: 1rem; }
   .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
 
@@ -594,12 +603,19 @@ $('btnStart').addEventListener('click', async () => {
 function renderGame(game){
   const players = game.players || {};
   const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-  $('scoreboard').innerHTML = entries.map(([name,p]) => `
-    <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''}">
+  
+  // Modification : ajout de la classe good/bad en fonction de la réponse
+  $('scoreboard').innerHTML = entries.map(([name,p]) => {
+    let stateClass = '';
+    if (p.lastAnswerQ === game.currentQ) {
+      stateClass = p.lastWrongQ === game.currentQ ? 'bad' : 'good';
+    }
+    return `
+    <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''} ${stateClass}">
       <span class="player-name">${escapeHtml(name)}</span>
       <span class="player-score">${p.score||0}</span>
     </div>
-  `).join('');
+  `}).join('');
 
   let answered = 0;
   for (const name of Object.keys(players)) {
@@ -709,7 +725,6 @@ async function submitAnswer(){
       [`players.${pseudo}.correctAnswers`]: myCorrects
     };
     
-    // Modifié : passage à 1 seconde (1000ms)
     setTimeout(async () => {
       if (qIdx + 1 >= currentRoom.questions.length) {
         updates.state = 'ended';
@@ -741,9 +756,9 @@ async function submitAnswer(){
       const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
       
       if (allWrong) {
-        const q = data.questions[qIdx];
-        setMsg('msg3', `❌ Tout le monde a raté ! La réponse était : ${q.mot}`, 'var(--dore)');
-        speak("Tout le monde a raté. La réponse était " + q.mot);
+        // Modification : ne pas afficher la réponse, passer à 1 seconde
+        setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
+        speak("Tout le monde a raté.");
         
         setTimeout(async () => {
           const updates = {};
@@ -754,7 +769,7 @@ async function submitAnswer(){
             updates.qStartAt = Date.now();
           }
           await ref.update(updates);
-        }, 3000);
+        }, 1000);
       }
     } catch(e){ console.error(e); }
   }
@@ -764,7 +779,6 @@ async function submitAnswer(){
    QUITTER LA PARTIE
    ============================================================ */
 async function leaveRoom() {
-  // Modifié : Confirmation avant de quitter
   if (!confirm("Êtes-vous sûr de vouloir quitter ?")) return;
 
   if (roomCode && pseudo) {
