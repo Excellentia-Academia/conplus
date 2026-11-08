@@ -1,1 +1,1063 @@
-.
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nodasa – Calcul Mental Multijoueur</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #f4f4f4;
+    --texte: #111111;
+    --dore: #cda434;
+    --dore-hover: #b8902a;
+    --carte: #ffffff;
+    --gris: #e0e0e0;
+    --msg-rouge: #ef4444;
+    --msg-vert: #10b981;
+    --carte-verte: #dcfce7;
+    --carte-rouge: #fee2e2;
+  }
+
+  body.dark-mode {
+    --fond: #121212;
+    --texte: #f4f4f4;
+    --dore: #e5b83b;
+    --dore-hover: #f5c84c;
+    --carte: #1e1e1e;
+    --gris: #333333;
+    --msg-rouge: #f87171;
+    --msg-vert: #34d399;
+    --carte-verte: #064e3b;
+    --carte-rouge: #7f1d1d;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family: 'Montserrat', sans-serif;
+    background: var(--fond);
+    min-height: 100vh; color: var(--texte);
+    padding: 16px; display: grid; place-items: center;
+    transition: background 0.3s, color 0.3s;
+  }
+  .container {
+    max-width: 900px; width: 100%;
+    background: var(--carte);
+    border-radius: 20px; padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-top: 6px solid var(--dore);
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  #themeToggle {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--gris); border: none; border-radius: 50%;
+    width: 44px; height: 44px; cursor: pointer;
+    font-size: 1.2rem; display: grid; place-items: center;
+    transition: all 0.2s; color: var(--texte);
+  }
+  #themeToggle:hover { transform: scale(1.1); }
+
+  h1 {
+    font-size: clamp(24px, 4vw, 32px);
+    text-align: center; margin-bottom: 24px;
+    color: var(--texte); font-weight: 900;
+    letter-spacing: 1px;
+  }
+  h2 { text-align: center; color: var(--dore); margin-bottom: 16px; font-size: 1.2rem; }
+  
+  button {
+    padding: 14px 20px; font-size: 1rem; font-weight: 800;
+    border-radius: 12px; border: none;
+    cursor: pointer; transition: all 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+  
+  .btn-primaire { background: var(--dore); color: #111; }
+  .btn-primaire:hover:not(:disabled) { background: var(--dore-hover); transform: translateY(-2px); }
+  
+  .btn-secondaire { background: var(--gris); color: var(--texte); }
+  .btn-secondaire:hover:not(:disabled) { filter: brightness(0.9); }
+
+  .btn-danger { background: var(--msg-rouge); color: #fff; }
+  .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
+
+  input[type=text], input[type=number] {
+    font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
+    border: 2px solid var(--gris); width: 100%; margin: 8px 0;
+    background: var(--carte); color: var(--texte); outline: none;
+    font-family: 'Montserrat', sans-serif; font-weight: 600;
+    transition: border-color 0.2s, background 0.3s, color 0.3s;
+    text-align: center;
+  }
+  input:focus { border-color: var(--dore); }
+  
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; margin: 0; 
+  }
+  input[type=number] { -moz-appearance: textfield; }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+  .row > * { flex: 1; min-width: 140px; }
+  .hidden { display: none !important; }
+  
+  .pill {
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    background: var(--gris); font-size: 0.9rem; margin: 3px;
+    font-weight: 700; color: var(--texte);
+  }
+  .status { text-align: center; margin: 12px 0; font-weight: 600; }
+  
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin: 20px 0;
+  }
+  .player-card {
+    background: var(--fond); border-radius: 12px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border: 2px solid var(--gris); transition: all 0.3s ease;
+  }
+  .player-card.me { border-color: var(--dore); background: var(--carte); }
+  .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
+  
+  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
+  .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
+
+  .player-name { font-weight: 800; font-size: 1rem; }
+  .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
+
+  #questionBox {
+    background: var(--carte); color: var(--texte);
+    border-radius: 16px; padding: 30px; margin: 20px 0;
+    text-align: center; border: 2px solid var(--dore);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: background 0.3s, color 0.3s;
+  }
+  #prefixBig {
+    font-size: clamp(32px, 6vw, 56px); font-weight: 900;
+    letter-spacing: 0.05em; margin-bottom: 16px; color: var(--dore);
+  }
+  
+  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
+  #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
+  .timer-danger #timerFill { background: var(--msg-rouge); animation: pulse-danger 1s infinite; }
+  @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  #timerText { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
+
+  #progressBar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; background: var(--fond); border-radius: 12px;
+    margin: 16px 0; font-size: 0.9rem; font-weight: 700; border: 1px solid var(--gris);
+  }
+  .code-display {
+    font-family: monospace; font-size: 2.8rem; letter-spacing: 0.3em;
+    text-align: center; margin: 16px 0; background: var(--fond);
+    padding: 20px; border-radius: 16px; font-weight: 900;
+    color: var(--dore); border: 2px solid var(--gris);
+  }
+  
+  .recap-list { background: var(--fond); border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--gris); }
+  .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
+  .recap-item:last-child { border-bottom: none; }
+  .recap-good { color: var(--msg-vert); font-weight: 800; }
+
+  /* --- TABLEAU DE CLASSEMENT FINAL PROFESSIONNEL --- */
+  .pro-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: var(--carte);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--gris);
+  }
+  .pro-table th {
+    background: var(--dore);
+    color: #111;
+    padding: 16px;
+    text-align: left;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  .pro-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--gris);
+    font-weight: 600;
+    color: var(--texte);
+  }
+  .pro-table tr:last-child td { border-bottom: none; }
+  .pro-table tr.winner-row {
+    background: rgba(205, 164, 52, 0.1);
+  }
+  .pro-table tr.winner-row td {
+    color: var(--dore);
+    font-weight: 900;
+  }
+  .rank-badge {
+    display: inline-block;
+    width: 32px; height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--gris);
+    color: var(--texte);
+    font-weight: 800;
+  }
+  .rank-badge.gold { background: #fbbf24; color: #111; }
+  .rank-badge.silver { background: #9ca3af; color: #111; }
+  .rank-badge.bronze { background: #d97706; color: #fff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <button id="themeToggle" title="Changer de thème">🌙</button>
+
+  <h1>👑 Nodasa – Calcul Mental</h1>
+
+  <!-- ACCUEIL -->
+  <div id="screenHome">
+    <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
+    <div class="row">
+      <button id="btnCreate" class="btn-primaire">Créer une salle</button>
+      <input id="joinCode" type="text" placeholder="Code (4 chiffres)" maxlength="4" inputmode="numeric" style="max-width:180px" />
+      <button id="btnJoin" class="btn-secondaire">Rejoindre</button>
+    </div>
+    <div id="msg" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
+    <div class="status" style="opacity:0.6; font-size:0.85rem;">Crée une salle et partage le code aux autres joueurs</div>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="screenLobby" class="hidden">
+    <h2>Salle d'attente</h2>
+    <p style="text-align:center;margin-bottom:8px;">Partage ce code à tes amis :</p>
+    <div class="code-display" id="lobbyCode">----</div>
+    <p class="status" id="lobbyStatus">Chargement…</p>
+    <div class="scoreboard" id="lobbyPlayers"></div>
+    <div class="row" id="hostControls">
+      <button id="btnStart" class="btn-primaire">🚀 Lancer la partie</button>
+      <button id="btnLobbyLeave" class="btn-danger" style="max-width:180px;">Quitter</button>
+    </div>
+    <div class="row" id="guestLeave" style="display:none;">
+      <button id="btnLobbyLeaveGuest" class="btn-danger">Quitter la salle</button>
+    </div>
+    <div id="msg2" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
+  </div>
+
+  <!-- JEU -->
+  <div id="screenGame" class="hidden">
+    <div class="status">
+      <span class="pill" id="qCounter">Question 1/20</span>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+    
+    <div id="questionBox">
+      <div id="prefixBig">–</div>
+    </div>
+    
+    <div id="timerBar"><div id="timerFill"></div></div>
+    <div id="timerText">30s</div>
+
+    <div id="progressBar">
+      <span>📊 Joueurs ayant répondu</span>
+      <span><b id="answeredCount">0</b> / <b id="totalPlayers">0</b></span>
+    </div>
+    
+    <div class="row">
+      <input id="answer" type="number" placeholder="Ta réponse (chiffre)…" autocomplete="off" />
+      <button id="btnSubmit" class="btn-primaire" style="max-width:120px">Valider</button>
+    </div>
+    
+    <div id="msg3" class="status"></div>
+
+    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
+      <button id="btnGameLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter la partie</button>
+    </div>
+  </div>
+
+  <!-- FIN -->
+  <div id="screenEnd" class="hidden">
+    <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="endTitle">Partie terminée</div>
+    
+    <!-- Le tableau professionnel -->
+    <table class="pro-table" id="finalScoreboard">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Joueur</th>
+          <th>Score</th>
+          <th>Stats (✅/❌)</th>
+        </tr>
+      </thead>
+      <tbody id="finalScoreboardBody">
+        <!-- Rempli par JS -->
+      </tbody>
+    </table>
+    
+    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des réponses</h3>
+    <div class="recap-list" id="recapList"></div>
+
+    <div class="row" style="margin-top:24px;">
+      <button id="btnLeave" class="btn-primaire">🏠 Retour à l'accueil</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   🔥 CONFIG FIREBASE
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
+  authDomain: "eeee-1387d.firebaseapp.com",
+  projectId: "eeee-1387d",
+  storageBucket: "eeee-1387d.firebasestorage.app",
+  messagingSenderId: "777961527724",
+  appId: "1:777961527724:web:5c222e42be24af0ab38209"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ============================================================
+   BANQUE DE QUESTIONS (Maths)
+   ============================================================ */
+const MATH_QUESTIONS = [
+  { question: "81 ÷ 9", answer: 9 }, { question: "6 × 2 + 4 ÷ 2", answer: 14 },
+  { question: "12 × 3 - 4", answer: 32 }, { question: "25 × 4 ÷ 5", answer: 20 },
+  { question: "15 × 5", answer: 75 }, { question: "7 + 5 × 3", answer: 22 },
+  { question: "81 ÷ 9 + 3", answer: 12 }, { question: "100 ÷ 2 - 10", answer: 40 },
+  { question: "9 × 8 - 20", answer: 52 }, { question: "12 × 5 ÷ 3", answer: 20 },
+  { question: "10 ÷ 2 + 3 × 4", answer: 17 }, { question: "5 × 3 + 6 ÷ 2", answer: 18 },
+  { question: "12 ÷ 3 + 4 × 2", answer: 12 }, { question: "7 × 2 + 8 ÷ 4", answer: 16 },
+  { question: "8 ÷ 2 + 5 × 3", answer: 19 }, { question: "6 × 3 + 9 ÷ 3", answer: 21 },
+  { question: "16 ÷ 4 + 2 × 6", answer: 16 }, { question: "9 × 2 + 4 ÷ 2", answer: 20 },
+  { question: "12 ÷ 2 + 3 × 2", answer: 12 }, { question: "7 × 3 + 6 ÷ 3", answer: 23 },
+  { question: "10 ÷ 5 + 4 × 4", answer: 18 }, { question: "8 × 2 + 10 ÷ 2", answer: 21 },
+  { question: "18 ÷ 3 + 5 × 2", answer: 16 }, { question: "6 × 4 + 8 ÷ 4", answer: 26 },
+  { question: "15 ÷ 3 + 3 × 5", answer: 20 }, { question: "4 × 2 + 12 ÷ 3", answer: 12 },
+  { question: "16 ÷ 4 + 6 × 2", answer: 16 }, { question: "3 × 5 + 9 ÷ 3", answer: 18 },
+  { question: "20 ÷ 5 + 4 × 2", answer: 12 }, { question: "6 × 3 + 8 ÷ 4", answer: 20 },
+  { question: "12 ÷ 2 + 7 × 1", answer: 13 }, { question: "8 × 2 + 6 ÷ 3", answer: 18 },
+  { question: "9 ÷ 3 + 4 × 3", answer: 15 }, { question: "5 × 2 + 18 ÷ 6", answer: 13 },
+  { question: "14 ÷ 2 + 3 × 3", answer: 16 }, { question: "3 × 4 + 8 ÷ 4", answer: 14 },
+  { question: "18 ÷ 6 + 5 × 2", answer: 13 }, { question: "10 × 1 + 9 ÷ 3", answer: 13 },
+  { question: "6 ÷ 2 + 7 × 2", answer: 17 }, { question: "8 × 3 + 6 ÷ 2", answer: 27 },
+  { question: "15 ÷ 5 + 2 × 4", answer: 11 }, { question: "9 × 2 + 10 ÷ 5", answer: 22 },
+  { question: "12 ÷ 3 + 6 × 2", answer: 16 }, { question: "4 × 4 + 12 ÷ 3", answer: 20 },
+  { question: "18 ÷ 3 + 2 × 3", answer: 12 }, { question: "14 ÷ 2 + 3 × 4", answer: 19 },
+  { question: "7 × 2 + 10 ÷ 2", answer: 19 }, { question: "10 ÷ 2 + 6 × 2", answer: 17 },
+  { question: "6 × 2 ÷ 3 + 4", answer: 8 }, { question: "12 ÷ 3 × 2 + 5", answer: 13 },
+  { question: "8 × 3 ÷ 4 + 2", answer: 8 }, { question: "10 ÷ 2 × 3 + 1", answer: 16 },
+  { question: "4 × 5 ÷ 2 + 3", answer: 13 }, { question: "9 ÷ 3 × 4 + 2", answer: 14 },
+  { question: "7 × 2 ÷ 1 + 5", answer: 19 }, { question: "12 ÷ 4 × 2 + 6", answer: 12 },
+  { question: "16 ÷ 2 × 1 + 3", answer: 11 }, { question: "3 × 4 ÷ 2 + 7", answer: 13 },
+  { question: "8 ÷ 2 × 3 + 1", answer: 13 }, { question: "6 × 2 ÷ 1 + 5", answer: 17 },
+  { question: "10 ÷ 5 × 4 + 6", answer: 14 }, { question: "14 × 1 ÷ 2 + 3", answer: 10 },
+  { question: "18 ÷ 3 × 2 + 4", answer: 16 }, { question: "8 ÷ 2 × 5 + 2", answer: 22 },
+  { question: "6 ÷ 2 × 4 + 3", answer: 15 }, { question: "15 × 1 ÷ 5 + 8", answer: 11 },
+  { question: "20 ÷ 4 × 2 + 5", answer: 15 }, { question: "7 × 2 ÷ 1 + 3", answer: 17 },
+  { question: "8 ÷ 4 × 6 + 2", answer: 14 }, { question: "10 × 2 ÷ 5 + 3", answer: 7 },
+  { question: "6 ÷ 3 × 4 + 2", answer: 10 }, { question: "4 × 2 ÷ 2 + 7", answer: 11 },
+  { question: "16 ÷ 2 × 1 + 5", answer: 13 }, { question: "3 × 5 ÷ 1 + 2", answer: 17 },
+  { question: "12 ÷ 3 × 2 + 6", answer: 14 }, { question: "5 × 4 ÷ 2 + 3", answer: 13 },
+  { question: "9 ÷ 3 × 5 + 1", answer: 16 }, { question: "8 × 2 ÷ 4 + 5", answer: 9 },
+  { question: "14 ÷ 2 × 1 + 4", answer: 11 }, { question: "6 × 2 ÷ 3 + 7", answer: 11 },
+  { question: "20 ÷ 4 × 1 + 6", answer: 11 }, { question: "7 × 3 ÷ 1 + 2", answer: 23 },
+  { question: "15 + 25 - 10", answer: 30 }, { question: "50 ÷ 5 + 12", answer: 22 },
+  { question: "30 - 8 + 14", answer: 36 }, { question: "100 ÷ 4 - 15", answer: 10 },
+  { question: "75 + 25 ÷ 5", answer: 80 }, { question: "60 - 12 + 18", answer: 66 },
+  { question: "48 ÷ 6 + 10", answer: 18 }, { question: "120 - 40 ÷ 8", answer: 115 },
+  { question: "15 + 45 ÷ 9", answer: 20 }, { question: "72 - 24 + 8", answer: 56 },
+  { question: "84 ÷ 7 - 6", answer: 6 }, { question: "120 + 30 ÷ 6", answer: 125 },
+  { question: "45 + 36 ÷ 9", answer: 49 }, { question: "200 ÷ 10 + 5", answer: 25 },
+  { question: "80 - 16 + 4", answer: 68 }, { question: "56 ÷ 8 + 10", answer: 17 },
+  { question: "90 + 45 ÷ 9", answer: 95 }, { question: "18 - 3 + 10", answer: 25 },
+  { question: "150 ÷ 15 + 5", answer: 15 }, { question: "65 - 30 ÷ 5", answer: 59 },
+  { question: "45 + 38 - 22", answer: 61 }, { question: "120 ÷ 6 + 18", answer: 38 },
+  { question: "70 - 13 + 27", answer: 84 }, { question: "144 ÷ 12 - 7", answer: 5 },
+  { question: "90 + 48 ÷ 8", answer: 96 }, { question: "55 - 30 + 22", answer: 47 },
+  { question: "81 ÷ 9 + 6", answer: 15 }, { question: "200 - 56 ÷ 8", answer: 193 },
+  { question: "36 + 72 ÷ 9", answer: 44 }, { question: "150 - 40 + 30", answer: 140 },
+  { question: "25 + 40 - 15", answer: 50 }, { question: "96 ÷ 8 + 15", answer: 27 },
+  { question: "150 - 45 + 30", answer: 135 }, { question: "81 ÷ 9 - 5", answer: 4 },
+  { question: "36 + 54 ÷ 6", answer: 39 }, { question: "72 - 32 + 20", answer: 60 },
+  { question: "56 ÷ 7 + 9", answer: 13 }, { question: "100 + 60 ÷ 12", answer: 105 },
+  { question: "48 - 18 + 24", answer: 54 }, { question: "150 ÷ 5 + 10", answer: 40 },
+  { question: "72 + 18 - 24", answer: 66 }, { question: "120 ÷ 6 + 14", answer: 34 },
+  { question: "85 - 50 + 15", answer: 50 }, { question: "144 ÷ 12 - 9", answer: 3 },
+  { question: "36 + 48 ÷ 8", answer: 42 }, { question: "150 - 80 + 45", answer: 115 },
+  { question: "98 ÷ 7 + 10", answer: 24 }, { question: "200 - 120 ÷ 6", answer: 180 },
+  { question: "65 + 32 ÷ 8", answer: 69 }, { question: "135 - 45 + 18", answer: 108 },
+  { question: "24 + 36 ÷ 6", answer: 30 }, { question: "80 ÷ 4 + 27", answer: 47 },
+  { question: "63 - 21 + 9", answer: 51 }, { question: "250 ÷ 5 - 30", answer: 20 },
+  { question: "48 + 72 ÷ 9", answer: 56 }, { question: "210 - 56 ÷ 8", answer: 203 },
+  { question: "96 + 64 ÷ 8", answer: 104 }, { question: "50 - 18 + 12", answer: 44 },
+  { question: "180 ÷ 9 + 16", answer: 36 }, { question: "55 + 28 ÷ 7", answer: 59 },
+  { question: "7 × 6 + 8", answer: 50 }, { question: "9 × 5 + 4", answer: 49 },
+  { question: "12 × 3 + 15", answer: 51 }, { question: "8 × 4 + 6", answer: 38 },
+  { question: "5 × 9 + 11", answer: 56 }, { question: "6 × 7 + 13", answer: 55 },
+  { question: "3 × 12 + 18", answer: 54 }, { question: "4 × 8 + 17", answer: 49 },
+  { question: "11 × 2 + 25", answer: 47 }, { question: "10 × 6 + 7", answer: 67 },
+  { question: "8 × 7 - 5", answer: 51 }, { question: "6 × 9 - 10", answer: 44 },
+  { question: "15 × 4 - 20", answer: 40 }, { question: "10 × 5 - 9", answer: 41 },
+  { question: "7 × 8 - 12", answer: 44 }, { question: "9 × 6 - 18", answer: 36 },
+  { question: "11 × 5 - 8", answer: 47 }, { question: "13 × 4 - 14", answer: 38 },
+  { question: "6 × 12 - 20", answer: 52 }, { question: "14 × 3 - 22", answer: 20 },
+  { question: "5 × 3 + 2", answer: 17 }, { question: "7 × 4 + 9", answer: 37 },
+  { question: "6 × 8 + 5", answer: 53 }, { question: "9 × 2 + 7", answer: 25 },
+  { question: "4 × 6 + 11", answer: 35 }, { question: "3 × 5 + 8", answer: 23 },
+  { question: "8 × 3 + 10", answer: 34 }, { question: "6 × 7 + 4", answer: 46 },
+  { question: "2 × 9 + 15", answer: 33 }, { question: "5 × 5 + 3", answer: 28 },
+  { question: "8 × 6 - 4", answer: 44 }, { question: "7 × 9 - 5", answer: 58 },
+  { question: "3 × 4 - 6", answer: 6 }, { question: "5 × 5 - 8", answer: 17 },
+  { question: "9 × 3 - 7", answer: 20 }, { question: "6 × 8 - 3", answer: 45 },
+  { question: "4 × 7 - 9", answer: 19 }, { question: "8 × 5 - 12", answer: 28 },
+  { question: "2 × 6 - 9", answer: 3 }, { question: "7 × 3 - 5", answer: 16 },
+  { question: "12 × 3 ÷ 4", answer: 9 }, { question: "15 ÷ 5 × 6", answer: 18 },
+  { question: "7 × 8 ÷ 4", answer: 14 }, { question: "18 ÷ 3 × 2", answer: 12 },
+  { question: "9 × 4 ÷ 6", answer: 6 }, { question: "24 ÷ 8 × 3", answer: 9 },
+  { question: "5 × 10 ÷ 2", answer: 25 }, { question: "36 ÷ 6 × 7", answer: 42 },
+  { question: "6 × 9 ÷ 3", answer: 18 }, { question: "48 ÷ 12 × 2", answer: 8 },
+  { question: "8 × 7 ÷ 2", answer: 28 }, { question: "20 ÷ 4 × 5", answer: 25 },
+  { question: "30 × 2 ÷ 5", answer: 12 }, { question: "45 ÷ 9 × 6", answer: 30 },
+  { question: "10 × 3 ÷ 5", answer: 6 }, { question: "72 ÷ 8 × 9", answer: 81 },
+  { question: "16 × 5 ÷ 4", answer: 20 }, { question: "50 ÷ 10 × 2", answer: 10 },
+  { question: "14 × 2 ÷ 7", answer: 4 }, { question: "64 ÷ 8 × 3", answer: 24 },
+  { question: "14 × 4 ÷ 2", answer: 28 }, { question: "16 ÷ 4 × 3", answer: 12 },
+  { question: "9 × 7 ÷ 3", answer: 21 }, { question: "20 ÷ 5 × 6", answer: 24 },
+  { question: "25 × 2 ÷ 5", answer: 10 }, { question: "36 ÷ 12 × 8", answer: 24 },
+  { question: "12 × 9 ÷ 3", answer: 36 }, { question: "40 ÷ 8 × 5", answer: 25 },
+  { question: "24 × 3 ÷ 6", answer: 12 }, { question: "18 ÷ 3 × 5", answer: 30 },
+  { question: "21 × 2 ÷ 7", answer: 6 }, { question: "30 ÷ 6 × 4", answer: 20 },
+  { question: "10 × 8 ÷ 4", answer: 20 }, { question: "48 ÷ 6 × 3", answer: 24 },
+  { question: "72 ÷ 9 × 4", answer: 32 }, { question: "50 × 3 ÷ 10", answer: 15 },
+  { question: "60 ÷ 5 × 6", answer: 72 }, { question: "14 × 5 ÷ 10", answer: 7 },
+  { question: "8 × 12 ÷ 4", answer: 24 }, { question: "45 ÷ 15 × 6", answer: 18 },
+  { question: "30 ÷ 6 × 2", answer: 10 }, { question: "8 × 9 ÷ 6", answer: 12 },
+  { question: "36 ÷ 4 × 3", answer: 27 }, { question: "16 × 3 ÷ 8", answer: 6 },
+  { question: "24 ÷ 4 × 5", answer: 30 }, { question: "18 × 2 ÷ 6", answer: 6 },
+  { question: "48 ÷ 8 × 3", answer: 18 }, { question: "20 × 2 ÷ 10", answer: 4 },
+  { question: "72 ÷ 12 × 6", answer: 36 }, { question: "9 × 8 ÷ 4", answer: 18 },
+  { question: "28 ÷ 7 × 5", answer: 20 }, { question: "32 ÷ 8 × 2", answer: 8 },
+  { question: "10 × 5 ÷ 5", answer: 10 }, { question: "36 ÷ 6 × 4", answer: 24 },
+  { question: "12 × 7 ÷ 6", answer: 14 }, { question: "45 ÷ 5 × 4", answer: 36 },
+  { question: "24 × 5 ÷ 8", answer: 15 }, { question: "50 ÷ 10 × 9", answer: 45 },
+  { question: "56 ÷ 7 × 3", answer: 24 }, { question: "36 ÷ 9 × 7", answer: 28 },
+  { question: "56 ÷ 7 × 4", answer: 32 }, { question: "15 × 3 ÷ 5", answer: 9 },
+  { question: "45 ÷ 5 × 8", answer: 72 }, { question: "18 × 4 ÷ 6", answer: 12 },
+  { question: "72 ÷ 8 × 5", answer: 45 }, { question: "30 ÷ 6 × 3", answer: 15 },
+  { question: "50 × 4 ÷ 10", answer: 20 }, { question: "64 ÷ 8 × 6", answer: 48 },
+  { question: "12 × 5 ÷ 6", answer: 10 }, { question: "24 ÷ 3 × 2", answer: 16 },
+  { question: "48 ÷ 12 × 9", answer: 36 }, { question: "21 × 3 ÷ 7", answer: 9 },
+  { question: "27 ÷ 3 × 5", answer: 45 }, { question: "80 ÷ 10 × 2", answer: 16 },
+  { question: "18 × 2 ÷ 9", answer: 4 }, { question: "24 ÷ 6 × 4", answer: 16 },
+  { question: "10 × 7 ÷ 5", answer: 14 }, { question: "50 ÷ 10 × 6", answer: 30 },
+  { question: "36 × 2 ÷ 9", answer: 8 }, { question: "36 ÷ 4 × 5", answer: 45 },
+  { question: "24 × 3 ÷ 12", answer: 6 }, { question: "50 ÷ 5 × 6", answer: 60 },
+  { question: "72 ÷ 8 × 9", answer: 81 }, { question: "15 × 4 ÷ 3", answer: 20 },
+  { question: "36 ÷ 9 × 8", answer: 32 }, { question: "27 × 2 ÷ 9", answer: 6 },
+  { question: "63 ÷ 7 × 4", answer: 36 }, { question: "48 ÷ 6 × 5", answer: 40 },
+  { question: "25 × 6 ÷ 10", answer: 15 }, { question: "42 ÷ 7 × 8", answer: 48 },
+  { question: "64 ÷ 8 × 3", answer: 24 }, { question: "18 × 5 ÷ 9", answer: 10 },
+  { question: "12 × 6 ÷ 4", answer: 18 }, { question: "20 ÷ 5 × 4", answer: 16 },
+  { question: "56 ÷ 7 × 5", answer: 40 }, { question: "45 × 2 ÷ 5", answer: 18 },
+  { question: "36 ÷ 6 × 7", answer: 42 }, { question: "72 × 2 ÷ 9", answer: 16 },
+  { question: "54 ÷ 9 × 4", answer: 24 },
+  { question: "25 - 8 + 6 × 3", answer: 35 }, { question: "45 - 12 + 4 × 5", answer: 53 },
+  { question: "60 - 20 + 2 × 7", answer: 54 }, { question: "72 - 15 + 8 × 2", answer: 73 },
+  { question: "100 - 45 + 3 × 9", answer: 82 }, { question: "84 - 30 + 5 × 6", answer: 84 },
+  { question: "56 - 18 + 4 × 8", answer: 70 }, { question: "120 - 50 + 7 × 4", answer: 98 },
+  { question: "150 - 90 + 9 × 3", answer: 87 }, { question: "90 - 40 + 6 × 5", answer: 80 },
+  { question: "135 - 55 + 7 × 8", answer: 136 }, { question: "78 - 12 + 3 × 9", answer: 93 },
+  { question: "120 - 60 + 10 × 4", answer: 100 }, { question: "65 - 20 + 5 × 6", answer: 75 },
+  { question: "98 - 40 + 8 × 7", answer: 114 }, { question: "110 - 60 + 4 × 9", answer: 86 },
+  { question: "130 - 45 + 3 × 12", answer: 121 }, { question: "150 - 70 + 6 × 8", answer: 128 },
+  { question: "200 - 100 + 9 × 5", answer: 145 }, { question: "85 - 35 + 2 × 8", answer: 66 },
+  { question: "12 + 8 - 4 × 3", answer: 8 }, { question: "35 + 15 - 9 × 2", answer: 32 },
+  { question: "50 + 20 - 5 × 6", answer: 40 }, { question: "60 + 30 - 7 × 5", answer: 55 },
+  { question: "100 + 50 - 8 × 3", answer: 126 }, { question: "25 + 10 - 6 × 4", answer: 11 },
+  { question: "80 + 40 - 9 × 2", answer: 102 }, { question: "45 + 25 - 3 × 7", answer: 49 },
+  { question: "60 + 20 - 10 × 3", answer: 50 }, { question: "90 + 30 - 6 × 5", answer: 90 },
+  { question: "70 + 50 - 8 × 2", answer: 104 }, { question: "110 + 20 - 7 × 4", answer: 102 },
+  { question: "55 + 15 - 6 × 5", answer: 40 }, { question: "120 + 40 - 9 × 3", answer: 133 },
+  { question: "80 + 60 - 5 × 7", answer: 105 }, { question: "150 + 25 - 8 × 4", answer: 144 },
+  { question: "200 + 40 - 6 × 9", answer: 186 }, { question: "180 + 30 - 7 × 6", answer: 168 },
+  { question: "130 + 50 - 8 × 4", answer: 148 }, { question: "90 + 20 - 5 × 5", answer: 85 },
+  { question: "5 × 4 + 12 - 3", answer: 29 }, { question: "8 × 6 + 20 - 10", answer: 58 },
+  { question: "9 × 3 + 15 - 5", answer: 37 }, { question: "4 × 7 + 30 - 9", answer: 49 },
+  { question: "6 × 5 + 25 - 8", answer: 47 }, { question: "7 × 8 + 10 - 6", answer: 60 },
+  { question: "3 × 9 + 20 - 10", answer: 37 }, { question: "10 × 2 + 15 - 6", answer: 28 },
+  { question: "6 × 6 + 28 - 15", answer: 49 }, { question: "5 × 9 + 12 - 8", answer: 49 },
+  { question: "4 × 3 + 35 - 10", answer: 37 }, { question: "7 × 5 + 14 - 6", answer: 33 },
+  { question: "3 × 8 + 30 - 7", answer: 47 }, { question: "9 × 4 + 20 - 10", answer: 46 },
+  { question: "8 × 2 + 18 - 5", answer: 29 }, { question: "6 × 7 + 25 - 12", answer: 55 },
+  { question: "5 × 6 + 18 - 10", answer: 38 }, { question: "7 × 4 + 22 - 8", answer: 42 },
+  { question: "3 × 5 + 27 - 11", answer: 31 }, { question: "2 × 9 + 40 - 15", answer: 43 },
+  { question: "15 - 4 × 3 + 6", answer: 9 }, { question: "20 - 5 × 2 + 8", answer: 18 },
+  { question: "18 - 7 × 4 + 10", answer: 0 }, { question: "30 - 3 × 5 + 12", answer: 27 },
+  { question: "25 - 8 × 2 + 5", answer: 14 }, { question: "40 - 9 × 3 + 7", answer: 20 },
+  { question: "50 - 6 × 4 + 9", answer: 35 }, { question: "12 - 2 × 5 + 4", answer: 6 },
+  { question: "60 - 10 × 3 + 15", answer: 45 }, { question: "45 - 4 × 6 + 11", answer: 32 },
+  { question: "36 - 3 × 7 + 13", answer: 28 }, { question: "28 - 6 × 4 + 10", answer: 14 },
+  { question: "22 - 8 × 2 + 14", answer: 20 }, { question: "16 - 5 × 3 + 7", answer: 8 },
+  { question: "38 - 4 × 5 + 9", answer: 27 }, { question: "45 - 7 × 2 + 6", answer: 37 },
+  { question: "32 - 9 × 3 + 8", answer: 13 }, { question: "48 - 6 × 4 + 13", answer: 37 },
+  { question: "20 - 2 × 6 + 5", answer: 13 }, { question: "52 - 5 × 4 + 12", answer: 44 },
+  { question: "72 ÷ 8 + 5 - 3", answer: 11 }, { question: "45 ÷ 9 + 7 - 4", answer: 8 },
+  { question: "56 ÷ 7 + 8 - 2", answer: 14 }, { question: "36 ÷ 6 + 9 - 5", answer: 10 },
+  { question: "90 ÷ 10 + 3 - 1", answer: 11 }, { question: "63 ÷ 9 + 6 - 3", answer: 10 },
+  { question: "84 ÷ 7 + 4 - 2", answer: 14 }, { question: "48 ÷ 8 + 12 - 8", answer: 10 },
+  { question: "72 ÷ 9 + 5 - 2", answer: 11 }, { question: "60 ÷ 5 + 10 - 6", answer: 16 },
+  { question: "15 + 30 ÷ 5 - 3", answer: 18 }, { question: "40 + 50 ÷ 10 - 4", answer: 41 },
+  { question: "60 + 24 ÷ 8 - 2", answer: 61 }, { question: "100 + 36 ÷ 4 - 5", answer: 104 },
+  { question: "25 + 18 ÷ 3 - 2", answer: 29 }, { question: "90 + 72 ÷ 9 - 6", answer: 92 },
+  { question: "45 + 56 ÷ 7 - 8", answer: 45 }, { question: "36 + 18 ÷ 6 - 4", answer: 35 },
+  { question: "50 + 72 ÷ 8 - 9", answer: 50 }, { question: "120 + 84 ÷ 12 - 7", answer: 120 },
+  { question: "8 × 6 ÷ 3 - 4", answer: 12 }, { question: "12 × 5 ÷ 2 - 3", answer: 27 },
+  { question: "9 × 7 ÷ 7 - 2", answer: 7 }, { question: "15 × 4 ÷ 2 - 6", answer: 24 },
+  { question: "10 × 9 ÷ 3 - 5", answer: 25 }, { question: "20 × 3 ÷ 6 - 8", answer: 2 },
+  { question: "7 × 8 ÷ 4 - 3", answer: 11 }, { question: "18 × 5 ÷ 10 - 4", answer: 5 },
+  { question: "14 × 6 ÷ 2 - 5", answer: 37 }, { question: "11 × 6 ÷ 2 - 7", answer: 26 },
+  { question: "6 × 4 ÷ 2 + 3", answer: 15 }, { question: "9 × 5 ÷ 3 + 7", answer: 22 },
+  { question: "12 × 3 ÷ 6 + 8", answer: 14 }, { question: "8 × 7 ÷ 4 + 5", answer: 19 },
+  { question: "15 × 2 ÷ 5 + 6", answer: 12 }, { question: "10 × 9 ÷ 3 + 2", answer: 32 },
+  { question: "5 × 6 ÷ 2 + 9", answer: 24 }, { question: "14 × 2 ÷ 7 + 4", answer: 8 },
+  { question: "11 × 3 ÷ 3 + 10", answer: 10 }, { question: "7 × 8 ÷ 4 + 3", answer: 17 },
+  { question: "6 × 4 + 8 ÷ 2", answer: 28 }, { question: "9 × 5 + 12 ÷ 3", answer: 49 },
+  { question: "3 × 7 + 14 ÷ 7", answer: 23 }, { question: "8 × 6 + 18 ÷ 3", answer: 54 },
+  { question: "10 × 5 + 20 ÷ 4", answer: 55 }, { question: "4 × 3 + 24 ÷ 6", answer: 16 },
+  { question: "5 × 6 + 30 ÷ 5", answer: 36 }, { question: "7 × 2 + 18 ÷ 3", answer: 20 },
+  { question: "11 × 3 + 36 ÷ 6", answer: 39 }, { question: "12 × 2 + 24 ÷ 8", answer: 27 },
+  { question: "8 × 5 - 12 ÷ 4", answer: 37 }, { question: "6 × 7 - 18 ÷ 3", answer: 36 },
+  { question: "9 × 4 - 20 ÷ 5", answer: 32 }, { question: "10 × 3 - 24 ÷ 6", answer: 26 },
+  { question: "7 × 6 - 15 ÷ 3", answer: 37 }, { question: "5 × 8 - 30 ÷ 5", answer: 34 },
+  { question: "12 × 3 - 45 ÷ 9", answer: 31 }, { question: "6 × 9 - 36 ÷ 6", answer: 48 },
+  { question: "4 × 7 - 28 ÷ 7", answer: 24 }, { question: "3 × 5 - 18 ÷ 3", answer: 9 },
+  { question: "36 ÷ 6 + 4 × 5", answer: 26 }, { question: "48 ÷ 8 + 2 × 7", answer: 20 },
+  { question: "72 ÷ 9 + 3 × 6", answer: 26 }, { question: "84 ÷ 12 + 5 × 4", answer: 27 },
+  { question: "96 ÷ 8 + 7 × 3", answer: 24 }, { question: "60 ÷ 10 + 9 × 2", answer: 27 },
+  { question: "120 ÷ 15 + 6 × 8", answer: 56 }, { question: "90 ÷ 5 + 8 × 2", answer: 34 },
+  { question: "100 ÷ 20 + 4 × 6", answer: 29 }, { question: "54 ÷ 9 + 5 × 3", answer: 21 },
+  { question: "48 ÷ 8 × 3 + 5", answer: 23 }, { question: "36 ÷ 6 × 4 + 2", answer: 26 },
+  { question: "56 ÷ 7 × 5 + 8", answer: 48 }, { question: "72 ÷ 9 × 6 + 7", answer: 55 },
+  { question: "84 ÷ 12 × 8 + 9", answer: 65 }, { question: "90 ÷ 10 × 7 + 6", answer: 69 },
+  { question: "120 ÷ 15 × 9 + 4", answer: 76 }, { question: "64 ÷ 8 × 3 + 10", answer: 34 },
+  { question: "100 ÷ 25 × 6 + 11", answer: 35 }, { question: "54 ÷ 6 × 4 + 3", answer: 39 },
+  { question: "50 - 10 + 20 ÷ 5", answer: 44 }, { question: "72 - 15 + 30 ÷ 6", answer: 62 },
+  { question: "90 - 25 + 40 ÷ 8", answer: 70 }, { question: "60 - 10 + 36 ÷ 9", answer: 54 },
+  { question: "120 - 40 + 56 ÷ 7", answer: 88 }, { question: "80 - 20 + 48 ÷ 12", answer: 64 },
+  { question: "150 - 30 + 72 ÷ 9", answer: 128 }, { question: "110 - 45 + 36 ÷ 6", answer: 71 },
+  { question: "100 - 50 + 72 ÷ 12", answer: 56 }, { question: "200 - 75 + 54 ÷ 6", answer: 134 },
+  { question: "72 ÷ 8 × 5 - 12", answer: 33 }, { question: "84 ÷ 7 × 6 - 18", answer: 54 },
+  { question: "90 ÷ 9 × 4 - 15", answer: 25 }, { question: "96 ÷ 12 × 3 - 20", answer: 4 },
+  { question: "120 ÷ 10 × 7 - 25", answer: 59 }, { question: "144 ÷ 12 × 5 - 30", answer: 30 },
+  { question: "180 ÷ 15 × 6 - 40", answer: 32 }, { question: "225 ÷ 25 × 8 - 50", answer: 22 },
+  { question: "300 ÷ 30 × 4 - 40", answer: 0 }, { question: "450 ÷ 15 × 3 - 45", answer: 45 },
+  { question: "300 ÷ 10 + 25 × 2", answer: 80 }, { question: "144 ÷ 12 × 3 − 15", answer: 21 },
+  { question: "96 × 2 − 50 ÷ 5", answer: 182 }, { question: "180 ÷ 6 + 40 × 2", answer: 110 },
+  { question: "225 × 2 − 60 ÷ 3", answer: 430 }, { question: "400 ÷ 20 × 6 + 18", answer: 138 },
+  { question: "360 ÷ 12 − 15 × 3", answer: -15 }, { question: "150 × 2 + 100 ÷ 10", answer: 310 },
+  { question: "64 × 3 − 90 ÷ 6", answer: 177 }, { question: "500 ÷ 25 + 120 × 2", answer: 260 },
+  { question: "132 ÷ 11 + 45 × 3", answer: 147 }, { question: "84 × 2 − 36 ÷ 3", answer: 156 },
+  { question: "600 ÷ 20 × 2 + 80", answer: 140 }, { question: "256 × 1 − 48 ÷ 4", answer: 244 },
+  { question: "144 ÷ 12 + 90 × 2", answer: 192 }, { question: "240 × 2 − 60 ÷ 5", answer: 468 },
+  { question: "400 ÷ 8 + 100 × 2", answer: 250 }, { question: "180 × 3 − 120 ÷ 6", answer: 520 },
+  { question: "324 ÷ 18 × 5 + 25", answer: 115 }, { question: "96 × 4 − 64 ÷ 4", answer: 368 },
+  { question: "500 ÷ 10 + 120 × 1", answer: 170 }, { question: "128 × 2 − 72 ÷ 6", answer: 244 },
+  { question: "640 ÷ 8 × 2 + 30", answer: 190 }, { question: "144 ÷ 6 − 90 × 1", answer: -66 },
+  { question: "225 × 3 + 300 ÷ 10", answer: 705 }, { question: "5 × 4 + 8 ÷ 2", answer: 24 },
+  { question: "6 ÷ 3 + 7 × 3", answer: 23 }
+];
+
+/* ============================================================
+   CONSTANTES & ÉTAT GLOBAL
+   ============================================================ */
+const TOTAL_QUESTIONS = 20;
+const POINTS_PER_CORRECT = 10;
+const QUESTION_DURATION_MS = 30000; // 30 secondes
+
+let uid = null;
+let pseudo = localStorage.getItem('nodasa_math_pseudo') || '';
+let roomCode = null;
+let isHost = false;
+let unsubscribeRoom = null;
+let currentRoom = null;
+let timerInterval = null;
+let lastAnsweredQ = -1;
+
+const $ = id => document.getElementById(id);
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const genCode = () => String(Math.floor(1000 + Math.random() * 9000));
+
+/* ============================================================
+   GESTION DU THÈME
+   ============================================================ */
+function initTheme() {
+  const savedTheme = localStorage.getItem('nodasa_theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    $('themeToggle').textContent = '☀️';
+  }
+}
+
+$('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('nodasa_theme', isDark ? 'dark' : 'light');
+});
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+async function initAuth(){
+  initTheme();
+  
+  if (pseudo) $('pseudo').value = pseudo;
+  
+  const savedRoom = localStorage.getItem('nodasa_math_room');
+  if (savedRoom) {
+    try {
+      await auth.signInAnonymously();
+      uid = auth.currentUser.uid;
+      const snap = await db.collection('math_rooms').doc(savedRoom).get();
+      if (snap.exists && snap.data().players[pseudo]) {
+        roomCode = savedRoom;
+        isHost = (snap.data().hostName === pseudo);
+        enterLobby();
+        return;
+      }
+    } catch(e) { console.log("Pas de session précédente"); }
+  }
+
+  try {
+    await auth.signInAnonymously();
+    uid = auth.currentUser.uid;
+  } catch(e) {
+    console.error(e);
+    setMsg('msg', '❌ Auth échouée : ' + e.message, 'var(--msg-rouge)');
+  }
+}
+
+/* ============================================================
+   CRÉATION & CONNEXION SALLE
+   ============================================================ */
+async function createRoom(){
+  let code = null;
+  for (let i = 0; i < 10; i++) {
+    const testCode = genCode();
+    const snap = await db.collection('math_rooms').doc(testCode).get();
+    if (!snap.exists) { code = testCode; break; }
+  }
+  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
+
+  await db.collection('math_rooms').doc(code).set({
+    state: 'lobby',
+    hostName: pseudo,
+    players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 } },
+    questions: [],
+    currentQ: 0,
+    qStartAt: 0,
+    winnerName: null,
+    createdAt: Date.now()
+  });
+  
+  localStorage.setItem('nodasa_math_room', code);
+  isHost = true;
+  roomCode = code;
+  enterLobby();
+}
+
+async function joinRoom(code){
+  const ref = db.collection('math_rooms').doc(code);
+  const snap = await ref.get();
+  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', 'var(--msg-rouge)');
+  const data = snap.data();
+  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', 'var(--msg-rouge)');
+
+  if (!data.players[pseudo]) {
+    await ref.update({
+      [`players.${pseudo}`]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 }
+    });
+  }
+  
+  localStorage.setItem('nodasa_math_room', code);
+  isHost = false;
+  roomCode = code;
+  enterLobby();
+}
+
+/* ============================================================
+   LOBBY
+   ============================================================ */
+function enterLobby(){
+  hide('screenHome'); show('screenLobby'); hide('screenGame'); hide('screenEnd');
+  $('lobbyCode').textContent = roomCode;
+
+  if (unsubscribeRoom) unsubscribeRoom();
+  unsubscribeRoom = db.collection('math_rooms').doc(roomCode).onSnapshot(
+    (doc) => {
+      if (!doc.exists) return;
+      currentRoom = doc.data();
+      renderRoom(currentRoom);
+    },
+    (err) => {
+      console.error('❌ Erreur Firestore :', err);
+      setMsg('msg2', '❌ Erreur : ' + err.message, 'var(--msg-rouge)');
+    }
+  );
+}
+
+function renderRoom(game){
+  if (game.state === 'lobby') {
+    hide('screenGame'); hide('screenEnd'); show('screenLobby');
+    renderLobby(game);
+  } else if (game.state === 'playing') {
+    hide('screenLobby'); hide('screenEnd'); show('screenGame');
+    renderGame(game);
+  } else if (game.state === 'ended') {
+    hide('screenLobby'); hide('screenGame'); show('screenEnd');
+    renderEnd(game);
+  }
+}
+
+function renderLobby(game){
+  const players = game.players || {};
+  const names = Object.keys(players);
+  $('lobbyPlayers').innerHTML = names.map(name => `
+    <div class="player-card ${name===pseudo?'me':''}">
+      <span class="player-name">${escapeHtml(name)}${name===game.hostName?' 👑':''}</span>
+      <span class="pill">${name===pseudo?'toi':'prêt'}</span>
+    </div>
+  `).join('');
+
+  if (game.hostName === pseudo) {
+    $('hostControls').style.display = 'flex';
+    $('guestLeave').style.display = 'none';
+  } else {
+    $('hostControls').style.display = 'none';
+    $('guestLeave').style.display = 'flex';
+  }
+  $('btnStart').disabled = names.length < 2;
+  $('lobbyStatus').textContent = names.length < 2
+    ? "⏳ Attends au moins 1 autre joueur…"
+    : `✅ ${names.length} joueur(s) prêt(s) — l'hôte peut lancer.`;
+}
+
+$('btnStart').addEventListener('click', async () => {
+  if (!currentRoom || currentRoom.hostName !== pseudo) return;
+  const names = Object.keys(currentRoom.players || {});
+  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
+  
+  let all = [...MATH_QUESTIONS];
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  
+  const questions = all.slice(0, TOTAL_QUESTIONS);
+
+  const updates = {
+    state: 'playing',
+    currentQ: 0,
+    questions,
+    qStartAt: Date.now(),
+    winnerName: null
+  };
+  names.forEach(n => {
+    updates[`players.${n}.score`] = 0;
+    updates[`players.${n}.lastAnswerQ`] = -1;
+    updates[`players.${n}.lastWrongQ`] = -1;
+    updates[`players.${n}.correctAnswers`] = 0;
+    updates[`players.${n}.wrongAnswers`] = 0;
+  });
+  try { await db.collection('math_rooms').doc(roomCode).update(updates); }
+  catch(e){ console.error(e); }
+});
+
+/* ============================================================
+   JEU
+   ============================================================ */
+function renderGame(game){
+  const players = game.players || {};
+  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  
+  $('scoreboard').innerHTML = entries.map(([name,p]) => {
+    let stateClass = '';
+    if (p.lastAnswerQ === game.currentQ) {
+      stateClass = p.lastWrongQ === game.currentQ ? 'bad' : 'good';
+    }
+    return `
+    <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''} ${stateClass}">
+      <span class="player-name">${escapeHtml(name)}</span>
+      <span class="player-score">${p.score||0}</span>
+    </div>
+  `}).join('');
+
+  let answered = 0;
+  for (const name of Object.keys(players)) {
+    if (players[name].lastAnswerQ === game.currentQ) answered++;
+  }
+  $('answeredCount').textContent = answered;
+  $('totalPlayers').textContent = Object.keys(players).length;
+
+  const questions = game.questions || [];
+  const qIdx = game.currentQ || 0;
+  $('qCounter').textContent = `Question ${qIdx+1}/${questions.length}`;
+  
+  const q = questions[qIdx];
+  if (q) {
+    if (lastAnsweredQ !== qIdx) {
+      $('prefixBig').textContent = q.question;
+      $('answer').value = ""; // Vide le clavier
+      $('answer').disabled = false;
+      $('btnSubmit').disabled = false;
+      setMsg('msg3', '');
+      lastAnsweredQ = qIdx;
+    }
+  }
+
+  startTimerLoop();
+}
+
+function startTimerLoop(){
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!currentRoom || currentRoom.state !== 'playing') return;
+    const elapsed = Date.now() - (currentRoom.qStartAt || 0);
+    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
+    const pct = (remain / QUESTION_DURATION_MS) * 100;
+    $('timerFill').style.width = pct + '%';
+    $('timerText').textContent = Math.ceil(remain/1000) + 's';
+    $('timerBar').classList.toggle('timer-danger', remain < 5000);
+    
+    if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
+  }, 250);
+}
+
+async function handleTimeout(){
+  if (!currentRoom || currentRoom.state !== 'playing') return;
+  if (currentRoom.qStartAt_processed === currentRoom.qStartAt) return;
+  
+  const qIdx = currentRoom.currentQ;
+  const q = currentRoom.questions[qIdx];
+  
+  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.answer}`, 'var(--dore)');
+  
+  setTimeout(async () => {
+    const questions = currentRoom.questions || [];
+    const updates = { qStartAt_processed: currentRoom.qStartAt };
+    if (qIdx + 1 >= questions.length) {
+      updates.state = 'ended';
+      updates.winnerName = null;
+    } else {
+      updates.currentQ = qIdx + 1;
+      updates.qStartAt = Date.now();
+    }
+    try { await db.collection('math_rooms').doc(roomCode).update(updates); }
+    catch(e){ console.error(e); }
+  }, 1000); // 1 seconde
+}
+
+/* ============================================================
+   SOUMISSION DES RÉPONSES (Joueur)
+   ============================================================ */
+$('btnSubmit').addEventListener('click', submitAnswer);
+$('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
+
+async function submitAnswer(){
+  if (!currentRoom || currentRoom.state !== 'playing' || $('answer').disabled) return;
+  const qIdx = currentRoom.currentQ;
+  const userVal = parseInt($('answer').value.trim(), 10);
+  if (isNaN(userVal)) return;
+  const q = currentRoom.questions[qIdx];
+  if (!q) return;
+
+  const correct = userVal === q.answer;
+  $('answer').disabled = true;
+  $('btnSubmit').disabled = true;
+
+  const ref = db.collection('math_rooms').doc(roomCode);
+
+  if (correct) {
+    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
+    
+    const pData = currentRoom.players[pseudo] || { score: 0, correctAnswers: 0 };
+    const myScore = (pData.score || 0) + POINTS_PER_CORRECT;
+    const myCorrects = (pData.correctAnswers || 0) + 1;
+
+    const updates = {
+      [`players.${pseudo}.score`]: myScore,
+      [`players.${pseudo}.lastAnswerQ`]: qIdx,
+      [`players.${pseudo}.correctAnswers`]: myCorrects
+    };
+    
+    setTimeout(async () => {
+      if (qIdx + 1 >= currentRoom.questions.length) {
+        updates.state = 'ended';
+        updates.winnerName = pseudo;
+      } else {
+        updates.currentQ = qIdx + 1;
+        updates.qStartAt = Date.now();
+      }
+      try { await ref.update(updates); } catch(e){ console.error(e); }
+    }, 1000); // 1 seconde
+    
+  } else {
+    setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
+    
+    const pData = currentRoom.players[pseudo] || { wrongAnswers: 0 };
+    const myWrongs = (pData.wrongAnswers || 0) + 1;
+
+    try {
+      await ref.update({
+        [`players.${pseudo}.lastWrongQ`]: qIdx,
+        [`players.${pseudo}.lastAnswerQ`]: qIdx,
+        [`players.${pseudo}.wrongAnswers`]: myWrongs
+      });
+      
+      const snap = await ref.get();
+      const data = snap.data();
+      const players = data.players || {};
+      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
+      
+      if (allWrong) {
+        setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
+        setTimeout(async () => {
+          const updates = {};
+          if (qIdx + 1 >= data.questions.length) {
+            updates.state = 'ended';
+          } else {
+            updates.currentQ = qIdx + 1;
+            updates.qStartAt = Date.now();
+          }
+          await ref.update(updates);
+        }, 1000); // 1 seconde
+      }
+    } catch(e){ console.error(e); }
+  }
+}
+
+/* ============================================================
+   QUITTER LA PARTIE
+   ============================================================ */
+async function leaveRoom() {
+  if (!confirm("Êtes-vous sûr de vouloir quitter ?")) return;
+
+  if (roomCode && pseudo) {
+    try {
+      await db.collection('math_rooms').doc(roomCode).update({
+        [`players.${pseudo}`]: firebase.firestore.FieldValue.delete()
+      });
+    } catch(e) { console.error(e); }
+  }
+  localStorage.removeItem('nodasa_math_room');
+  location.reload();
+}
+
+$('btnLobbyLeave').addEventListener('click', leaveRoom);
+$('btnLobbyLeaveGuest').addEventListener('click', leaveRoom);
+$('btnGameLeave').addEventListener('click', leaveRoom);
+
+/* ============================================================
+   FIN DE PARTIE (TABLEAU PRO)
+   ============================================================ */
+function renderEnd(game){
+  if (timerInterval) clearInterval(timerInterval);
+  
+  const players = game.players || {};
+  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  
+  const winnerName = entries.length > 0 ? entries[0][0] : null;
+  const winnerScore = winnerName ? entries[0][1].score : 0;
+  const tied = entries.length > 1 && entries[1][1].score === winnerScore;
+
+  const tbody = $('finalScoreboardBody');
+  tbody.innerHTML = entries.map(([name,p],i) => {
+    let rankIcon = '';
+    let rankClass = '';
+    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
+    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
+    else if (i === 2) { rankIcon = '🥉'; rankClass = 'bronze'; }
+    else { rankIcon = i + 1; }
+
+    const isWinner = name === winnerName && !tied;
+
+    return `
+      <tr class="${isWinner ? 'winner-row' : ''}">
+        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
+        <td>${escapeHtml(name)} ${isWinner ? '👑' : ''}</td>
+        <td style="color:var(--dore); font-size:1.2rem;">${p.score||0} pts</td>
+        <td>✅ ${p.correctAnswers||0} | ❌ ${p.wrongAnswers||0}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  if (tied) {
+    $('endTitle').textContent = `🤝 Égalité entre les joueurs à ${winnerScore} pts !`;
+  } else if (winnerName) {
+    $('endTitle').textContent = `🏆 ${winnerName} gagne avec ${winnerScore} pts !`;
+  } else {
+    $('endTitle').textContent = "⏱ Fin de partie — aucun gagnant";
+  }
+
+  const questions = game.questions || [];
+  $('recapList').innerHTML = questions.map((q, i) => `
+    <div class="recap-item">
+      <span><b>Q${i+1}.</b> ${q.question}</span>
+      <span class="recap-good">= ${q.answer}</span>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   NAVIGATION ACCUEIL
+   ============================================================ */
+$('btnCreate').addEventListener('click', async () => {
+  const p = $('pseudo').value.trim();
+  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
+  pseudo = p;
+  localStorage.setItem('nodasa_math_pseudo', pseudo);
+  try { await createRoom(); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
+});
+
+$('btnJoin').addEventListener('click', async () => {
+  const p = $('pseudo').value.trim();
+  const code = $('joinCode').value.trim();
+  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
+  if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', 'var(--msg-rouge)');
+  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
+  pseudo = p;
+  localStorage.setItem('nodasa_math_pseudo', pseudo);
+  try { await joinRoom(code); }
+  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
+});
+
+$('btnLeave').addEventListener('click', () => {
+  localStorage.removeItem('nodasa_math_room');
+  location.reload();
+});
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+initAuth();
+</script>
+</body>
+</html>
