@@ -1,871 +1,547 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Coach Virtuelle — Dictée & Communication</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur Carnet Dictée & Épellation</title>
 <style>
-/* ============================================================
-   VARIABLES — PERSONNALISE ICI tes couleurs et tes images
-   ============================================================ */
-:root {
-  --vert-doux: #7ba05b;
-  --vert-profond: #3f5e3a;
-  --beige: #f6f1e7;
-  --beige-fonce: #e8dfcc;
-  --or: #c9a86a;
-  --texte: #2e2a24;
-  --texte-doux: #6b6357;
-  --blanc: #fffdf9;
-  --ombre: rgba(60, 50, 30, 0.18);
-
-  /* 👉 Pour utiliser TES images, remplace par une URL ou un chemin :
-     url("jardin.jpg") ou url("https://exemple.com/jardin.jpg")
-     Si l'image manque, un dégradé de secours s'affiche. */
-  --image-jardin: url("jardin.jpg");
-  --image-coach: url("coach.jpg");
-
-  --rayon: 22px;
-  --transition: 0.35s ease;
-}
-
-/* ============================================================
-   RESET & BASE
-   ============================================================ */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  min-height: 100%;
-  font-family: "Nunito", system-ui, sans-serif;
-  color: var(--texte);
-  background: var(--beige);
-}
-body {
-  position: relative;
-  overflow-x: hidden;
-  line-height: 1.55;
-}
-
-/* ============================================================
-   JARDIN — fond réaliste (dégradé de secours si image absente)
-   ============================================================ */
-.jardin {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    linear-gradient(180deg, rgba(246,241,231,0.15) 0%, rgba(63,94,58,0.25) 100%),
-    var(--image-jardin) center/cover no-repeat,
-    linear-gradient(180deg, #cfe3c0 0%, #9dbf87 45%, #6f975a 100%);
-  filter: saturate(1.05);
-}
-.soleil {
-  position: absolute;
-  top: -10%; right: 8%;
-  width: 480px; height: 480px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,245,200,0.75), rgba(255,245,200,0) 70%);
-  filter: blur(10px);
-  animation: soleil 14s ease-in-out infinite alternate;
-}
-@keyframes soleil {
-  from { transform: translate(0,0) scale(1); opacity: 0.9; }
-  to   { transform: translate(-30px,20px) scale(1.08); opacity: 0.7; }
-}
-.brume {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 100%; height: 40%;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 100%);
-  filter: blur(6px);
-  pointer-events: none;
-}
-
-/* ============================================================
-   SCÈNE PRINCIPALE
-   ============================================================ */
-.scene {
-  position: relative;
-  z-index: 1;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 48px 24px 32px;
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 40px;
-  align-items: start;
-}
-
-/* ============================================================
-   ZONE COACH
-   ============================================================ */
-.coach-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: sticky;
-  top: 40px;
-}
-.coach-cadre {
-  position: relative;
-  width: min(340px, 80vw);
-  aspect-ratio: 3 / 4;
-  display: grid;
-  place-items: center;
-}
-.coach-avatar {
-  width: 100%; height: 100%;
-  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
-  overflow: hidden;
-  background:
-    var(--image-coach) center/cover no-repeat,
-    linear-gradient(160deg, #f0d9b5, #d8b48a);
-  box-shadow: 0 30px 60px -20px var(--ombre), inset 0 0 0 6px rgba(255,253,249,0.7);
-  animation: respiration 6s ease-in-out infinite;
-  position: relative;
-  z-index: 2;
-}
-.coach-fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(160deg, #fbe9d0, #e6c9a8);
-}
-.coach-fallback .visage {
-  font-size: clamp(80px, 18vw, 150px);
-  filter: drop-shadow(0 8px 14px rgba(120,80,40,0.25));
-}
-@keyframes respiration {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-6px) scale(1.012); }
-}
-.coach-halo {
-  position: absolute;
-  inset: -18px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,240,200,0.55), rgba(255,240,200,0) 68%);
-  z-index: 1;
-  animation: halo 6s ease-in-out infinite;
-}
-@keyframes halo {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50%      { opacity: 1; transform: scale(1.05); }
-}
-.coach-nom {
-  margin-top: 18px;
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.5rem;
-  color: var(--vert-profond);
-  letter-spacing: 0.5px;
-}
-.bulle {
-  margin-top: 16px;
-  background: var(--blanc);
-  border-radius: 18px;
-  padding: 18px 22px;
-  max-width: 360px;
-  font-size: 1.02rem;
-  color: var(--texte);
-  box-shadow: 0 16px 40px -18px var(--ombre);
-  position: relative;
-  border: 1px solid rgba(201,168,106,0.25);
-  transition: transform 0.3s ease;
-}
-.bulle::before {
-  content: "";
-  position: absolute;
-  top: -10px; left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 18px; height: 18px;
-  background: var(--blanc);
-  border-left: 1px solid rgba(201,168,106,0.25);
-  border-top: 1px solid rgba(201,168,106,0.25);
-}
-
-/* ============================================================
-   PANNEAU ACTIVITÉS
-   ============================================================ */
-.panneau {
-  background: rgba(255,253,249,0.97);
-  border-radius: var(--rayon);
-  padding: 28px;
-  box-shadow: 0 30px 70px -30px var(--ombre);
-  border: 1px solid rgba(255,255,255,0.6);
-}
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .panneau {
-    background: rgba(255,253,249,0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
   }
-}
-
-.onglets {
-  display: flex;
-  gap: 8px;
-  background: var(--beige);
-  border-radius: 14px;
-  padding: 6px;
-  margin-bottom: 24px;
-}
-.onglet {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.98rem;
-  color: var(--texte-doux);
-  cursor: pointer;
-  transition: var(--transition);
-}
-.onglet.actif {
-  background: var(--blanc);
-  color: var(--vert-profond);
-  box-shadow: 0 6px 16px -8px var(--ombre);
-}
-.onglet:hover:not(.actif) { color: var(--vert-doux); }
-
-.vue { animation: apparition 0.4s ease; }
-.vue.cache { display: none; }
-@keyframes apparition {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.titre-vue {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.9rem;
-  color: var(--vert-profond);
-  margin-bottom: 6px;
-}
-.sous-titre {
-  color: var(--texte-doux);
-  font-size: 0.98rem;
-  margin-bottom: 20px;
-}
-
-.phrase-card {
-  background: linear-gradient(135deg, var(--beige) 0%, var(--beige-fonce) 100%);
-  border-radius: 16px;
-  padding: 22px;
-  margin-bottom: 16px;
-  border: 1px dashed rgba(201,168,106,0.5);
-}
-.phrase-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--or);
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-.phrase-affichee {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.5rem;
-  color: var(--texte);
-  line-height: 1.4;
-}
-
-.zone-saisie {
-  width: 100%;
-  border: 1.5px solid var(--beige-fonce);
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-family: inherit;
-  font-size: 1.05rem;
-  color: var(--texte);
-  background: var(--blanc);
-  resize: vertical;
-  transition: var(--transition);
-}
-.zone-saisie:focus {
-  outline: none;
-  border-color: var(--vert-doux);
-  box-shadow: 0 0 0 4px rgba(123,160,91,0.15);
-}
-
-.barre-boutons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-}
-.btn {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.96rem;
-  cursor: pointer;
-  transition: var(--transition);
-}
-.btn:active { transform: scale(0.97); }
-.btn-principal {
-  background: var(--vert-doux);
-  color: var(--blanc);
-  box-shadow: 0 10px 24px -12px var(--vert-doux);
-}
-.btn-principal:hover { background: var(--vert-profond); }
-.btn-verifier {
-  background: var(--or);
-  color: var(--blanc);
-  box-shadow: 0 10px 24px -12px var(--or);
-}
-.btn-verifier:hover { filter: brightness(0.94); }
-.btn-doux {
-  background: var(--beige-fonce);
-  color: var(--texte);
-}
-.btn-doux:hover { background: #ded1b8; }
-
-.themes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.theme {
-  background: var(--beige);
-  border: 1.5px solid transparent;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--texte);
-  cursor: pointer;
-  transition: var(--transition);
-}
-.theme:hover { background: var(--beige-fonce); }
-.theme.actif {
-  border-color: var(--vert-doux);
-  background: rgba(123,160,91,0.14);
-  color: var(--vert-profond);
-}
-
-.retour {
-  margin-top: 20px;
-  display: none;
-}
-.retour.visible { display: block; animation: apparition 0.4s ease; }
-.retour .carte {
-  background: var(--blanc);
-  border-radius: 16px;
-  padding: 20px;
-  border-left: 5px solid var(--vert-doux);
-  box-shadow: 0 14px 34px -20px var(--ombre);
-}
-.retour .carte.conseil { border-left-color: var(--or); }
-.retour h3 {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.35rem;
-  color: var(--vert-profond);
-  margin-bottom: 10px;
-}
-.retour p { color: var(--texte); margin-bottom: 8px; }
-.retour ul { margin: 10px 0 0 18px; }
-.retour li { margin-bottom: 8px; }
-
-.retour .mot { padding: 1px 4px; border-radius: 4px; }
-.mot.ok     { background: rgba(123,160,91,0.22); color: var(--vert-profond); }
-.mot.ecart  { background: rgba(201,168,106,0.28); color: #7a5a1e; }
-.mot.manque { background: rgba(201,168,106,0.18); color: #7a5a1e; text-decoration: line-through; }
-
-.astuce {
-  margin-top: 12px;
-  padding: 12px 16px;
-  background: rgba(123,160,91,0.10);
-  border-radius: 12px;
-  font-size: 0.95rem;
-  color: var(--vert-profond);
-}
-.avertissement {
-  margin-top: 18px;
-  font-size: 0.82rem;
-  color: var(--texte-doux);
-  font-style: italic;
-  text-align: center;
-}
-.pied {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 24px;
-  color: var(--vert-profond);
-  font-size: 0.88rem;
-  opacity: 0.85;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 880px) {
-  .scene {
-    grid-template-columns: 1fr;
-    padding: 32px 16px;
-    gap: 28px;
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
   }
-  .coach-zone { position: static; }
-  .coach-cadre { width: min(260px, 65vw); }
-  .panneau { padding: 22px 18px; }
-  .titre-vue { font-size: 1.6rem; }
-  .phrase-affichee { font-size: 1.3rem; }
-}
-@media (max-width: 480px) {
-  .barre-boutons .btn { flex: 1 1 100%; }
-  .onglet { font-size: 0.88rem; padding: 10px 8px; }
-  .theme { font-size: 0.86rem; padding: 9px 14px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
+  header {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    color: #fff;
+    padding: 30px;
+    text-align: center;
   }
-}
+  header h1 { font-size: 1.8em; margin-bottom: 8px; }
+  header p { opacity: 0.9; font-size: 0.95em; }
+  .content { padding: 30px; }
+  .form-group { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+    font-size: 0.95em;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border 0.3s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  .row { display: flex; gap: 15px; flex-wrap: wrap; }
+  .row .form-group { flex: 1; min-width: 200px; }
+  button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 16px 30px;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+  }
+  button:active { transform: translateY(0); }
+  .info {
+    background: #f0f4ff;
+    border-left: 4px solid #667eea;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9em;
+    color: #555;
+  }
+  .preview {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    font-size: 0.9em;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    display: none;
+    font-family: 'Courier New', monospace;
+  }
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 0.85em;
+  }
 </style>
 </head>
 <body>
+<div class="container">
+  <header>
+    <h1>📚 Générateur de Carnet d'Entraînement</h1>
+    <p>Dictée & Épellation — Programme hebdomadaire avec difficulté progressive</p>
+  </header>
 
-<!-- ================= JARDIN ================= -->
-<div class="jardin" aria-hidden="true">
-  <div class="soleil"></div>
-  <div class="brume"></div>
+  <div class="content">
+    <div class="info">
+      💡 Remplis les champs ci-dessous, puis clique sur <strong>« Générer le fichier Word »</strong>. 
+      Un carnet complet de <strong>8 semaines</strong> sera créé avec programme, motivation, proverbes et difficulté croissante.
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>👤 Nom de l'élève / du joueur</label>
+        <input type="text" id="nom" placeholder="Ex : Aïcha Diallo" value="Élève">
+      </div>
+      <div class="form-group">
+        <label>📅 Semaine de début (date)</label>
+        <input type="date" id="dateDebut">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>🎯 Niveau de départ</label>
+        <select id="niveau">
+          <option value="debutant">Débutant (CE1–CE2)</option>
+          <option value="intermediaire" selected>Intermédiaire (CM1–CM2)</option>
+          <option value="avance">Avancé (6e–5e)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📖 Nombre de semaines</label>
+        <select id="semaines">
+          <option value="4">4 semaines</option>
+          <option value="6">6 semaines</option>
+          <option value="8" selected>8 semaines</option>
+          <option value="12">12 semaines</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>✍️ Thème principal (optionnel)</label>
+        <input type="text" id="theme" placeholder="Ex : animaux, nature, sport..." value="général">
+      </div>
+      <div class="form-group">
+        <label>🗣️ Langue</label>
+        <select id="langue">
+          <option value="fr" selected>Français</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="genererWord()">📄 Générer le fichier Word</button>
+    <div class="preview" id="preview"></div>
+  </div>
+
+  <div class="footer">Générateur local — aucune donnée envoyée sur Internet</div>
 </div>
 
-<!-- ================= CONTENU ================= -->
-<main class="scene">
-
-  <!-- ---------- Coach ---------- -->
-  <section class="coach-zone" aria-label="Coach virtuelle">
-    <div class="coach-cadre">
-      <div class="coach-avatar" id="coachAvatar" role="img" aria-label="Coach virtuelle souriante">
-        <div class="coach-fallback">
-          <span class="visage">🙂</span>
-        </div>
-      </div>
-      <div class="coach-halo"></div>
-    </div>
-    <p class="coach-nom">Élise · votre coach</p>
-    <div class="bulle" id="bulleCoach" aria-live="polite">
-      Bonjour, je suis ravie de vous retrouver. Choisissez un mode ci-dessous, et avançons ensemble à votre rythme. 🌿
-    </div>
-  </section>
-
-  <!-- ---------- Panneau ---------- -->
-  <section class="panneau" aria-label="Activités">
-    <nav class="onglets" role="tablist">
-      <button class="onglet actif" data-mode="dictee" role="tab" aria-selected="true">📝 Dictée</button>
-      <button class="onglet" data-mode="conseil" role="tab" aria-selected="false">💬 Conseil relationnel</button>
-    </nav>
-
-    <!-- ===== MODE DICTÉE ===== -->
-    <div class="vue" id="vue-dictee" role="tabpanel">
-      <h2 class="titre-vue">Améliorons votre dictée</h2>
-      <p class="sous-titre">Écoutez la phrase, puis écrivez-la. Prenez tout votre temps.</p>
-
-      <div class="phrase-card">
-        <p class="phrase-label">Phrase à écrire</p>
-        <p class="phrase-affichee" id="phraseAffichee">—</p>
-      </div>
-
-      <textarea id="saisie" class="zone-saisie" placeholder="Écrivez la phrase ici…" rows="3" aria-label="Votre réponse"></textarea>
-
-      <div class="barre-boutons">
-        <button class="btn btn-principal" id="btnEcouter">🔊 Écouter</button>
-        <button class="btn btn-verifier" id="btnVerifier">✓ Vérifier</button>
-        <button class="btn btn-doux" id="btnNouvellePhrase">↻ Nouvelle phrase</button>
-      </div>
-
-      <div class="retour" id="retourDictee" aria-live="polite"></div>
-    </div>
-
-    <!-- ===== MODE CONSEIL ===== -->
-    <div class="vue cache" id="vue-conseil" role="tabpanel">
-      <h2 class="titre-vue">Un conseil pour mieux communiquer</h2>
-      <p class="sous-titre">Choisissez un thème, ou décrivez votre situation en quelques mots.</p>
-
-      <div class="themes" id="themes">
-        <button class="theme" data-theme="ecoute">👂 Mieux écouter</button>
-        <button class="theme" data-theme="conflit">⚖️ Gérer un désaccord</button>
-        <button class="theme" data-theme="confiance">🌱 Parler avec confiance</button>
-        <button class="theme" data-theme="limites">🛡️ Poser des limites</button>
-        <button class="theme" data-theme="emotion">💧 Accueillir les émotions</button>
-      </div>
-
-      <textarea id="situation" class="zone-saisie" placeholder="Décrivez votre situation (facultatif)…" rows="2" aria-label="Votre situation"></textarea>
-
-      <div class="barre-boutons">
-        <button class="btn btn-principal" id="btnConseil">💬 Demander un conseil</button>
-      </div>
-
-      <div class="retour" id="retourConseil" aria-live="polite"></div>
-
-      <p class="avertissement">
-        Ces conseils sont pédagogiques et bienveillants. Ils ne remplacent pas l'avis d'un professionnel de santé ou d'un thérapeute.
-      </p>
-    </div>
-  </section>
-</main>
-
-<footer class="pied">
-  <p>Un espace pour progresser en douceur. · <span id="annee"></span></p>
-</footer>
-
 <script>
-/* ============================================================
-   COACH VIRTUELLE — tout le JavaScript ici
-   ============================================================ */
+// ============ BANQUE DE MOTS PAR NIVEAU ET DIFFICULTÉ ============
+const banqueMots = {
+  debutant: {
+    facile: ["chat", "chien", "maison", "école", "papa", "maman", "table", "livre", "eau", "pain", "ami", "soleil", "lune", "fleur", "jardin"],
+    moyen: ["jardinier", "bibliothèque", "chocolat", "éléphant", "papillon", "ordinateur", "vacances", "cuisine", "montagne", "rivière"],
+    difficile: ["extraordinaire", "magnifique", "intéressant", "attention", "apprentissage", "vocabulaire", "connaissance", "imagination"]
+  },
+  intermediaire: {
+    facile: ["aventure", "curieux", "silence", "lumière", "voyage", "courage", "nature", "forêt", "rêve", "espoir", "saison", "planète", "océan", "désert", "village"],
+    moyen: ["développement", "environnement", "communication", "gouvernement", "personnalité", "responsabilité", "informatique", "géographie", "philosophie", "enthousiasme"],
+    difficile: ["conscience", "excellence", "persévérance", "ambiguïté", "connaissance", "bienveillance", "indépendance", "effervescence", "intelligence"]
+  },
+  avance: {
+    facile: ["paradoxe", "éphémère", "mélancolie", "harmonie", "métaphore", "allégorie", "rhétorique", "éloquence", "sagacité", "apogée", "dichotomie", "synergie"],
+    moyen: ["incontournable", "extraordinaire", "phénoménal", "sophistiqué", "inébranlable", "irréversible", "incompréhensible", "caractéristique", "détermination", "perspicacité"],
+    difficile: ["anticonstitutionnel", "incompréhensibilité", "intergouvernemental", "otorhinolaryngologiste", "anticonstitutionnellement", "hexakosioihexekontahexaphobie", "interdisciplinarité", "conceptualisation", "désinstitutionnalisation"]
+  }
+};
 
-/* ---------- 1. DONNÉES PERSONNALISABLES ---------- */
-const PHRASES_DICTEE = [
-  "Le jardin embaume la lavande au lever du soleil.",
-  "Elle écoute attentivement avant de répondre avec calme.",
-  "Nous avons planté des fleurs pour accueillir les abeilles.",
-  "La communication commence par une écoute sincère.",
-  "Demain, nous irons marcher ensemble sous les arbres.",
-  "Une parole douce peut apaiser bien des malentendus.",
-  "Les enfants rient et jouent sur la pelouse verte.",
-  "Prenez le temps de respirer avant de parler.",
-  "La lumière du matin caresse les feuilles du chêne.",
-  "Chaque petit progrès mérite d'être célébré avec joie."
+// ============ PHRASES DE DICTÉE PAR NIVEAU ============
+const dictees = {
+  debutant: {
+    facile: [
+      "Le chat dort sur le tapis.",
+      "Papa lit un livre à la maison.",
+      "Les enfants jouent dans le jardin.",
+      "La lune brille dans le ciel.",
+      "J'aime le pain et le chocolat."
+    ],
+    moyen: [
+      "Le jardinier arrose les fleurs du jardin.",
+      "Mon ami a une belle bibliothèque.",
+      "L'éléphant boit de l'eau à la rivière.",
+      "Nous partons en vacances à la montagne.",
+      "Le papillon vole au-dessus des fleurs."
+    ],
+    difficile: [
+      "L'apprentissage du vocabulaire demande de l'attention et de l'imagination.",
+      "La connaissance s'acquiert par un travail extraordinaire et intéressant.",
+      "Un magnifique papillon se pose sur une fleur extraordinaire."
+    ]
+  },
+  intermediaire: {
+    facile: [
+      "Le voyage vers la forêt fut une belle aventure.",
+      "Le silence de la nature inspire le courage.",
+      "Les saisons changent et la lumière revient.",
+      "L'océan cache des mystères profonds.",
+      "Chaque village possède son histoire."
+    ],
+    moyen: [
+      "Le développement durable exige une communication responsable.",
+      "La personnalité se forge à travers l'apprentissage et l'enthousiasme.",
+      "La géographie et la philosophie éclairent notre compréhension du monde.",
+      "L'environnement est une responsabilité partagée par tous les citoyens."
+    ],
+    difficile: [
+      "La persévérance et la bienveillance mènent à l'excellence et à la conscience.",
+      "L'indépendance intellectuelle suppose une connaissance approfondie et une intelligence vive.",
+      "L'effervescence créative transforme l'ambiguïté en clarté conceptuelle."
+    ]
+  },
+  avance: {
+    facile: [
+      "L'harmonie éphémère du crépuscule inspire une douce mélancolie.",
+      "La métaphore et l'allégorie enrichissent la rhétorique.",
+      "L'éloquence n'est pas toujours synonyme de sagacité.",
+      "L'apogée de sa carrière fut marquée par une synergie remarquable."
+    ],
+    moyen: [
+      "La détermination et la perspicacité caractérisent un esprit incontournable.",
+      "Ce phénomène extraordinaire reste incompréhensible sans une analyse sophistiquée.",
+      "L'inébranlable volonté conduit à des résultats irréversibles et déterminants."
+    ],
+    difficile: [
+      "L'anticonstitutionnellement est un mot souvent cité pour sa longueur exceptionnelle.",
+      "La désinstitutionnalisation et la conceptualisation exigent une interdisciplinarité rigoureuse.",
+      "L'otorhinolaryngologiste étudie les pathologies complexes de la sphère ORL.",
+      "L'hexakosioihexekontahexaphobie désigne la peur irrationnelle du nombre 666."
+    ]
+  }
+};
+
+// ============ PROVERBES ET MOTIVATIONS ============
+const proverbes = [
+  "« C'est en forgeant qu'on devient forgeron. »",
+  "« Petit à petit, l'oiseau fait son nid. »",
+  "« La persévérance vient à bout de tout. »",
+  "« Qui sème le vent récolte la tempête. »",
+  "« L'habit ne fait pas le moine. »",
+  "« Pierre qui roule n'amasse pas mousse. »",
+  "« Après la pluie, le beau temps. »",
+  "« Vouloir, c'est pouvoir. »",
+  "« Les petits ruisseaux font les grandes rivières. »",
+  "« Il n'y a pas de réussite sans effort. »",
+  "« Chaque expert a d'abord été un débutant. »",
+  "« Le succès est la somme de petits efforts répétés. »"
 ];
 
-const CONSEILS = {
-  ecoute: {
-    titre: "Mieux écouter",
-    astuce: "L'écoute active, c'est offrir son attention sans préparer sa réponse.",
-    conseils: [
-      "Avant de répondre, reformulez ce que vous avez entendu : « Si je comprends bien, tu ressens… »",
-      "Posez une question ouverte : « Qu'est-ce qui compte le plus pour toi dans cette situation ? »",
-      "Laissez un silence de deux secondes après les paroles de l'autre. Il ouvre souvent à l'essentiel.",
-      "Évitez de conseiller tout de suite : demandez d'abord si la personne souhaite une écoute ou une solution."
-    ]
-  },
-  conflit: {
-    titre: "Gérer un désaccord",
-    astuce: "Un désaccord n'est pas un combat : c'est une recherche commune de compréhension.",
-    conseils: [
-      "Parlez de vos ressentis plutôt que d'accuser : « Je me sens blessé quand… » plutôt que « Tu es injuste ».",
-      "Cherchez un point d'accord, même minuscule, pour reconstruire le dialogue.",
-      "Proposez une pause si les émotions débordent : « Reprenons dans une heure, à froid. »",
-      "Distinguez le problème de la personne : on attaque le souci, pas l'autre."
-    ]
-  },
-  confiance: {
-    titre: "Parler avec confiance",
-    astuce: "La confiance se cultive par de petits gestes répétés, pas par la perfection.",
-    conseils: [
-      "Préparez une phrase d'ouverture simple : « J'aimerais te parler de quelque chose d'important pour moi. »",
-      "Respirez lentement avant de prendre la parole : cela ralentit le rythme et apaise la voix.",
-      "Regardez votre interlocuteur par petits instants plutôt que de fixer le sol.",
-      "Acceptez les hésitations : elles sont naturelles et rendent plus humain."
-    ]
-  },
-  limites: {
-    titre: "Poser des limites",
-    astuce: "Une limite claire est un cadeau pour la relation : elle évite les rancœurs silencieuses.",
-    conseils: [
-      "Utilisez la formule « Je » : « J'ai besoin de temps seul(e) le soir. »",
-      "Soyez précis sur ce que vous acceptez et ce que vous refusez.",
-      "Une limite peut s'accompagner de douceur : le ton compte autant que le contenu.",
-      "Il est normal de répéter une limite plusieurs fois : c'est un apprentissage mutuel."
-    ]
-  },
-  emotion: {
-    titre: "Accueillir les émotions",
-    astuce: "Nommer une émotion, c'est déjà commencer à l'apaiser.",
-    conseils: [
-      "Essayez : « En ce moment, je ressens de la tristesse / de la colère / de la peur. »",
-      "Accueillez l'émotion sans la juger : elle vous informe sur un besoin.",
-      "Demandez-vous : de quoi ai-je besoin maintenant ? (repos, écoute, sécurité, clarté…)",
-      "Partagez votre émotion avec une personne de confiance, à voix haute, sans chercher à la résoudre tout de suite."
-    ]
+const motivations = [
+  "🌟 « Chaque mot appris est une victoire sur l'ignorance. »",
+  "💪 « Tu es plus fort(e) que tu ne le penses. Continue ! »",
+  "🚀 « Un petit progrès chaque jour mène à de grands résultats. »",
+  "🎯 « La régularité bat le talent quand le talent ne s'entraîne pas. »",
+  "🏆 « Champion(ne) n'est pas celui qui ne tombe jamais, mais celui qui se relève toujours. »",
+  "🌱 « Les graines que tu plantes aujourd'hui deviendront des arbres demain. »",
+  "✨ « Crois en toi et tout devient possible. »",
+  "🔥 « La difficulté d'aujourd'hui est la force de demain. »",
+  "📚 « Lire, écrire, épeler : trois clés pour ouvrir le monde. »",
+  "🎉 « Félicitations pour ta persévérance, continue sur cette lancée ! »"
+];
+
+// ============ FONCTIONS UTILITAIRES ============
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-};
-
-const CONSEIL_GENERIQUE = {
-  titre: "Un pas à la fois",
-  astuce: "Chaque situation relationnelle mérite d'être abordée avec douceur et curiosité.",
-  conseils: [
-    "Commencez par clarifier ce que vous ressentez et ce dont vous avez besoin.",
-    "Choisissez un moment calme pour en parler, plutôt qu'à chaud.",
-    "Utilisez des phrases en « je » : elles expriment votre vécu sans accuser.",
-    "Si la situation est douloureuse ou répétée, n'hésitez pas à en parler à un professionnel : ce n'est pas un aveu de faiblesse, c'est une ressource."
-  ]
-};
-
-/* ---------- 2. RÉFÉRENCES DOM ---------- */
-const el = {
-  bulle: document.getElementById("bulleCoach"),
-  onglets: document.querySelectorAll(".onglet"),
-  vueDictee: document.getElementById("vue-dictee"),
-  vueConseil: document.getElementById("vue-conseil"),
-  phraseAffichee: document.getElementById("phraseAffichee"),
-  saisie: document.getElementById("saisie"),
-  btnEcouter: document.getElementById("btnEcouter"),
-  btnVerifier: document.getElementById("btnVerifier"),
-  btnNouvellePhrase: document.getElementById("btnNouvellePhrase"),
-  retourDictee: document.getElementById("retourDictee"),
-  themes: document.querySelectorAll(".theme"),
-  situation: document.getElementById("situation"),
-  btnConseil: document.getElementById("btnConseil"),
-  retourConseil: document.getElementById("retourConseil"),
-  annee: document.getElementById("annee")
-};
-
-let phraseCourante = "";
-let themeActif = null;
-
-/* ---------- 3. SYNTHÈSE VOCALE ---------- */
-function chargerVoixFr() {
-  if (!("speechSynthesis" in window)) return;
-}
-if ("speechSynthesis" in window) {
-  chargerVoixFr();
-  window.speechSynthesis.onvoiceschanged = chargerVoixFr;
+  return a;
 }
 
-function coachDit(texte, avecVoix = false) {
-  el.bulle.textContent = texte;
-  el.bulle.style.transform = "scale(1.02)";
-  setTimeout(() => { el.bulle.style.transform = "scale(1)"; }, 300);
-
-  if (avecVoix && "speechSynthesis" in window) {
-    try {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(texte);
-      u.lang = "fr-FR";
-      u.rate = 0.95;
-      u.pitch = 1.05;
-      const voixFr = window.speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith("fr"));
-      if (voixFr) u.voice = voixFr;
-      window.speechSynthesis.speak(u);
-    } catch (err) {
-      console.warn("Synthèse vocale indisponible :", err);
-    }
-  }
+function formatDate(date) {
+  const d = new Date(date);
+  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-/* ---------- 4. UTILITAIRES ---------- */
-function echapper(str) {
-  return String(str).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
 }
 
-function normaliserMots(phrase) {
-  return phrase.trim().split(/\s+/).filter(Boolean);
-}
+// ============ GÉNÉRATION DU CONTENU ============
+function genererContenu() {
+  const nom = document.getElementById('nom').value || 'Élève';
+  const dateDebutVal = document.getElementById('dateDebut').value;
+  const dateDebut = dateDebutVal ? new Date(dateDebutVal) : new Date();
+  const niveau = document.getElementById('niveau').value;
+  const nbSemaines = parseInt(document.getElementById('semaines').value);
+  const theme = document.getElementById('theme').value || 'général';
+  const langue = document.getElementById('langue').value;
 
-function simplifier(mot) {
-  return mot
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[’']/g, "'")
-    .replace(/[.,;:!?«»"]/g, "");
-}
+  const niveauNom = {
+    debutant: 'Débutant (CE1–CE2)',
+    intermediaire: 'Intermédiaire (CM1–CM2)',
+    avance: 'Avancé (6e–5e)'
+  }[niveau];
 
-function similaires(a, b) {
-  return simplifier(a) === simplifier(b);
-}
+  const mots = banqueMots[niveau];
+  const dics = dictees[niveau];
 
-/* ---------- 5. MODE DICTÉE ---------- */
-function nouvellePhrase() {
-  let nouvelle;
-  do {
-    nouvelle = PHRASES_DICTEE[Math.floor(Math.random() * PHRASES_DICTEE.length)];
-  } while (nouvelle === phraseCourante && PHRASES_DICTEE.length > 1);
+  // Difficulté progressive : on répartit les semaines en 3 paliers
+  const paliers = ['facile', 'moyen', 'difficile'];
+  const paliersNoms = { facile: '🟢 Facile', moyen: '🟡 Moyen', difficile: '🔴 Difficile' };
 
-  phraseCourante = nouvelle;
-  el.phraseAffichee.textContent = phraseCourante;
-  el.saisie.value = "";
-  el.retourDictee.classList.remove("visible");
-  el.retourDictee.innerHTML = "";
-  el.saisie.focus();
-  coachDit("Voici une nouvelle phrase. Prenez votre temps, puis écrivez-la comme vous l'entendez.");
-}
+  let contenu = '';
 
-function verifierDictee() {
-  const saisie = el.saisie.value.trim();
-  if (!saisie) {
-    coachDit("Prenez le temps d'écrire votre réponse avant de vérifier. Rien ne presse. 🌿");
-    return;
-  }
+  // ===== PAGE DE GARDE =====
+  contenu += `
+═══════════════════════════════════════════════════════════
+        📚 CARNET D'ENTRAÎNEMENT — DICTÉE & ÉPELLATION 📚
+═══════════════════════════════════════════════════════════
 
-  const motsAttendus = normaliserMots(phraseCourante);
-  const motsSaisis   = normaliserMots(saisie);
+👤 Élève / Joueur : ${nom}
 
-  let corrects = 0;
-  const details = [];
-  const maxLen = Math.max(motsAttendus.length, motsSaisis.length);
+📅 Date de début : ${formatDate(dateDebut)}
 
-  for (let i = 0; i < maxLen; i++) {
-    const attendu = motsAttendus[i] || "";
-    const saisi   = motsSaisis[i]   || "";
+🎯 Niveau : ${niveauNom}
 
-    if (saisi && attendu && saisi === attendu) {
-      corrects++;
-      details.push(`<span class="mot ok">${echapper(attendu)}</span>`);
-    } else if (saisi && attendu && similaires(saisi, attendu)) {
-      details.push(`<span class="mot ecart" title="Presque ! (accent, majuscule ou ponctuation)">${echapper(saisi)}</span>`);
-    } else if (saisi && !attendu) {
-      details.push(`<span class="mot ecart" title="Mot en trop">${echapper(saisi)}</span>`);
-    } else if (!saisi && attendu) {
-      details.push(`<span class="mot manque" title="Mot à ajouter">${echapper(attendu)}</span>`);
+📖 Nombre de semaines : ${nbSemaines}
+
+🏷️ Thème : ${theme}
+
+═══════════════════════════════════════════════════════════
+
+💡 OBJECTIF : Progresser chaque semaine en dictée et en
+   épellation grâce à un entraînement régulier et motivant.
+
+   Chaque semaine comprend :
+   • Une liste de mots à épeler (difficulté croissante)
+   • Une phrase de dictée à travailler
+   • Un proverbe à méditer
+   • Une motivation pour rester concentré(e)
+   • Un espace pour noter ses résultats
+
+═══════════════════════════════════════════════════════════
+`;
+
+  // ===== SEMAINES =====
+  let indexProverbe = 0;
+  let indexMotivation = 0;
+
+  for (let s = 1; s <= nbSemaines; s++) {
+    // Déterminer le palier de difficulté
+    let palierIndex;
+    if (nbSemaines <= 4) {
+      palierIndex = s <= 2 ? 0 : (s === 3 ? 1 : 2);
+    } else if (nbSemaines <= 6) {
+      palierIndex = s <= 2 ? 0 : (s <= 4 ? 1 : 2);
+    } else if (nbSemaines <= 8) {
+      palierIndex = s <= 3 ? 0 : (s <= 6 ? 1 : 2);
     } else {
-      details.push(`<span class="mot ecart" title="À revoir">${echapper(saisi)}</span>`);
+      palierIndex = s <= 4 ? 0 : (s <= 8 ? 1 : 2);
     }
-  }
+    const palier = paliers[palierIndex];
 
-  const score = Math.round((corrects / motsAttendus.length) * 100);
+    const debutSemaine = addDays(dateDebut, (s - 1) * 7);
+    const finSemaine = addDays(debutSemaine, 6);
 
-  let message;
-  if (score === 100) {
-    message = "Parfait ! Votre phrase est exacte. Bravo pour cette précision. ✨";
-  } else if (score >= 70) {
-    message = "Très beau travail ! Quelques petits détails à ajuster, et ce sera impeccable.";
-  } else if (score >= 40) {
-    message = "Bon effort ! Vous êtes sur la bonne voie. Comparons ensemble, mot à mot.";
-  } else {
-    message = "Merci d'avoir essayé. Chaque tentative vous fait progresser. Regardons ensemble, sans pression.";
-  }
+    // Sélectionner 10 mots de la difficulté correspondante
+    const motsSemaine = shuffle(mots[palier]).slice(0, 10);
 
-  const astuce = construireAstuce(phraseCourante, saisie);
+    // Sélectionner une dictée
+    const dicteeSemaine = shuffle(dics[palier])[0];
 
-  el.retourDictee.innerHTML = `
-    <div class="carte">
-      <h3>${message}</h3>
-      <p><strong>Phrase attendue :</strong> ${echapper(phraseCourante)}</p>
-      <p><strong>Votre phrase :</strong> ${details.join(" ")}</p>
-      ${astuce ? `<div class="astuce">💡 ${astuce}</div>` : ""}
-    </div>
-  `;
-  el.retourDictee.classList.add("visible");
+    // Proverbe et motivation
+    const proverbe = proverbes[indexProverbe % proverbes.length];
+    indexProverbe++;
+    const motivation = motivations[indexMotivation % motivations.length];
+    indexMotivation++;
 
-  if (score === 100) {
-    coachDit("C'est exactement cela. Bravo, votre phrase est juste et bien ponctuée. ✨");
-  } else if (score >= 70) {
-    coachDit("Vous y êtes presque ! Regardez les mots surlignés en doré pour affiner.");
-  } else {
-    coachDit("Chaque essai compte. Regardons ensemble les mots en doré, sans jugement.");
-  }
-}
+    contenu += `
 
-function construireAstuce(attendue, saisie) {
-  const a = simplifier(attendue);
-  const s = simplifier(saisie);
+═══════════════════════════════════════════════════════════
+   📅 SEMAINE ${s} — ${paliersNoms[palier]}
+   Du ${formatDate(debutSemaine)} au ${formatDate(finSemaine)}
+═══════════════════════════════════════════════════════════
 
-  if (a === s) {
-    return "Attention à la ponctuation et aux majuscules : elles donnent le rythme de la phrase.";
-  }
+📖 LISTE DE MOTS À ÉPELER (${motsSemaine.length} mots) :
+`;
 
-  const ponctuationAttendue = attendue.match(/[.,;:!?]/g) || [];
-  const ponctuationSaisie   = saisie.match(/[.,;:!?]/g) || [];
-  if (ponctuationAttendue.length > ponctuationSaisie.length) {
-    return "Pensez à la ponctuation finale : un point, une virgule changent le sens et le rythme.";
-  }
-
-  if (attendue.includes("'") && !saisie.includes("'")) {
-    return "N'oubliez pas l'apostrophe : « l'arbre », « d'accord ». Elle relie les mots.";
-  }
-
-  const accentsAttendus = (attendue.match(/[éèêëàâîïôöûüç]/gi) || []).length;
-  const accentsSaisis   = (saisie.match(/[éèêëàâîïôöûüç]/gi) || []).length;
-  if (accentsAttendus > accentsSaisis) {
-    return "Certains accents manquent peut-être : é, è, ê, à… Ils changent la prononciation et le sens.";
-  }
-
-  return "Relisez à voix haute : l'oreille repère souvent ce que l'œil a manqué.";
-}
-
-/* ---------- 6. MODE CONSEIL ---------- */
-function afficherConseil() {
-  const situation = el.situation.value.trim();
-  const base = themeActif && CONSEILS[themeActif] ? CONSEILS[themeActif] : null;
-  const data = base || CONSEIL_GENERIQUE;
-
-  const intro = situation
-    ? "Merci de partager cette situation. Voici quelques pistes bienveillantes pour vous accompagner."
-    : "Voici quelques pistes concrètes et douces à explorer.";
-
-  const liste = data.conseils.map(c => `<li>${echapper(c)}</li>`).join("");
-
-  el.retourConseil.innerHTML = `
-    <div class="carte conseil">
-      <h3>${echapper(data.titre)}</h3>
-      <p>${echapper(intro)}</p>
-      <ul>${liste}</ul>
-      <div class="astuce">🌿 ${echapper(data.astuce)}</div>
-    </div>
-  `;
-  el.retourConseil.classList.add("visible");
-
-  coachDit(`Sur le thème « ${data.titre} », voici quelques pistes. Prenez ce qui vous parle, laissez le reste.`);
-}
-
-/* ---------- 7. NAVIGATION ---------- */
-el.onglets.forEach(onglet => {
-  onglet.addEventListener("click", () => {
-    el.onglets.forEach(o => {
-      o.classList.remove("actif");
-      o.setAttribute("aria-selected", "false");
+    motsSemaine.forEach((mot, i) => {
+      contenu += `   ${(i + 1).toString().padStart(2, ' ')}. ${mot.padEnd(30, ' ')} ☐ Épélé ☐ Écrit ☐ Réussi\n`;
     });
-    onglet.classList.add("actif");
-    onglet.setAttribute("aria-selected", "true");
 
-    const mode = onglet.dataset.mode;
-    if (mode === "dictee") {
-      el.vueDictee.classList.remove("cache");
-      el.vueConseil.classList.add("cache");
-      if (!phraseCourante) nouvellePhrase();
-      coachDit("Nous voici en mode dictée. Écoutez, écrivez, puis vérifiez ensemble.");
-    } else {
-      el.vueDictee.classList.add("cache");
-      el.vueConseil.classList.remove("cache");
-      coachDit("Parlons de vos relations. Choisissez un thème, ou décrivez votre situation.");
-    }
-  });
-});
+    contenu += `
+✍️ DICTÉE DE LA SEMAINE :
 
-el.themes.forEach(btn => {
-  btn.addEventListener("click", () => {
-    el.themes.forEach(b => b.classList.remove("actif"));
-    btn.classList.add("actif");
-    themeActif = btn.dataset.theme;
-  });
-});
+   « ${dicteeSemaine} »
 
-/* ---------- 8. ÉVÉNEMENTS ---------- */
-el.btnEcouter.addEventListener("click", () => {
-  if (!phraseCourante) nouvellePhrase();
-  coachDit(phraseCourante, true);
-});
+   ☐ Lu attentivement
+   ☐ Dicté par un adulte
+   ☐ Corrigé seul(e)
+   ☐ Recopié sans faute
 
-el.btnVerifier.addEventListener("click", verifierDictee);
-el.btnNouvellePhrase.addEventListener("click", nouvellePhrase);
-el.btnConseil.addEventListener("click", afficherConseil);
+💡 PROVERBE À MÉDITER :
+   ${proverbe}
 
-el.saisie.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    verifierDictee();
+🌟 MOTIVATION DE LA SEMAINE :
+   ${motivation}
+
+📊 RÉSULTATS (à remplir) :
+
+   Épellation :   ____ / ${motsSemaine.length}
+   Dictée :       ____ erreurs
+   Auto-évaluation : ☐ Excellent  ☐ Bien  ☐ À revoir
+
+🔁 EXERCICES DE RENFORCEMENT :
+   • Écris chaque mot 3 fois.
+   • Épelle chaque mot à voix haute.
+   • Invente une phrase avec 5 mots de la liste.
+   • Récite la dictée à un adulte.
+`;
+
   }
-});
 
-/* ---------- 9. INITIALISATION ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  if (el.annee) el.annee.textContent = new Date().getFullYear();
-  nouvellePhrase();
-});
+  // ===== PAGE FINALE =====
+  contenu += `
+
+═══════════════════════════════════════════════════════════
+   🎉 FÉLICITATIONS POUR TON TRAVAIL ! 🎉
+═══════════════════════════════════════════════════════════
+
+   ${nom}, tu as terminé un cycle de ${nbSemaines} semaines
+   d'entraînement en dictée et en épellation.
+
+   Continue à pratiquer chaque jour, même 10 minutes :
+   la régularité est la clé du succès !
+
+   « Le succès est la somme de petits efforts répétés. »
+
+═══════════════════════════════════════════════════════════
+   📝 NOTES PERSONNELLES :
+═══════════════════════════════════════════════════════════
+
+   _______________________________________________________
+
+   _______________________________________________________
+
+   _______________________________________________________
+
+   _______________________________________________________
+
+   _______________________________________________________
+
+═══════════════════════════════════════════════════════════
+   Généré le ${formatDate(new Date())}
+═══════════════════════════════════════════════════════════
+`;
+
+  return contenu;
+}
+
+// ============ GÉNÉRATION DU FICHIER WORD ============
+function genererWord() {
+  const contenu = genererContenu();
+  const nom = document.getElementById('nom').value || 'Eleve';
+
+  // Afficher un aperçu
+  const preview = document.getElementById('preview');
+  preview.style.display = 'block';
+  preview.textContent = contenu.substring(0, 800) + '\n\n[...]\n\n✅ Fichier prêt au téléchargement !';
+
+  // Créer le fichier Word (format HTML compatible Word)
+  const htmlWord = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="UTF-8">
+<title>Carnet Dictée Épellation</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  @page { size: A4; margin: 2cm; }
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+  }
+  pre {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+  h1 { color: #4a2c8a; }
+</style>
+</head>
+<body>
+<pre>${contenu.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+</body>
+</html>
+`;
+
+  // Télécharger le fichier .doc
+  const blob = new Blob(['\ufeff', htmlWord], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const lien = document.createElement('a');
+  lien.href = url;
+  lien.download = `Carnet_Dictee_Epellation_${nom.replace(/\s+/g, '_')}.doc`;
+  document.body.appendChild(lien);
+  lien.click();
+  document.body.removeChild(lien);
+  URL.revokeObjectURL(url);
+}
+
+// Initialiser la date du jour
+window.onload = function() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('dateDebut').value = `${yyyy}-${mm}-${dd}`;
+};
 </script>
 </body>
 </html>
