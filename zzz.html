@@ -129,7 +129,6 @@
   }
   .status { text-align: center; margin: 12px 0; font-weight: 600; }
 
-  /* Difficulté */
   .diff-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -154,7 +153,6 @@
   .diff-name { font-weight: 900; font-size: 1rem; margin-bottom: 4px; }
   .diff-time { font-size: 0.8rem; opacity: 0.7; }
   
-  /* Scoreboard */
   .scoreboard {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px; margin: 20px 0;
@@ -197,7 +195,6 @@
   .recap-item:last-child { border-bottom: none; }
   .recap-good { color: var(--msg-vert); font-weight: 800; }
 
-  /* Tableau final */
   .pro-table {
     width: 100%;
     border-collapse: collapse;
@@ -262,7 +259,6 @@
     transition: width 0.2s linear;
   }
 
-  /* ===== ESPACE SCORES ===== */
   .tabs {
     display: flex;
     gap: 8px;
@@ -421,9 +417,7 @@
     margin: 16px 0;
     border: 1px solid var(--gris);
   }
-  .progress-item {
-    margin-bottom: 16px;
-  }
+  .progress-item { margin-bottom: 16px; }
   .progress-item:last-child { margin-bottom: 0; }
   .progress-header {
     display: flex;
@@ -468,7 +462,7 @@
 
   <h1>✨ Champ lexical – Duel contre Ya Credo Robot ✨</h1>
 
-  <!-- ===== ACCUEIL ===== -->
+  <!-- ACCUEIL -->
   <div id="screenHome">
     <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
     
@@ -477,14 +471,16 @@
       <button id="btnShowScores" class="btn-scores">📊 Mes scores</button>
     </div>
     <div id="msg" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
-    <div class="status" style="opacity:0.6; font-size:0.85rem;">Réponds avant la fin du chrono, sinon Ya Credo Robot répondra correctement !</div>
+    <div class="status" style="opacity:0.6; font-size:0.85rem;">
+      ⚠️ Si tu réponds <b>mal</b> ou si tu <b>ne réponds pas</b> à temps, Ya Credo Robot prendra les points !
+    </div>
   </div>
 
-  <!-- ===== SETUP SOLO ===== -->
+  <!-- SETUP -->
   <div id="screenSoloSetup" class="hidden">
     <h2>🤖 Affronter Ya Credo Robot</h2>
     <p style="text-align:center; opacity:0.7; margin-bottom:20px; font-size:0.9rem;">
-      Si tu ne réponds pas avant la fin du temps, <b>Ya Credo Robot</b> répondra correctement à ta place !
+      ⚠️ <b>Attention :</b> si tu réponds mal OU si tu ne réponds pas avant la fin du chrono, <b>Ya Credo Robot</b> répondra correctement et prendra les points !
     </p>
     
     <div class="diff-grid">
@@ -511,7 +507,7 @@
     </div>
   </div>
 
-  <!-- ===== JEU SOLO ===== -->
+  <!-- JEU -->
   <div id="screenSoloGame" class="hidden">
     <div class="status">
       <span class="pill" id="qCounterSolo">Question 1/20</span>
@@ -557,7 +553,7 @@
     </div>
   </div>
 
-  <!-- ===== FIN SOLO ===== -->
+  <!-- FIN -->
   <div id="screenSoloEnd" class="hidden">
     <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="soloEndTitle">Duel terminé</div>
     
@@ -583,7 +579,7 @@
     </div>
   </div>
 
-  <!-- ===== ESPACE SCORES ===== -->
+  <!-- SCORES -->
   <div id="screenScores" class="hidden">
     <h2>📊 Mes statistiques</h2>
     
@@ -593,27 +589,20 @@
       <button class="tab" data-tab="history">📜 Historique</button>
     </div>
 
-    <!-- Onglet Évolution -->
     <div id="tab-evolution" class="tab-content">
       <div id="emptyEvolution" class="empty-state hidden">
         <div class="emoji">📈</div>
         <p>Aucune donnée pour l'instant.<br>Joue un duel pour voir ton évolution !</p>
       </div>
-
       <div id="evolutionContent" class="hidden">
-        <!-- Schéma de progression -->
         <div class="progress-section">
           <div class="chart-title">🏆 Progression vers le niveau suivant</div>
           <div id="progressBars"></div>
         </div>
-
-        <!-- Graphique : Évolution du score -->
         <div class="chart-card">
           <div class="chart-title">📈 Évolution de tes scores</div>
           <div class="chart-container"><canvas id="chartEvolution"></canvas></div>
         </div>
-
-        <!-- Graphique : Victoires vs Défaites -->
         <div class="chart-card">
           <div class="chart-title">🥇 Victoires vs Défaites vs Égalités</div>
           <div class="chart-container"><canvas id="chartVictories"></canvas></div>
@@ -621,28 +610,23 @@
       </div>
     </div>
 
-    <!-- Onglet Statistiques -->
     <div id="tab-stats" class="tab-content hidden">
       <div class="stats-grid" id="statsGrid"></div>
-      
       <div id="emptyStats" class="empty-state hidden">
         <div class="emoji">🎯</div>
         <p>Joue ta première partie pour voir tes statistiques !</p>
       </div>
-
       <div class="chart-card" id="chartDiffCard" style="display:none;">
         <div class="chart-title">🎚️ Répartition par difficulté</div>
         <div class="chart-container"><canvas id="chartDifficulty"></canvas></div>
       </div>
     </div>
 
-    <!-- Onglet Historique -->
     <div id="tab-history" class="tab-content hidden">
       <div id="emptyHistory" class="empty-state">
         <div class="emoji">📜</div>
         <p>Aucune partie enregistrée.<br>Commence un duel pour remplir ton historique !</p>
       </div>
-      
       <div id="historyContent" class="hidden">
         <div class="scroll-wrap">
           <table class="history-table">
@@ -670,7 +654,7 @@
 
 <script>
 /* ============================================================
-   BANQUE DE QUESTIONS
+   BANQUE DE QUESTIONS — VALIDE
    ============================================================ */
 const FIELDS = {
   "Ab":[{"mot":"Abandon","def":"Action de renoncer à quelque chose."},{"mot":"Abcès","def":"Poche de pus dans un tissu."},{"mot":"Abîme","def":"Gouffre très profond."},{"mot":"Abnégation","def":"Sacrifice de soi au profit d'autrui."},{"mot":"Abolir","def":"Supprimer officiellement une loi."},{"mot":"Abondance","def":"Grande quantité de biens."},{"mot":"Abordable","def":"Facile d'accès ou de prix."},{"mot":"Abri","def":"Lieu qui protège des intempéries."},{"mot":"Abrupt","def":"À pente raide et soudaine."},{"mot":"Absence","def":"Fait de ne pas être présent."},{"mot":"Absolu","def":"Total, sans restriction."},{"mot":"Absorber","def":"Faire pénétrer un liquide ou une information."},{"mot":"Abstention","def":"Fait de ne pas voter."},{"mot":"Abstrait","def":"Qui n'a pas de réalité matérielle."},{"mot":"Absurde","def":"Dépourvu de sens logique."},{"mot":"Abus","def":"Usage excessif ou injuste."},{"mot":"Abyssal","def":"Relatif aux grandes profondeurs."}],
@@ -678,10 +662,9 @@ const FIELDS = {
   "Af":[{"mot":"Affable","def":"Aimable et facile d'accès."},{"mot":"Affaire","def":"Occupation ou commerce."},{"mot":"Affamé","def":"Qui a très faim."},{"mot":"Affectif","def":"Relatif aux émotions."},{"mot":"Affection","def":"Sentiment d'attachement tendre."},{"mot":"Affichage","def":"Action de présenter publiquement."},{"mot":"Affinité","def":"Ressemblance ou attirance naturelle."},{"mot":"Affirmation","def":"Action d'énoncer quelque chose."},{"mot":"Affluence","def":"Grande arrivée de personnes."},{"mot":"Affreux","def":"Très désagréable ou laid."},{"mot":"Affront","def":"Insulte ou offense publique."},{"mot":"Africain","def":"Relatif à l'Afrique."}],
   "Al":[{"mot":"Alarme","def":"Signal d'avertissement d'un danger."},{"mot":"Alchimie","def":"Art ancien de la transmutation."},{"mot":"Alcool","def":"Liquide enivrant produit par fermentation."},{"mot":"Alerte","def":"Signal d'avertissement."},{"mot":"Algue","def":"Plante aquatique sans vraie racine."},{"mot":"Alibi","def":"Justification prouvant l'absence."},{"mot":"Alignement","def":"Mise en ligne droite."},{"mot":"Aliment","def":"Substance qui nourrit."},{"mot":"Allée","def":"Chemin pour se déplacer."},{"mot":"Alliance","def":"Union entre personnes ou États."},{"mot":"Allocation","def":"Somme versée régulièrement."},{"mot":"Allonger","def":"Rendre plus long."},{"mot":"Allusion","def":"Référence indirecte."},{"mot":"Alphabet","def":"Ensemble des lettres d'une langue."},{"mot":"Altruisme","def":"Souci désintéressé d'autrui."},{"mot":"Aluminium","def":"Métal léger argenté."}],
   "Am":[{"mot":"Amas","def":"Tas d'objets accumulés."},{"mot":"Amateur","def":"Personne qui aime une activité sans en faire profession."},{"mot":"Ambassade","def":"Représentation diplomatique d'un pays."},{"mot":"Ambiance","def":"Atmosphère d'un lieu."},{"mot":"Ambigu","def":"Qui peut être compris de plusieurs façons."},{"mot":"Ambitieux","def":"Qui vise de hauts objectifs."},{"mot":"Ambition","def":"Désir d'atteindre un objectif élevé."},{"mot":"Ambulance","def":"Véhicule pour transporter les malades."},{"mot":"Âme","def":"Principe spirituel de l'être humain."},{"mot":"Amélioration","def":"Action de rendre meilleur."},{"mot":"Amende","def":"Somme payée comme punition."},{"mot":"Ami","def":"Personne avec qui on a de l'affection."},{"mot":"Amitié","def":"Lien d'affection réciproque."},{"mot":"Amnésie","def":"Perte totale ou partielle de la mémoire."},{"mot":"Amorcer","def":"Commencer une action."},{"mot":"Amour","def":"Sentiment d'affection intense."},{"mot":"Ampleur","def":"Grandeur, étendue d'un phénomène."},{"mot":"Amusant","def":"Qui divertit et fait rire."},{"mot":"Analyse","def":"Décomposition d'un tout en parties."}],
-  "An":[{"mot":"Analogique","def":"Qui utilise un signal continu."},{"mot":"Analogie","def":"Rapport de ressemblance entre deux choses."},{"mot":"Ananas","def":"Fruit tropical à peau épineuse."},{"mot":"Anatomie","def":"Science de la structure du corps."},{"mot":"Ancêtre","def":"Personne dont on descend."},{"mot":"Ancre","def":"Objet lourd qui retient un navire."},{"mot":"Ancrage","def":"Action de fixer solidement."},{"mot":"Anéantir","def":"Réduire à néant, détruire."},{"mot":"Anesthésie","def":"Suppression temporaire de la sensibilité."},{"mot":"Ange","def":"Être spirituel céleste."},{"mot":"Angle","def":"Ouverture entre deux droites."},{"mot":"Angoisse","def":"Sentiment d'inquiétude profonde."},{"mot":"Anguille","def":"Poisson long et serpentiforme."},{"mot":"Animal","def":"Être vivant non végétal."},{"mot":"Animer","def":"Donner vie ou mouvement."},{"mot":"Animosité","def":"Hostilité, malveillance."},{"mot":"Anneau","def":"Cercle de métal porté au doigt."},{"mot":"Annexe","def":"Partie jointe à un document."},{"mot":"Anniversaire","def":"Date commémorative de la naissance."},{"mot":"Annulation","def":"Action d'annuler."},{"mot":"Anomalie","def":"Irrégularité par rapport à la norme."},{"mot":"Anonyme","def":"Dont on ne connaît pas le nom."},{"mot":"Anormal","def":"Qui s'écarte de la norme."},{"mot":"Antenne","def":"Dispositif de réception d'ondes."},{"mot":"Antérieur","def":"Qui est situé avant, devant."},{"mot":"Anthropologie","def":"Science de l'être humain."},{"mot":"Anticiper","def":"Prévoir à l'avance."},{"mot":"Antidote","def":"Remède contre un poison."},{"mot":"Antiquité","def":"Époque ancienne de l'histoire."},{"mot":"Anxiété","def":"État d'inquiétude persistante."}],
+  "An":[{"mot":"Analogie","def":"Rapport de ressemblance entre deux choses."},{"mot":"Ananas","def":"Fruit tropical à peau épineuse."},{"mot":"Anatomie","def":"Science de la structure du corps."},{"mot":"Ancêtre","def":"Personne dont on descend."},{"mot":"Ancre","def":"Objet lourd qui retient un navire."},{"mot":"Ancrage","def":"Action de fixer solidement."},{"mot":"Anéantir","def":"Réduire à néant, détruire."},{"mot":"Anesthésie","def":"Suppression temporaire de la sensibilité."},{"mot":"Ange","def":"Être spirituel céleste."},{"mot":"Angle","def":"Ouverture entre deux droites."},{"mot":"Angoisse","def":"Sentiment d'inquiétude profonde."},{"mot":"Anguille","def":"Poisson long et serpentiforme."},{"mot":"Animal","def":"Être vivant non végétal."},{"mot":"Animer","def":"Donner vie ou mouvement."},{"mot":"Animosité","def":"Hostilité, malveillance."},{"mot":"Anneau","def":"Cercle de métal porté au doigt."},{"mot":"Annexe","def":"Partie jointe à un document."},{"mot":"Anniversaire","def":"Date commémorative de la naissance."},{"mot":"Annulation","def":"Action d'annuler."},{"mot":"Anomalie","def":"Irrégularité par rapport à la norme."},{"mot":"Anonyme","def":"Dont on ne connaît pas le nom."},{"mot":"Anormal","def":"Qui s'écarte de la norme."},{"mot":"Antenne","def":"Dispositif de réception d'ondes."},{"mot":"Antérieur","def":"Qui est situé avant, devant."},{"mot":"Anthropologie","def":"Science de l'être humain."},{"mot":"Anticiper","def":"Prévoir à l'avance."},{"mot":"Antidote","def":"Remède contre un poison."},{"mot":"Antiquité","def":"Époque ancienne de l'histoire."},{"mot":"Anxiété","def":"État d'inquiétude persistante."}],
   "Ap":[{"mot":"Apaisement","def":"Action de calmer."},{"mot":"Aperçu","def":"Vue rapide et générale."},{"mot":"Aplanir","def":"Rendre plan, résoudre une difficulté."},{"mot":"Aplomb","def":"Assurance dans l'attitude."},{"mot":"Apogée","def":"Point culminant d'une évolution."},{"mot":"Appareil","def":"Objet fabriqué pour un usage."},{"mot":"Apparence","def":"Aspect extérieur visible."},{"mot":"Apparition","def":"Fait de se manifester, surgir."},{"mot":"Appartement","def":"Logement dans un immeuble."},{"mot":"Appel","def":"Action d'inviter ou de crier."},{"mot":"Appendice","def":"Partie ajoutée, annexe."},{"mot":"Appétit","def":"Envie de manger."},{"mot":"Applaudir","def":"Battre des mains en signe d'approbation."},{"mot":"Application","def":"Programme ou mise en pratique."},{"mot":"Apport","def":"Contribution ajoutée."},{"mot":"Apprenti","def":"Personne qui apprend un métier."},{"mot":"Apprentissage","def":"Acquisition de connaissances."},{"mot":"Approbation","def":"Accord favorable."},{"mot":"Approche","def":"Manière d'aborder un sujet."},{"mot":"Approfondir","def":"Étudier plus en détail."},{"mot":"Approprié","def":"Qui convient, adapté."},{"mot":"Approuver","def":"Donner son accord."},{"mot":"Appui","def":"Soutien, base solide."},{"mot":"Appuyer","def":"Faire pression, soutenir."}],
   "Ar":[{"mot":"Araignée","def":"Animal à huit pattes qui tisse des toiles."},{"mot":"Arbitrage","def":"Action de juger un litige ou un match."},{"mot":"Arbre","def":"Grand végétal à tronc ligneux."},{"mot":"Arc","def":"Arme courbée pour tirer des flèches."},{"mot":"Arcade","def":"Galerie ou passage couvert."},{"mot":"Archange","def":"Ange d'un rang supérieur."},{"mot":"Arche","def":"Navire ou coffre en forme de caisse."},{"mot":"Archéologie","def":"Science des vestiges du passé."},{"mot":"Architecte","def":"Concepteur de bâtiments."},{"mot":"Archives","def":"Ensemble de documents conservés."},{"mot":"Ardent","def":"Qui brûle, très vif."},{"mot":"Ardoise","def":"Roche plate servant à écrire."},{"mot":"Argent","def":"Métal précieux ou monnaie."},{"mot":"Argile","def":"Terre plastique utilisée en poterie."},{"mot":"Argument","def":"Raison présentée pour convaincre."},{"mot":"Aride","def":"Très sec, sans végétation."},{"mot":"Armature","def":"Structure de soutien."},{"mot":"Arme","def":"Instrument destiné à attaquer ou défendre."},{"mot":"Armée","def":"Forces militaires d'un pays."},{"mot":"Armistice","def":"Suspension des combats."},{"mot":"Armoire","def":"Meuble de rangement."},{"mot":"Arôme","def":"Odeur agréable d'une substance."},{"mot":"Arracher","def":"Détacher avec force."},{"mot":"Arrangement","def":"Organisation, accord."},{"mot":"Arrestation","def":"Action de priver de liberté."},{"mot":"Arrivée","def":"Action d'atteindre un lieu."},{"mot":"Arrogant","def":"Hautain, méprisant."},{"mot":"Arrosage","def":"Action de fournir de l'eau aux plantes."},{"mot":"Arroser","def":"Fournir de l'eau."},{"mot":"Arsenal","def":"Lieu de stockage d'armes."},{"mot":"Artère","def":"Vaisseau qui transporte le sang."},{"mot":"Article","def":"Texte d'une publication ou élément d'un ensemble."},{"mot":"Articulation","def":"Jonction entre deux os."},{"mot":"Artifice","def":"Moyen habile ou trompeur, feu d'artifice."},{"mot":"Artisan","def":"Travailleur manuel qualifié."},{"mot":"Artiste","def":"Personne qui crée des œuvres d'art."},{"mot":"Ascenseur","def":"Appareil pour monter et descendre."},{"mot":"Ascension","def":"Action de monter, s'élever."},{"mot":"Asile","def":"Lieu de refuge."},{"mot":"Aspect","def":"Apparence extérieure."},{"mot":"Asperger","def":"Projeter un liquide sur quelque chose."},{"mot":"Aspirateur","def":"Appareil qui aspire la poussière."},{"mot":"Assemblage","def":"Action de mettre ensemble."},{"mot":"Assemblée","def":"Groupe de personnes réunies."},{"mot":"Assidu","def":"Régulier et appliqué."},{"mot":"Assiette","def":"Ustensile plat pour manger."},{"mot":"Assistance","def":"Aide apportée à quelqu'un."},{"mot":"Association","def":"Groupe organisé poursuivant un but."},{"mot":"Assurance","def":"Contrat de garantie, ou confiance."},{"mot":"Assurer","def":"Garantir, rendre certain."},{"mot":"Astre","def":"Corps céleste lumineux."},{"mot":"Astuce","def":"Trouvaille ingénieuse."},{"mot":"Astronome","def":"Scientifique qui étudie les astres."},{"mot":"Atelier","def":"Lieu de travail artisanal."},{"mot":"Athlète","def":"Personne pratiquant un sport."},{"mot":"Atmosphère","def":"Couche gazeuse autour de la Terre."},{"mot":"Atome","def":"Plus petite particule d'un élément."},{"mot":"Atout","def":"Avantage favorable."},{"mot":"Atroce","def":"Extrêmement cruel ou horrible."},{"mot":"Attaque","def":"Action offensive."},{"mot":"Attente","def":"Fait d'espérer ou d'attendre."},{"mot":"Attention","def":"Concentration de l'esprit."},{"mot":"Attitude","def":"Manière de se tenir ou de penser."},{"mot":"Attraction","def":"Force qui attire."},{"mot":"Attrait","def":"Charme, séduction."},{"mot":"Attribut","def":"Caractéristique propre."},{"mot":"Audace","def":"Hardiesse, courage."},{"mot":"Audience","def":"Séance d'un tribunal, ou nombre de spectateurs."},{"mot":"Audition","def":"Action d'entendre."},{"mot":"Augmentation","def":"Action d'accroître."},{"mot":"Aumône","def":"Don fait aux pauvres."},{"mot":"Aurore","def":"Lueur du matin avant le lever du soleil."},{"mot":"Auteur","def":"Personne qui crée une œuvre."},{"mot":"Authentique","def":"Vrai, conforme à l'original."},{"mot":"Automate","def":"Machine qui agit seule."},{"mot":"Automne","def":"Saison entre été et hiver."},{"mot":"Automobile","def":"Véhicule à moteur."},{"mot":"Autonomie","def":"Capacité à se gouverner soi-même."},{"mot":"Autorité","def":"Pouvoir de commander."},{"mot":"Autoroute","def":"Grande route rapide."},{"mot":"Autruche","def":"Grand oiseau qui ne vole pas."},{"mot":"Avalanche","def":"Masse de neige qui dévale."},{"mot":"Avance","def":"Mouvement en avant, progrès."},{"mot":"Avantage","def":"Situation favorable."},{"mot":"Avare","def":"Qui amasse sans dépenser."},{"mot":"Avenir","def":"Temps à venir."},{"mot":"Aventure","def":"Expérience excitante et imprévue."},{"mot":"Averse","def":"Pluie soudaine et brève."},{"mot":"Avertir","def":"Informer d'un danger."},{"mot":"Aveugle","def":"Privé de la vue."},{"mot":"Avide","def":"Qui désire ardemment."},{"mot":"Avion","def":"Appareil volant."},{"mot":"Avocat","def":"Juriste, ou fruit."},{"mot":"Avoine","def":"Céréale pour l'alimentation animale."},{"mot":"Avouer","def":"Reconnaître un fait."},{"mot":"Avril","def":"Quatrième mois de l'année."},{"mot":"Azur","def":"Bleu intense du ciel."},{"mot":"Azote","def":"Gaz incolore de l'air."}],
-
   "Ch":[{"mot":"Chaleur","def":"Sensation de température élevée."},{"mot":"Chambre","def":"Pièce où l'on dort."},{"mot":"Chanson","def":"Composition musicale avec paroles."},{"mot":"Chapeau","def":"Coiffure protégeant du soleil."},{"mot":"Chat","def":"Animal domestique qui miaule."},{"mot":"Chocolat","def":"Produit alimentaire à base de cacao."},{"mot":"Chiffre","def":"Symbole numérique."},{"mot":"Chute","def":"Action de tomber."}],
   "De":[{"mot":"Définition","def":"Explication précise d'un mot."},{"mot":"Démocratie","def":"Système où le peuple exerce le pouvoir."},{"mot":"Décision","def":"Choix pris après réflexion."},{"mot":"Désir","def":"Envie d'obtenir quelque chose."},{"mot":"Début","def":"Commencement d'une période."},{"mot":"Défi","def":"Provocation à une épreuve."}],
   "Ma":[{"mot":"Magie","def":"Utilisation de pouvoirs surnaturels."},{"mot":"Maison","def":"Bâtiment où l'on vit."},{"mot":"Mariage","def":"Union légale de partenaires."},{"mot":"Maladie","def":"Altération de la santé."},{"mot":"Matin","def":"Première partie de la journée."},{"mot":"Masque","def":"Objet porté sur le visage."}],
@@ -739,7 +722,7 @@ function speak(text) {
 }
 
 /* ============================================================
-   HISTORIQUE LOCALSTORAGE
+   HISTORIQUE
    ============================================================ */
 function loadHistory() {
   try {
@@ -747,15 +730,12 @@ function loadHistory() {
     return raw ? JSON.parse(raw) : [];
   } catch(e) { return []; }
 }
-
 function saveMatch(match) {
   const history = loadHistory();
   history.push(match);
-  // Garde les 200 dernières parties max
   if (history.length > 200) history.shift();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
 }
-
 function clearHistory() {
   if (!confirm("⚠️ Effacer tout l'historique ?\nCette action est irréversible.")) return;
   localStorage.removeItem(STORAGE_KEY);
@@ -777,7 +757,6 @@ $('themeToggle').addEventListener('click', () => {
   const isDark = document.body.classList.contains('dark-mode');
   $('themeToggle').textContent = isDark ? '☀️' : '🌙';
   localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
-  // Re-render les graphiques si visibles
   if (!$('screenScores').classList.contains('hidden')) {
     renderScoresScreen();
   }
@@ -938,7 +917,7 @@ function startSoloTimers() {
 
   soloRobotTimeout = setTimeout(() => {
     if (!soloState || soloState.questionClosed) return;
-    robotAnswer();
+    robotAnswer(false);
   }, limitMs);
 }
 
@@ -972,6 +951,7 @@ function submitSoloAnswer() {
   $('btnSubmitSolo').disabled = true;
 
   if (correct) {
+    // ✅ Bonne réponse → le joueur gagne
     soloState.myScore += POINTS_PER_CORRECT;
     soloState.myCorrects++;
     soloState.answers.push({ by: 'me', correct: true, mot: q.mot });
@@ -979,21 +959,36 @@ function submitSoloAnswer() {
     $('soloPlayerCard').classList.add('good');
     setMsg('msgSolo', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
     speak("Correct !");
-  } else {
-    soloState.myWrongs++;
-    soloState.answers.push({ by: 'me', correct: false, mot: q.mot });
-    $('soloPlayerCard').classList.add('bad');
-    setMsg('msgSolo', `❌ Mauvaise réponse. La réponse était : ${q.mot}`, 'var(--msg-rouge)');
-    speak("Mauvaise réponse. La réponse était " + q.mot);
-  }
 
-  setTimeout(() => {
-    $('soloPlayerCard').classList.remove('good', 'bad');
-    nextSoloQuestion();
-  }, 1500);
+    setTimeout(() => {
+      $('soloPlayerCard').classList.remove('good', 'bad');
+      nextSoloQuestion();
+    }, 1500);
+
+  } else {
+    // ❌ Mauvaise réponse → le robot prend les points !
+    soloState.myWrongs++;
+    soloState.robotScore += POINTS_PER_CORRECT;
+    soloState.robotCorrects++;
+    soloState.answers.push({ by: 'robot', correct: true, mot: q.mot, reason: 'player_wrong' });
+
+    $('soloPlayerCard').classList.add('bad');
+    $('soloRobotScore').textContent = soloState.robotScore;
+    $('soloRobotCard').classList.add('good');
+    $('robotEmoji').textContent = '🤖';
+
+    setMsg('msgSolo', `❌ Mauvaise réponse ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--msg-rouge)');
+    speak("Mauvaise réponse. Ya Credo Robot répond : " + q.mot);
+
+    setTimeout(() => {
+      $('soloPlayerCard').classList.remove('good', 'bad');
+      $('soloRobotCard').classList.remove('good');
+      nextSoloQuestion();
+    }, 2200);
+  }
 }
 
-function robotAnswer() {
+function robotAnswer(timedOut) {
   if (!soloState || soloState.questionClosed) return;
   soloState.questionClosed = true;
   stopSoloTimers();
@@ -1002,13 +997,13 @@ function robotAnswer() {
 
   soloState.robotScore += POINTS_PER_CORRECT;
   soloState.robotCorrects++;
-  soloState.answers.push({ by: 'robot', correct: true, mot: q.mot });
+  soloState.answers.push({ by: 'robot', correct: true, mot: q.mot, reason: 'timeout' });
   $('soloRobotScore').textContent = soloState.robotScore;
   $('soloRobotCard').classList.add('good');
   $('answerSolo').disabled = true;
   $('btnSubmitSolo').disabled = true;
   $('robotEmoji').textContent = '🤖';
-  setMsg('msgSolo', `🤖 Temps écoulé ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--robot)');
+  setMsg('msgSolo', `⏱️ Temps écoulé ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--robot)');
   speak("Temps écoulé. Ya Credo Robot répond correctement : " + q.mot);
 
   setTimeout(() => {
@@ -1035,7 +1030,7 @@ $('btnSoloLeave').addEventListener('click', () => {
 });
 
 /* ============================================================
-   FIN DU DUEL
+   FIN
    ============================================================ */
 function endSoloGame() {
   stopSoloTimers();
@@ -1060,7 +1055,6 @@ function endSoloGame() {
   const entries = [me, robot].sort((a,b) => b.score - a.score);
   const tie = entries[0].score === entries[1].score;
 
-  // Sauvegarde dans l'historique
   const match = {
     date: new Date().toISOString(),
     difficulty: soloState.difficulty,
@@ -1100,7 +1094,14 @@ function endSoloGame() {
 
   $('soloRecapList').innerHTML = soloState.questions.map((q, i) => {
     const a = soloState.answers[i];
-    const by = a ? (a.by === 'robot' ? '🤖 Robot' : '👤 Moi') : '—';
+    let by = '—';
+    if (a) {
+      if (a.by === 'robot') {
+        by = a.reason === 'player_wrong' ? '🤖 Robot (tu as raté)' : '🤖 Robot (temps)';
+      } else {
+        by = '👤 Toi';
+      }
+    }
     return `
       <div class="recap-item">
         <span><b>Q${i+1}.</b> (${q.prefix.toUpperCase()}) ${q.mot}</span>
@@ -1120,7 +1121,7 @@ $('btnSoloBack').addEventListener('click', () => {
 });
 
 /* ============================================================
-   ESPACE SCORES
+   SCORES
    ============================================================ */
 function computeStats(history) {
   const total = history.length;
@@ -1136,30 +1137,22 @@ function computeStats(history) {
   const totalAnswers = totalCorrects + totalWrongs;
   const accuracy = totalAnswers > 0 ? Math.round((totalCorrects / totalAnswers) * 100) : 0;
 
-  // Répartition par difficulté
   const byDiff = { facile: 0, moyen: 0, difficile: 0 };
   history.forEach(m => { if (byDiff[m.difficulty] !== undefined) byDiff[m.difficulty]++; });
 
-  return {
-    total, wins, loses, ties, bestScore, avgScore, accuracy,
-    totalCorrects, totalWrongs, byDiff
-  };
+  return { total, wins, loses, ties, bestScore, avgScore, accuracy, totalCorrects, totalWrongs, byDiff };
 }
 
 function renderScoresScreen() {
   const history = loadHistory();
 
-  // Onglet évolution
   if (history.length === 0) {
-    show('emptyEvolution');
-    hide('evolutionContent');
+    show('emptyEvolution'); hide('evolutionContent');
   } else {
-    hide('emptyEvolution');
-    show('evolutionContent');
+    hide('emptyEvolution'); show('evolutionContent');
     renderEvolution(history);
   }
 
-  // Onglet stats
   const stats = computeStats(history);
   if (!stats) {
     $('statsGrid').innerHTML = '';
@@ -1172,59 +1165,24 @@ function renderScoresScreen() {
     renderDifficultyChart(stats.byDiff);
   }
 
-  // Onglet historique
   if (history.length === 0) {
-    show('emptyHistory');
-    hide('historyContent');
+    show('emptyHistory'); hide('historyContent');
   } else {
-    hide('emptyHistory');
-    show('historyContent');
+    hide('emptyHistory'); show('historyContent');
     renderHistory(history);
   }
 }
 
 function renderStats(stats) {
   $('statsGrid').innerHTML = `
-    <div class="stat-card">
-      <div class="stat-emoji">🎮</div>
-      <div class="stat-value">${stats.total}</div>
-      <div class="stat-label">Parties jouées</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">🏆</div>
-      <div class="stat-value" style="color:#10b981;">${stats.wins}</div>
-      <div class="stat-label">Victoires</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">❌</div>
-      <div class="stat-value" style="color:#ef4444;">${stats.loses}</div>
-      <div class="stat-label">Défaites</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">🤝</div>
-      <div class="stat-value" style="color:#f59e0b;">${stats.ties}</div>
-      <div class="stat-label">Égalités</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">⭐</div>
-      <div class="stat-value">${stats.bestScore}</div>
-      <div class="stat-label">Meilleur score</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">📊</div>
-      <div class="stat-value">${stats.avgScore}</div>
-      <div class="stat-label">Score moyen</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">🎯</div>
-      <div class="stat-value">${stats.accuracy}%</div>
-      <div class="stat-label">Précision</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-emoji">✅</div>
-      <div class="stat-value">${stats.totalCorrects}</div>
-      <div class="stat-label">Bonnes réponses</div>
-    </div>
+    <div class="stat-card"><div class="stat-emoji">🎮</div><div class="stat-value">${stats.total}</div><div class="stat-label">Parties jouées</div></div>
+    <div class="stat-card"><div class="stat-emoji">🏆</div><div class="stat-value" style="color:#10b981;">${stats.wins}</div><div class="stat-label">Victoires</div></div>
+    <div class="stat-card"><div class="stat-emoji">❌</div><div class="stat-value" style="color:#ef4444;">${stats.loses}</div><div class="stat-label">Défaites</div></div>
+    <div class="stat-card"><div class="stat-emoji">🤝</div><div class="stat-value" style="color:#f59e0b;">${stats.ties}</div><div class="stat-label">Égalités</div></div>
+    <div class="stat-card"><div class="stat-emoji">⭐</div><div class="stat-value">${stats.bestScore}</div><div class="stat-label">Meilleur score</div></div>
+    <div class="stat-card"><div class="stat-emoji">📊</div><div class="stat-value">${stats.avgScore}</div><div class="stat-label">Score moyen</div></div>
+    <div class="stat-card"><div class="stat-emoji">🎯</div><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">Précision</div></div>
+    <div class="stat-card"><div class="stat-emoji">✅</div><div class="stat-value">${stats.totalCorrects}</div><div class="stat-label">Bonnes réponses</div></div>
   `;
 }
 
@@ -1251,9 +1209,6 @@ function renderHistory(history) {
   }).join('');
 }
 
-/* ============================================================
-   GRAPHIQUES
-   ============================================================ */
 function getThemeColors() {
   const isDark = document.body.classList.contains('dark-mode');
   return {
@@ -1276,14 +1231,11 @@ function destroyChart(name) {
 
 function renderEvolution(history) {
   const colors = getThemeColors();
-  // On prend les 20 dernières parties dans l'ordre chronologique
   const recent = [...history].sort((a,b) => new Date(a.date) - new Date(b.date)).slice(-20);
-  
   const labels = recent.map((_, i) => `#${history.length - recent.length + i + 1}`);
   const myScores = recent.map(m => m.myScore);
   const robotScores = recent.map(m => m.robotScore);
 
-  // === Barres de progression (schéma) ===
   const stats = computeStats(history);
   const winRate = stats.total > 0 ? Math.round((stats.wins / stats.total) * 100) : 0;
   const accuracy = stats.accuracy;
@@ -1292,35 +1244,19 @@ function renderEvolution(history) {
 
   $('progressBars').innerHTML = `
     <div class="progress-item">
-      <div class="progress-header">
-        <span>🏆 Taux de victoire</span>
-        <span style="color:#10b981;">${winRate}%</span>
-      </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill fill-green" style="width:${winRate}%;"></div>
-      </div>
+      <div class="progress-header"><span>🏆 Taux de victoire</span><span style="color:#10b981;">${winRate}%</span></div>
+      <div class="progress-bar-track"><div class="progress-bar-fill fill-green" style="width:${winRate}%;"></div></div>
     </div>
     <div class="progress-item">
-      <div class="progress-header">
-        <span>🎯 Précision des réponses</span>
-        <span style="color:#f59e0b;">${accuracy}%</span>
-      </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill fill-orange" style="width:${accuracy}%;"></div>
-      </div>
+      <div class="progress-header"><span>🎯 Précision des réponses</span><span style="color:#f59e0b;">${accuracy}%</span></div>
+      <div class="progress-bar-track"><div class="progress-bar-fill fill-orange" style="width:${accuracy}%;"></div></div>
     </div>
     <div class="progress-item">
-      <div class="progress-header">
-        <span>⭐ Meilleur score</span>
-        <span style="color:#6366f1;">${bestScore} / ${bestScoreMax}</span>
-      </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill fill-blue" style="width:${(bestScore/bestScoreMax)*100}%;"></div>
-      </div>
+      <div class="progress-header"><span>⭐ Meilleur score</span><span style="color:#6366f1;">${bestScore} / ${bestScoreMax}</span></div>
+      <div class="progress-bar-track"><div class="progress-bar-fill fill-blue" style="width:${(bestScore/bestScoreMax)*100}%;"></div></div>
     </div>
   `;
 
-  // === Graphique ligne évolution ===
   destroyChart('evolution');
   const ctx1 = $('chartEvolution').getContext('2d');
   currentCharts.evolution = new Chart(ctx1, {
@@ -1333,55 +1269,33 @@ function renderEvolution(history) {
           data: myScores,
           borderColor: colors.dore,
           backgroundColor: 'rgba(205,164,52,0.15)',
-          fill: true,
-          tension: 0.35,
-          pointRadius: 4,
-          pointBackgroundColor: colors.dore,
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          borderWidth: 3
+          fill: true, tension: 0.35,
+          pointRadius: 4, pointBackgroundColor: colors.dore,
+          pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 3
         },
         {
           label: 'Ya Credo Robot',
           data: robotScores,
           borderColor: colors.robot,
           backgroundColor: 'rgba(99,102,241,0.1)',
-          fill: true,
-          tension: 0.35,
-          pointRadius: 4,
-          pointBackgroundColor: colors.robot,
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          borderWidth: 3
+          fill: true, tension: 0.35,
+          pointRadius: 4, pointBackgroundColor: colors.robot,
+          pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 3
         }
       ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: {
-          labels: { color: colors.text, font: { family: 'Montserrat', weight: '700' } }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          titleFont: { family: 'Montserrat', weight: '800' },
-          bodyFont: { family: 'Montserrat' }
-        }
+        legend: { labels: { color: colors.text, font: { family: 'Montserrat', weight: '700' } } }
       },
       scales: {
         x: { ticks: { color: colors.text, font: { family: 'Montserrat' } }, grid: { color: colors.grid } },
-        y: {
-          beginAtZero: true,
-          max: bestScoreMax,
-          ticks: { color: colors.text, font: { family: 'Montserrat' } },
-          grid: { color: colors.grid }
-        }
+        y: { beginAtZero: true, max: bestScoreMax, ticks: { color: colors.text, font: { family: 'Montserrat' } }, grid: { color: colors.grid } }
       }
     }
   });
 
-  // === Graphique donut victoires ===
   destroyChart('victories');
   const ctx2 = $('chartVictories').getContext('2d');
   currentCharts.victories = new Chart(ctx2, {
@@ -1392,22 +1306,18 @@ function renderEvolution(history) {
         data: [stats.wins, stats.loses, stats.ties],
         backgroundColor: [colors.green, colors.red, colors.orange],
         borderColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#fff',
-        borderWidth: 4,
-        hoverOffset: 10
+        borderWidth: 4, hoverOffset: 10
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'bottom',
           labels: {
             color: colors.text,
             font: { family: 'Montserrat', weight: '700', size: 12 },
-            padding: 16,
-            usePointStyle: true,
-            pointStyle: 'circle'
+            padding: 16, usePointStyle: true, pointStyle: 'circle'
           }
         }
       },
@@ -1427,30 +1337,17 @@ function renderDifficultyChart(byDiff) {
       datasets: [{
         label: 'Parties jouées',
         data: [byDiff.facile, byDiff.moyen, byDiff.difficile],
-        backgroundColor: [
-          'rgba(16,185,129,0.7)',
-          'rgba(245,158,11,0.7)',
-          'rgba(239,68,68,0.7)'
-        ],
+        backgroundColor: ['rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(239,68,68,0.7)'],
         borderColor: [colors.green, colors.orange, colors.red],
-        borderWidth: 2,
-        borderRadius: 8,
-        barThickness: 60
+        borderWidth: 2, borderRadius: 8, barThickness: 60
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: colors.text, font: { family: 'Montserrat', weight: '700' } }, grid: { display: false } },
-        y: {
-          beginAtZero: true,
-          ticks: { color: colors.text, stepSize: 1, font: { family: 'Montserrat' } },
-          grid: { color: colors.grid }
-        }
+        y: { beginAtZero: true, ticks: { color: colors.text, stepSize: 1, font: { family: 'Montserrat' } }, grid: { color: colors.grid } }
       }
     }
   });
