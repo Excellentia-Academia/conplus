@@ -1,980 +1,1482 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur Carnet Dictée & Épellation — Pro</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Champ lexical – Quiz Multijoueur & Solo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --primary: #4f46e5;
-    --primary-dark: #3730a3;
-    --accent: #f59e0b;
-    --success: #10b981;
-    --danger: #ef4444;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
+    --fond: #f4f4f4;
+    --texte: #111111;
+    --dore: #cda434;
+    --dore-hover: #b8902a;
+    --carte: #ffffff;
+    --gris: #e0e0e0;
+    --msg-rouge: #ef4444;
+    --msg-vert: #10b981;
+    --carte-verte: #dcfce7;
+    --carte-rouge: #fee2e2;
+    --robot: #6366f1;
+    --robot-light: #e0e7ff;
   }
 
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 100%);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 20px;
+  body.dark-mode {
+    --fond: #121212;
+    --texte: #f4f4f4;
+    --dore: #e5b83b;
+    --dore-hover: #f5c84c;
+    --carte: #1e1e1e;
+    --gris: #333333;
+    --msg-rouge: #f87171;
+    --msg-vert: #34d399;
+    --carte-verte: #064e3b;
+    --carte-rouge: #7f1d1d;
+    --robot: #818cf8;
+    --robot-light: #312e81;
   }
 
-  .app {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: var(--card);
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(79,70,229,0.15);
-    overflow: hidden;
-    animation: appIn 0.6s cubic-bezier(0.16,1,0.3,1);
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family: 'Montserrat', sans-serif;
+    background: var(--fond);
+    min-height: 100vh; color: var(--texte);
+    padding: 16px; display: grid; place-items: center;
+    transition: background 0.3s, color 0.3s;
   }
-  @keyframes appIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ===== HEADER ===== */
-  header {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: #fff;
-    padding: 35px 30px;
-    text-align: center;
+  .container {
+    max-width: 900px; width: 100%;
+    background: var(--carte);
+    border-radius: 20px; padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-top: 6px solid var(--dore);
     position: relative;
-    overflow: hidden;
+    transition: background 0.3s, border-color 0.3s;
   }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(245,158,11,0.3), transparent 50%);
-  }
-  header h1, header p { position: relative; z-index: 1; }
-  header h1 {
-    font-size: clamp(1.3rem, 4vw, 1.9rem);
-    font-weight: 800;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-  header p { opacity: 0.9; font-size: 0.95rem; }
 
-  /* ===== CONTENU ===== */
-  .content { padding: 30px; }
-
-  .info {
-    background: linear-gradient(135deg, #eef2ff, #fce7f3);
-    border-left: 4px solid var(--primary);
-    padding: 15px 18px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    font-size: 0.92rem;
-    color: var(--text);
-    line-height: 1.6;
+  #themeToggle {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--gris); border: none; border-radius: 50%;
+    width: 44px; height: 44px; cursor: pointer;
+    font-size: 1.2rem; display: grid; place-items: center;
+    transition: all 0.2s; color: var(--texte);
   }
-  .info strong { color: var(--primary); }
+  #themeToggle:hover { transform: scale(1.1); }
 
-  .section-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--primary-dark);
-    margin: 28px 0 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--border);
+  h1 {
+    font-size: clamp(22px, 4vw, 30px);
+    text-align: center; margin-bottom: 24px;
+    color: var(--texte); font-weight: 900;
+    letter-spacing: 1px;
   }
-  .section-title .num {
-    width: 28px; height: 28px;
-    background: var(--primary);
+  h2 { text-align: center; color: var(--dore); margin-bottom: 16px; font-size: 1.2rem; }
+  
+  button {
+    padding: 14px 20px; font-size: 1rem; font-weight: 800;
+    border-radius: 12px; border: none;
+    cursor: pointer; transition: all 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+  
+  .btn-primaire { background: var(--dore); color: #111; }
+  .btn-primaire:hover:not(:disabled) { background: var(--dore-hover); transform: translateY(-2px); }
+  
+  .btn-secondaire { background: var(--gris); color: var(--texte); }
+  .btn-secondaire:hover:not(:disabled) { filter: brightness(0.9); }
+
+  .btn-danger { background: var(--msg-rouge); color: #fff; }
+  .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
+
+  .btn-robot {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: #fff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    flex-shrink: 0;
+  }
+  .btn-robot:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99,102,241,0.4);
   }
 
-  .form-group { margin-bottom: 16px; }
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-    font-size: 0.88rem;
-    color: #334155;
+  input[type=text] {
+    font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
+    border: 2px solid var(--gris); width: 100%; margin: 8px 0;
+    background: var(--carte); color: var(--texte); outline: none;
+    font-family: 'Montserrat', sans-serif; font-weight: 600;
+    transition: border-color 0.2s, background 0.3s, color 0.3s;
   }
-  label .hint {
-    font-weight: 400;
-    color: var(--muted);
-    font-size: 0.8rem;
+  input[type=text]:focus { border-color: var(--dore); }
+  
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+  .row > * { flex: 1; min-width: 140px; }
+  .hidden { display: none !important; }
+  
+  .pill {
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    background: var(--gris); font-size: 0.9rem; margin: 3px;
+    font-weight: 700; color: var(--texte);
   }
-
-  input, select, textarea {
-    width: 100%;
-    padding: 11px 14px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    background: #fff;
-    color: var(--text);
-    transition: all 0.2s;
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
-  }
-
-  .row { display: flex; gap: 15px; flex-wrap: wrap; }
-  .row .form-group { flex: 1; min-width: 180px; }
-
-  /* ===== CHECKBOXES OPTIONS ===== */
-  .options-grid {
+  .status { text-align: center; margin: 12px 0; font-weight: 600; }
+  
+  /* Choix du mode */
+  .mode-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    margin-bottom: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
   }
-  .check-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
+  .mode-card {
+    padding: 28px 20px;
+    border: 3px solid var(--gris);
+    border-radius: 16px;
+    background: var(--carte);
     cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background: #fff;
-    user-select: none;
-  }
-  .check-card:hover {
-    border-color: var(--primary);
-    background: #eef2ff;
-  }
-  .check-card input { width: auto; margin: 0; accent-color: var(--primary); }
-  .check-card.checked {
-    border-color: var(--primary);
-    background: #eef2ff;
-    color: var(--primary-dark);
-  }
-
-  /* ===== BOUTON PRINCIPAL ===== */
-  .btn-generate {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: #fff;
-    border: none;
-    padding: 18px 30px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    border-radius: 14px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 25px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 10px 30px rgba(79,70,229,0.35);
+    text-align: center;
     transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
   }
-  .btn-generate:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(79,70,229,0.5);
+  .mode-card:hover {
+    border-color: var(--dore);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(205,164,52,0.2);
   }
-  .btn-generate:active { transform: translateY(-1px); }
+  .mode-card.robot:hover {
+    border-color: var(--robot);
+    box-shadow: 0 10px 25px rgba(99,102,241,0.25);
+  }
+  .mode-icon { font-size: 3rem; margin-bottom: 10px; }
+  .mode-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; }
+  .mode-desc { font-size: 0.85rem; color: var(--texte); opacity: 0.7; line-height: 1.4; }
 
-  /* ===== APERÇU ===== */
-  .preview {
-    margin-top: 25px;
-    padding: 0;
-    border: 2px solid var(--border);
+  /* Difficulté */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .diff-card {
+    padding: 20px 16px;
+    border: 3px solid var(--gris);
     border-radius: 14px;
+    background: var(--carte);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .diff-card:hover { transform: translateY(-3px); }
+  .diff-card.selected { transform: translateY(-3px); }
+  .diff-card.facile.selected { border-color: #10b981; background: rgba(16,185,129,0.08); }
+  .diff-card.moyen.selected { border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .diff-card.difficile.selected { border-color: #ef4444; background: rgba(239,68,68,0.08); }
+  .diff-emoji { font-size: 2rem; margin-bottom: 6px; }
+  .diff-name { font-weight: 900; font-size: 1rem; margin-bottom: 4px; }
+  .diff-time { font-size: 0.8rem; opacity: 0.7; }
+  
+  /* Style du tableau des scores en jeu */
+  .scoreboard {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin: 20px 0;
+  }
+  .player-card {
+    background: var(--fond); border-radius: 12px; padding: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border: 2px solid var(--gris); transition: all 0.3s ease;
+  }
+  .player-card.me { border-color: var(--dore); background: var(--carte); }
+  .player-card.robot-card { border-color: var(--robot); background: var(--robot-light); }
+  .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
+  
+  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
+  .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
+
+  .player-name { font-weight: 800; font-size: 1rem; }
+  .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
+  .player-card.robot-card .player-score { color: var(--robot); }
+
+  #questionBox {
+    background: var(--carte); color: var(--texte);
+    border-radius: 16px; padding: 30px; margin: 20px 0;
+    text-align: center; border: 2px solid var(--dore);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: background 0.3s, color 0.3s;
+  }
+  #prefixBig, #prefixBigSolo {
+    font-size: clamp(40px, 8vw, 72px); font-weight: 900;
+    letter-spacing: 0.15em; margin-bottom: 16px; color: var(--dore);
+    text-transform: uppercase;
+  }
+  #definitionText, #definitionTextSolo { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5; font-weight: 600; }
+  
+  #timerBar, #timerBarSolo { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
+  #timerFill, #timerFillSolo { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
+  .timer-danger #timerFill, .timer-danger #timerFillSolo { background: var(--msg-rouge); animation: pulse-danger 1s infinite; }
+  @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  #timerText, #timerTextSolo { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
+
+  #progressBar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; background: var(--fond); border-radius: 12px;
+    margin: 16px 0; font-size: 0.9rem; font-weight: 700; border: 1px solid var(--gris);
+  }
+  .code-display {
+    font-family: monospace; font-size: 2.8rem; letter-spacing: 0.3em;
+    text-align: center; margin: 16px 0; background: var(--fond);
+    padding: 20px; border-radius: 16px; font-weight: 900;
+    color: var(--dore); border: 2px solid var(--gris);
+  }
+  
+  .recap-list { background: var(--fond); border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--gris); }
+  .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
+  .recap-item:last-child { border-bottom: none; }
+  .recap-good { color: var(--msg-vert); font-weight: 800; }
+
+  /* --- TABLEAU DE CLASSEMENT FINAL PROFESSIONNEL --- */
+  .pro-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: var(--carte);
+    border-radius: 12px;
     overflow: hidden;
-    display: none;
-    animation: fadeUp 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--gris);
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .preview-head {
-    background: #f1f5f9;
-    padding: 12px 18px;
+  .pro-table th {
+    background: var(--dore);
+    color: #111;
+    padding: 16px;
+    text-align: left;
+    font-weight: 800;
+    text-transform: uppercase;
     font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.5px;
   }
-  .preview-head .ok {
-    color: var(--success);
-    background: #d1fae5;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
+  .pro-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--gris);
+    font-weight: 600;
+    color: var(--texte);
   }
-  .preview-body {
-    padding: 18px;
-    background: #fafafa;
-    font-family: 'Consolas', monospace;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    max-height: 320px;
-    overflow-y: auto;
-    color: #475569;
+  .pro-table tr:last-child td { border-bottom: none; }
+  .pro-table tr.winner-row {
+    background: rgba(205, 164, 52, 0.1);
   }
-  .preview-body::-webkit-scrollbar { width: 8px; }
-  .preview-body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-
-  .footer {
-    text-align: center;
-    padding: 18px;
-    color: var(--muted);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border);
-  }
-
-  /* ===== ÉCRAN INDISPONIBLE ===== */
-  #offline {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #0f172a, #1e1b4b);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.5s;
-  }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .offline-card {
-    max-width: 480px;
-    text-align: center;
-    padding: 45px 35px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    backdrop-filter: blur(20px);
-    color: #fff;
-  }
-  .offline-icon {
-    font-size: 60px;
-    margin-bottom: 20px;
-    animation: shake 2s ease-in-out infinite;
-    display: inline-block;
-  }
-  @keyframes shake {
-    0%, 100% { transform: rotate(0); }
-    25%      { transform: rotate(-8deg); }
-    75%      { transform: rotate(8deg); }
-  }
-  .offline-card h2 {
-    font-size: 2rem;
+  .pro-table tr.winner-row td {
+    color: var(--dore);
     font-weight: 900;
-    letter-spacing: 3px;
-    background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: grad 3s linear infinite;
-    margin-bottom: 15px;
   }
-  @keyframes grad {
-    0%   { background-position: 0% 0; }
-    100% { background-position: 200% 0; }
+  .rank-badge {
+    display: inline-block;
+    width: 32px; height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--gris);
+    color: var(--texte);
+    font-weight: 800;
   }
-  .offline-card p {
-    color: #94a3b8;
-    line-height: 1.6;
-    font-size: 0.95rem;
-  }
+  .rank-badge.gold { background: #fbbf24; color: #111; }
+  .rank-badge.silver { background: #9ca3af; color: #111; }
+  .rank-badge.bronze { background: #d97706; color: #fff; }
 
-  @media (max-width: 600px) {
-    .content { padding: 20px; }
-    header { padding: 25px 20px; }
+  /* Animation robot */
+  @keyframes robotThinking {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-10deg) scale(1.1); }
+    75% { transform: rotate(10deg) scale(1.1); }
+  }
+  .robot-thinking { animation: robotThinking 0.8s ease-in-out infinite; display: inline-block; }
+
+  /* Barre de réponse robot */
+  .robot-progress {
+    height: 6px;
+    background: var(--gris);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .robot-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--robot), #8b5cf6);
+    width: 0%;
+    transition: width 0.2s linear;
   }
 </style>
 </head>
 <body>
+<div class="container">
+  <button id="themeToggle" title="Changer de thème">🌙</button>
 
-<!-- ===== ÉCRAN INDISPONIBLE ===== -->
-<div id="offline">
-  <div class="offline-card">
-    <div class="offline-icon">🔧</div>
-    <h2>INDISPONIBLE</h2>
-    <p>Le générateur est en cours de maintenance.<br>Merci de revenir plus tard.</p>
+  <h1>✨ Champ lexical – Quiz ✨</h1>
+
+  <!-- ===== ACCUEIL : CHOIX DU MODE ===== -->
+  <div id="screenHome">
+    <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
+    
+    <h2 style="margin-top:24px;">Choisis ton mode de jeu</h2>
+    
+    <div class="mode-grid">
+      <div class="mode-card" id="modeMulti">
+        <div class="mode-icon">👥</div>
+        <div class="mode-title">Multijoueur</div>
+        <div class="mode-desc">Crée ou rejoins une salle et affronte tes amis en temps réel.</div>
+      </div>
+      <div class="mode-card robot" id="modeSolo">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-title">Solo — Ya Credo Robot</div>
+        <div class="mode-desc">Affronte Ya Credo Robot. Il répond correctement si tu es trop lent !</div>
+      </div>
+    </div>
+    
+    <div id="msg" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
   </div>
-</div>
 
-<!-- ===== APPLICATION ===== -->
-<div class="app">
-  <header>
-    <h1>📚 Générateur Carnet Dictée & Épellation</h1>
-    <p>Fiches pédagogiques complètes avec exercices, consignes et pratique guidée</p>
-  </header>
-
-  <div class="content">
-    <div class="info">
-      💡 <strong>Configure ton carnet</strong> : choisis les options d'exercices, les consignes et la pratique souhaitée. Le fichier Word généré contiendra des <strong>cases à cocher</strong>, des <strong>lignes d'écriture</strong>, des <strong>consignes claires</strong> et des <strong>exercices progressifs</strong>.
-    </div>
-
-    <!-- ===== SECTION 1 : INFOS ÉLÈVE ===== -->
-    <div class="section-title"><span class="num">1</span> Informations de l'élève</div>
-
+  <!-- ===== ÉCRAN MULTIJOUEUR (choix créer/rejoindre) ===== -->
+  <div id="screenMulti" class="hidden">
+    <h2>Multijoueur</h2>
     <div class="row">
-      <div class="form-group">
-        <label>👤 Nom complet</label>
-        <input type="text" id="nom" placeholder="Ex : Aïcha Diallo" value="Élève">
-      </div>
-      <div class="form-group">
-        <label>🎓 Classe / Niveau</label>
-        <select id="niveau">
-          <option value="debutant">Débutant (CE1–CE2)</option>
-          <option value="intermediaire" selected>Intermédiaire (CM1–CM2)</option>
-          <option value="avance">Avancé (6e–5e)</option>
-        </select>
-      </div>
+      <button id="btnCreate" class="btn-primaire">Créer une salle</button>
+      <input id="joinCode" type="text" placeholder="Code (4 chiffres)" maxlength="4" inputmode="numeric" style="max-width:180px" />
+      <button id="btnJoin" class="btn-secondaire">Rejoindre</button>
     </div>
+    <div class="row" style="margin-top:16px;">
+      <button id="btnBackHome1" class="btn-secondaire">← Retour</button>
+    </div>
+    <div id="msgMulti" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
+    <div class="status" style="opacity:0.6; font-size:0.85rem;">Crée une salle et partage le code aux autres joueurs</div>
+  </div>
 
+  <!-- ===== LOBBY ===== -->
+  <div id="screenLobby" class="hidden">
+    <h2>Salle d'attente</h2>
+    <p style="text-align:center;margin-bottom:8px;">Partage ce code à tes amis :</p>
+    <div class="code-display" id="lobbyCode">----</div>
+    <p class="status" id="lobbyStatus">Chargement…</p>
+    <div class="scoreboard" id="lobbyPlayers"></div>
+    <div class="row" id="hostControls">
+      <button id="btnStart" class="btn-primaire">🚀 Lancer la partie</button>
+      <button id="btnLobbyLeave" class="btn-danger" style="max-width:180px;">Quitter</button>
+    </div>
+    <div class="row" id="guestLeave" style="display:none;">
+      <button id="btnLobbyLeaveGuest" class="btn-danger">Quitter la salle</button>
+    </div>
+    <div id="msg2" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
+  </div>
+
+  <!-- ===== JEU MULTIJOUEUR ===== -->
+  <div id="screenGame" class="hidden">
+    <div class="status">
+      <span class="pill" id="qCounter">Question 1/20</span>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+    
+    <div id="questionBox">
+      <div id="prefixBig">–</div>
+      <div id="definitionText">En attente…</div>
+      <button id="btnVocal" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter la définition</button>
+    </div>
+    
+    <div id="timerBar"><div id="timerFill"></div></div>
+    <div id="timerText">30s</div>
+
+    <div id="progressBar">
+      <span>📊 Joueurs ayant répondu</span>
+      <span><b id="answeredCount">0</b> / <b id="totalPlayers">0</b></span>
+    </div>
+    
     <div class="row">
-      <div class="form-group">
-        <label>📅 Date de début</label>
-        <input type="date" id="dateDebut">
-      </div>
-      <div class="form-group">
-        <label>📖 Nombre de semaines</label>
-        <select id="semaines">
-          <option value="2">2 semaines</option>
-          <option value="4" selected>4 semaines</option>
-          <option value="6">6 semaines</option>
-          <option value="8">8 semaines</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>🏷️ Thème <span class="hint">(optionnel)</span></label>
-        <input type="text" id="theme" placeholder="Ex : animaux, nature..." value="général">
-      </div>
+      <input id="answer" type="text" placeholder="Ta réponse…" autocomplete="off" />
+      <button id="btnSubmit" class="btn-primaire" style="max-width:120px">Valider</button>
     </div>
+    
+    <div id="msg3" class="status"></div>
 
-    <!-- ===== SECTION 2 : EXERCICES À INCLURE ===== -->
-    <div class="section-title"><span class="num">2</span> Exercices à inclure dans le carnet</div>
-
-    <div class="options-grid">
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="listeMots" checked>
-        📝 Liste de mots à épeler
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="copieMots" checked>
-        ✍️ Copie des mots (3 fois)
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="epellation" checked>
-        🗣️ Épellation à voix haute
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="dictee" checked>
-        📖 Dictée de la semaine
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="autodictee" checked>
-        🎧 Auto-dictée (mémorisation)
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="phraseInvente" checked>
-        💡 Invente une phrase
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="motsCroises">
-        🧩 Mots cachés / classement
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="correction" checked>
-        ✅ Auto-correction guidée
-      </label>
-      <label class="check-card checked">
-        <input type="checkbox" class="opt" value="bilan" checked>
-        📊 Bilan & auto-évaluation
-      </label>
-      <label class="check-card">
-        <input type="checkbox" class="opt" value="proverbe" checked>
-        💬 Proverbe du jour
-      </label>
-      <label class="check-card">
-        <input type="checkbox" class="opt" value="motivation" checked>
-        🌟 Motivation
-      </label>
-      <label class="check-card">
-        <input type="checkbox" class="opt" value="defi" checked>
-        🏆 Défi de la semaine
-      </label>
-    </div>
-
-    <!-- ===== SECTION 3 : CONSIGNES & PRATIQUE ===== -->
-    <div class="section-title"><span class="num">3</span> Consignes et pratique</div>
-
-    <div class="row">
-      <div class="form-group">
-        <label>✏️ Nombre de mots par semaine</label>
-        <select id="nbMots">
-          <option value="5">5 mots</option>
-          <option value="8">8 mots</option>
-          <option value="10" selected>10 mots</option>
-          <option value="12">12 mots</option>
-          <option value="15">15 mots</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>📝 Nombre de lignes de copie par mot</label>
-        <select id="nbCopies">
-          <option value="2">2 fois</option>
-          <option value="3" selected>3 fois</option>
-          <option value="4">4 fois</option>
-          <option value="5">5 fois</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>🎯 Difficulté progressive</label>
-        <select id="progression">
-          <option value="oui" selected>Oui — 3 paliers (facile → difficile)</option>
-          <option value="non">Non — difficulté constante</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>📋 Consignes personnalisées <span class="hint">(une par ligne — seront incluses dans le carnet)</span></label>
-      <textarea id="consignes" rows="4" placeholder="Ex :&#10;Lis chaque mot à voix haute avant de l'écrire.&#10;Vérifie l'orthographe dans le dictionnaire.&#10;Souligne les mots difficiles.">Lis chaque mot à voix haute avant de l'écrire.
-Épelle chaque mot lettre par lettre.
-Vérifie l'orthographe dans le dictionnaire.
-Souligne les mots que tu trouves difficiles.</textarea>
-    </div>
-
-    <button class="btn-generate" onclick="generer()">📄 Générer mon carnet Word complet</button>
-
-    <div class="preview" id="preview">
-      <div class="preview-head">
-        <span>👁️ Aperçu du carnet</span>
-        <span class="ok">✅ Fichier prêt</span>
-      </div>
-      <div class="preview-body" id="previewBody"></div>
+    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
+      <button id="btnGameLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter la partie</button>
     </div>
   </div>
 
-  <div class="footer">Générateur local · Aucune donnée envoyée sur Internet</div>
+  <!-- ===== FIN MULTIJOUEUR ===== -->
+  <div id="screenEnd" class="hidden">
+    <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="endTitle">Partie terminée</div>
+    
+    <table class="pro-table" id="finalScoreboard">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Joueur</th>
+          <th>Score</th>
+          <th>Stats (✅/❌)</th>
+        </tr>
+      </thead>
+      <tbody id="finalScoreboardBody"></tbody>
+    </table>
+    
+    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des réponses</h3>
+    <div class="recap-list" id="recapList"></div>
+
+    <div class="row" style="margin-top:24px;">
+      <button id="btnLeave" class="btn-primaire">🏠 Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN SOLO : CHOIX DIFFICULTÉ ===== -->
+  <div id="screenSoloSetup" class="hidden">
+    <h2>🤖 Affronter Ya Credo Robot</h2>
+    <p style="text-align:center; opacity:0.7; margin-bottom:20px; font-size:0.9rem;">
+      Si tu ne réponds pas avant la fin du temps, <b>Ya Credo Robot</b> répondra correctement à ta place !
+    </p>
+    
+    <div class="diff-grid">
+      <div class="diff-card facile" data-diff="facile" data-time="20">
+        <div class="diff-emoji">🟢</div>
+        <div class="diff-name">Facile</div>
+        <div class="diff-time">20 secondes</div>
+      </div>
+      <div class="diff-card moyen selected" data-diff="moyen" data-time="15">
+        <div class="diff-emoji">🟡</div>
+        <div class="diff-name">Moyen</div>
+        <div class="diff-time">15 secondes</div>
+      </div>
+      <div class="diff-card difficile" data-diff="difficile" data-time="10">
+        <div class="diff-emoji">🔴</div>
+        <div class="diff-name">Difficile</div>
+        <div class="diff-time">10 secondes</div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <button id="btnStartSolo" class="btn-robot">🚀 Lancer le duel</button>
+      <button id="btnBackHome2" class="btn-secondaire">← Retour</button>
+    </div>
+  </div>
+
+  <!-- ===== JEU SOLO ===== -->
+  <div id="screenSoloGame" class="hidden">
+    <div class="status">
+      <span class="pill" id="qCounterSolo">Question 1/20</span>
+      <span class="pill" id="diffBadge">🟡 Moyen</span>
+    </div>
+    
+    <div class="scoreboard">
+      <div class="player-card me" id="soloPlayerCard">
+        <span class="player-name">👤 <span id="soloMyName">Moi</span></span>
+        <span class="player-score" id="soloMyScore">0</span>
+      </div>
+      <div class="player-card robot-card" id="soloRobotCard">
+        <span class="player-name"><span id="robotEmoji">🤖</span> Ya Credo Robot</span>
+        <span class="player-score" id="soloRobotScore">0</span>
+      </div>
+    </div>
+    
+    <div id="questionBox">
+      <div id="prefixBigSolo">–</div>
+      <div id="definitionTextSolo">En attente…</div>
+      <button id="btnVocalSolo" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter la définition</button>
+    </div>
+    
+    <div id="timerBarSolo"><div id="timerFillSolo"></div></div>
+    <div id="timerTextSolo">15s</div>
+    
+    <div class="robot-progress" style="margin: 12px 0;">
+      <div class="robot-progress-fill" id="robotProgressFill"></div>
+    </div>
+    <p style="text-align:center; font-size:0.8rem; opacity:0.6; margin-bottom:12px;">
+      Ya Credo Robot répondra automatiquement dans <span id="robotTimeLeft">15</span>s
+    </p>
+    
+    <div class="row">
+      <input id="answerSolo" type="text" placeholder="Ta réponse…" autocomplete="off" />
+      <button id="btnSubmitSolo" class="btn-primaire" style="max-width:120px">Valider</button>
+    </div>
+    
+    <div id="msgSolo" class="status"></div>
+    
+    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
+      <button id="btnSoloLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter le duel</button>
+    </div>
+  </div>
+
+  <!-- ===== FIN SOLO ===== -->
+  <div id="screenSoloEnd" class="hidden">
+    <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="soloEndTitle">Duel terminé</div>
+    
+    <table class="pro-table">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Joueur</th>
+          <th>Score</th>
+          <th>Stats (✅/❌)</th>
+        </tr>
+      </thead>
+      <tbody id="soloFinalBody"></tbody>
+    </table>
+    
+    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des réponses</h3>
+    <div class="recap-list" id="soloRecapList"></div>
+
+    <div class="row" style="margin-top:24px;">
+      <button id="btnSoloRematch" class="btn-robot">🔁 Revanche</button>
+      <button id="btnSoloBack" class="btn-primaire">🏠 Accueil</button>
+    </div>
+  </div>
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ========== MASQUER L'ÉCRAN INDISPONIBLE APRÈS 2.5s ========== */
-setTimeout(() => {
-  document.getElementById('offline').style.display = 'none';
-}, 2500);
+/* ============================================================
+   🔥 CONFIG FIREBASE
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
+  authDomain: "eeee-1387d.firebaseapp.com",
+  projectId: "eeee-1387d",
+  storageBucket: "eeee-1387d.firebasestorage.app",
+  messagingSenderId: "777961527724",
+  appId: "1:777961527724:web:5c222e42be24af0ab38209"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-/* ========== CHECKBOX VISUEL ========== */
-document.querySelectorAll('.check-card input').forEach(cb => {
-  cb.addEventListener('change', () => {
-    cb.closest('.check-card').classList.toggle('checked', cb.checked);
-  });
+/* ============================================================
+   BANQUE DE QUESTIONS (identique à l'original, tronquée ici pour brièveté)
+   ============================================================ */
+const FIELDS = {
+  "Pr":[{"mot":"Précision","def":"Le fait de donner des détails exacts et précis."},{"mot":"Profond","def":"Qui se rapporte à la profondeur."},{"mot":"Profession","def":"Domaine d'activité ou métier."},{"mot":"Progrès","def":"Avancement ou amélioration."},{"mot":"Promesse","def":"Engagement ou parole donnée."},{"mot":"Proverbe","def":"Expression populaire qui contient une sagesse."}],
+  "Se":[{"mot":"Sensation","def":"Perception ou ressenti d'un stimulus."},{"mot":"Séduction","def":"Charme ou pouvoir d'attraction."},{"mot":"Sérénité","def":"État de calme et de tranquillité."},{"mot":"Secret","def":"Quelque chose qui est caché."},{"mot":"Sentiment","def":"Émotion ou affection ressentie."},{"mot":"Service","def":"Action d'aider ou d'assister."}],
+  "Tr":[{"mot":"Transformation","def":"Changement ou métamorphose."},{"mot":"Tristesse","def":"État de chagrin ou de mélancolie."},{"mot":"Travail","def":"Emploi ou activité professionnelle."},{"mot":"Tradition","def":"Coutume transmise de génération en génération."},{"mot":"Triomphe","def":"Victoire éclatante."},{"mot":"Trésor","def":"Richesse ou bien précieux."}],
+  "Ca":[{"mot":"Caractère","def":"Ensemble de traits distinctifs."},{"mot":"Carte","def":"Document représentant une région."},{"mot":"Cascade","def":"Chute d'eau sur une pente."},{"mot":"Cadeau","def":"Objet offert pour une occasion."},{"mot":"Caméra","def":"Appareil pour filmer."},{"mot":"Capitale","def":"Ville principale d'un pays."}],
+  "Br":[{"mot":"Branche","def":"Partie d'un arbre partant du tronc."},{"mot":"Briller","def":"Émettre de la lumière ou luire."},{"mot":"Brouillard","def":"Nuage au sol réduisant la visibilité."},{"mot":"Bras","def":"Membre supérieur de l'être humain."},{"mot":"Brume","def":"Nuage léger près du sol."},{"mot":"Bravoure","def":"Courage face au danger."}],
+  "Th":[{"mot":"Théâtre","def":"Art et lieu de représentation scénique."},{"mot":"Théorie","def":"Ensemble organisé de concepts explicatifs."},{"mot":"Thermomètre","def":"Appareil mesurant la température."},{"mot":"Thérapeute","def":"Professionnel qui soigne par thérapie."},{"mot":"Théorème","def":"Proposition mathématique démontrée."},{"mot":"Thym","def":"Plante aromatique utilisée en cuisine."}],
+  "Ch":[{"mot":"Chaleur","def":"Sensation de température élevée."},{"mot":"Chambre","def":"Pièce où l'on dort."},{"mot":"Chanson","def":"Composition musicale avec paroles."},{"mot":"Chapeau","def":"Coiffure protégeant du soleil."},{"mot":"Chat","def":"Animal domestique qui miaule."},{"mot":"Chocolat","def":"Produit alimentaire à base de cacao."},{"mot":"Chiffre","def":"Symbole numérique."},{"mot":"Chute","def":"Action de tomber."}],
+  "Me":[{"mot":"Mémoire","def":"Capacité de se souvenir."},{"mot":"Méthode","def":"Manière spécifique d'effectuer une tâche."},{"mot":"Mélodie","def":"Séquence agréable de notes musicales."},{"mot":"Menu","def":"Liste de plats ou d'options."},{"mot":"Mesure","def":"Quantité ou échelle pour évaluer."},{"mot":"Merveille","def":"Chose très impressionnante."}],
+  "Di":[{"mot":"Direction","def":"Position ou trajectoire d'un mouvement."},{"mot":"Difficulté","def":"Obstacle ou défi qui complique."},{"mot":"Discipline","def":"Obéissance à des règles."},{"mot":"Dialogue","def":"Conversation entre deux personnes."},{"mot":"Diversité","def":"Variété dans un groupe."},{"mot":"Dictionnaire","def":"Livre listant les mots et définitions."}],
+  "Em":[{"mot":"Empathie","def":"Capacité de comprendre les sentiments d'autrui."},{"mot":"Emploi","def":"Travail ou occupation rémunéré."},{"mot":"Empreinte","def":"Marque laissée par un objet."},{"mot":"Émotionnel","def":"Lié aux émotions."},{"mot":"Émancipation","def":"Fait de se libérer de contraintes."},{"mot":"Empire","def":"Vaste territoire gouverné par un souverain."}],
+  "No":[{"mot":"Nourriture","def":"Substances consommées pour se nourrir."},{"mot":"Nouvelle","def":"Information sur des événements récents."},{"mot":"Nostalgie","def":"Désir ou tristesse envers le passé."},{"mot":"Normalité","def":"État conforme aux normes."},{"mot":"Notoriété","def":"Renommée d'une personne ou d'une chose."},{"mot":"Nomade","def":"Qui se déplace souvent sans domicile fixe."}],
+  "La":[{"mot":"Langage","def":"Système de communication humaine."},{"mot":"Labyrinthe","def":"Dédale complexe de passages."},{"mot":"Lampe","def":"Appareil d'éclairage."},{"mot":"Larme","def":"Goutte d'eau produite par les glandes lacrymales."},{"mot":"Lavage","def":"Action de nettoyer avec de l'eau."},{"mot":"Lancinant","def":"Douleur vive et persistante."}],
+  "In":[{"mot":"Insecte","def":"Petit animal à six pattes."},{"mot":"Inconnu","def":"Qui n'est pas reconnu ou identifié."},{"mot":"Innovant","def":"Qui apporte des idées nouvelles."},{"mot":"Injustice","def":"Absence d'équité."},{"mot":"Information","def":"Faits ou connaissances sur un sujet."},{"mot":"Invention","def":"Création d'une chose nouvelle."}],
+  "Ge":[{"mot":"Géant","def":"Très grand ou imposant."},{"mot":"Géographie","def":"Étude de la Terre et de ses habitants."},{"mot":"Géologie","def":"Étude des roches et de la structure de la Terre."},{"mot":"Genre","def":"Catégorie de choses similaires."},{"mot":"Géométrie","def":"Branche des mathématiques des formes."},{"mot":"Générosité","def":"Qualité de donner sans attendre en retour."}],
+  "Fa":[{"mot":"Famille","def":"Groupe de personnes liées par le sang."},{"mot":"Fabuleux","def":"Incroyablement merveilleux."},{"mot":"Facteur","def":"Variable qui influence un résultat."},{"mot":"Façon","def":"Manière dont quelque chose est fait."},{"mot":"Face","def":"Partie antérieure de la tête humaine."},{"mot":"Fable","def":"Court récit imaginaire avec une morale."}],
+  "Be":[{"mot":"Bébé","def":"Enfant en très bas âge."},{"mot":"Beauté","def":"Qualité d'être beau."},{"mot":"Berceau","def":"Lit pour bébé."},{"mot":"Besoin","def":"Nécessité ou exigence."},{"mot":"Beurre","def":"Produit laitier de la crème."},{"mot":"Bénéfice","def":"Profit ou avantage."}],
+  "Bo":[{"mot":"Bonbon","def":"Petite sucrerie."},{"mot":"Bonheur","def":"État de contentement."},{"mot":"Boîte","def":"Récipient rigide."},{"mot":"Bouteille","def":"Récipient pour liquides."},{"mot":"Boussole","def":"Instrument indiquant le nord."},{"mot":"Bougie","def":"Objet en cire servant à éclairer."}],
+  "Bi":[{"mot":"Bibliothèque","def":"Lieu de conservation des livres."},{"mot":"Bicyclette","def":"Véhicule à deux roues."},{"mot":"Biographie","def":"Récit de la vie d'une personne."},{"mot":"Bijou","def":"Objet ornemental porté sur le corps."},{"mot":"Bilan","def":"État des lieux ou compte rendu."},{"mot":"Biologie","def":"Science des êtres vivants."}],
+  "Pl":[{"mot":"Plage","def":"Étendue de sable au bord de la mer."},{"mot":"Plaisir","def":"Sensation de satisfaction."},{"mot":"Plateau","def":"Surface plane pour transporter."},{"mot":"Pluie","def":"Précipitation en gouttes d'eau."},{"mot":"Plume","def":"Objet pour écrire ou décorer."},{"mot":"Plante","def":"Être vivant végétal."}],
+  "Fr":[{"mot":"Fraise","def":"Fruit rouge et sucré."},{"mot":"Frère","def":"Membre masculin de la fratrie."},{"mot":"Frontière","def":"Ligne séparant deux pays."},{"mot":"Frisson","def":"Sensation de froid ou de peur."},{"mot":"Fraternité","def":"Solidarité entre êtres humains."},{"mot":"Fréquence","def":"Nombre de répétitions par unité de temps."}],
+  "Ba":[{"mot":"Baccalauréat","def":"Examen de fin d'études secondaires."},{"mot":"Banque","def":"Institution de services financiers."},{"mot":"Base","def":"Fondement sur lequel on construit."},{"mot":"Bataille","def":"Conflit armé entre groupes."},{"mot":"Banane","def":"Fruit jaune et courbé."},{"mot":"Bateau","def":"Embarcation naviguant sur l'eau."}],
+  "De":[{"mot":"Définition","def":"Explication précise d'un mot."},{"mot":"Démocratie","def":"Système où le peuple exerce le pouvoir."},{"mot":"Décision","def":"Choix pris après réflexion."},{"mot":"Désir","def":"Envie d'obtenir quelque chose."},{"mot":"Début","def":"Commencement d'une période."},{"mot":"Défi","def":"Provocation à une épreuve."}],
+  "Ma":[{"mot":"Magie","def":"Utilisation de pouvoirs surnaturels."},{"mot":"Maison","def":"Bâtiment où l'on vit."},{"mot":"Mariage","def":"Union légale de partenaires."},{"mot":"Maladie","def":"Altération de la santé."},{"mot":"Matin","def":"Première partie de la journée."},{"mot":"Masque","def":"Objet porté sur le visage."}],
+  "Su":[{"mot":"Survie","def":"Fait de rester en vie dans la difficulté."},{"mot":"Succès","def":"Réalisation d'un résultat positif."},{"mot":"Sujet","def":"Thème principal d'un discours."},{"mot":"Surprise","def":"Événement inattendu."},{"mot":"Supprimer","def":"Effacer ou enlever définitivement."},{"mot":"Subtil","def":"Délicat, peu évident."}],
+  "Pa":[{"mot":"Parc","def":"Espace vert aménagé."},{"mot":"Parler","def":"Communiquer par le langage."},{"mot":"Passeport","def":"Document permettant de voyager."},{"mot":"Pain","def":"Aliment à base de farine."},{"mot":"Parapluie","def":"Objet pour se protéger de la pluie."},{"mot":"Paix","def":"Absence de guerre."}],
+  "Re":[{"mot":"Rêve","def":"Suite d'images pendant le sommeil."},{"mot":"Réalité","def":"Ensemble des choses existantes."},{"mot":"Région","def":"Territoire délimité."},{"mot":"Recherche","def":"Action de chercher des informations."},{"mot":"Résultat","def":"Conséquence d'une action."},{"mot":"Réussir","def":"Atteindre son objectif avec succès."}],
+  "Co":[{"mot":"Concombre","def":"Légume vert allongé."},{"mot":"Connaissance","def":"Savoir acquis."},{"mot":"Coopération","def":"Action de travailler ensemble."},{"mot":"Corps","def":"Partie physique d'un être vivant."},{"mot":"Couleur","def":"Perception visuelle."},{"mot":"Conflit","def":"Opposition entre parties."}],
+  "Na":[{"mot":"Nage","def":"Déplacement dans l'eau."},{"mot":"Naissance","def":"Venue au monde d'un être vivant."},{"mot":"Narrateur","def":"Personne qui raconte une histoire."},{"mot":"Nation","def":"Communauté humaine partageant histoire."},{"mot":"Nature","def":"Ensemble des éléments du monde physique."},{"mot":"Navire","def":"Grand bateau de transport."}],
+  "Ro":[{"mot":"Robot","def":"Machine programmable effectuant des tâches."},{"mot":"Rose","def":"Fleur parfumée à pétales."},{"mot":"Royaume","def":"Territoire gouverné par un monarque."},{"mot":"Route","def":"Voie de circulation pour véhicules."},{"mot":"Roman","def":"Œuvre littéraire de fiction."},{"mot":"Rocher","def":"Gros bloc de pierre."}],
+  "An":[{"mot":"Anatomie","def":"Étude de la structure des organismes."},{"mot":"Ange","def":"Être céleste spirituel."},{"mot":"Animal","def":"Être vivant non végétal."},{"mot":"Ananas","def":"Fruit tropical à écorce épineuse."},{"mot":"Analyse","def":"Examen détaillé d'un sujet."},{"mot":"Angle","def":"Ouverture entre deux lignes."}],
+  "Av":[{"mot":"Avion","def":"Aéronef transportant passagers."},{"mot":"Aventure","def":"Expérience excitante et imprévue."},{"mot":"Avenir","def":"Temps à venir."},{"mot":"Avocat","def":"Juriste représentant en justice."},{"mot":"Avantage","def":"Situation favorable."},{"mot":"Avide","def":"Qui désire ardemment."}],
+  "Ar":[{"mot":"Arbre","def":"Végétal ligneux avec tronc."},{"mot":"Artisan","def":"Travailleur manuel qualifié."},{"mot":"Artichaut","def":"Légume comestible."},{"mot":"Arène","def":"Lieu pour spectacles/sports."},{"mot":"Arôme","def":"Odeur agréable d'une substance."},{"mot":"Architecture","def":"Art de concevoir et bâtir."}],
+  "En":[{"mot":"Enfant","def":"Humain mineur."},{"mot":"Enseignement","def":"Action de transmettre des connaissances."},{"mot":"Environnement","def":"Milieu naturel et construit."},{"mot":"Enquête","def":"Recherche d'informations sur un sujet."},{"mot":"Enthousiasme","def":"Élan joyeux et motivé."},{"mot":"Enjeu","def":"Ce qui est en question/risque."}],
+  "Ha":[{"mot":"Habitat","def":"Lieu de vie d'un être ou groupe."},{"mot":"Handicap","def":"Limitation d'activité ou participation."},{"mot":"Harmonie","def":"Accord, juste combinaison d'éléments."},{"mot":"Hâte","def":"Empressement, précipitation."},{"mot":"Hauteur","def":"Dimension verticale."},{"mot":"Hachoir","def":"Outil pour hacher la viande."}],
+  "So":[{"mot":"Société","def":"Ensemble d'individus vivant en communauté."},{"mot":"Solitude","def":"Fait/ressenti d'être seul."},{"mot":"Solidarité","def":"Soutien mutuel au sein d'un groupe."},{"mot":"Sommeil","def":"État de repos périodique."},{"mot":"Soutien","def":"Aide, appui."},{"mot":"Souvenir","def":"Image/événement conservé en mémoire."}],
+  "Pi":[{"mot":"Piano","def":"Instrument de musique à clavier."},{"mot":"Pictogramme","def":"Symbole graphique informatif."},{"mot":"Piscine","def":"Bassin pour nager."},{"mot":"Piste","def":"Chemin ou voie tracée."},{"mot":"Pilote","def":"Personne qui conduit un véhicule."},{"mot":"Pinceau","def":"Outil pour peindre."}],
+  "Sc":[{"mot":"Scandale","def":"Événement causant indignation."},{"mot":"Sceptique","def":"Qui doute; incrédule."},{"mot":"Science","def":"Ensemble organisé de connaissances."},{"mot":"Score","def":"Résultat d'un jeu/épreuve."},{"mot":"Sculpture","def":"Art de créer des formes en volume."},{"mot":"Scénario","def":"Texte décrivant l'histoire d'un film."}],
+  "St":[{"mot":"Stupéfaction","def":"Surprise extrême."},{"mot":"Stabilité","def":"Capacité à rester constant."},{"mot":"Stratégie","def":"Plan d'action pour atteindre un objectif."},{"mot":"Stress","def":"Réponse à une contrainte/pression."},{"mot":"Structure","def":"Organisation des parties d'un tout."},{"mot":"Studio","def":"Lieu de création/enregistrement."}],
+  "Tu":[{"mot":"Tuba","def":"Instrument de musique à vent grave."},{"mot":"Tunique","def":"Vêtement ample descendant aux genoux."},{"mot":"Tumulte","def":"Agitation bruyante."},{"mot":"Turquoise","def":"Pierre fine bleu-vert."},{"mot":"Tunnel","def":"Passage souterrain."},{"mot":"Tutoriel","def":"Guide pas-à-pas pour réaliser une tâche."}],
+  "Va":[{"mot":"Vache","def":"Bovin femelle domestique."},{"mot":"Valise","def":"Bagage pour vêtements et effets."},{"mot":"Vague","def":"Ondulation de la surface de l'eau."},{"mot":"Vanille","def":"Épice issue d'orchidées."},{"mot":"Valeur","def":"Caractère de ce qui est estimable."},{"mot":"Vacances","def":"Période d'arrêt des activités habituelles."}],
+  "Vi":[{"mot":"Victoire","def":"Résultat gagnant d'une compétition."},{"mot":"Vibration","def":"Mouvement oscillatoire."},{"mot":"Vif","def":"Plein de vie et d'énergie."},{"mot":"Vision","def":"Capacité de voir."},{"mot":"Visage","def":"Partie antérieure de la tête."},{"mot":"Vitesse","def":"Rapidité d'un mouvement."}],
+  "He":[{"mot":"Héroïsme","def":"Bravoure exceptionnelle face au danger."},{"mot":"Hésitation","def":"Indécision dans le choix."},{"mot":"Héritage","def":"Biens, droits transmis par succession."},{"mot":"Hélicoptère","def":"Aéronef à voilure tournante."},{"mot":"Hérisson","def":"Petit mammifère couvert de piquants."},{"mot":"Heure","def":"Unité de temps égale à 60 minutes."}],
+  "Te":[{"mot":"Tendresse","def":"Sentiment d'affection douce."},{"mot":"Tempête","def":"Phénomène météorologique violent."},{"mot":"Ténacité","def":"Persévérance, résistance dans l'effort."},{"mot":"Terrasse","def":"Espace extérieur attenant à un bâtiment."},{"mot":"Téléphone","def":"Appareil de communication vocale à distance."},{"mot":"Texte","def":"Suite de mots formant un message écrit."}],
+  "Ta":[{"mot":"Tableau","def":"Surface pour écrire/dessiner."},{"mot":"Tache","def":"Marque salissante sur une surface."},{"mot":"Tâche","def":"Travail à accomplir."},{"mot":"Tactile","def":"Relatif au toucher."},{"mot":"Tapis","def":"Revêtement de sol souple."},{"mot":"Tasse","def":"Petit récipient pour boire."}],
+  "Li":[{"mot":"Liberté","def":"État d'une personne libre d'agir."},{"mot":"Ligne","def":"Trait continu; rangée d'éléments alignés."},{"mot":"Littoral","def":"Zone de contact terre/mer."},{"mot":"Limite","def":"Frontière séparant deux espaces."},{"mot":"Livre","def":"Ouvrage écrit relié."},{"mot":"Littérature","def":"Ensemble des œuvres écrites."}],
+  "Lu":[{"mot":"Lucide","def":"Clairvoyant, qui perçoit nettement la réalité."},{"mot":"Lune","def":"Satellite naturel de la Terre."},{"mot":"Lutte","def":"Combat; sport de combat."},{"mot":"Luminosité","def":"Intensité de la lumière."},{"mot":"Luxe","def":"Caractère de ce qui est somptueux."},{"mot":"Lumière","def":"Rayonnement rendant les objets visibles."}],
+  "Ru":[{"mot":"Ruban","def":"Bande étroite de tissu."},{"mot":"Rubrique","def":"Titre de section; catégorie d'articles."},{"mot":"Ruche","def":"Habitation artificielle des abeilles."},{"mot":"Ruisseau","def":"Petit cours d'eau."},{"mot":"Ruse","def":"Stratagème pour tromper ou contourner."},{"mot":"Rue","def":"Voie de circulation bordée de bâtiments."}],
+  "Hu":[{"mot":"Humanité","def":"Ensemble des êtres humains."},{"mot":"Humeur","def":"Disposition émotionnelle du moment."},{"mot":"Humilité","def":"Qualité de qui est modeste."},{"mot":"Humain","def":"Relatif à l'être humain."},{"mot":"Huile","def":"Substance grasse d'origine végétale."},{"mot":"Hurler","def":"Pousser des cris aigus et forts."}],
+  "Mo":[{"mot":"Monde","def":"Ensemble des êtres et des choses."},{"mot":"Montagne","def":"Relief élevé."},{"mot":"Monarque","def":"Souverain d'un État."},{"mot":"Monnaie","def":"Moyen d'échange."},{"mot":"Moteur","def":"Dispositif produisant un mouvement."},{"mot":"Monument","def":"Construction commémorative remarquable."}],
+  "Sp":[{"mot":"Spécial","def":"Différent de l'ordinaire."},{"mot":"Spectacle","def":"Représentation artistique publique."},{"mot":"Sphère","def":"Solide géométrique rond en 3D."},{"mot":"Spécialité","def":"Compétence ou produit propre à un domaine."},{"mot":"Spirale","def":"Courbe enroulée autour d'un point."},{"mot":"Spontané","def":"Qui se produit naturellement."}],
+  "Ab":[{"mot":"Abyssal","def":"Très profond."},{"mot":"Abolition","def":"Suppression d'une loi ou pratique."},{"mot":"Abrupt","def":"À pente raide; brusque."},{"mot":"Abondant","def":"Présent en grande quantité."},{"mot":"Absolu","def":"Total, sans restriction."},{"mot":"Absurde","def":"Dépourvu de logique."}],
+  "At":[{"mot":"Athlétisme","def":"Ensemble de disciplines de course, saut, lancer."},{"mot":"Attaquer","def":"Commencer une action offensive."},{"mot":"Attraction","def":"Force qui attire; attrait."},{"mot":"Attention","def":"Concentration de l'esprit sur un objet."},{"mot":"Atmosphère","def":"Couche gazeuse entourant la Terre."},{"mot":"Athlète","def":"Personne qui pratique un sport physique."}],
+  "Am":[{"mot":"Amour","def":"Sentiment d'affection intense."},{"mot":"Ambition","def":"Désir d'atteindre un haut objectif."},{"mot":"Ambiance","def":"Atmosphère d'un lieu ou d'un moment."},{"mot":"Amitié","def":"Lien d'affection réciproque."},{"mot":"Ampleur","def":"Grandeur, étendue."},{"mot":"Améliorer","def":"Rendre meilleur."}],
+  "Or":[{"mot":"Orage","def":"Perturbation atmosphérique avec éclairs."},{"mot":"Ornement","def":"Élément décoratif."},{"mot":"Orateur","def":"Personne qui parle en public."},{"mot":"Orchestre","def":"Ensemble d'instruments jouant ensemble."},{"mot":"Organisation","def":"Action de structurer; entité organisée."},{"mot":"Orientation","def":"Direction vers laquelle on se dirige."}],
+  "Hi":[{"mot":"Hilarant","def":"Qui fait beaucoup rire."},{"mot":"Hippocampe","def":"Petit poisson à tête de cheval."},{"mot":"Hibernation","def":"Dormance prolongée en hiver."},{"mot":"Historique","def":"Relatif à l'histoire; mémorable."},{"mot":"Histoire","def":"Récit d'événements passés."},{"mot":"Hiérarchie","def":"Organisation en niveaux d'autorité."}],
+  "Da":[{"mot":"Dague","def":"Arme blanche courte et pointue."},{"mot":"Danse","def":"Mouvements rythmiques du corps avec musique."},{"mot":"Date","def":"Indication du jour, mois et année."},{"mot":"Dangereux","def":"Qui expose à un risque."},{"mot":"Danser","def":"Exécuter des pas de danse."},{"mot":"Dard","def":"Organe piquant de certains animaux."}],
+  "Ga":[{"mot":"Galaxie","def":"Ensemble d'étoiles, gaz, poussières."},{"mot":"Galant","def":"Courtois, attentionné."},{"mot":"Galerie","def":"Passage couvert; espace d'exposition."},{"mot":"Gamin","def":"Enfant espiègle."},{"mot":"Gant","def":"Accessoire pour protéger les mains."},{"mot":"Gare","def":"Lieu de départ/arrivée des trains."}],
+  "Go":[{"mot":"Gomme","def":"Matière pour effacer."},{"mot":"Gorge","def":"Partie du cou en avant de la colonne."},{"mot":"Goudron","def":"Matière noire et visqueuse."},{"mot":"Gourmet","def":"Personne au goût raffiné pour la cuisine."},{"mot":"Goutte","def":"Petite quantité de liquide tombant."},{"mot":"Gouvernement","def":"Institutions dirigeant un pays."}],
+  "Ou":[{"mot":"Ouverture","def":"Action d'ouvrir; espace ouvert."},{"mot":"Ouïe","def":"Sens de l'audition."},{"mot":"Ouvrier","def":"Travailleur manuel."},{"mot":"Ouragan","def":"Tempête tropicale très violente."},{"mot":"Ouest","def":"Point cardinal du coucher du soleil."},{"mot":"Outil","def":"Instrument pour travailler la matière."}],
+  "Sa":[{"mot":"Sable","def":"Petits grains minéraux sur plages/déserts."},{"mot":"Sagesse","def":"Capacité à bien juger et agir."},{"mot":"Salade","def":"Plat de légumes crus/cuits mélangés."},{"mot":"Salle","def":"Pièce destinée à un usage donné."},{"mot":"Sanguin","def":"Relatif au sang; de couleur rouge vif."},{"mot":"Sardine","def":"Petit poisson marin."}],
+  "Ap":[{"mot":"Apaisement","def":"Action de calmer une tension."},{"mot":"Apogée","def":"Point culminant."},{"mot":"Apport","def":"Ce qui est ajouté ou contribué."},{"mot":"Appui","def":"Soutien."},{"mot":"Approche","def":"Méthode ou manière d'aborder un sujet."},{"mot":"Apprentissage","def":"Acquisition de connaissances/compétences."}],
+  "Ph":[{"mot":"Phare","def":"Tour de signalisation pour navires."},{"mot":"Phénomène","def":"Fait observable."},{"mot":"Philanthropie","def":"Générosité envers autrui."},{"mot":"Philosophie","def":"Étude des principes de l'être et du savoir."},{"mot":"Photographe","def":"Personne qui prend des photos."},{"mot":"Physique","def":"Science de la matière et de l'énergie."}],
+  "Ir":[{"mot":"Irrigation","def":"Apport d'eau aux cultures."},{"mot":"Ironie","def":"Expression du contraire de ce que l'on pense."},{"mot":"Irréel","def":"Qui n'existe pas dans la réalité."},{"mot":"Irritant","def":"Qui provoque une irritation."},{"mot":"Irlandais","def":"Relatif à l'Irlande."},{"mot":"Irrégulier","def":"Sans régularité."}],
+  "El":[{"mot":"Électricité","def":"Énergie due au mouvement des électrons."},{"mot":"Élection","def":"Choix d'un candidat à une fonction."},{"mot":"Élévation","def":"Hauteur; action d'élever."},{"mot":"Élégance","def":"Qualité de ce qui est gracieux/raffiné."},{"mot":"Élément","def":"Constituant de base d'un ensemble."},{"mot":"Éloquence","def":"Aisance persuasive à l'oral."}],
+  "Je":[{"mot":"Jeu","def":"Activité ludique ou d'apprentissage."},{"mot":"Jeter","def":"Lancer; se débarrasser de."},{"mot":"Jeunesse","def":"Période de la vie avant l'âge adulte."},{"mot":"Jeudi","def":"Quatrième jour ouvré de la semaine."},{"mot":"Jeune","def":"Qui est d'un âge peu avancé."},{"mot":"Jeûne","def":"Abstinence volontaire de nourriture."}],
+  "Nu":[{"mot":"Nudité","def":"État d'une personne sans vêtement."},{"mot":"Nutritif","def":"Qui fournit des nutriments."},{"mot":"Nuisible","def":"Qui cause un dommage."},{"mot":"Nuit","def":"Période d'obscurité entre coucher et lever."},{"mot":"Numérique","def":"Relatif aux technologies informatiques."},{"mot":"Nuage","def":"Amas de gouttelettes d'eau dans l'air."}],
+  "Ec":[{"mot":"Économie","def":"Étude de la production et répartition des richesses."},{"mot":"Écologie","def":"Étude des relations entre êtres vivants."},{"mot":"Éclipse","def":"Occultation d'un astre par un autre."},{"mot":"École","def":"Lieu d'enseignement."},{"mot":"Écran","def":"Surface d'affichage d'images."},{"mot":"Écriture","def":"Action de tracer des signes pour communiquer."}],
+  "Mi":[{"mot":"Migration","def":"Déplacement d'êtres vivants d'un lieu à un autre."},{"mot":"Milieu","def":"Environnement dans lequel on vit."},{"mot":"Militaire","def":"Relatif aux forces armées."},{"mot":"Ministre","def":"Membre du gouvernement."},{"mot":"Miracle","def":"Événement extraordinaire et inexpliqué."},{"mot":"Minorité","def":"Groupe numériquement inférieur."}],
+  "Ze":[{"mot":"Zen","def":"Relatif à la méditation, à la paix intérieure."},{"mot":"Zèbre","def":"Équidé reconnaissable à ses rayures."},{"mot":"Zénith","def":"Point du ciel situé à la verticale."},{"mot":"Zeste","def":"Fine pellicule d'un agrume."},{"mot":"Zéphyr","def":"Vent doux et léger."},{"mot":"Zébu","def":"Bovin domestique d'Asie et d'Afrique."}],
+  "Id":[{"mot":"Idéal","def":"Ce qui est parfait ou souhaitable."},{"mot":"Identité","def":"Caractéristiques qui définissent une personne."},{"mot":"Idée","def":"Pensée ou concept."},{"mot":"Idiot","def":"Personne jugée très peu intelligente."},{"mot":"Idéologie","def":"Système d'idées organisées."},{"mot":"Idéogramme","def":"Symbole représentant une idée/mot."}],
+  "Le":[{"mot":"Légal","def":"Conforme à la loi."},{"mot":"Léger","def":"De faible poids."},{"mot":"Légende","def":"Récit traditionnel."},{"mot":"Légion","def":"Grande unité militaire; multitude."},{"mot":"Légitime","def":"Conforme au droit ou justifié."},{"mot":"Lézard","def":"Reptile à quatre pattes et longue queue."}],
+  "Af":[{"mot":"Affectif","def":"Relatif aux émotions et aux sentiments."},{"mot":"Affable","def":"Aimable, facile d'accès."},{"mot":"Affamé","def":"Qui a faim; avide de."},{"mot":"Affection","def":"Attachement, tendresse."},{"mot":"Affichage","def":"Action d'afficher; éléments affichés."},{"mot":"Affirmation","def":"Proposition énoncée positivement."}],
+  "Al":[{"mot":"Alchimie","def":"Pratique visant la transmutation des métaux."},{"mot":"Alcool","def":"Substance des boissons alcoolisées."},{"mot":"Altruisme","def":"Souci désintéressé du bien d'autrui."},{"mot":"Alimentation","def":"Ensemble des aliments."},{"mot":"Alphabet","def":"Ensemble des lettres d'une langue."},{"mot":"Algorithme","def":"Suite d'instructions pour résoudre un problème."}],
+  "Et":[{"mot":"Étendue","def":"Surface vaste; amplitude."},{"mot":"Éthique","def":"Principes et valeurs morales."},{"mot":"Établissement","def":"Institution; lieu d'implantation."},{"mot":"Étudiant","def":"Personne poursuivant des études."},{"mot":"Étymologie","def":"Origine et évolution des mots."},{"mot":"Étude","def":"Recherche ou analyse systématique."}],
+  "Qu":[{"mot":"Qualité","def":"Degré d'excellence ou de conformité."},{"mot":"Question","def":"Demande d'information."},{"mot":"Quotidien","def":"Qui a lieu chaque jour."},{"mot":"Quotient","def":"Résultat d'une division."},{"mot":"Quartier","def":"Subdivision d'une ville ou région."},{"mot":"Quota","def":"Part fixée d'une ressource."}],
+  "Ob":[{"mot":"Obéir","def":"Suivre des ordres ou instructions."},{"mot":"Objet","def":"Chose matérielle perceptible par les sens."},{"mot":"Obligation","def":"Devoir à accomplir."},{"mot":"Obscurité","def":"Absence de lumière."},{"mot":"Observation","def":"Examen attentif d'un phénomène."},{"mot":"Obstacle","def":"Ce qui entrave un mouvement ou un projet."}],
+  "Pe":[{"mot":"Pêche","def":"Action de capturer des poissons; aussi fruit."},{"mot":"Pédagogie","def":"Art et science de l'enseignement."},{"mot":"Pénalité","def":"Punition ou sanction."},{"mot":"Perception","def":"Façon d'appréhender par les sens."},{"mot":"Pesticide","def":"Substance destinée à détruire les nuisibles."},{"mot":"Pérenne","def":"Qui dure dans le temps."}],
+  "Ad":[{"mot":"Adhésif","def":"Qui colle; substance collante."},{"mot":"Adjectif","def":"Mot qualifiant un nom."},{"mot":"Administration","def":"Gestion d'une organisation."},{"mot":"Admissible","def":"Qui peut être accepté."},{"mot":"Adorable","def":"Qui inspire l'affection."},{"mot":"Adoucir","def":"Rendre plus doux/agréable."}],
+  "Eq":[{"mot":"Équilibre","def":"État de stabilité entre forces opposées."},{"mot":"Équation","def":"Égalité entre deux expressions mathématiques."},{"mot":"Équateur","def":"Ligne entourant la Terre à mi-distance des pôles."},{"mot":"Équité","def":"Justice impartiale; traitement égal."},{"mot":"Équipement","def":"Ensemble d'outils nécessaires à une activité."},{"mot":"Équipe","def":"Groupe collaborant à un objectif commun."}],
+  "Ed":[{"mot":"Éducation","def":"Acquisition de connaissances et de compétences."},{"mot":"Édification","def":"Construction; formation morale/intellectuelle."},{"mot":"Édifice","def":"Bâtiment imposant."},{"mot":"Édition","def":"Publication/version d'une œuvre."},{"mot":"Éditeur","def":"Personne ou entreprise publiant des œuvres."},{"mot":"Éducatif","def":"Qui vise l'apprentissage."}],
+  "Si":[{"mot":"Signal","def":"Signe transmis pour informer ou commander."},{"mot":"Signification","def":"Sens d'un mot, symbole ou événement."},{"mot":"Sismique","def":"Relatif aux séismes."},{"mot":"Situation","def":"Ensemble des circonstances; position."},{"mot":"Simulation","def":"Reproduction artificielle d'un processus."},{"mot":"Simplicité","def":"Caractère de ce qui est simple."}],
+  "Po":[{"mot":"Pouvoir","def":"Capacité ou autorité d'agir."},{"mot":"Politesse","def":"Comportement courtois et respectueux."},{"mot":"Pollution","def":"Dégradation de l'environnement."},{"mot":"Politique","def":"Gestion des affaires publiques."},{"mot":"Population","def":"Ensemble des habitants d'une zone."},{"mot":"Poésie","def":"Genre littéraire jouant sur la langue et le rythme."}]
+};
+
+/* ============================================================
+   CONSTANTES & ÉTAT GLOBAL
+   ============================================================ */
+const TOTAL_QUESTIONS = 20;
+const POINTS_PER_CORRECT = 10;
+const QUESTION_DURATION_MS = 30000;
+
+let uid = null;
+let pseudo = localStorage.getItem('josef_pseudo') || '';
+let roomCode = null;
+let isHost = false;
+let unsubscribeRoom = null;
+let currentRoom = null;
+let timerInterval = null;
+let lastAnsweredQ = -1;
+
+/* État SOLO */
+let soloState = null;
+let soloTimerInterval = null;
+let soloRobotTimeout = null;
+
+const $ = id => document.getElementById(id);
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
+const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\-' ]/g,'').trim();
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function genCode(){ return String(Math.floor(1000 + Math.random() * 9000)); }
+
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    u.rate = 1.0;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+/* ============================================================
+   GESTION DU THÈME
+   ============================================================ */
+function initTheme() {
+  const savedTheme = localStorage.getItem('josef_theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    $('themeToggle').textContent = '☀️';
+  }
+}
+
+$('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
 });
 
-/* ========== BANQUE DE DONNÉES ========== */
-const banqueMots = {
-  debutant: {
-    facile: ["chat","chien","maison","école","papa","maman","table","livre","eau","pain","ami","soleil","lune","fleur","jardin","porte","chien","oiseau","rouge","bleu"],
-    moyen: ["jardinier","bibliothèque","chocolat","éléphant","papillon","ordinateur","vacances","cuisine","montagne","rivière","attention","chanson","parapluie"],
-    difficile: ["extraordinaire","magnifique","intéressant","apprentissage","vocabulaire","connaissance","imagination","merveilleux"]
-  },
-  intermediaire: {
-    facile: ["aventure","curieux","silence","lumière","voyage","courage","nature","forêt","rêve","espoir","saison","planète","océan","désert","village","chemin","souvenir"],
-    moyen: ["développement","environnement","communication","gouvernement","personnalité","responsabilité","informatique","géographie","philosophie","enthousiasme","imagination","découverte"],
-    difficile: ["conscience","excellence","persévérance","ambiguïté","connaissance","bienveillance","indépendance","effervescence","intelligence","incompréhensible"]
-  },
-  avance: {
-    facile: ["paradoxe","éphémère","mélancolie","harmonie","métaphore","allégorie","rhétorique","éloquence","sagacité","apogée","dichotomie","synergie","immuable"],
-    moyen: ["incontournable","extraordinaire","phénoménal","sophistiqué","inébranlable","irréversible","caractéristique","détermination","perspicacité","contradiction"],
-    difficile: ["anticonstitutionnel","incompréhensibilité","intergouvernemental","otorhinolaryngologiste","anticonstitutionnellement","interdisciplinarité","conceptualisation","désinstitutionnalisation"]
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+async function initAuth(){
+  initTheme();
+  
+  if (pseudo) $('pseudo').value = pseudo;
+  
+  try {
+    await auth.signInAnonymously();
+    uid = auth.currentUser.uid;
+  } catch(e) {
+    console.error(e);
   }
-};
+}
 
-const dictees = {
-  debutant: {
-    facile: ["Le chat dort sur le tapis.","Papa lit un livre à la maison.","Les enfants jouent dans le jardin.","La lune brille dans le ciel.","J'aime le pain et le chocolat."],
-    moyen: ["Le jardinier arrose les fleurs du jardin.","Mon ami a une belle bibliothèque.","L'éléphant boit de l'eau à la rivière.","Nous partons en vacances à la montagne."],
-    difficile: ["L'apprentissage du vocabulaire demande de l'attention et de l'imagination.","La connaissance s'acquiert par un travail extraordinaire.","Un magnifique papillon se pose sur une fleur."]
-  },
-  intermediaire: {
-    facile: ["Le voyage vers la forêt fut une belle aventure.","Le silence de la nature inspire le courage.","Les saisons changent et la lumière revient.","L'océan cache des mystères profonds."],
-    moyen: ["Le développement durable exige une communication responsable.","La personnalité se forge à travers l'apprentissage et l'enthousiasme.","La géographie et la philosophie éclairent notre compréhension."],
-    difficile: ["La persévérance et la bienveillance mènent à l'excellence.","L'indépendance intellectuelle suppose une connaissance approfondie.","L'effervescence créative transforme l'ambiguïté en clarté."]
-  },
-  avance: {
-    facile: ["L'harmonie éphémère du crépuscule inspire une douce mélancolie.","La métaphore et l'allégorie enrichissent la rhétorique.","L'éloquence n'est pas toujours synonyme de sagacité."],
-    moyen: ["La détermination et la perspicacité caractérisent un esprit incontournable.","Ce phénomène extraordinaire reste incompréhensible sans une analyse sophistiquée.","L'inébranlable volonté conduit à des résultats irréversibles."],
-    difficile: ["L'anticonstitutionnellement est un mot souvent cité pour sa longueur.","La désinstitutionnalisation et la conceptualisation exigent une interdisciplinarité rigoureuse.","L'otorhinolaryngologiste étudie les pathologies complexes de la sphère ORL."]
+/* ============================================================
+   NAVIGATION ENTRE ÉCRANS
+   ============================================================ */
+function goHome() {
+  show('screenHome');
+  hide('screenMulti'); hide('screenLobby'); hide('screenGame'); hide('screenEnd');
+  hide('screenSoloSetup'); hide('screenSoloGame'); hide('screenSoloEnd');
+  stopSoloTimers();
+}
+
+$('modeMulti').addEventListener('click', () => {
+  const p = $('pseudo').value.trim();
+  if (!p) return setMsg('msg', 'Entre un pseudo avant de continuer.', 'var(--msg-rouge)');
+  pseudo = p;
+  localStorage.setItem('josef_pseudo', pseudo);
+  hide('screenHome'); show('screenMulti');
+});
+
+$('modeSolo').addEventListener('click', () => {
+  const p = $('pseudo').value.trim();
+  if (!p) return setMsg('msg', 'Entre un pseudo avant de continuer.', 'var(--msg-rouge)');
+  pseudo = p;
+  localStorage.setItem('josef_pseudo', pseudo);
+  hide('screenHome'); show('screenSoloSetup');
+  $('soloMyName').textContent = pseudo;
+});
+
+$('btnBackHome1').addEventListener('click', goHome);
+$('btnBackHome2').addEventListener('click', goHome);
+
+/* ============================================================
+   CRÉATION & CONNEXION SALLE (MULTIJOUEUR)
+   ============================================================ */
+async function createRoom(){
+  if (!uid) {
+    try { await auth.signInAnonymously(); uid = auth.currentUser.uid; } catch(e){}
   }
-};
+  let code = null;
+  for (let i = 0; i < 10; i++) {
+    const testCode = genCode();
+    const snap = await db.collection('rooms').doc(testCode).get();
+    if (!snap.exists) { code = testCode; break; }
+  }
+  if (!code) return setMsg('msgMulti', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
 
-const proverbes = [
-  "« C'est en forgeant qu'on devient forgeron. »",
-  "« Petit à petit, l'oiseau fait son nid. »",
-  "« La persévérance vient à bout de tout. »",
-  "« Vouloir, c'est pouvoir. »",
-  "« Les petits ruisseaux font les grandes rivières. »",
-  "« Il n'y a pas de réussite sans effort. »",
-  "« Chaque expert a d'abord été un débutant. »",
-  "« Le succès est la somme de petits efforts répétés. »"
-];
+  await db.collection('rooms').doc(code).set({
+    state: 'lobby',
+    hostName: pseudo,
+    players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 } },
+    questions: [],
+    currentQ: 0,
+    qStartAt: 0,
+    winnerName: null,
+    createdAt: Date.now()
+  });
+  
+  localStorage.setItem('josef_room', code);
+  isHost = true;
+  roomCode = code;
+  enterLobby();
+}
 
-const motivations = [
-  "🌟 « Chaque mot appris est une victoire sur l'ignorance. »",
-  "💪 « Tu es plus fort(e) que tu ne le penses. Continue ! »",
-  "🚀 « Un petit progrès chaque jour mène à de grands résultats. »",
-  "🎯 « La régularité bat le talent quand le talent ne s'entraîne pas. »",
-  "🏆 « Champion(ne) n'est pas celui qui ne tombe jamais, mais celui qui se relève toujours. »",
-  "🌱 « Les graines que tu plantes aujourd'hui deviendront des arbres demain. »",
-  "✨ « Crois en toi et tout devient possible. »",
-  "🔥 « La difficulté d'aujourd'hui est la force de demain. »"
-];
+async function joinRoom(code){
+  const ref = db.collection('rooms').doc(code);
+  const snap = await ref.get();
+  if (!snap.exists) return setMsg('msgMulti', '❌ Salle introuvable.', 'var(--msg-rouge)');
+  const data = snap.data();
+  if (data.state !== 'lobby') return setMsg('msgMulti', '❌ La partie a déjà commencé.', 'var(--msg-rouge)');
 
-const defis = [
-  "Épelle 5 mots sans aucune erreur.",
-  "Écris une phrase contenant 3 mots de la liste.",
-  "Récite la dictée à un adulte sans faute.",
-  "Trouve un synonyme pour 3 mots de la liste.",
-  "Classe les mots par ordre alphabétique.",
-  "Écris les mots les plus difficiles 5 fois.",
-  "Invente une mini-histoire avec 4 mots.",
-  "Fais deviner 5 mots à quelqu'un sans les dire."
-];
+  if (!data.players[pseudo]) {
+    await ref.update({
+      [`players.${pseudo}`]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 }
+    });
+  }
+  
+  localStorage.setItem('josef_room', code);
+  isHost = false;
+  roomCode = code;
+  enterLobby();
+}
 
-/* ========== UTILITAIRES ========== */
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
+/* ============================================================
+   LOBBY
+   ============================================================ */
+function enterLobby(){
+  hide('screenHome'); hide('screenMulti'); show('screenLobby'); hide('screenGame'); hide('screenEnd');
+  $('lobbyCode').textContent = roomCode;
+
+  if (unsubscribeRoom) unsubscribeRoom();
+  unsubscribeRoom = db.collection('rooms').doc(roomCode).onSnapshot(
+    (doc) => {
+      if (!doc.exists) return;
+      currentRoom = doc.data();
+      renderRoom(currentRoom);
+    },
+    (err) => {
+      console.error('❌ Erreur Firestore :', err);
+      setMsg('msg2', '❌ Erreur : ' + err.message, 'var(--msg-rouge)');
+    }
+  );
+}
+
+function renderRoom(game){
+  if (game.state === 'lobby') {
+    hide('screenGame'); hide('screenEnd'); show('screenLobby');
+    renderLobby(game);
+  } else if (game.state === 'playing') {
+    hide('screenLobby'); hide('screenEnd'); show('screenGame');
+    renderGame(game);
+  } else if (game.state === 'ended') {
+    hide('screenLobby'); hide('screenGame'); show('screenEnd');
+    renderEnd(game);
+  }
+}
+
+function renderLobby(game){
+  const players = game.players || {};
+  const names = Object.keys(players);
+  $('lobbyPlayers').innerHTML = names.map(name => `
+    <div class="player-card ${name===pseudo?'me':''}">
+      <span class="player-name">${escapeHtml(name)}${name===game.hostName?' 👑':''}</span>
+      <span class="pill">${name===pseudo?'toi':'prêt'}</span>
+    </div>
+  `).join('');
+
+  if (game.hostName === pseudo) {
+    $('hostControls').style.display = 'flex';
+    $('guestLeave').style.display = 'none';
+  } else {
+    $('hostControls').style.display = 'none';
+    $('guestLeave').style.display = 'flex';
+  }
+  $('btnStart').disabled = names.length < 2;
+  $('lobbyStatus').textContent = names.length < 2
+    ? "⏳ Attends au moins 1 autre joueur…"
+    : `✅ ${names.length} joueur(s) prêt(s) — l'hôte peut lancer.`;
+}
+
+$('btnStart').addEventListener('click', async () => {
+  if (!currentRoom || currentRoom.hostName !== pseudo) return;
+  const names = Object.keys(currentRoom.players || {});
+  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
+  
+  const historySnap = await db.collection('config').doc('history').get();
+  let history = historySnap.exists ? historySnap.data().asked || [] : [];
+
+  let all = [];
+  for (const prefix of Object.keys(FIELDS)) {
+    for (const item of FIELDS[prefix]) {
+      const qId = `${prefix}-${item.mot}`;
+      if (!history.includes(qId)) {
+        all.push({ id: qId, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
+  if (all.length < TOTAL_QUESTIONS) {
+    history = [];
+    all = [];
+    for (const prefix of Object.keys(FIELDS)) {
+      for (const item of FIELDS[prefix]) {
+        all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
+      }
+    }
+  }
+
+  for (let i = all.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    [all[i], all[j]] = [all[j], all[i]];
   }
-  return a;
-}
-function formatDate(date) {
-  const d = new Date(date);
-  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-  return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}`;
-}
-function addDays(date, days) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
-}
-function pad(n) { return String(n).padStart(2, '0'); }
+  
+  const questions = all.slice(0, TOTAL_QUESTIONS);
+  const newAskedIds = questions.map(q => q.id);
+  const updatedHistory = [...history, ...newAskedIds];
+  await db.collection('config').doc('history').set({ asked: updatedHistory });
 
-/* ========== GÉNÉRATION DU CONTENU ========== */
-function genererContenu() {
-  const nom = document.getElementById('nom').value || 'Élève';
-  const dateDebutVal = document.getElementById('dateDebut').value;
-  const dateDebut = dateDebutVal ? new Date(dateDebutVal) : new Date();
-  const niveau = document.getElementById('niveau').value;
-  const nbSemaines = parseInt(document.getElementById('semaines').value);
-  const theme = document.getElementById('theme').value || 'général';
-  const nbMots = parseInt(document.getElementById('nbMots').value);
-  const nbCopies = parseInt(document.getElementById('nbCopies').value);
-  const progression = document.getElementById('progression').value === 'oui';
-  const consignesPerso = document.getElementById('consignes').value.split('\n').filter(l => l.trim());
-
-  const optionsActives = Array.from(document.querySelectorAll('.opt:checked')).map(o => o.value);
-
-  const niveauNom = {
-    debutant: 'Débutant (CE1–CE2)',
-    intermediaire: 'Intermédiaire (CM1–CM2)',
-    avance: 'Avancé (6e–5e)'
-  }[niveau];
-
-  const mots = banqueMots[niveau];
-  const dics = dictees[niveau];
-  const paliers = ['facile', 'moyen', 'difficile'];
-  const paliersNoms = { facile: '🟢 FACILE', moyen: '🟡 MOYEN', difficile: '🔴 DIFFICILE' };
-
-  let contenu = '';
-
-  /* ===== PAGE DE GARDE ===== */
-  contenu += `
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║        📚  CARNET D'ENTRAÎNEMENT  📚                          ║
-║            DICTÉE  &  ÉPELLATION                              ║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
-
-👤 Élève            : ${nom}
-🎓 Niveau           : ${niveauNom}
-📅 Début            : ${formatDate(dateDebut)}
-📖 Durée            : ${nbSemaines} semaines
-🏷️ Thème            : ${theme}
-✏️ Mots / semaine   : ${nbMots}
-📝 Copies / mot     : ${nbCopies} fois
-
-───────────────────────────────────────────────────────────────
-                    🎯 OBJECTIF DU CARNET
-───────────────────────────────────────────────────────────────
-
-Progresser en dictée et en épellation grâce à un entraînement
-régulier, structuré et motivant.
-
-Chaque semaine, tu travailleras :
-   • L'épellation à voix haute
-   • La copie et la mémorisation des mots
-   • La dictée et l'auto-dictée
-   • La création de phrases
-   • L'auto-correction guidée
-   • Un bilan personnel
-
-───────────────────────────────────────────────────────────────
-                    📋 CONSIGNES GÉNÉRALES
-───────────────────────────────────────────────────────────────
-`;
-  consignesPerso.forEach((c, i) => {
-    contenu += `   ${i + 1}. ${c}\n`;
+  const updates = {
+    state: 'playing',
+    currentQ: 0,
+    questions,
+    qStartAt: Date.now(),
+    winnerName: null
+  };
+  names.forEach(n => {
+    updates[`players.${n}.score`] = 0;
+    updates[`players.${n}.lastAnswerQ`] = -1;
+    updates[`players.${n}.lastWrongQ`] = -1;
+    updates[`players.${n}.correctAnswers`] = 0;
+    updates[`players.${n}.wrongAnswers`] = 0;
   });
+  try { await db.collection('rooms').doc(roomCode).update(updates); }
+  catch(e){ console.error(e); }
+});
 
-  contenu += `
-
-───────────────────────────────────────────────────────────────
-        ✨ Prêt(e) ? C'est parti pour ${nbSemaines} semaines ! ✨
-───────────────────────────────────────────────────────────────
-`;
-
-  let idxProv = 0, idxMotiv = 0, idxDefi = 0;
-
-  /* ===== SEMAINES ===== */
-  for (let s = 1; s <= nbSemaines; s++) {
-    let palierIndex = 0;
-    if (progression) {
-      if (nbSemaines <= 2) palierIndex = s === 1 ? 0 : 2;
-      else if (nbSemaines <= 4) palierIndex = s <= 2 ? 0 : (s === 3 ? 1 : 2);
-      else if (nbSemaines <= 6) palierIndex = s <= 2 ? 0 : (s <= 4 ? 1 : 2);
-      else palierIndex = s <= 3 ? 0 : (s <= 6 ? 1 : 2);
+/* ============================================================
+   JEU MULTIJOUEUR
+   ============================================================ */
+function renderGame(game){
+  const players = game.players || {};
+  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  
+  $('scoreboard').innerHTML = entries.map(([name,p]) => {
+    let stateClass = '';
+    if (p.lastAnswerQ === game.currentQ) {
+      stateClass = p.lastWrongQ === game.currentQ ? 'bad' : 'good';
     }
-    const palier = paliers[palierIndex];
-    const debutSem = addDays(dateDebut, (s - 1) * 7);
-    const finSem = addDays(debutSem, 6);
-    const motsSem = shuffle(mots[palier]).slice(0, nbMots);
-    const dicteeSem = shuffle(dics[palier])[0];
-    const proverbe = proverbes[idxProv++ % proverbes.length];
-    const motivation = motivations[idxMotiv++ % motivations.length];
-    const defi = defis[idxDefi++ % defis.length];
+    return `
+    <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''} ${stateClass}">
+      <span class="player-name">${escapeHtml(name)}</span>
+      <span class="player-score">${p.score||0}</span>
+    </div>
+  `}).join('');
 
-    contenu += `
+  let answered = 0;
+  for (const name of Object.keys(players)) {
+    if (players[name].lastAnswerQ === game.currentQ) answered++;
+  }
+  $('answeredCount').textContent = answered;
+  $('totalPlayers').textContent = Object.keys(players).length;
 
-
-╔═══════════════════════════════════════════════════════════════╗
-║  📅 SEMAINE ${s}  —  ${paliersNoms[palier].padEnd(15)}               ║
-║  Du ${formatDate(debutSem)} au ${formatDate(finSem)}
-╚═══════════════════════════════════════════════════════════════╝
-`;
-
-    /* --- EXERCICE 1 : LISTE DE MOTS --- */
-    if (optionsActives.includes('listeMots')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  📝 EXERCICE 1 — LISTE DE MOTS À ÉPELER                     │
-│  Consigne : Lis chaque mot. Épelle-le à voix haute.         │
-└─────────────────────────────────────────────────────────────┘
-`;
-      motsSem.forEach((mot, i) => {
-        contenu += `   ${pad(i + 1)}. ${mot.padEnd(28)} ☐ Épelé   ☐ Lu   ☐ Compris\n`;
-      });
+  const questions = game.questions || [];
+  const qIdx = game.currentQ || 0;
+  $('qCounter').textContent = `Question ${qIdx+1}/${questions.length}`;
+  
+  const q = questions[qIdx];
+  if (q) {
+    if (lastAnsweredQ !== qIdx) {
+      $('prefixBig').textContent = q.prefix.toUpperCase();
+      $('definitionText').textContent = q.def;
+      $('answer').value = "";
+      $('answer').disabled = false;
+      $('btnSubmit').disabled = false;
+      setMsg('msg3', '');
+      lastAnsweredQ = qIdx;
     }
-
-    /* --- EXERCICE 2 : COPIE DES MOTS --- */
-    if (optionsActives.includes('copieMots')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  ✍️ EXERCICE 2 — COPIE DES MOTS (${nbCopies} fois)         │
-│  Consigne : Recopie chaque mot ${nbCopies} fois sans faute. │
-└─────────────────────────────────────────────────────────────┘
-`;
-      motsSem.forEach((mot, i) => {
-        contenu += `\n   Mot ${pad(i + 1)} : ${mot}\n`;
-        for (let c = 1; c <= nbCopies; c++) {
-          contenu += `   ${c}. _______________________________________________\n`;
-        }
-      });
-    }
-
-    /* --- EXERCICE 3 : ÉPELLATION --- */
-    if (optionsActives.includes('epellation')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  🗣️ EXERCICE 3 — ÉPELLATION À VOIX HAUTE                    │
-│  Consigne : Épelle chaque mot lettre par lettre.            │
-└─────────────────────────────────────────────────────────────┘
-`;
-      motsSem.slice(0, 5).forEach((mot, i) => {
-        contenu += `   ${pad(i + 1)}. ${mot.padEnd(25)} → ___ ___ ___ ___ ___ ___ ___ ___\n`;
-      });
-    }
-
-    /* --- EXERCICE 4 : DICTÉE --- */
-    if (optionsActives.includes('dictee')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  📖 EXERCICE 4 — DICTÉE DE LA SEMAINE                        │
-│  Consigne : Écoute et écris la phrase sans erreur.          │
-└─────────────────────────────────────────────────────────────┘
-
-   Phrase à dicter :
-   « ${dicteeSem} »
-
-   Mon écriture :
-   _______________________________________________________________
-
-   _______________________________________________________________
-
-   _______________________________________________________________
-
-   ☐ Relu    ☐ Corrigé    ☐ Recopié sans faute
-`;
-    }
-
-    /* --- EXERCICE 5 : AUTO-DICTÉE --- */
-    if (optionsActives.includes('autodictee')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  🎧 EXERCICE 5 — AUTO-DICTÉE                                 │
-│  Consigne : Mémorise la phrase, puis écris-la de mémoire.   │
-└─────────────────────────────────────────────────────────────┘
-
-   Temps de mémorisation : ☐ 2 min   ☐ 5 min   ☐ 10 min
-
-   Mon écriture de mémoire :
-   _______________________________________________________________
-
-   _______________________________________________________________
-
-   _______________________________________________________________
-`;
-    }
-
-    /* --- EXERCICE 6 : INVENTE UNE PHRASE --- */
-    if (optionsActives.includes('phraseInvente')) {
-      const motsChoix = shuffle(motsSem).slice(0, 3);
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  💡 EXERCICE 6 — INVENTE UNE PHRASE                          │
-│  Consigne : Utilise les mots suivants dans une phrase.      │
-└─────────────────────────────────────────────────────────────┘
-
-   Mots imposés : ${motsChoix.join('  •  ')}
-
-   Ma phrase :
-   _______________________________________________________________
-
-   _______________________________________________________________
-`;
-    }
-
-    /* --- EXERCICE 7 : MOTS CACHÉS / CLASSEMENT --- */
-    if (optionsActives.includes('motsCroises')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  🧩 EXERCICE 7 — CLASSEMENT ALPHABÉTIQUE                     │
-│  Consigne : Classe les mots dans l'ordre alphabétique.      │
-└─────────────────────────────────────────────────────────────┘
-
-   Mots à classer : ${motsSem.slice(0, 6).join(', ')}
-
-   1. ____________________   4. ____________________
-   2. ____________________   5. ____________________
-   3. ____________________   6. ____________________
-`;
-    }
-
-    /* --- EXERCICE 8 : AUTO-CORRECTION --- */
-    if (optionsActives.includes('correction')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  ✅ EXERCICE 8 — AUTO-CORRECTION GUIDÉE                      │
-│  Consigne : Compare ton travail avec le modèle.             │
-└─────────────────────────────────────────────────────────────┘
-
-   ☐ J'ai relu chaque mot.
-   ☐ J'ai vérifié les accents.
-   ☐ J'ai vérifié les majuscules.
-   ☐ J'ai corrigé mes erreurs en rouge.
-   ☐ J'ai recopié les mots erronés 3 fois.
-
-   Mots que je dois revoir :
-   _______________________________________________________________
-`;
-    }
-
-    /* --- BILAN --- */
-    if (optionsActives.includes('bilan')) {
-      contenu += `
-┌─────────────────────────────────────────────────────────────┐
-│  📊 BILAN DE LA SEMAINE ${s}                                  │
-└─────────────────────────────────────────────────────────────┘
-
-   Épellation      : ____ / ${nbMots}     ☐ Excellent  ☐ Bien  ☐ À revoir
-   Dictée          : ____ erreurs       ☐ 0  ☐ 1-2  ☐ 3+
-   Auto-dictée     : ____ erreurs       ☐ 0  ☐ 1-2  ☐ 3+
-   Copie           : ☐ Sans faute  ☐ Quelques fautes  ☐ À refaire
-
-   Mon ressenti : ☐ 😀 Content  ☐ 🙂 Moyen  ☐ 😕 Difficile
-
-   Ce que j'ai appris :
-   _______________________________________________________________
-
-   Ce que je dois améliorer :
-   _______________________________________________________________
-`;
-    }
-
-    /* --- PROVERBE --- */
-    if (optionsActives.includes('proverbe')) {
-      contenu += `
-   💬 PROVERBE DE LA SEMAINE :
-   ${proverbe}
-`;
-    }
-
-    /* --- MOTIVATION --- */
-    if (optionsActives.includes('motivation')) {
-      contenu += `
-   🌟 MOTIVATION :
-   ${motivation}
-`;
-    }
-
-    /* --- DÉFI --- */
-    if (optionsActives.includes('defi')) {
-      contenu += `
-   🏆 DÉFI DE LA SEMAINE :
-   ${defi}
-
-   ☐ Défi relevé !
-`;
-    }
-
-    contenu += `\n`;
   }
 
-  /* ===== PAGE FINALE ===== */
-  contenu += `
-
-
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║              🎉 FÉLICITATIONS ${nom.toUpperCase().padEnd(20)} 🎉         ║
-║                                                               ║
-║  Tu as terminé ${nbSemaines} semaines d'entraînement !              ║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
-
-   Continue à pratiquer chaque jour, même 10 minutes :
-   la régularité est la clé du succès !
-
-   « Le succès est la somme de petits efforts répétés. »
-
-───────────────────────────────────────────────────────────────
-   📝 NOTES PERSONNELLES :
-───────────────────────────────────────────────────────────────
-
-   ___________________________________________________________
-
-   ___________________________________________________________
-
-   ___________________________________________________________
-
-   ___________________________________________________________
-
-   ___________________________________________________________
-
-   ___________________________________________________________
-
-───────────────────────────────────────────────────────────────
-   Généré le ${formatDate(new Date())}
-───────────────────────────────────────────────────────────────
-`;
-
-  return contenu;
+  startTimerLoop();
 }
 
-/* ========== TÉLÉCHARGEMENT WORD ========== */
-function generer() {
-  const contenu = genererContenu();
-  const nom = document.getElementById('nom').value || 'Eleve';
-
-  /* Aperçu */
-  const preview = document.getElementById('preview');
-  preview.style.display = 'block';
-  document.getElementById('previewBody').textContent = contenu.substring(0, 1500) + '\n\n[...]';
-
-  /* Fichier Word */
-  const htmlWord = `
-<html xmlns:o='urn:schemas-microsoft-com:office:office'
-      xmlns:w='urn:schemas-microsoft-com:office:word'
-      xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-<meta charset="UTF-8">
-<title>Carnet Dictée Épellation — ${nom}</title>
-<!--[if gte mso 9]>
-<xml>
-<w:WordDocument>
-<w:View>Print</w:View>
-<w:Zoom>100</w:Zoom>
-</w:WordDocument>
-</xml>
-<![endif]-->
-<style>
-  @page { size: A4; margin: 1.8cm; }
-  body { font-family: 'Calibri', Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #000; }
-  pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; line-height: 1.35; }
-</style>
-</head>
-<body>
-<pre>${contenu.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-</body>
-</html>
-`;
-
-  const blob = new Blob(['\ufeff', htmlWord], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const lien = document.createElement('a');
-  lien.href = url;
-  lien.download = `Carnet_${nom.replace(/\s+/g, '_')}.doc`;
-  document.body.appendChild(lien);
-  lien.click();
-  document.body.removeChild(lien);
-  URL.revokeObjectURL(url);
-
-  setTimeout(() => preview.scrollIntoView({ behavior: 'smooth' }), 300);
+function startTimerLoop(){
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!currentRoom || currentRoom.state !== 'playing') return;
+    const elapsed = Date.now() - (currentRoom.qStartAt || 0);
+    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
+    const pct = (remain / QUESTION_DURATION_MS) * 100;
+    $('timerFill').style.width = pct + '%';
+    $('timerText').textContent = Math.ceil(remain/1000) + 's';
+    $('timerBar').classList.toggle('timer-danger', remain < 5000);
+    
+    if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
+  }, 250);
 }
 
-/* ========== DATE PAR DÉFAUT ========== */
-window.addEventListener('load', () => {
-  const t = new Date();
-  document.getElementById('dateDebut').value =
-    `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+async function handleTimeout(){
+  if (!currentRoom || currentRoom.state !== 'playing') return;
+  if (currentRoom.qStartAt_processed === currentRoom.qStartAt) return;
+  
+  const qIdx = currentRoom.currentQ;
+  const q = currentRoom.questions[qIdx];
+  
+  setMsg('msg3', `⏱ Temps écoulé ! La réponse était : ${q.mot}`, 'var(--dore)');
+  speak("Temps écoulé. La réponse était " + q.mot);
+  
+  setTimeout(async () => {
+    const questions = currentRoom.questions || [];
+    const updates = { qStartAt_processed: currentRoom.qStartAt };
+    if (qIdx + 1 >= questions.length) {
+      updates.state = 'ended';
+      updates.winnerName = null;
+    } else {
+      updates.currentQ = qIdx + 1;
+      updates.qStartAt = Date.now();
+    }
+    try { await db.collection('rooms').doc(roomCode).update(updates); }
+    catch(e){ console.error(e); }
+  }, 1000);
+}
+
+$('btnSubmit').addEventListener('click', submitAnswer);
+$('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
+
+$('btnVocal').addEventListener('click', () => {
+  if (currentRoom && currentRoom.questions) {
+    const q = currentRoom.questions[currentRoom.currentQ];
+    if (q) speak("Trouvez le mot qui commence par " + q.prefix + ". " + q.def);
+  }
 });
+
+async function submitAnswer(){
+  if (!currentRoom || currentRoom.state !== 'playing' || $('answer').disabled) return;
+  const qIdx = currentRoom.currentQ;
+  const userVal = normalize($('answer').value);
+  if (!userVal) return;
+  const q = currentRoom.questions[qIdx];
+  if (!q) return;
+
+  const correct = userVal === normalize(q.mot);
+  $('answer').disabled = true;
+  $('btnSubmit').disabled = true;
+
+  const ref = db.collection('rooms').doc(roomCode);
+
+  if (correct) {
+    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
+    speak("Correct !");
+    
+    const pData = currentRoom.players[pseudo] || { score: 0, correctAnswers: 0 };
+    const myScore = (pData.score || 0) + POINTS_PER_CORRECT;
+    const myCorrects = (pData.correctAnswers || 0) + 1;
+
+    const updates = {
+      [`players.${pseudo}.score`]: myScore,
+      [`players.${pseudo}.lastAnswerQ`]: qIdx,
+      [`players.${pseudo}.correctAnswers`]: myCorrects
+    };
+    
+    setTimeout(async () => {
+      if (qIdx + 1 >= currentRoom.questions.length) {
+        updates.state = 'ended';
+        updates.winnerName = pseudo;
+      } else {
+        updates.currentQ = qIdx + 1;
+        updates.qStartAt = Date.now();
+      }
+      try { await ref.update(updates); } catch(e){ console.error(e); }
+    }, 1000);
+    
+  } else {
+    setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
+    speak("Mauvaise réponse.");
+    
+    const pData = currentRoom.players[pseudo] || { wrongAnswers: 0 };
+    const myWrongs = (pData.wrongAnswers || 0) + 1;
+
+    try {
+      await ref.update({
+        [`players.${pseudo}.lastWrongQ`]: qIdx,
+        [`players.${pseudo}.lastAnswerQ`]: qIdx,
+        [`players.${pseudo}.wrongAnswers`]: myWrongs
+      });
+      
+      const snap = await ref.get();
+      const data = snap.data();
+      const players = data.players || {};
+      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
+      
+      if (allWrong) {
+        setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
+        
+        setTimeout(async () => {
+          const updates = {};
+          if (qIdx + 1 >= data.questions.length) {
+            updates.state = 'ended';
+          } else {
+            updates.currentQ = qIdx + 1;
+            updates.qStartAt = Date.now();
+          }
+          await ref.update(updates);
+        }, 1000);
+      }
+    } catch(e){ console.error(e); }
+  }
+}
+
+/* ============================================================
+   QUITTER (MULTI)
+   ============================================================ */
+async function leaveRoom() {
+  if (!confirm("Êtes-vous sûr de vouloir quitter ?")) return;
+
+  if (roomCode && pseudo) {
+    try {
+      await db.collection('rooms').doc(roomCode).update({
+        [`players.${pseudo}`]: firebase.firestore.FieldValue.delete()
+      });
+    } catch(e) { console.error(e); }
+  }
+  localStorage.removeItem('josef_room');
+  location.reload();
+}
+
+$('btnLobbyLeave').addEventListener('click', leaveRoom);
+$('btnLobbyLeaveGuest').addEventListener('click', leaveRoom);
+$('btnGameLeave').addEventListener('click', leaveRoom);
+
+/* ============================================================
+   FIN MULTI
+   ============================================================ */
+function renderEnd(game){
+  if (timerInterval) clearInterval(timerInterval);
+  
+  const players = game.players || {};
+  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  
+  const winnerName = entries.length > 0 ? entries[0][0] : null;
+  const winnerScore = winnerName ? entries[0][1].score : 0;
+  const tied = entries.length > 1 && entries[1][1].score === winnerScore;
+
+  const tbody = $('finalScoreboardBody');
+  tbody.innerHTML = entries.map(([name,p],i) => {
+    let rankIcon = '';
+    let rankClass = '';
+    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
+    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
+    else if (i === 2) { rankIcon = '🥉'; rankClass = 'bronze'; }
+    else { rankIcon = i + 1; }
+
+    const isWinner = name === winnerName && !tied;
+
+    return `
+      <tr class="${isWinner ? 'winner-row' : ''}">
+        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
+        <td>${escapeHtml(name)} ${isWinner ? '👑' : ''}</td>
+        <td style="color:var(--dore); font-size:1.2rem;">${p.score||0} pts</td>
+        <td>✅ ${p.correctAnswers||0} | ❌ ${p.wrongAnswers||0}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  if (tied) {
+    $('endTitle').textContent = `🤝 Égalité entre les joueurs à ${winnerScore} pts !`;
+  } else if (winnerName) {
+    $('endTitle').textContent = `🏆 ${winnerName} gagne avec ${winnerScore} pts !`;
+  } else {
+    $('endTitle').textContent = "⏱ Fin de partie — aucun gagnant";
+  }
+
+  const questions = game.questions || [];
+  $('recapList').innerHTML = questions.map((q, i) => `
+    <div class="recap-item">
+      <span><b>Q${i+1}.</b> (${q.prefix.toUpperCase()}) ${q.mot}</span>
+      <span class="recap-good">Réponse</span>
+    </div>
+  `).join('');
+}
+
+$('btnCreate').addEventListener('click', async () => {
+  try { await createRoom(); }
+  catch(e) { console.error(e); setMsg('msgMulti', '❌ ' + e.message, 'var(--msg-rouge)'); }
+});
+
+$('btnJoin').addEventListener('click', async () => {
+  const code = $('joinCode').value.trim();
+  if (!/^\d{4}$/.test(code)) return setMsg('msgMulti', 'Code à 4 chiffres requis.', 'var(--msg-rouge)');
+  try { await joinRoom(code); }
+  catch(e) { console.error(e); setMsg('msgMulti', '❌ ' + e.message, 'var(--msg-rouge)'); }
+});
+
+$('btnLeave').addEventListener('click', () => {
+  localStorage.removeItem('josef_room');
+  location.reload();
+});
+
+/* ============================================================
+   MODE SOLO — YA CREDO ROBOT
+   ============================================================ */
+
+/* Sélection de la difficulté */
+let soloDifficulty = 'moyen';
+let soloTimeLimit = 15;
+
+document.querySelectorAll('.diff-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.diff-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    soloDifficulty = card.dataset.diff;
+    soloTimeLimit = parseInt(card.dataset.time);
+  });
+});
+
+/* Construction d'une banque de questions plate */
+function buildAllQuestions() {
+  const all = [];
+  for (const prefix of Object.keys(FIELDS)) {
+    for (const item of FIELDS[prefix]) {
+      all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
+    }
+  }
+  return all;
+}
+
+/* Démarrer le duel solo */
+$('btnStartSolo').addEventListener('click', () => {
+  startSoloGame();
+});
+
+function startSoloGame() {
+  const all = buildAllQuestions();
+  // Mélange
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  const questions = all.slice(0, TOTAL_QUESTIONS);
+
+  soloState = {
+    questions,
+    currentQ: 0,
+    myScore: 0,
+    robotScore: 0,
+    myCorrects: 0,
+    myWrongs: 0,
+    robotCorrects: 0,
+    robotWrongs: 0,
+    answers: [], // historique : { by: 'me'|'robot', correct: bool, mot }
+    qStartAt: Date.now(),
+    questionClosed: false,
+    difficulty: soloDifficulty,
+    timeLimit: soloTimeLimit
+  };
+
+  hide('screenHome'); hide('screenMulti'); hide('screenLobby');
+  hide('screenGame'); hide('screenEnd'); hide('screenSoloSetup');
+  hide('screenSoloEnd');
+  show('screenSoloGame');
+
+  $('soloMyName').textContent = pseudo;
+  $('soloMyScore').textContent = '0';
+  $('soloRobotScore').textContent = '0';
+  $('diffBadge').textContent =
+    soloDifficulty === 'facile' ? '🟢 Facile' :
+    soloDifficulty === 'difficile' ? '🔴 Difficile' : '🟡 Moyen';
+
+  renderSoloQuestion();
+}
+
+/* Affichage d'une question solo */
+function renderSoloQuestion() {
+  if (!soloState) return;
+  const qIdx = soloState.currentQ;
+  const q = soloState.questions[qIdx];
+  if (!q) return;
+
+  soloState.questionClosed = false;
+  soloState.qStartAt = Date.now();
+
+  $('qCounterSolo').textContent = `Question ${qIdx+1}/${soloState.questions.length}`;
+  $('prefixBigSolo').textContent = q.prefix.toUpperCase();
+  $('definitionTextSolo').textContent = q.def;
+  $('answerSolo').value = '';
+  $('answerSolo').disabled = false;
+  $('btnSubmitSolo').disabled = false;
+  $('robotEmoji').textContent = '🤖';
+  setMsg('msgSolo', '');
+
+  // Reset timer bar
+  $('timerFillSolo').style.width = '100%';
+  $('timerTextSolo').textContent = soloTimeLimit + 's';
+  $('timerBarSolo').classList.remove('timer-danger');
+
+  // Reset robot progress
+  $('robotProgressFill').style.width = '0%';
+  $('robotTimeLeft').textContent = soloTimeLimit;
+
+  // Lance les timers
+  startSoloTimers();
+}
+
+/* Timers synchronisés : humain + robot */
+function startSoloTimers() {
+  stopSoloTimers();
+  const startAt = soloState.qStartAt;
+  const limitMs = soloState.timeLimit * 1000;
+
+  // Timer d'affichage
+  soloTimerInterval = setInterval(() => {
+    if (!soloState || soloState.questionClosed) return;
+    const elapsed = Date.now() - startAt;
+    const remain = Math.max(0, limitMs - elapsed);
+
+    // Barre du haut (temps humain)
+    const pct = (remain / limitMs) * 100;
+    $('timerFillSolo').style.width = pct + '%';
+    $('timerTextSolo').textContent = Math.ceil(remain/1000) + 's';
+    $('timerBarSolo').classList.toggle('timer-danger', remain < 3000);
+
+    // Barre robot (progression vers sa réponse)
+    const robotPct = Math.min(100, (elapsed / limitMs) * 100);
+    $('robotProgressFill').style.width = robotPct + '%';
+    $('robotTimeLeft').textContent = Math.ceil(remain/1000);
+
+    // Animation de réflexion du robot dans les 3 dernières secondes
+    if (remain < 3000 && !soloState.questionClosed) {
+      $('robotEmoji').classList.add('robot-thinking');
+    } else {
+      $('robotEmoji').classList.remove('robot-thinking');
+    }
+  }, 200);
+
+  // Timeout robot : répond à la fin du temps
+  soloRobotTimeout = setTimeout(() => {
+    if (!soloState || soloState.questionClosed) return;
+    robotAnswer();
+  }, limitMs);
+}
+
+function stopSoloTimers() {
+  if (soloTimerInterval) { clearInterval(soloTimerInterval); soloTimerInterval = null; }
+  if (soloRobotTimeout) { clearTimeout(soloRobotTimeout); soloRobotTimeout = null; }
+  $('robotEmoji').classList.remove('robot-thinking');
+}
+
+/* Le joueur soumet sa réponse */
+$('btnSubmitSolo').addEventListener('click', submitSoloAnswer);
+$('answerSolo').addEventListener('keydown', e => { if (e.key === 'Enter') submitSoloAnswer(); });
+$('btnVocalSolo').addEventListener('click', () => {
+  if (soloState) {
+    const q = soloState.questions[soloState.currentQ];
+    if (q) speak("Trouvez le mot qui commence par " + q.prefix + ". " + q.def);
+  }
+});
+
+function submitSoloAnswer() {
+  if (!soloState || soloState.questionClosed) return;
+  const val = normalize($('answerSolo').value);
+  if (!val) return;
+
+  soloState.questionClosed = true;
+  stopSoloTimers();
+
+  const q = soloState.questions[soloState.currentQ];
+  const correct = val === normalize(q.mot);
+
+  $('answerSolo').disabled = true;
+  $('btnSubmitSolo').disabled = true;
+
+  if (correct) {
+    soloState.myScore += POINTS_PER_CORRECT;
+    soloState.myCorrects++;
+    soloState.answers.push({ by: 'me', correct: true, mot: q.mot });
+    $('soloMyScore').textContent = soloState.myScore;
+    $('soloPlayerCard').classList.add('good');
+    setMsg('msgSolo', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
+    speak("Correct !");
+  } else {
+    soloState.myWrongs++;
+    soloState.answers.push({ by: 'me', correct: false, mot: q.mot });
+    $('soloPlayerCard').classList.add('bad');
+    setMsg('msgSolo', `❌ Mauvaise réponse. La réponse était : ${q.mot}`, 'var(--msg-rouge)');
+    speak("Mauvaise réponse. La réponse était " + q.mot);
+  }
+
+  setTimeout(() => {
+    $('soloPlayerCard').classList.remove('good', 'bad');
+    nextSoloQuestion();
+  }, 1500);
+}
+
+/* Le robot répond correctement quand le temps est écoulé */
+function robotAnswer() {
+  if (!soloState || soloState.questionClosed) return;
+  soloState.questionClosed = true;
+  stopSoloTimers();
+
+  const q = soloState.questions[soloState.currentQ];
+
+  // Le robot répond correctement
+  soloState.robotScore += POINTS_PER_CORRECT;
+  soloState.robotCorrects++;
+  soloState.answers.push({ by: 'robot', correct: true, mot: q.mot });
+  $('soloRobotScore').textContent = soloState.robotScore;
+  $('soloRobotCard').classList.add('good');
+  $('answerSolo').disabled = true;
+  $('btnSubmitSolo').disabled = true;
+  $('robotEmoji').textContent = '🤖';
+  setMsg('msgSolo', `🤖 Temps écoulé ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--robot)');
+  speak("Temps écoulé. Ya Credo Robot répond correctement : " + q.mot);
+
+  setTimeout(() => {
+    $('soloRobotCard').classList.remove('good');
+    nextSoloQuestion();
+  }, 1800);
+}
+
+/* Question suivante ou fin */
+function nextSoloQuestion() {
+  if (!soloState) return;
+  soloState.currentQ++;
+  if (soloState.currentQ >= soloState.questions.length) {
+    endSoloGame();
+  } else {
+    renderSoloQuestion();
+  }
+}
+
+/* Quitter le duel solo */
+$('btnSoloLeave').addEventListener('click', () => {
+  if (!confirm("Quitter le duel ?")) return;
+  stopSoloTimers();
+  soloState = null;
+  goHome();
+});
+
+/* Fin de partie solo */
+function endSoloGame() {
+  stopSoloTimers();
+  hide('screenSoloGame');
+  show('screenSoloEnd');
+
+  const me = {
+    name: pseudo,
+    score: soloState.myScore,
+    corrects: soloState.myCorrects,
+    wrongs: soloState.myWrongs,
+    isMe: true
+  };
+  const robot = {
+    name: 'Ya Credo Robot',
+    score: soloState.robotScore,
+    corrects: soloState.robotCorrects,
+    wrongs: soloState.robotWrongs,
+    isRobot: true
+  };
+
+  const entries = [me, robot].sort((a,b) => b.score - a.score);
+  const tie = entries[0].score === entries[1].score;
+
+  const tbody = $('soloFinalBody');
+  tbody.innerHTML = entries.map((p, i) => {
+    let rankIcon = '';
+    let rankClass = '';
+    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
+    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
+    const isWinner = i === 0 && !tie;
+    return `
+      <tr class="${isWinner ? 'winner-row' : ''}">
+        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
+        <td>${p.isRobot ? '🤖 ' : '👤 '}${escapeHtml(p.name)} ${isWinner ? '👑' : ''}</td>
+        <td style="color:${p.isRobot ? 'var(--robot)' : 'var(--dore)'}; font-size:1.2rem;">${p.score} pts</td>
+        <td>✅ ${p.corrects} | ❌ ${p.wrongs}</td>
+      </tr>
+    `;
+  }).join('');
+
+  if (tie) {
+    $('soloEndTitle').textContent = `🤝 Égalité à ${me.score} pts !`;
+  } else if (entries[0].isRobot) {
+    $('soloEndTitle').textContent = `🤖 Ya Credo Robot gagne ${robot.score} - ${me.score} !`;
+  } else {
+    $('soloEndTitle').textContent = `🏆 ${pseudo} bat Ya Credo Robot ${me.score} - ${robot.score} !`;
+  }
+
+  // Récap
+  $('soloRecapList').innerHTML = soloState.questions.map((q, i) => {
+    const a = soloState.answers[i];
+    const by = a ? (a.by === 'robot' ? '🤖 Robot' : '👤 Moi') : '—';
+    return `
+      <div class="recap-item">
+        <span><b>Q${i+1}.</b> (${q.prefix.toUpperCase()}) ${q.mot}</span>
+        <span class="recap-good">${by}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+/* Revanche */
+$('btnSoloRematch').addEventListener('click', () => {
+  hide('screenSoloEnd');
+  show('screenSoloSetup');
+});
+
+/* Retour accueil */
+$('btnSoloBack').addEventListener('click', () => {
+  soloState = null;
+  goHome();
+});
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+initAuth();
 </script>
 </body>
 </html>
