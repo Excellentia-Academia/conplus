@@ -1,123 +1,267 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Année - Challenge Dictée et Épellation</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f9f9f9; --texte: #111; --carte: #fff;
-    --rouge: #ef4444; --bleu: #3b82f6; --vert: #10b981; --gris: #e5e7eb;
-  }
-  body.dark-mode {
-    --bg: #121212; --texte: #f4f4f4; --carte: #1e1e1e; --gris: #333;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body {
-    font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--texte);
-    transition: background 0.3s, color 0.3s; padding-bottom: 50px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registre des Coachs - Dictée et Épellation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --carte: #f9f9f9;
+      --bleu: rgb(88, 88, 238);
+      --bleu-hover: rgb(72, 72, 245);
+      --rouge: red;
+      --gris: #e0e0e0;
+    }
+    body.dark-mode {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --carte: #1e1e1e;
+      --gris: #333333;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+      padding-bottom: 50px;
+    }
+    
+    .toggle-btn {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      background: none;
+      border: 2px solid var(--text-color);
+      color: var(--text-color);
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s, color 0.3s, border 0.3s;
+      z-index: 100;
+      font-family: inherit;
+    }
+    .toggle-btn:hover {
+      background: var(--text-color);
+      color: var(--bg-color);
+    }
 
-  .nav-bar {
-    position: fixed; top: 15px; left: 15px; right: 15px;
-    display: flex; justify-content: space-between; z-index: 100;
-  }
-  .nav-btn {
-    padding: 10px 20px; background: var(--carte); color: var(--texte);
-    border: 1px solid var(--gris); border-radius: 8px; text-decoration: none;
-    font-weight: 600; cursor: pointer; font-family: inherit; font-size: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  .nav-btn:hover { background: var(--gris); }
+    .back-btn {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+      padding: 10px;
+      border: none;
+      border-radius: 500px;
+      background-color: var(--gris);
+      color: var(--text-color);
+      cursor: pointer;
+      z-index: 100;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+    }
 
-  h1 {
-    background: linear-gradient(135deg, #5858ee, #3b82f6); color: white;
-    text-align: center; padding: 30px 20px; margin-top: 70px;
-    font-size: 2.5rem; border-radius: 20px; max-width: 800px;
-    margin-left: auto; margin-right: auto; box-shadow: 0 10px 30px rgba(88, 88, 238, 0.3);
-  }
+    h1 {
+      background-color: var(--bleu);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  .conteneur { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+    .conteneur {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
 
-  .categorie { margin-bottom: 30px; }
-  .categorie h2 {
-    color: var(--rouge); font-size: 1.4rem; margin-bottom: 12px;
-    padding-bottom: 6px; border-bottom: 2px solid var(--rouge);
-  }
+    /* Design exact de tes paragraphes */
+    .categorie-titre {
+      color: var(--rouge);
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-top: 25px;
+      margin-bottom: 10px;
+    }
 
-  .liste-personnes { display: flex; flex-direction: column; gap: 8px; padding-left: 15px; }
-  .personne { font-size: 1.05rem; line-height: 1.5; padding: 6px 0; }
+    .personne-item {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .personne-item:hover {
+      background: var(--carte);
+    }
 
-  .zone-admin {
-    max-width: 800px; margin: 40px auto; padding: 20px;
-    background: var(--carte); border: 2px dashed var(--bleu);
-    border-radius: 16px; text-align: center;
-  }
-  .zone-admin h3 { color: var(--bleu); margin-bottom: 15px; }
-  .btn-ajouter {
-    background: var(--bleu); color: white; border: none; padding: 12px 25px;
-    border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-ajouter:hover { background: #2563eb; transform: translateY(-2px); }
+    .actions-personne {
+      display: flex;
+      gap: 8px;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+    .personne-item:hover .actions-personne {
+      opacity: 1;
+    }
+    .actions-personne button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 5px;
+    }
+    .actions-personne button:hover {
+      transform: scale(1.2);
+    }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    z-index: 999; align-items: center; justify-content: center; padding: 20px;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: var(--carte); padding: 30px; border-radius: 16px;
-    max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    animation: popIn 0.3s ease-out;
-  }
-  @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .modal h3 { color: var(--bleu); margin-bottom: 20px; font-size: 1.3rem; }
-  .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--texte); }
-  .modal select, .modal input {
-    width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--gris);
-    border-radius: 8px; font-family: inherit; font-size: 1rem; background: var(--bg); color: var(--texte);
-  }
-  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-  .modal-actions button {
-    flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-  }
-  .btn-annuler { background: var(--gris); color: var(--texte); }
-  .btn-valider { background: var(--vert); color: white; }
+    /* Boutons Ajouter */
+    .btn-ajouter {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 15px;
+      background: var(--bleu);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .btn-ajouter:hover {
+      background: var(--bleu-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(88,88,238,0.4);
+    }
 
-  .msg { text-align: center; margin-top: 15px; font-weight: 600; font-size: 0.9rem; min-height: 20px; }
-  .msg-ok { color: var(--vert); }
-  .msg-err { color: var(--rouge); }
-</style>
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--bg-color);
+      color: var(--text-color);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .modal h3 {
+      text-align: center;
+      color: var(--bleu);
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .modal label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      margin-top: 15px;
+    }
+    .modal input, .modal select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--gris);
+      border-radius: 8px;
+      background: var(--carte);
+      color: var(--text-color);
+      font-family: inherit;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-annuler {
+      background: var(--gris);
+      color: var(--text-color);
+    }
+    .btn-valider {
+      background: var(--bleu);
+      color: white;
+    }
+
+    .msg {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    .msg-error { color: var(--rouge); }
+    .msg-ok { color: #10b981; }
+  </style>
 </head>
 <body>
 
-  <div class="nav-bar">
-    <a href="Test.html" class="nav-btn">← Retour</a>
-    <button class="nav-btn" onclick="document.body.classList.toggle('dark-mode')">🌓 Mode</button>
-  </div>
+  <a href="Test.html" class="back-btn">← Retour</a>
+  <button class="toggle-btn" onclick="document.body.classList.toggle('dark-mode')">🌓 Mode</button>
 
   <h1 id="titreAnnee">Année 2025</h1>
 
   <div class="conteneur" id="contenu">
-    <p style="text-align:center;opacity:0.5;">Chargement de l'héritage...</p>
+    <p style="text-align:center; opacity:0.5;">Chargement...</p>
   </div>
 
-  <div class="zone-admin" id="zoneAdmin">
-    <h3>✍️ Ajouter au Registre</h3>
-    <p style="font-size:0.9rem;opacity:0.7;margin-bottom:15px;">
-      Vous êtes un coach ? Ajoutez votre nom ou celui de votre équipe pour cette année.
-    </p>
-    <button class="btn-ajouter" onclick="ouvrirFormulaire()">➕ Ajouter une personne</button>
-    <p id="msgSave" class="msg"></p>
-  </div>
+  <button class="btn-ajouter" onclick="ouvrirFormulaire()">➕ Ajouter une personne à l'année</button>
 
+  <!-- MODAL (Fenêtre d'ajout / modification) -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
-      <h3>Ajouter au registre</h3>
+      <h3 id="modalTitre">Ajouter une personne</h3>
       
+      <label>Année :</label>
+      <select id="selectAnnee">
+        <option value="2024">2024</option>
+        <option value="2025" selected>2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+      </select>
+
       <label>Catégorie :</label>
       <select id="selectCategorie">
         <option value="Coach">Coach</option>
@@ -130,24 +274,24 @@
       <label>Nom complet :</label>
       <input type="text" id="inputNom" placeholder="Ex: Ya Lwanga Credo Musao">
 
-      <label>Mention (optionnel) :</label>
-      <input type="text" id="inputMention" placeholder="Ex: 🥇, 🥈, ✨">
+      <label>Mention (ex: 🥇) :</label>
+      <input type="text" id="inputMention" placeholder="Optionnel">
 
-      <div class="modal-actions">
+      <div class="modal-buttons">
         <button class="btn-annuler" onclick="fermerFormulaire()">Annuler</button>
-        <button class="btn-valider" onclick="validerAjout()">Enregistrer</button>
+        <button class="btn-valider" onclick="validerFormulaire()">Enregistrer</button>
       </div>
       <p id="modalMsg" class="msg"></p>
     </div>
   </div>
 
-<!-- 🔥 FIREBASE INTÉGRÉ ICI -->
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 /* ============================================================
-   🔥 CONFIG FIREBASE (Celle de ton projet eeee-1387d)
+   CONFIG FIREBASE
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
@@ -161,31 +305,31 @@ firebase.initializeApp(FIREBASE_CONFIG);
 const db = firebase.firestore();
 
 /* ============================================================
-   DÉTECTION DE L'ANNÉE
+   ÉTAT GLOBAL
    ============================================================ */
 const urlParams = new URLSearchParams(window.location.search);
-const ANNEE = urlParams.get('annee') || '2025';
-document.getElementById('titreAnnee').textContent = 'Année ' + ANNEE;
+const ANNEE_PAR_DEFAUT = urlParams.get('annee') || '2025';
+document.getElementById('titreAnnee').textContent = 'Année ' + ANNEE_PAR_DEFAUT;
+
+// Données temporaires en mémoire pour modification
+let donneesActuelles = { categories: {} };
+let modeEdition = false; // false = ajout, true = modification
+let personneEnEdition = null; // { annee, categorie, index }
 
 /* ============================================================
-   AFFICHAGE DES DONNÉES
+   CHARGEMENT DES DONNÉES
    ============================================================ */
-async function chargerRegistre() {
-  const conteneur = document.getElementById('contenu');
-  conteneur.innerHTML = '<p style="text-align:center;opacity:0.5;">Chargement...</p>';
-
+async function chargerDonnees() {
   try {
-    const docRef = db.collection('registres_annees').doc(ANNEE);
+    const docRef = db.collection('registres_annees').doc(ANNEE_PAR_DEFAUT);
     const snap = await docRef.get();
     
-    let data = { categories: {} };
-
     if (snap.exists) {
-      data = snap.data();
+      donneesActuelles = snap.data();
     } else {
-      // Initialisation avec tes vraies données 2025
-      if (ANNEE === '2025') {
-        data = {
+      // Si l'année n'existe pas encore, on initialise avec 2025 par défaut pour te faire plaisir
+      if (ANNEE_PAR_DEFAUT === '2025') {
+        donneesActuelles = {
           categories: {
             "Coach": [ { nom: "Ya Lwanga Credo Musao", mention: "🥇" } ],
             "Vice-coachs": [
@@ -207,43 +351,53 @@ async function chargerRegistre() {
             ]
           }
         };
-        await docRef.set(data);
+        await docRef.set(donneesActuelles);
+      } else {
+        donneesActuelles = { categories: {} };
       }
     }
-
-    renderRegistre(data.categories);
+    
+    renderAffichage();
   } catch(e) {
-    console.error("Erreur de chargement :", e);
-    conteneur.innerHTML = '<p style="color:red;text-align:center;">Erreur de chargement. Vérifie les règles Firestore.</p>';
+    console.error(e);
+    document.getElementById('contenu').innerHTML = `<p class="msg msg-error">Erreur de chargement : ${e.message}</p>`;
   }
 }
 
-function renderRegistre(categories) {
+/* ============================================================
+   AFFICHAGE (Même format que ton code d'origine)
+   ============================================================ */
+function renderAffichage() {
   const conteneur = document.getElementById('contenu');
+  const cats = donneesActuelles.categories || {};
   
-  if (!categories || Object.keys(categories).length === 0) {
-    conteneur.innerHTML = '<p style="text-align:center;opacity:0.5;">Aucune personne enregistrée pour le moment.</p>';
-    return;
+  let html = '';
+  let totalPersonnes = 0;
+
+  for (const [catNom, personnes] of Object.entries(cats)) {
+    if (personnes.length === 0) continue;
+    totalPersonnes += personnes.length;
+    
+    html += `<div class="categorie-titre">${catNom}</div>`;
+    
+    personnes.forEach((p, index) => {
+      html += `
+        <div class="personne-item">
+          <span>${index + 1}. ${escapeHtml(p.nom)} ${p.mention ? escapeHtml(p.mention) : ''}</span>
+          <div class="actions-personne">
+            <button title="Modifier" onclick="ouvrirModification('${catNom}', ${index})">✏️</button>
+            <button title="Supprimer" onclick="supprimerPersonne('${catNom}', ${index})">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
   }
 
-  let html = '';
-  for (const [catNom, personnes] of Object.entries(categories)) {
-    if (personnes.length === 0) continue;
-    
-    html += `<div class="categorie">
-      <h2>${escapeHtml(catNom)}</h2>
-      <div class="liste-personnes">`;
-    
-    personnes.forEach((p, idx) => {
-      html += `<div class="personne">
-        ${idx+1}. ${escapeHtml(p.nom)} ${p.mention ? `<span>${escapeHtml(p.mention)}</span>` : ''}
-      </div>`;
-    });
-    
-    html += `</div></div>`;
+  if (totalPersonnes === 0) {
+    conteneur.innerHTML = '<p style="text-align:center; opacity:0.5;">Aucune personne enregistrée pour cette année.</p>';
+  } else {
+    conteneur.innerHTML = html;
   }
-  
-  conteneur.innerHTML = html;
 }
 
 function escapeHtml(s) {
@@ -253,65 +407,128 @@ function escapeHtml(s) {
 }
 
 /* ============================================================
-   AJOUT D'UNE PERSONNE (Sauvegarde Firebase)
+   FORMULAIRE (Ajout / Modification)
    ============================================================ */
 function ouvrirFormulaire() {
+  modeEdition = false;
+  document.getElementById('modalTitre').textContent = "Ajouter une personne";
+  document.getElementById('selectAnnee').value = ANNEE_PAR_DEFAUT;
+  document.getElementById('selectCategorie').value = "Coach";
+  document.getElementById('inputNom').value = "";
+  document.getElementById('inputMention').value = "";
+  document.getElementById('modalMsg').textContent = "";
   document.getElementById('modal').classList.add('active');
-  document.getElementById('inputNom').value = '';
-  document.getElementById('inputMention').value = '';
-  document.getElementById('modalMsg').textContent = '';
 }
+
+function ouvrirModification(categorie, index) {
+  modeEdition = true;
+  const p = donneesActuelles.categories[categorie][index];
+  personneEnEdition = { categorie, index };
+
+  document.getElementById('modalTitre').textContent = "Modifier la personne";
+  document.getElementById('selectAnnee').value = ANNEE_PAR_DEFAUT;
+  document.getElementById('selectCategorie').value = categorie;
+  document.getElementById('inputNom').value = p.nom;
+  document.getElementById('inputMention').value = p.mention || "";
+  document.getElementById('modalMsg').textContent = "";
+  document.getElementById('modal').classList.add('active');
+}
+
 function fermerFormulaire() {
   document.getElementById('modal').classList.remove('active');
 }
 
-async function validerAjout() {
+async function validerFormulaire() {
+  const anneeSelectionnee = document.getElementById('selectAnnee').value;
   const categorie = document.getElementById('selectCategorie').value;
   const nom = document.getElementById('inputNom').value.trim();
   const mention = document.getElementById('inputMention').value.trim();
   const msg = document.getElementById('modalMsg');
 
   if (!nom) {
-    msg.textContent = '❌ Veuillez écrire le nom.';
-    msg.className = 'msg msg-err';
+    msg.textContent = "❌ Le nom est obligatoire.";
+    msg.className = "msg msg-error";
     return;
   }
 
   try {
-    const docRef = db.collection('registres_annees').doc(ANNEE);
-    const snap = await docRef.get();
-    
-    let data = snap.exists ? snap.data() : { categories: {} };
-    if (!data.categories) data.categories = {};
-    if (!data.categories[categorie]) data.categories[categorie] = [];
+    msg.textContent = "⏳ Sauvegarde...";
+    msg.className = "msg";
+    msg.style.color = "var(--bleu)";
 
-    data.categories[categorie].push({ nom, mention });
+    // Si on change d'année, ou si on ajoute une nouvelle personne
+    if (anneeSelectionnee !== ANNEE_PAR_DEFAUT) {
+      // Sauvegarder dans une autre année
+      const docRefAutre = db.collection('registres_annees').doc(anneeSelectionnee);
+      const snapAutre = await docRefAutre.get();
+      let dataAutre = snapAutre.exists ? snapAutre.data() : { categories: {} };
+      if (!dataAutre.categories) dataAutre.categories = {};
+      if (!dataAutre.categories[categorie]) dataAutre.categories[categorie] = [];
+      
+      dataAutre.categories[categorie].push({ nom, mention });
+      await docRefAutre.set(dataAutre);
+      
+      msg.textContent = `✅ Ajouté à l'année ${anneeSelectionnee} !`;
+      msg.className = "msg msg-ok";
+      
+      // Redirection facultative pour voir la nouvelle année
+      setTimeout(() => {
+        window.location.href = `?annee=${anneeSelectionnee}`;
+      }, 1000);
+      
+      return; 
+    }
 
-    await docRef.set(data);
+    // Sinon, on sauvegarde dans l'année actuelle
+    if (modeEdition) {
+      // Modification
+      donneesActuelles.categories[personneEnEdition.categorie].splice(personneEnEdition.index, 1);
+      if (!donneesActuelles.categories[categorie]) donneesActuelles.categories[categorie] = [];
+      donneesActuelles.categories[categorie].push({ nom, mention });
+      msg.textContent = "✅ Modifié avec succès !";
+    } else {
+      // Ajout
+      if (!donneesActuelles.categories[categorie]) donneesActuelles.categories[categorie] = [];
+      donneesActuelles.categories[categorie].push({ nom, mention });
+      msg.textContent = "✅ Ajouté avec succès !";
+    }
 
-    msg.textContent = '✅ Enregistré avec succès !';
-    msg.className = 'msg msg-ok';
+    // Sauvegarde dans Firebase
+    await db.collection('registres_annees').doc(ANNEE_PAR_DEFAUT).set(donneesActuelles);
 
-    renderRegistre(data.categories);
+    msg.className = "msg msg-ok";
+    renderAffichage();
 
     setTimeout(() => {
       fermerFormulaire();
-      document.getElementById('msgSave').textContent = '✅ ' + nom + ' a été ajouté au registre.';
-      document.getElementById('msgSave').className = 'msg msg-ok';
-      setTimeout(() => document.getElementById('msgSave').textContent = '', 3000);
-    }, 1200);
+    }, 1000);
 
   } catch(e) {
-    console.error("Erreur d'ajout :", e);
-    msg.textContent = '❌ Erreur : ' + e.message;
-    msg.className = 'msg msg-err';
+    console.error(e);
+    msg.textContent = "❌ Erreur : " + e.message;
+    msg.className = "msg msg-error";
   }
 }
 
 /* ============================================================
-   DÉMARRAGE
+   SUPPRESSION
    ============================================================ */
-chargerRegistre();
+async function supprimerPersonne(categorie, index) {
+  if (!confirm("Voulez-vous vraiment supprimer cette personne ?")) return;
+
+  try {
+    donneesActuelles.categories[categorie].splice(index, 1);
+    await db.collection('registres_annees').doc(ANNEE_PAR_DEFAUT).set(donneesActuelles);
+    renderAffichage();
+  } catch(e) {
+    alert("Erreur lors de la suppression : " + e.message);
+  }
+}
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+chargerDonnees();
 </script>
 </body>
 </html>
