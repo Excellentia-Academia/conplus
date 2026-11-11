@@ -3,33 +3,37 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Continuer l'Aventure 🏛️ | L'Héritage des Coachs</title>
+<title>L'Héritage des Coachs | Continuer l'Aventure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --or: #d4af37;
-    --or-clair: #fceabb;
-    --nuit: #0a0e17;
-    --nuit-clair: #131c31;
-    --bleu: #1e3a8a;
-    --texte: #e2e8f0;
-    --texte-sombre: #94a3b8;
-    --verre: rgba(255, 255, 255, 0.05);
-    --bordure: rgba(212, 175, 55, 0.3);
+    --noir-profond: #050505;
+    --nuit: #0a0f18;
+    --or: #c5a059;
+    --or-brillance: #e6c87a;
+    --or-sombre: #8a6d31;
+    --texte: #d1d5db;
+    --texte-doux: #9ca3af;
+    --lueur: rgba(197, 160, 89, 0.15);
+    --bordure: rgba(197, 160, 89, 0.2);
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family: 'Inter', sans-serif;
-    background: var(--nuit);
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lora', serif;
+    background-color: var(--noir-profond);
+    background-image: radial-gradient(circle at 50% 0%, var(--nuit) 0%, var(--noir-profond) 70%);
     color: var(--texte);
     min-height: 100vh;
     overflow-x: hidden;
+    line-height: 1.8;
   }
 
-  /* ================= CANVAS PARTICULES ================= */
-  #particles-canvas {
+  /* Particules lentes et sacrées */
+  #canvas-sacre {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
@@ -37,203 +41,207 @@
     pointer-events: none;
   }
 
-  /* ================= CONTENEUR ================= */
   .app-wrapper {
     position: relative;
     z-index: 1;
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
   }
 
   /* ================= ANIMATIONS ================= */
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes fadeInCinematic {
+    0% { opacity: 0; filter: blur(10px); transform: scale(0.98); }
+    100% { opacity: 1; filter: blur(0); transform: scale(1); }
   }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  @keyframes lineGrow {
+    0% { width: 0; opacity: 0; }
+    100% { width: 100%; opacity: 1; }
   }
-  @keyframes float {
+  @keyframes floatSlow {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
   }
-  @keyframes glowPulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6); }
-  }
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
+  @keyframes pulseGolden {
+    0%, 100% { box-shadow: 0 0 15px rgba(197, 160, 89, 0.1); border-color: rgba(197, 160, 89, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(197, 160, 89, 0.3); border-color: rgba(197, 160, 89, 0.6); }
   }
 
-  /* ================= HERO ================= */
-  .hero {
+  /* ================= HERO / ENTRÉE ================= */
+  .hero-cinematic {
     text-align: center;
-    padding: 100px 20px 80px;
-    animation: fadeIn 1.5s ease-out;
-  }
-  .hero-icon {
-    font-size: 5rem;
-    margin-bottom: 20px;
-    display: inline-block;
-    animation: float 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 24px;
-    background: linear-gradient(135deg, var(--or), var(--or-clair), var(--or));
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 4s linear infinite;
-  }
-  .hero-subtitle {
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    color: var(--texte-sombre);
-    max-width: 650px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
-    font-weight: 300;
-    animation: fadeInUp 1.2s ease-out 0.3s both;
-  }
-  .hero-divider {
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--or), transparent);
-    margin: 0 auto 48px;
-    animation: fadeIn 2s ease-out 0.8s both;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    animation: fadeInCinematic 2s ease-out forwards;
   }
 
-  /* ================= BOUTON PRINCIPAL ================= */
-  .btn-entrer {
-    padding: 20px 60px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 2px;
+  .hero-symbol {
+    font-size: 4rem;
+    color: var(--or);
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeInCinematic 2s ease-out 0.5s forwards, floatSlow 6s ease-in-out infinite 2s;
+    text-shadow: 0 0 30px var(--lueur);
+  }
+
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    color: var(--texte);
+    letter-spacing: 4px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeInCinematic 2s ease-out 1s forwards;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  }
+
+  .hero h1 span {
+    display: block;
+    color: var(--or);
+    font-size: 0.4em;
+    letter-spacing: 8px;
+    margin-top: 15px;
     text-transform: uppercase;
-    background: linear-gradient(135deg, var(--or), var(--or-clair));
-    color: var(--nuit);
-    border: none;
-    border-radius: 60px;
+  }
+
+  .hero-divider-cinematic {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--or), transparent);
+    margin: 40px auto;
+    opacity: 0;
+    animation: lineGrow 3s ease-out 1.5s forwards;
+  }
+
+  .hero-text-cinematic {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--texte-doux);
+    max-width: 700px;
+    margin: 0 auto 50px;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeInCinematic 2s ease-out 2s forwards;
+  }
+
+  .btn-franchir {
+    font-family: 'Cinzel', serif;
+    padding: 18px 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--or);
+    border: 1px solid var(--or);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: fadeInUp 1.2s ease-out 0.6s both, glowPulse 3s ease-in-out infinite 1.8s;
     position: relative;
     overflow: hidden;
+    transition: all 0.5s ease;
+    opacity: 0;
+    animation: fadeInCinematic 2s ease-out 2.5s forwards, pulseGolden 4s infinite 3s;
   }
-  .btn-entrer::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.6s;
+
+  .btn-franchir:hover {
+    background: var(--or);
+    color: var(--noir-profond);
+    box-shadow: 0 0 40px var(--lueur);
   }
-  .btn-entrer:hover::before { left: 100%; }
-  .btn-entrer:hover {
-    transform: translateY(-4px) scale(1.03);
-    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+
+  /* ================= SECTIONS ================= */
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    text-align: center;
+    color: var(--or);
+    margin: 80px 0 40px;
+    letter-spacing: 2px;
   }
 
   /* ================= CARTES COACHS ================= */
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    text-align: center;
-    color: var(--or);
-    margin: 60px 0 40px;
-    font-weight: 700;
-  }
   .coach-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
-    animation: fadeInUp 1s ease-out 0.9s both;
+    animation: fadeInCinematic 1.5s ease-out 3s forwards;
+    opacity: 0;
   }
+
   .coach-card {
-    background: var(--verre);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--bordure);
-    border-radius: 20px;
-    padding: 32px 24px;
+    padding: 40px 24px;
     text-align: center;
     text-decoration: none;
     color: var(--texte);
-    transition: all 0.4s ease;
+    transition: all 0.5s ease;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
   }
-  .coach-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-    background: linear-gradient(90deg, transparent, var(--or), transparent);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
+
   .coach-card:hover {
-    transform: translateY(-8px);
+    background: rgba(197, 160, 89, 0.05);
     border-color: var(--or);
-    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
-    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   }
-  .coach-card:hover::before { transform: scaleX(1); }
+
   .coach-avatar {
-    width: 70px; height: 70px;
+    width: 80px; height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--or), var(--or-clair));
+    border: 1px solid var(--or);
     display: grid;
     place-items: center;
-    margin: 0 auto 16px;
+    margin: 0 auto 20px;
     font-size: 2rem;
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+    color: var(--or);
+    background: rgba(197, 160, 89, 0.05);
   }
+
   .coach-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--or-clair);
+    color: var(--or-brillance);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
   }
+
   .coach-subtitle {
-    font-size: 0.9rem;
-    color: var(--texte-sombre);
+    font-size: 0.85rem;
+    color: var(--texte-doux);
     font-style: italic;
   }
 
   /* ================= AUTH ================= */
   .auth-box {
-    max-width: 450px;
-    margin: 80px auto;
-    padding: 48px 36px;
-    background: var(--verre);
-    backdrop-filter: blur(16px);
+    max-width: 480px;
+    margin: 100px auto;
+    padding: 50px 40px;
+    background: rgba(10, 15, 24, 0.8);
     border: 1px solid var(--bordure);
-    border-radius: 24px;
     text-align: center;
-    animation: fadeInUp 0.8s ease-out;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: fadeInCinematic 1s ease-out;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
   }
+
   .auth-box h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
     color: var(--or);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
   }
+
   .auth-box p {
-    color: var(--texte-sombre);
-    margin-bottom: 32px;
-    font-size: 0.95rem;
+    color: var(--texte-doux);
+    margin-bottom: 30px;
+    font-style: italic;
   }
 
   /* ================= BOUTONS ================= */
@@ -241,43 +249,48 @@
     display: block;
     width: 100%;
     padding: 16px 24px;
-    font-size: 1rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
     font-weight: 700;
-    border-radius: 12px;
-    border: none;
+    letter-spacing: 1px;
+    border: 1px solid var(--or);
+    background: transparent;
+    color: var(--or);
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    margin-bottom: 12px;
+    transition: all 0.4s ease;
+    margin-bottom: 15px;
+    text-transform: uppercase;
   }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--or), var(--or-clair));
-    color: var(--nuit);
+
+  .btn:hover {
+    background: var(--or);
+    color: var(--noir-profond);
+    box-shadow: 0 0 20px var(--lueur);
   }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
-  }
+
   .btn-secondary {
-    background: rgba(255,255,255,0.05);
-    color: var(--texte);
-    border: 1px solid rgba(255,255,255,0.1);
+    border-color: var(--texte-doux);
+    color: var(--texte-doux);
   }
   .btn-secondary:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: var(--or);
+    background: var(--texte-doux);
+    color: var(--noir-profond);
   }
+
   .btn-danger {
-    background: transparent;
+    border-color: #7f1d1d;
     color: #f87171;
-    border: 1px solid #f87171;
   }
-  .btn-danger:hover { background: #f87171; color: white; }
+  .btn-danger:hover {
+    background: #f87171;
+    color: var(--noir-profond);
+  }
+
   .btn-small {
     display: inline-block;
     width: auto;
     padding: 10px 20px;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     margin: 0;
   }
 
@@ -288,140 +301,158 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-    padding: 24px 0;
+    padding: 30px 0;
     border-bottom: 1px solid var(--bordure);
-    margin-bottom: 32px;
-    animation: fadeIn 0.6s ease-out;
+    margin-bottom: 40px;
+    animation: fadeInCinematic 1s ease-out;
   }
+
   .editor-header h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cinzel', serif;
     font-size: 2rem;
     color: var(--or);
+    letter-spacing: 2px;
   }
+
   .editor-grid {
     display: grid;
     grid-template-columns: 1fr 340px;
-    gap: 28px;
-    animation: fadeInUp 0.8s ease-out;
+    gap: 30px;
+    animation: fadeInCinematic 1s ease-out 0.2s both;
   }
   @media(max-width: 850px) { .editor-grid { grid-template-columns: 1fr; } }
 
   .panel {
-    background: var(--verre);
-    backdrop-filter: blur(12px);
+    background: rgba(10, 15, 24, 0.6);
     border: 1px solid var(--bordure);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 20px;
+    padding: 30px;
+    margin-bottom: 24px;
   }
+
   .panel h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
     color: var(--or);
     margin-bottom: 20px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+    padding-bottom: 10px;
   }
+
   .panel h3 {
+    font-family: 'Cinzel', serif;
     font-size: 1rem;
     color: var(--texte);
-    margin: 20px 0 12px;
-    font-weight: 600;
+    margin: 25px 0 15px;
+    font-weight: 700;
   }
 
   label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
     margin-bottom: 8px;
-    color: var(--texte-sombre);
+    color: var(--or-sombre);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
   }
-  input[type="text"], input[type="email"], textarea, select {
+
+  input[type="text"], textarea, select {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    border-radius: 10px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(197, 160, 89, 0.2);
     color: var(--texte);
-    font-family: inherit;
+    font-family: 'Lora', serif;
     font-size: 1rem;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     transition: all 0.3s ease;
   }
+
   input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--or);
-    background: rgba(0,0,0,0.5);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    background: rgba(0,0,0,0.6);
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.1);
   }
-  textarea { min-height: 100px; resize: vertical; }
-  select option { background: var(--nuit); color: var(--texte); }
+
+  textarea { min-height: 120px; resize: vertical; }
+  select option { background: var(--nuit); }
 
   /* ================= BLOCS ================= */
   .bloc {
     background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 14px;
+    border: 1px solid rgba(197, 160, 89, 0.1);
+    padding: 20px;
+    margin-bottom: 16px;
     position: relative;
     transition: all 0.3s ease;
-    animation: fadeIn 0.4s ease-out;
   }
+
   .bloc:hover {
     border-color: var(--or);
-    background: rgba(212, 175, 55, 0.05);
+    background: rgba(197, 160, 89, 0.03);
   }
+
   .bloc-type {
     display: inline-block;
+    font-family: 'Cinzel', serif;
     font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     color: var(--or);
-    font-weight: 800;
-    margin-bottom: 10px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase;
   }
+
   .bloc-actions {
     position: absolute;
-    top: 12px; right: 12px;
+    top: 15px; right: 15px;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.3s;
   }
   .bloc:hover .bloc-actions { opacity: 1; }
   .bloc-actions button {
     background: transparent;
-    border: none;
+    border: 1px solid #7f1d1d;
     color: #f87171;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 8px;
+    transition: all 0.3s;
   }
+  .bloc-actions button:hover { background: #f87171; color: var(--noir-profond); }
 
   .add-bar {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
+
   .add-bar button {
-    padding: 12px 8px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    color: var(--or-clair);
-    border-radius: 10px;
+    padding: 14px 10px;
+    background: transparent;
+    border: 1px solid var(--bordure);
+    color: var(--or);
     cursor: pointer;
-    font-size: 0.8rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    text-transform: uppercase;
   }
-  .add-bar button span { font-size: 1.2rem; }
+
+  .add-bar button span { font-size: 1.3rem; }
+
   .add-bar button:hover {
-    background: var(--or);
-    color: var(--nuit);
+    background: rgba(197, 160, 89, 0.1);
     border-color: var(--or);
     transform: translateY(-2px);
   }
@@ -429,34 +460,34 @@
   /* ================= COULEURS & APERÇU ================= */
   .color-picker {
     width: 100%;
-    height: 56px;
-    border: none;
-    border-radius: 10px;
+    height: 50px;
+    border: 1px solid var(--bordure);
     cursor: pointer;
     background: transparent;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
+
   .preview-box {
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    border-radius: 12px;
-    padding: 20px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(197, 160, 89, 0.1);
+    padding: 24px;
     font-size: 0.9rem;
     min-height: 150px;
     max-height: 400px;
     overflow-y: auto;
   }
-  .preview-box h2 { color: var(--or); margin: 12px 0 8px; }
-  .preview-box p { color: var(--texte); line-height: 1.6; margin-bottom: 10px; }
+
+  .preview-box h2 { color: var(--or); margin: 16px 0 10px; font-family: 'Cinzel', serif; }
+  .preview-box p { color: var(--texte); margin-bottom: 12px; }
   .preview-box blockquote {
-    border-left: 3px solid var(--or);
-    padding-left: 14px;
+    border-left: 2px solid var(--or);
+    padding-left: 16px;
     font-style: italic;
-    color: var(--texte-sombre);
-    margin: 10px 0;
+    color: var(--texte-doux);
+    margin: 12px 0;
   }
-  .preview-box img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
-  .preview-box a { color: var(--or); font-weight: 600; }
+  .preview-box img { max-width: 100%; margin: 10px 0; }
+  .preview-box a { color: var(--or); font-weight: 600; text-decoration: underline; }
 
   /* ================= FICHIERS ================= */
   .file-item {
@@ -465,10 +496,9 @@
     align-items: center;
     background: rgba(0,0,0,0.2);
     padding: 12px 16px;
-    border-radius: 10px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 0.85rem;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(197, 160, 89, 0.1);
   }
   .file-item button {
     background: transparent;
@@ -492,99 +522,98 @@
   .link-box button {
     padding: 12px 16px;
     background: var(--or);
-    color: var(--nuit);
+    color: var(--noir-profond);
     border: none;
-    border-radius: 8px;
     cursor: pointer;
     font-weight: 700;
-    white-space: nowrap;
+    font-family: 'Cinzel', serif;
   }
 
   /* ================= PAGE PUBLIQUE ================= */
   .public-hero {
     text-align: center;
-    padding: 100px 20px 60px;
-    border-radius: 24px;
-    margin-bottom: 40px;
-    animation: fadeIn 1s ease-out;
+    padding: 120px 20px 80px;
+    margin-bottom: 50px;
+    animation: fadeInCinematic 1.5s ease-out;
     position: relative;
-    overflow: hidden;
+    background: transparent;
   }
-  .public-hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4));
-    pointer-events: none;
-  }
+  
   .public-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    color: white;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--or-brillance);
     font-weight: 900;
     position: relative;
     z-index: 1;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    letter-spacing: 2px;
   }
+
   .public-content {
     max-width: 800px;
-    margin: 0 auto 60px;
-    padding: 40px;
-    background: var(--verre);
-    backdrop-filter: blur(12px);
+    margin: 0 auto 80px;
+    padding: 50px;
+    background: rgba(10, 15, 24, 0.6);
     border: 1px solid var(--bordure);
-    border-radius: 20px;
-    line-height: 1.8;
-    font-size: 1.05rem;
-    animation: fadeInUp 1s ease-out 0.3s both;
+    line-height: 2;
+    font-size: 1.1rem;
+    animation: fadeInCinematic 1.5s ease-out 0.3s both;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
   }
+
   .public-content h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cinzel', serif;
     color: var(--or);
     font-size: 1.8rem;
-    margin: 32px 0 16px;
+    margin: 40px 0 20px;
+    letter-spacing: 1px;
   }
   .public-content h2:first-child { margin-top: 0; }
-  .public-content p { color: var(--texte); margin-bottom: 16px; }
+  .public-content p { color: var(--texte); margin-bottom: 20px; }
   .public-content blockquote {
-    border-left: 4px solid var(--or);
-    padding: 16px 24px;
-    margin: 24px 0;
+    border-left: 3px solid var(--or);
+    padding: 20px 30px;
+    margin: 30px 0;
     font-style: italic;
-    font-size: 1.15rem;
-    color: var(--or-clair);
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 0 12px 12px 0;
+    font-size: 1.2rem;
+    color: var(--or-brillance);
+    background: rgba(197, 160, 89, 0.05);
   }
   .public-content img {
     max-width: 100%;
-    border-radius: 12px;
-    margin: 20px 0;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    margin: 30px 0;
+    border: 1px solid var(--bordure);
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
   }
   .public-content a {
     display: inline-block;
     padding: 14px 28px;
-    background: linear-gradient(135deg, var(--or), var(--or-clair));
-    color: var(--nuit);
+    background: transparent;
+    border: 1px solid var(--or);
+    color: var(--or);
     text-decoration: none;
-    border-radius: 10px;
-    font-weight: 800;
-    margin: 10px 0;
-    transition: all 0.3s ease;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    margin: 15px 0;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
   }
   .public-content a:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    background: var(--or);
+    color: var(--noir-profond);
+    box-shadow: 0 0 20px var(--lueur);
   }
   .public-video {
     display: block;
     width: 100%;
     max-width: 700px;
     aspect-ratio: 16/9;
-    border: none;
-    border-radius: 12px;
-    margin: 20px auto;
+    border: 1px solid var(--bordure);
+    margin: 30px auto;
   }
 
   /* ================= TOAST ================= */
@@ -594,78 +623,79 @@
     left: 50%;
     transform: translateX(-50%) translateY(100px);
     padding: 16px 32px;
-    border-radius: 12px;
+    font-family: 'Cinzel', serif;
     font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
     z-index: 9999;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transition: all 0.5s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    border: 1px solid var(--or);
+    background: rgba(10, 15, 24, 0.95);
+    color: var(--or);
   }
   .toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
   }
-  .toast.success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-  .toast.info { background: linear-gradient(135deg, var(--or), var(--or-clair)); color: var(--nuit); }
+  .toast.error { border-color: #7f1d1d; color: #f87171; }
 
   /* ================= UTILS ================= */
   .hidden { display: none !important; }
   .status { text-align: center; padding: 16px; font-weight: 600; }
   .error-msg { color: #f87171; }
 
-  /* ================= SCROLLBAR ================= */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--nuit); }
-  ::-webkit-scrollbar-thumb { background: var(--or); border-radius: 4px; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--noir-profond); }
+  ::-webkit-scrollbar-thumb { background: var(--or-sombre); }
 </style>
 </head>
 <body>
 
-<!-- Canvas particules animées -->
-<canvas id="particles-canvas"></canvas>
+<canvas id="canvas-sacre"></canvas>
 
 <div class="app-wrapper">
 
   <!-- ===================== ÉCRAN ACCUEIL ===================== -->
   <div id="screenHome">
-    <div class="hero">
-      <div class="hero-icon">🏛️</div>
-      <h1>Continuer l'Aventure</h1>
-      <div class="hero-divider"></div>
-      <p class="hero-subtitle">
-        Ce lieu est un héritage vivant.<br>
-        Ici, chaque coach transmet son histoire, ses idées et ses ressources —<br>
-        <em style="color: var(--or-clair);">pour que l'aventure ne s'arrête jamais.</em>
+    <div class="hero-cinematic">
+      <div class="hero-symbol">⚜</div>
+      <h1>L'HÉRITAGE<span>Continuer l'Aventure</span></h1>
+      <div class="hero-divider-cinematic"></div>
+      <p class="hero-text-cinematic">
+        "Ce que nous transmettons ne meurt jamais.<br>
+        Ici reposent les histoires, les savoirs et les âmes des coachs.<br>
+        Franchissez le seuil et déposez votre pierre à l'édifice."
       </p>
-      <button class="btn-entrer" id="btnEntrer">✨ Entrer dans l'espace</button>
+      <button class="btn-franchir" id="btnEntrer">Franchir le seuil</button>
     </div>
 
-    <h2 class="section-title">🧑‍🏫 Les coachs héritiers</h2>
+    <h2 class="section-title">🕯️ Les Gardiens de la Mémoire</h2>
     <div id="listeCoachs" class="coach-grid"></div>
-    <p id="noCoachs" class="status" style="color: var(--texte-sombre); opacity: 0.6;">
-      Aucun coach n'a encore publié son histoire. Sois le premier.
+    <p id="noCoachs" class="status" style="color: var(--texte-doux); opacity: 0.6; font-style: italic; margin-bottom: 80px;">
+      Le sanctuaire attend son premier gardien. L'histoire est encore à écrire.
     </p>
   </div>
 
   <!-- ===================== ÉCRAN AUTH ===================== -->
   <div id="screenAuth" class="hidden">
     <div class="auth-box">
-      <h2>Rejoindre l'héritage</h2>
-      <p>Connecte-toi pour créer ou gérer ton espace coach.</p>
-      <button id="btnGoogle" class="btn btn-primary">🔵 Continuer avec Google</button>
-      <button id="btnAnon" class="btn btn-secondary">👤 Entrer anonymement</button>
-      <p id="msgAuth" class="status error-msg" style="min-height: 20px; margin-top: 16px;"></p>
+      <h2>Franchir le Seuil</h2>
+      <p>Identifiez-vous pour recevoir les clés de votre sanctuaire.</p>
+      <button id="btnGoogle" class="btn">🔵 Sceau de Google</button>
+      <button id="btnAnon" class="btn btn-secondary">👤 Entrer en tant qu'Anonyme</button>
+      <p id="msgAuth" class="status error-msg" style="min-height: 20px; margin-top: 16px; font-size: 0.85rem;"></p>
     </div>
   </div>
 
   <!-- ===================== ÉCRAN ÉDITEUR ===================== -->
   <div id="screenEditor" class="hidden">
     <div class="editor-header">
-      <h1>🧑‍🏫 Mon Espace</h1>
+      <h1>🕯️ Mon Sanctuaire</h1>
       <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-        <span id="userEmail" style="font-size: 0.85rem; color: var(--texte-sombre);"></span>
-        <button id="btnLogout" class="btn btn-danger btn-small">Déconnexion</button>
+        <span id="userEmail" style="font-size: 0.85rem; color: var(--texte-doux); font-style: italic;"></span>
+        <button id="btnLogout" class="btn btn-danger btn-small">Fermer le sceau</button>
       </div>
     </div>
 
@@ -673,70 +703,70 @@
       <!-- Colonne principale -->
       <div>
         <div class="panel">
-          <h2>📖 Ma page</h2>
-          <label>Titre de ma page</label>
-          <input id="pageTitre" type="text" placeholder="Mon parcours" value="Mon parcours">
+          <h2>📖 Mon Chapitre</h2>
+          <label>Titre de mon héritage</label>
+          <input id="pageTitre" type="text" placeholder="L'histoire d'un coach..." value="L'histoire d'un coach...">
 
-          <h3>Ajouter un bloc :</h3>
+          <h3>Forger mon récit :</h3>
           <div class="add-bar">
-            <button onclick="addBloc('titre')"><span>📌</span>Titre</button>
-            <button onclick="addBloc('texte')"><span>📝</span>Texte</button>
-            <button onclick="addBloc('image')"><span>🖼️</span>Image</button>
-            <button onclick="addBloc('pdf')"><span>📎</span>PDF</button>
-            <button onclick="addBloc('video')"><span>🎥</span>Vidéo</button>
-            <button onclick="addBloc('citation')"><span>💬</span>Citation</button>
+            <button onclick="addBloc('titre')"><span>⚜</span>Chapitre</button>
+            <button onclick="addBloc('texte')"><span>✒️</span>Récit</button>
+            <button onclick="addBloc('image')"><span>🖼️</span>Vision</button>
+            <button onclick="addBloc('pdf')"><span>📜</span>Archive</button>
+            <button onclick="addBloc('video')"><span>🎥</span>Mémoire</button>
+            <button onclick="addBloc('citation')"><span>💬</span>Pensée</button>
           </div>
           <div id="blocs"></div>
         </div>
 
         <div class="panel">
-          <h2>📎 Mes fichiers</h2>
-          <p style="font-size: 0.85rem; color: var(--texte-sombre); margin-bottom: 14px;">
-            Upload direct — disponibles en téléchargement sur ta page publique.
+          <h2>📜 Les Archives</h2>
+          <p style="font-size: 0.85rem; color: var(--texte-doux); margin-bottom: 14px; font-style: italic;">
+            Déposez ici les parchemins (PDF), les images et les preuves de votre passage.
           </p>
-          <input type="file" id="fileInput" multiple style="margin-bottom: 14px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed rgba(212,175,55,0.3); color: var(--texte);">
+          <input type="file" id="fileInput" multiple style="margin-bottom: 14px; padding: 12px; background: rgba(0,0,0,0.3); border: 1px dashed var(--bordure); color: var(--texte); font-family: 'Lora', serif; width: 100%;">
           <div id="fichiers"></div>
         </div>
 
-        <button class="btn btn-primary" id="btnSave" style="padding: 20px; font-size: 1.1rem;">
-          💾 Sauvegarder et publier
+        <button class="btn" id="btnSave" style="padding: 20px; font-size: 1rem;">
+          ⚜ Sceller et Publier l'Héritage
         </button>
-        <p id="msgSave" class="status" style="margin-top: 12px;"></p>
+        <p id="msgSave" class="status" style="margin-top: 12px; font-size: 0.85rem;"></p>
       </div>
 
       <!-- Sidebar -->
       <div>
         <div class="panel">
-          <h2>🎨 Apparence</h2>
-          <label>Couleur principale</label>
-          <input type="color" id="couleurPrimaire" class="color-picker" value="#d4af37">
-          <label>Couleur secondaire</label>
-          <input type="color" id="couleurSecondaire" class="color-picker" value="#fceabb">
-          <label>Police</label>
+          <h2>🎨 L'Âme</h2>
+          <label>Couleur de l'or (principale)</label>
+          <input type="color" id="couleurPrimaire" class="color-picker" value="#c5a059">
+          <label>Couleur de la flamme (secondaire)</label>
+          <input type="color" id="couleurSecondaire" class="color-picker" value="#8a6d31">
+          <label>Calligraphie</label>
           <select id="police">
-            <option value="Inter">Inter (moderne)</option>
-            <option value="'Playfair Display', serif">Playfair (élégant)</option>
-            <option value="Georgia, serif">Georgia (classique)</option>
-            <option value="'Courier New', monospace">Courier (machine)</option>
+            <option value="'Lora', serif">Lora (Livre ancien)</option>
+            <option value="'Cinzel', serif">Cinzel (Solennel)</option>
+            <option value="'Inter', sans-serif">Inter (Moderne)</option>
+            <option value="Georgia, serif">Georgia (Classique)</option>
           </select>
         </div>
 
         <div class="panel">
-          <h2>👁️ Aperçu</h2>
+          <h2>👁️ Vision</h2>
           <div class="preview-box" id="preview"></div>
         </div>
 
         <div class="panel">
-          <h2>🔗 Lien public</h2>
-          <p style="font-size: 0.8rem; color: var(--texte-sombre);">
-            Partage ce lien pour que ton histoire soit visible.
+          <h2>🔗 Le Lien</h2>
+          <p style="font-size: 0.8rem; color: var(--texte-doux); font-style: italic;">
+            Partagez ce lien pour que votre histoire traverse les âges.
           </p>
           <div class="link-box">
             <input id="lienPublic" readonly>
             <button onclick="copierLien()">📋</button>
           </div>
-          <button class="btn btn-secondary" onclick="voirPublic()" style="margin-top: 10px;">
-            👁️ Voir ma page publique
+          <button class="btn btn-secondary" onclick="voirPublic()" style="margin-top: 10px; font-size: 0.75rem;">
+            Voir mon Sanctuaire Public
           </button>
         </div>
       </div>
@@ -745,8 +775,8 @@
 
   <!-- ===================== ÉCRAN PAGE PUBLIQUE ===================== -->
   <div id="screenPublic" class="hidden">
-    <div style="padding: 20px 0; animation: fadeIn 0.5s ease-out;">
-      <button class="btn btn-secondary btn-small" onclick="retourAccueil()">← Retour</button>
+    <div style="padding: 30px 0; animation: fadeInCinematic 0.5s ease-out;">
+      <button class="btn btn-secondary btn-small" onclick="retourAccueil()">← Revenir au seuil</button>
     </div>
     <div id="publicHero" class="public-hero"><h1 id="publicTitre"></h1></div>
     <div id="publicContenu" class="public-content"></div>
@@ -761,7 +791,7 @@
 
 <script>
 /* ============================================================
-   🔥 FIREBASE
+   🔥 TA FIREBASE EXISTANTE
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
@@ -797,14 +827,14 @@ function toast(msg, type='success') {
   requestAnimationFrame(() => t.classList.add('show'));
   setTimeout(() => {
     t.classList.remove('show');
-    setTimeout(() => t.remove(), 400);
-  }, 3000);
+    setTimeout(() => t.remove(), 500);
+  }, 3500);
 }
 
 /* ============================================================
-   🌌 PARTICULES ANIMÉES
+   🌌 PARTICULES LENTES ET SACRÉES
    ============================================================ */
-const canvas = $('particles-canvas');
+const canvas = $('canvas-sacre');
 const ctx = canvas.getContext('2d');
 let particles = [];
 
@@ -822,29 +852,28 @@ class Particle {
   }
   reset() {
     this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 10;
-    this.size = Math.random() * 2.5 + 0.5;
-    this.speedY = Math.random() * 0.5 + 0.2;
-    this.speedX = (Math.random() - 0.5) * 0.3;
-    this.opacity = Math.random() * 0.6 + 0.2;
-    this.twinkle = Math.random() * 0.05 + 0.02;
+    this.y = canvas.height + 20;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.speedY = Math.random() * 0.2 + 0.05; // très lent
+    this.speedX = (Math.random() - 0.5) * 0.1;
+    this.opacity = Math.random() * 0.5 + 0.1;
   }
   update() {
     this.y -= this.speedY;
     this.x += this.speedX;
-    if (this.y < -10) this.reset();
+    if (this.y < -20) this.reset();
   }
   draw() {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = 'rgba(212, 175, 55, 0.8)';
+    ctx.fillStyle = `rgba(197, 160, 89, ${this.opacity})`;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(197, 160, 89, 0.5)';
     ctx.fill();
   }
 }
 
-for (let i = 0; i < 80; i++) particles.push(new Particle());
+for (let i = 0; i < 50; i++) particles.push(new Particle());
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -889,11 +918,10 @@ async function chargerListeCoachs() {
     $('noCoachs').classList.add('hidden');
     $('listeCoachs').innerHTML = docs.map(d => {
       const data = d.data();
-      const primaire = data.couleurs?.primaire || '#d4af37';
       const nom = data.nomCoach || data.email?.split('@')[0] || 'Coach';
       return `
         <a class="coach-card" onclick="event.preventDefault(); ouvrirPublic('${d.id}')" style="cursor:pointer;">
-          <div class="coach-avatar" style="background: linear-gradient(135deg, ${primaire}, ${primaire}88);">🧑‍🏫</div>
+          <div class="coach-avatar">⚜</div>
           <div class="coach-name">${escapeHtml(nom)}</div>
           <div class="coach-subtitle">${escapeHtml(data.pageTitre || '')}</div>
         </a>
@@ -931,7 +959,7 @@ $('btnLogout').addEventListener('click', async () => {
 auth.onAuthStateChanged(async user => {
   if (user) {
     coachId = user.uid;
-    currentUserEmail = user.email || ('anonyme_' + user.uid.slice(0,6));
+    currentUserEmail = user.email || ('Sage Anonyme');
     $('userEmail').textContent = currentUserEmail;
     await chargerDonnees();
     gotoEditor();
@@ -952,10 +980,10 @@ async function chargerDonnees() {
     const snap = await db.collection('coachs_aventure').doc(coachId).get();
     if (snap.exists) {
       const d = snap.data();
-      $('pageTitre').value = d.pageTitre || 'Mon parcours';
-      $('couleurPrimaire').value = d.couleurs?.primaire || '#d4af37';
-      $('couleurSecondaire').value = d.couleurs?.secondaire || '#fceabb';
-      $('police').value = d.police || 'Inter';
+      $('pageTitre').value = d.pageTitre || 'L\'histoire d\'un coach...';
+      $('couleurPrimaire').value = d.couleurs?.primaire || '#c5a059';
+      $('couleurSecondaire').value = d.couleurs?.secondaire || '#8a6d31';
+      $('police').value = d.police || "'Lora', serif";
       blocs = d.blocs || [];
       fichiers = d.fichiers || [];
     }
@@ -979,12 +1007,12 @@ function majLienPublic() {
    ============================================================ */
 function addBloc(type) {
   const defaults = {
-    titre:    { contenu: 'Mon titre' },
-    texte:    { contenu: 'Mon texte...' },
+    titre:    { contenu: 'Un nouveau chapitre' },
+    texte:    { contenu: 'Il était une fois...' },
     image:    { url: '' },
     pdf:      { url: '', nom: '' },
     video:    { url: '' },
-    citation: { contenu: '"Une citation inspirante"' },
+    citation: { contenu: '"La sagesse se transmet par ceux qui osent la partager."' },
   };
   blocs.push({ type, ...defaults[type], id: Date.now() });
   renderBlocs();
@@ -994,29 +1022,29 @@ function addBloc(type) {
 function renderBlocs() {
   const c = $('blocs');
   if (blocs.length === 0) {
-    c.innerHTML = '<p style="opacity:.5; text-align:center; padding:20px;">Ajoute ton premier bloc ci-dessus ☝️</p>';
+    c.innerHTML = '<p style="opacity:.5; text-align:center; padding:20px; font-style:italic;">Votre récit est encore vierge. Ajoutez un chapitre ci-dessus.</p>';
     return;
   }
   c.innerHTML = blocs.map((b, i) => {
     let inner = '';
     if (b.type === 'titre' || b.type === 'citation') {
-      inner = `<input type="text" value="${escapeHtml(b.contenu)}" onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="${b.type === 'titre' ? 'Titre' : 'Citation'}">`;
+      inner = `<input type="text" value="${escapeHtml(b.contenu)}" onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="${b.type === 'titre' ? 'Chapitre' : 'Citation'}">`;
     } else if (b.type === 'texte') {
-      inner = `<textarea onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="Texte...">${escapeHtml(b.contenu)}</textarea>`;
+      inner = `<textarea onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="Écrivez votre récit...">${escapeHtml(b.contenu)}</textarea>`;
     } else if (b.type === 'image') {
-      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL image (https://...)">`;
+      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="Lien de l'image (https://...)">`;
     } else if (b.type === 'pdf') {
       inner = `
-        <input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL PDF (https://...)" style="margin-bottom:8px;">
-        <input type="text" value="${escapeHtml(b.nom)}" onchange="updateBloc(${i}, 'nom', this.value)" placeholder="Nom affiché du PDF">
+        <input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="Lien du PDF (https://...)" style="margin-bottom:8px;">
+        <input type="text" value="${escapeHtml(b.nom)}" onchange="updateBloc(${i}, 'nom', this.value)" placeholder="Titre de l'archive">
       `;
     } else if (b.type === 'video') {
-      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL vidéo (YouTube...)">`;
+      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="Lien de la vidéo (YouTube...)">`;
     }
     return `
       <div class="bloc">
-        <div class="bloc-actions"><button onclick="supprimerBloc(${i})" title="Supprimer">🗑️</button></div>
-        <span class="bloc-type">${b.type}</span>
+        <div class="bloc-actions"><button onclick="supprimerBloc(${i})" title="Effacer">✕</button></div>
+        <span class="bloc-type">${b.type === 'titre' ? 'Chapitre' : b.type === 'texte' ? 'Récit' : b.type === 'image' ? 'Vision' : b.type === 'pdf' ? 'Archive' : b.type === 'video' ? 'Mémoire' : 'Pensée'}</span>
         ${inner}
       </div>
     `;
@@ -1037,19 +1065,19 @@ function supprimerBloc(i) {
    FICHIERS
    ============================================================ */
 $('fileInput').addEventListener('change', async e => {
-  if (!coachId) return toast('Connecte-toi d\'abord', 'error');
+  if (!coachId) return toast('Connectez-vous d\'abord', 'error');
   for (const file of e.target.files) {
     try {
-      toast('⏳ Upload ' + file.name + '...', 'info');
+      toast('⏳ Scellement de ' + file.name + '...', 'info');
       const path = `coachs_aventure/${coachId}/${Date.now()}_${file.name}`;
       const ref = storage.ref(path);
       await ref.put(file);
       const url = await ref.getDownloadURL();
       fichiers.push({ nom: file.name, url, taille: (file.size/1024/1024).toFixed(2) + ' MB' });
-      toast('✅ ' + file.name + ' ajouté');
+      toast('⚜ ' + file.name + ' scellé.');
     } catch(err) {
       console.error(err);
-      toast('❌ Erreur upload : ' + err.message, 'error');
+      toast('❌ Erreur : ' + err.message, 'error');
     }
   }
   renderFichiers();
@@ -1058,13 +1086,13 @@ $('fileInput').addEventListener('change', async e => {
 function renderFichiers() {
   const c = $('fichiers');
   if (fichiers.length === 0) {
-    c.innerHTML = '<p style="opacity:.5; font-size:.85rem;">Aucun fichier.</p>';
+    c.innerHTML = '<p style="opacity:.5; font-size:.85rem; font-style:italic;">Aucune archive pour le moment.</p>';
     return;
   }
   c.innerHTML = fichiers.map((f, i) => `
     <div class="file-item">
-      <span>📄 ${escapeHtml(f.nom)} <small style="opacity:.6;">(${f.taille})</small></span>
-      <button onclick="supprimerFichier(${i})">❌</button>
+      <span>📜 ${escapeHtml(f.nom)} <small style="opacity:.6;">(${f.taille})</small></span>
+      <button onclick="supprimerFichier(${i})">✕</button>
     </div>
   `).join('');
 }
@@ -1087,12 +1115,12 @@ function renderPreview() {
     if (b.type === 'texte')    return `<p>${escapeHtml(b.contenu)}</p>`;
     if (b.type === 'citation') return `<blockquote style="border-color:${p};">${escapeHtml(b.contenu)}</blockquote>`;
     if (b.type === 'image' && b.url) return `<img src="${escapeHtml(b.url)}">`;
-    if (b.type === 'pdf' && b.url)   return `<a href="${escapeHtml(b.url)}" target="_blank">📎 ${escapeHtml(b.nom || 'Télécharger PDF')}</a>`;
-    if (b.type === 'video' && b.url) return `<a href="${escapeHtml(b.url)}" target="_blank">🎥 Voir la vidéo</a>`;
+    if (b.type === 'pdf' && b.url)   return `<a href="${escapeHtml(b.url)}" target="_blank">📜 ${escapeHtml(b.nom || 'Télécharger')}</a>`;
+    if (b.type === 'video' && b.url) return `<a href="${escapeHtml(b.url)}" target="_blank">🎥 Voir</a>`;
     return '';
   }).join('');
 
-  $('preview').innerHTML = html || '<p style="opacity:.5;">Ajoute des blocs pour voir l\'aperçu...</p>';
+  $('preview').innerHTML = html || '<p style="opacity:.5; font-style:italic;">La vision apparaîtra ici...</p>';
 }
 
 ['couleurPrimaire', 'couleurSecondaire', 'police'].forEach(id => {
@@ -1104,16 +1132,16 @@ function renderPreview() {
    SAUVEGARDER
    ============================================================ */
 $('btnSave').addEventListener('click', async () => {
-  if (!coachId) return toast('Connecte-toi d\'abord', 'error');
+  if (!coachId) return toast('Connectez-vous d\'abord', 'error');
   const btn = $('btnSave');
   btn.disabled = true;
-  btn.textContent = '⏳ Sauvegarde...';
+  btn.textContent = '⏳ Scellement en cours...';
 
   try {
     await db.collection('coachs_aventure').doc(coachId).set({
       email: currentUserEmail,
       nomCoach: currentUserEmail.split('@')[0],
-      pageTitre: $('pageTitre').value || 'Mon parcours',
+      pageTitre: $('pageTitre').value || 'L\'histoire d\'un coach...',
       couleurs: {
         primaire: $('couleurPrimaire').value,
         secondaire: $('couleurSecondaire').value
@@ -1126,9 +1154,9 @@ $('btnSave').addEventListener('click', async () => {
       cree_le: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
-    $('msgSave').textContent = '✅ Page sauvegardée et publiée !';
-    $('msgSave').style.color = '#10b981';
-    toast('✅ Page publiée avec succès !');
+    $('msgSave').textContent = '⚜ L\'héritage a été scellé et publié.';
+    $('msgSave').style.color = 'var(--or)';
+    toast('⚜ Héritage scellé avec succès.');
     majLienPublic();
   } catch(e) {
     console.error(e);
@@ -1137,13 +1165,13 @@ $('btnSave').addEventListener('click', async () => {
     toast('❌ Erreur : ' + e.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '💾 Sauvegarder et publier';
+    btn.textContent = '⚜ Sceller et Publier l\'Héritage';
   }
 });
 
 function copierLien() {
   navigator.clipboard.writeText($('lienPublic').value);
-  toast('📋 Lien copié !');
+  toast('📋 Lien copié.');
 }
 function voirPublic() { ouvrirPublic(coachId); }
 
@@ -1153,14 +1181,15 @@ function voirPublic() { ouvrirPublic(coachId); }
 async function ouvrirPublic(id) {
   try {
     const snap = await db.collection('coachs_aventure').doc(id).get();
-    if (!snap.exists) return toast('Coach introuvable', 'error');
+    if (!snap.exists) return toast('Sanctuaire introuvable', 'error');
     const d = snap.data();
-    const p = d.couleurs?.primaire || '#d4af37';
-    const s = d.couleurs?.secondaire || '#fceabb';
+    const p = d.couleurs?.primaire || '#c5a059';
+    const s = d.couleurs?.secondaire || '#8a6d31';
 
-    $('publicHero').style.background = `linear-gradient(135deg, ${p}, ${s})`;
-    $('publicTitre').textContent = d.pageTitre || 'Mon parcours';
-    $('publicContenu').style.fontFamily = d.police || 'Inter';
+    // Dégradé très sombre pour le hero public
+    $('publicHero').style.background = `linear-gradient(180deg, ${p}22 0%, transparent 100%)`;
+    $('publicTitre').textContent = d.pageTitre || 'L\'histoire d\'un coach...';
+    $('publicContenu').style.fontFamily = d.police || "'Lora', serif";
 
     function youtubeEmbed(url) {
       const m = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
@@ -1172,16 +1201,16 @@ async function ouvrirPublic(id) {
       if (b.type === 'texte')    return `<p>${escapeHtml(b.contenu)}</p>`;
       if (b.type === 'citation') return `<blockquote style="border-color:${p};">${escapeHtml(b.contenu)}</blockquote>`;
       if (b.type === 'image')    return `<img src="${escapeHtml(b.url)}">`;
-      if (b.type === 'pdf')      return `<a href="${escapeHtml(b.url)}" target="_blank" style="background:${p};">📎 ${escapeHtml(b.nom || 'Télécharger')}</a>`;
+      if (b.type === 'pdf')      return `<a href="${escapeHtml(b.url)}" target="_blank" style="border-color:${p}; color:${p};">📜 ${escapeHtml(b.nom || 'Consulter l\'archive')}</a>`;
       if (b.type === 'video') {
         const embed = youtubeEmbed(b.url);
         if (embed) return embed;
-        return `<p><a href="${escapeHtml(b.url)}" target="_blank" style="background:${p};">🎥 Voir la vidéo</a></p>`;
+        return `<p><a href="${escapeHtml(b.url)}" target="_blank" style="border-color:${p}; color:${p};">🎥 Voir la mémoire</a></p>`;
       }
       return '';
     }).join('');
 
-    $('publicContenu').innerHTML = html || '<p style="opacity:.6;">Cette page est encore vide.</p>';
+    $('publicContenu').innerHTML = html || '<p style="opacity:.6; font-style:italic;">Ce sanctuaire est encore silencieux.</p>';
     history.pushState({}, '', '?coach=' + id);
     gotoPublic();
     window.scrollTo(0, 0);
