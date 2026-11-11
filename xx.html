@@ -3,297 +3,741 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Continuer l'Aventure 🏛️</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>Continuer l'Aventure 🏛️ | L'Héritage des Coachs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --fond: #f4f4f4;
-    --texte: #111111;
-    --dore: #cda434;
-    --dore-hover: #b8902a;
-    --carte: #ffffff;
-    --gris: #e0e0e0;
-    --msg-rouge: #ef4444;
-    --msg-vert: #10b981;
-  }
-  body.dark-mode {
-    --fond: #121212;
-    --texte: #f4f4f4;
-    --dore: #e5b83b;
-    --carte: #1e1e1e;
-    --gris: #333333;
+    --or: #d4af37;
+    --or-clair: #fceabb;
+    --nuit: #0a0e17;
+    --nuit-clair: #131c31;
+    --bleu: #1e3a8a;
+    --texte: #e2e8f0;
+    --texte-sombre: #94a3b8;
+    --verre: rgba(255, 255, 255, 0.05);
+    --bordure: rgba(212, 175, 55, 0.3);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{
-    font-family:'Montserrat',sans-serif;
-    background:var(--fond); color:var(--texte);
-    min-height:100vh; padding:16px;
-    transition: background .3s, color .3s;
-  }
-  .container{
-    max-width:1000px; margin:0 auto;
-    background:var(--carte); border-radius:20px;
-    padding:30px; box-shadow:0 10px 30px rgba(0,0,0,.1);
-    border-top:6px solid var(--dore); position:relative;
-  }
-  #themeToggle{
-    position:absolute; top:20px; right:20px;
-    background:var(--gris); border:none; border-radius:50%;
-    width:44px; height:44px; cursor:pointer; font-size:1.2rem;
-  }
-  h1{font-size:clamp(24px,4vw,34px); text-align:center; margin-bottom:20px; font-weight:900;}
-  h2{color:var(--dore); margin:20px 0 12px; font-size:1.2rem;}
-  h3{margin:15px 0 8px; font-size:1rem;}
-  p{line-height:1.6; margin-bottom:10px;}
-  button{
-    padding:14px 20px; font-size:1rem; font-weight:800;
-    border-radius:12px; border:none; cursor:pointer;
-    transition:all .2s; font-family:inherit; text-transform:uppercase;
-    letter-spacing:.5px;
-  }
-  button:disabled{opacity:.5; cursor:not-allowed;}
-  .btn-primaire{background:var(--dore); color:#111;}
-  .btn-primaire:hover:not(:disabled){background:var(--dore-hover); transform:translateY(-2px);}
-  .btn-secondaire{background:var(--gris); color:var(--texte);}
-  .btn-danger{background:var(--msg-rouge); color:#fff;}
-  .btn-small{padding:8px 14px; font-size:.8rem;}
-  input, textarea, select{
-    font-size:1rem; padding:12px 14px; border-radius:10px;
-    border:2px solid var(--gris); width:100%;
-    background:var(--carte); color:var(--texte); outline:none;
-    font-family:inherit; font-weight:600;
-    transition: border-color .2s;
-  }
-  input:focus, textarea:focus, select:focus{border-color:var(--dore);}
-  textarea{min-height:100px; resize:vertical;}
-  label{display:block; font-weight:700; font-size:.9rem; margin:12px 0 6px;}
-  .row{display:flex; gap:12px; flex-wrap:wrap; margin:12px 0;}
-  .row > *{flex:1; min-width:140px;}
-  .hidden{display:none !important;}
-  .pill{
-    display:inline-block; padding:6px 14px; border-radius:999px;
-    background:var(--gris); font-size:.85rem; margin:3px; font-weight:700;
-  }
-  .status{text-align:center; margin:12px 0; font-weight:600;}
-  .error{color:var(--msg-rouge); font-weight:700; text-align:center;}
-  .success{color:var(--msg-vert); font-weight:700; text-align:center;}
-
-  /* Écran héros */
-  .hero{
-    text-align:center; padding:60px 20px;
-    background:linear-gradient(135deg, var(--dore), var(--dore-hover));
-    color:#111; border-radius:16px; margin-bottom:30px;
-  }
-  .hero h1{color:#111; font-size:clamp(28px,5vw,48px); margin-bottom:20px;}
-  .hero p{font-size:1.1rem; max-width:600px; margin:0 auto 30px;}
-  .btn-entrer{
-    padding:18px 50px; font-size:1.2rem;
-    background:#111; color:var(--dore);
-    border-radius:50px; animation:pulse 2s infinite;
-  }
-  @keyframes pulse{
-    0%,100%{box-shadow:0 0 0 0 rgba(205,164,52,.7);}
-    50%{box-shadow:0 0 0 25px rgba(205,164,52,0);}
-  }
-  .btn-entrer:hover{transform:scale(1.05);}
-
-  /* Éditeur */
-  .editor-grid{
-    display:grid; grid-template-columns:1fr 320px; gap:24px; margin-top:20px;
-  }
-  @media(max-width:800px){.editor-grid{grid-template-columns:1fr;}}
-  .card{
-    background:var(--fond); border-radius:12px;
-    padding:20px; margin-bottom:16px;
-    border:1px solid var(--gris);
-  }
-  .bloc{
-    border:2px dashed var(--gris); border-radius:10px;
-    padding:15px; margin-bottom:12px; position:relative;
-    background:var(--carte); transition:border-color .2s;
-  }
-  .bloc:hover{border-color:var(--dore);}
-  .bloc-actions{
-    position:absolute; top:8px; right:8px; display:none; gap:5px;
-  }
-  .bloc:hover .bloc-actions{display:flex;}
-  .bloc-actions button{
-    background:var(--msg-rouge); color:white; border:none;
-    border-radius:5px; padding:4px 8px; cursor:pointer; font-size:.75rem;
-  }
-  .bloc-type{
-    color:var(--dore); font-size:.7rem;
-    text-transform:uppercase; letter-spacing:1px;
-    font-weight:900; display:block; margin-bottom:8px;
-  }
-  .add-bar{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
-    gap:8px; margin-bottom:16px;
-  }
-  .add-bar button{
-    padding:10px; border:1px solid var(--dore);
-    background:var(--carte); color:var(--dore);
-    border-radius:6px; cursor:pointer; font-weight:700; font-size:.85rem;
-  }
-  .add-bar button:hover{background:var(--dore); color:#111;}
-
-  .color-input{
-    width:100%; height:50px; border:none;
-    border-radius:8px; cursor:pointer; padding:0;
-  }
-  .preview-box{
-    border:1px solid var(--gris); border-radius:8px;
-    padding:15px; background:var(--carte); min-height:150px;
-    font-size:.9rem;
-  }
-  .preview-box h2{font-size:1.1rem; margin:10px 0 6px; color:var(--dore);}
-  .preview-box img{max-width:100%; border-radius:6px;}
-
-  .file-item{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:8px 12px; background:var(--carte);
-    border-radius:6px; margin-bottom:6px; font-size:.85rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--nuit);
+    color: var(--texte);
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* Liste des coachs */
-  .coach-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:16px; margin-top:16px;
+  /* ================= CANVAS PARTICULES ================= */
+  #particles-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
   }
-  .coach-card{
-    background:var(--carte); padding:20px; border-radius:12px;
-    text-decoration:none; color:var(--texte); text-align:center;
-    border:2px solid var(--gris); transition:all .2s;
-    display:block;
-  }
-  .coach-card:hover{border-color:var(--dore); transform:translateY(-3px);}
 
-  .toast{
-    position:fixed; bottom:20px; right:20px;
-    background:var(--msg-vert); color:white;
-    padding:14px 24px; border-radius:8px;
-    font-weight:700; z-index:9999;
-    animation:slideIn .3s;
+  /* ================= CONTENEUR ================= */
+  .app-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
   }
-  @keyframes slideIn{from{transform:translateX(400px);} to{transform:translateX(0);}}
 
-  /* Page publique */
-  .public-hero{
-    padding:80px 20px; color:white; text-align:center;
-    border-radius:16px; margin-bottom:30px;
+  /* ================= ANIMATIONS ================= */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .public-hero h1{font-size:clamp(28px,5vw,48px); margin:0; color:white;}
-  .public-content{max-width:800px; margin:0 auto;}
-  .public-content img{max-width:100%; border-radius:10px; margin:15px 0;}
-  .public-content blockquote{
-    border-left:4px solid var(--dore); padding-left:20px;
-    margin:20px 0; font-style:italic; font-size:1.05rem;
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-  .pdf-link{
-    display:inline-block; padding:12px 24px; border-radius:8px;
-    color:white; text-decoration:none; margin:8px 0;
-    background:var(--dore); font-weight:700;
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* ================= HERO ================= */
+  .hero {
+    text-align: center;
+    padding: 100px 20px 80px;
+    animation: fadeIn 1.5s ease-out;
+  }
+  .hero-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--or), var(--or-clair), var(--or));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--texte-sombre);
+    max-width: 650px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+    font-weight: 300;
+    animation: fadeInUp 1.2s ease-out 0.3s both;
+  }
+  .hero-divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--or), transparent);
+    margin: 0 auto 48px;
+    animation: fadeIn 2s ease-out 0.8s both;
+  }
+
+  /* ================= BOUTON PRINCIPAL ================= */
+  .btn-entrer {
+    padding: 20px 60px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--or), var(--or-clair));
+    color: var(--nuit);
+    border: none;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: fadeInUp 1.2s ease-out 0.6s both, glowPulse 3s ease-in-out infinite 1.8s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-entrer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s;
+  }
+  .btn-entrer:hover::before { left: 100%; }
+  .btn-entrer:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+  }
+
+  /* ================= CARTES COACHS ================= */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    text-align: center;
+    color: var(--or);
+    margin: 60px 0 40px;
+    font-weight: 700;
+  }
+  .coach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    animation: fadeInUp 1s ease-out 0.9s both;
+  }
+  .coach-card {
+    background: var(--verre);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--texte);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .coach-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--or), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+  .coach-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--or);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .coach-card:hover::before { transform: scaleX(1); }
+  .coach-avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--or), var(--or-clair));
+    display: grid;
+    place-items: center;
+    margin: 0 auto 16px;
+    font-size: 2rem;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  }
+  .coach-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--or-clair);
+  }
+  .coach-subtitle {
+    font-size: 0.9rem;
+    color: var(--texte-sombre);
+    font-style: italic;
+  }
+
+  /* ================= AUTH ================= */
+  .auth-box {
+    max-width: 450px;
+    margin: 80px auto;
+    padding: 48px 36px;
+    background: var(--verre);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--bordure);
+    border-radius: 24px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .auth-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--or);
+    margin-bottom: 12px;
+  }
+  .auth-box p {
+    color: var(--texte-sombre);
+    margin-bottom: 32px;
+    font-size: 0.95rem;
+  }
+
+  /* ================= BOUTONS ================= */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--or), var(--or-clair));
+    color: var(--nuit);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: var(--texte);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--or);
+  }
+  .btn-danger {
+    background: transparent;
+    color: #f87171;
+    border: 1px solid #f87171;
+  }
+  .btn-danger:hover { background: #f87171; color: white; }
+  .btn-small {
+    display: inline-block;
+    width: auto;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  /* ================= ÉDITEUR ================= */
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--bordure);
+    margin-bottom: 32px;
+    animation: fadeIn 0.6s ease-out;
+  }
+  .editor-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--or);
+  }
+  .editor-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 28px;
+    animation: fadeInUp 0.8s ease-out;
+  }
+  @media(max-width: 850px) { .editor-grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--verre);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--or);
+    margin-bottom: 20px;
+  }
+  .panel h3 {
+    font-size: 1rem;
+    color: var(--texte);
+    margin: 20px 0 12px;
+    font-weight: 600;
+  }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--texte-sombre);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+    color: var(--texte);
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 14px;
+    transition: all 0.3s ease;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--or);
+    background: rgba(0,0,0,0.5);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  }
+  textarea { min-height: 100px; resize: vertical; }
+  select option { background: var(--nuit); color: var(--texte); }
+
+  /* ================= BLOCS ================= */
+  .bloc {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.4s ease-out;
+  }
+  .bloc:hover {
+    border-color: var(--or);
+    background: rgba(212, 175, 55, 0.05);
+  }
+  .bloc-type {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--or);
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .bloc-actions {
+    position: absolute;
+    top: 12px; right: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .bloc:hover .bloc-actions { opacity: 1; }
+  .bloc-actions button {
+    background: transparent;
+    border: none;
+    color: #f87171;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .add-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .add-bar button {
+    padding: 12px 8px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--or-clair);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .add-bar button span { font-size: 1.2rem; }
+  .add-bar button:hover {
+    background: var(--or);
+    color: var(--nuit);
+    border-color: var(--or);
+    transform: translateY(-2px);
+  }
+
+  /* ================= COULEURS & APERÇU ================= */
+  .color-picker {
+    width: 100%;
+    height: 56px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+    margin-bottom: 14px;
+  }
+  .preview-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 0.9rem;
+    min-height: 150px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .preview-box h2 { color: var(--or); margin: 12px 0 8px; }
+  .preview-box p { color: var(--texte); line-height: 1.6; margin-bottom: 10px; }
+  .preview-box blockquote {
+    border-left: 3px solid var(--or);
+    padding-left: 14px;
+    font-style: italic;
+    color: var(--texte-sombre);
+    margin: 10px 0;
+  }
+  .preview-box img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
+  .preview-box a { color: var(--or); font-weight: 600; }
+
+  /* ================= FICHIERS ================= */
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .file-item button {
+    background: transparent;
+    border: none;
+    color: #f87171;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  /* ================= LIEN PUBLIC ================= */
+  .link-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .link-box input {
+    flex: 1;
+    font-size: 0.75rem;
+    margin: 0;
+  }
+  .link-box button {
+    padding: 12px 16px;
+    background: var(--or);
+    color: var(--nuit);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ================= PAGE PUBLIQUE ================= */
+  .public-hero {
+    text-align: center;
+    padding: 100px 20px 60px;
+    border-radius: 24px;
+    margin-bottom: 40px;
+    animation: fadeIn 1s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+  .public-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4));
+    pointer-events: none;
+  }
+  .public-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: white;
+    font-weight: 900;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .public-content {
+    max-width: 800px;
+    margin: 0 auto 60px;
+    padding: 40px;
+    background: var(--verre);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    line-height: 1.8;
+    font-size: 1.05rem;
+    animation: fadeInUp 1s ease-out 0.3s both;
+  }
+  .public-content h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--or);
+    font-size: 1.8rem;
+    margin: 32px 0 16px;
+  }
+  .public-content h2:first-child { margin-top: 0; }
+  .public-content p { color: var(--texte); margin-bottom: 16px; }
+  .public-content blockquote {
+    border-left: 4px solid var(--or);
+    padding: 16px 24px;
+    margin: 24px 0;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--or-clair);
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 0 12px 12px 0;
+  }
+  .public-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 20px 0;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .public-content a {
+    display: inline-block;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--or), var(--or-clair));
+    color: var(--nuit);
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 800;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+  }
+  .public-content a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+  }
+  .public-video {
+    display: block;
+    width: 100%;
+    max-width: 700px;
+    aspect-ratio: 16/9;
+    border: none;
+    border-radius: 12px;
+    margin: 20px auto;
+  }
+
+  /* ================= TOAST ================= */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .toast.success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+  .toast.info { background: linear-gradient(135deg, var(--or), var(--or-clair)); color: var(--nuit); }
+
+  /* ================= UTILS ================= */
+  .hidden { display: none !important; }
+  .status { text-align: center; padding: 16px; font-weight: 600; }
+  .error-msg { color: #f87171; }
+
+  /* ================= SCROLLBAR ================= */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--nuit); }
+  ::-webkit-scrollbar-thumb { background: var(--or); border-radius: 4px; }
 </style>
 </head>
 <body>
-<div class="container">
-  <button id="themeToggle" title="Thème">🌙</button>
+
+<!-- Canvas particules animées -->
+<canvas id="particles-canvas"></canvas>
+
+<div class="app-wrapper">
 
   <!-- ===================== ÉCRAN ACCUEIL ===================== -->
   <div id="screenHome">
     <div class="hero">
-      <h1>🏛️ Continuer l'Aventure</h1>
-      <p>Ce lieu est un héritage vivant. Ici, chaque coach transmet son histoire, ses idées et ses ressources — pour que l'aventure ne s'arrête jamais.</p>
+      <div class="hero-icon">🏛️</div>
+      <h1>Continuer l'Aventure</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-subtitle">
+        Ce lieu est un héritage vivant.<br>
+        Ici, chaque coach transmet son histoire, ses idées et ses ressources —<br>
+        <em style="color: var(--or-clair);">pour que l'aventure ne s'arrête jamais.</em>
+      </p>
       <button class="btn-entrer" id="btnEntrer">✨ Entrer dans l'espace</button>
     </div>
-    <h2 style="text-align:center;">🧑‍🏫 Les coachs héritiers</h2>
+
+    <h2 class="section-title">🧑‍🏫 Les coachs héritiers</h2>
     <div id="listeCoachs" class="coach-grid"></div>
-    <p id="noCoachs" class="status" style="opacity:.6; margin-top:20px;">Aucun coach n'a encore publié son histoire.</p>
+    <p id="noCoachs" class="status" style="color: var(--texte-sombre); opacity: 0.6;">
+      Aucun coach n'a encore publié son histoire. Sois le premier.
+    </p>
   </div>
 
   <!-- ===================== ÉCRAN AUTH ===================== -->
   <div id="screenAuth" class="hidden">
-    <h2 style="text-align:center;">🔐 Connexion</h2>
-    <p class="status">Connecte-toi pour créer ton espace coach.</p>
-    <div class="row" style="justify-content:center; margin-top:24px;">
-      <button id="btnGoogle" class="btn-primaire" style="max-width:300px;">🔵 Se connecter avec Google</button>
+    <div class="auth-box">
+      <h2>Rejoindre l'héritage</h2>
+      <p>Connecte-toi pour créer ou gérer ton espace coach.</p>
+      <button id="btnGoogle" class="btn btn-primary">🔵 Continuer avec Google</button>
+      <button id="btnAnon" class="btn btn-secondary">👤 Entrer anonymement</button>
+      <p id="msgAuth" class="status error-msg" style="min-height: 20px; margin-top: 16px;"></p>
     </div>
-    <div class="row" style="justify-content:center; margin-top:12px;">
-      <button id="btnAnon" class="btn-secondaire" style="max-width:300px;">👤 Continuer anonymement</button>
-    </div>
-    <p id="msgAuth" class="status" style="margin-top:20px;"></p>
   </div>
 
   <!-- ===================== ÉCRAN ÉDITEUR ===================== -->
   <div id="screenEditor" class="hidden">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-      <h1>🧑‍🏫 Mon Espace Coach</h1>
-      <div>
-        <span id="userEmail" class="pill"></span>
-        <button id="btnLogout" class="btn-danger btn-small">Déconnexion</button>
+    <div class="editor-header">
+      <h1>🧑‍🏫 Mon Espace</h1>
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <span id="userEmail" style="font-size: 0.85rem; color: var(--texte-sombre);"></span>
+        <button id="btnLogout" class="btn btn-danger btn-small">Déconnexion</button>
       </div>
     </div>
 
     <div class="editor-grid">
       <!-- Colonne principale -->
       <div>
-        <div class="card">
+        <div class="panel">
           <h2>📖 Ma page</h2>
           <label>Titre de ma page</label>
-          <input id="pageTitre" placeholder="Mon parcours" value="Mon parcours">
+          <input id="pageTitre" type="text" placeholder="Mon parcours" value="Mon parcours">
 
           <h3>Ajouter un bloc :</h3>
           <div class="add-bar">
-            <button onclick="addBloc('titre')">📌 Titre</button>
-            <button onclick="addBloc('texte')">📝 Texte</button>
-            <button onclick="addBloc('image')">🖼️ Image</button>
-            <button onclick="addBloc('pdf')">📎 PDF</button>
-            <button onclick="addBloc('video')">🎥 Vidéo</button>
-            <button onclick="addBloc('citation')">💬 Citation</button>
+            <button onclick="addBloc('titre')"><span>📌</span>Titre</button>
+            <button onclick="addBloc('texte')"><span>📝</span>Texte</button>
+            <button onclick="addBloc('image')"><span>🖼️</span>Image</button>
+            <button onclick="addBloc('pdf')"><span>📎</span>PDF</button>
+            <button onclick="addBloc('video')"><span>🎥</span>Vidéo</button>
+            <button onclick="addBloc('citation')"><span>💬</span>Citation</button>
           </div>
           <div id="blocs"></div>
         </div>
 
-        <div class="card">
-          <h2>📎 Mes fichiers (PDF, images)</h2>
-          <p style="font-size:.85rem; opacity:.7;">Upload direct — disponibles en téléchargement sur ta page publique.</p>
-          <input type="file" id="fileInput" multiple style="margin:12px 0;">
+        <div class="panel">
+          <h2>📎 Mes fichiers</h2>
+          <p style="font-size: 0.85rem; color: var(--texte-sombre); margin-bottom: 14px;">
+            Upload direct — disponibles en téléchargement sur ta page publique.
+          </p>
+          <input type="file" id="fileInput" multiple style="margin-bottom: 14px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed rgba(212,175,55,0.3); color: var(--texte);">
           <div id="fichiers"></div>
         </div>
 
-        <button class="btn-primaire" id="btnSave" style="width:100%; padding:18px; font-size:1.1rem;">💾 Sauvegarder et publier</button>
-        <p id="msgSave" class="status" style="margin-top:12px;"></p>
+        <button class="btn btn-primary" id="btnSave" style="padding: 20px; font-size: 1.1rem;">
+          💾 Sauvegarder et publier
+        </button>
+        <p id="msgSave" class="status" style="margin-top: 12px;"></p>
       </div>
 
       <!-- Sidebar -->
       <div>
-        <div class="card">
+        <div class="panel">
           <h2>🎨 Apparence</h2>
           <label>Couleur principale</label>
-          <input type="color" id="couleurPrimaire" class="color-input" value="#cda434">
+          <input type="color" id="couleurPrimaire" class="color-picker" value="#d4af37">
           <label>Couleur secondaire</label>
-          <input type="color" id="couleurSecondaire" class="color-input" value="#b8902a">
+          <input type="color" id="couleurSecondaire" class="color-picker" value="#fceabb">
           <label>Police</label>
           <select id="police">
-            <option value="Montserrat">Montserrat (moderne)</option>
-            <option value="Georgia">Georgia (classique)</option>
-            <option value="Arial">Arial (simple)</option>
-            <option value="Courier New">Courier (machine)</option>
+            <option value="Inter">Inter (moderne)</option>
+            <option value="'Playfair Display', serif">Playfair (élégant)</option>
+            <option value="Georgia, serif">Georgia (classique)</option>
+            <option value="'Courier New', monospace">Courier (machine)</option>
           </select>
         </div>
 
-        <div class="card">
+        <div class="panel">
           <h2>👁️ Aperçu</h2>
           <div class="preview-box" id="preview"></div>
         </div>
 
-        <div class="card">
+        <div class="panel">
           <h2>🔗 Lien public</h2>
-          <p style="font-size:.8rem; opacity:.7;">Une fois publié, ton espace est accessible ici :</p>
-          <input id="lienPublic" readonly style="font-size:.75rem; margin-top:8px;">
-          <button class="btn-primaire btn-small" onclick="copierLien()" style="width:100%; margin-top:8px;">📋 Copier</button>
-          <button class="btn-secondaire btn-small" onclick="voirPublic()" style="width:100%; margin-top:6px;">👁️ Voir ma page publique</button>
+          <p style="font-size: 0.8rem; color: var(--texte-sombre);">
+            Partage ce lien pour que ton histoire soit visible.
+          </p>
+          <div class="link-box">
+            <input id="lienPublic" readonly>
+            <button onclick="copierLien()">📋</button>
+          </div>
+          <button class="btn btn-secondary" onclick="voirPublic()" style="margin-top: 10px;">
+            👁️ Voir ma page publique
+          </button>
         </div>
       </div>
     </div>
@@ -301,10 +745,13 @@
 
   <!-- ===================== ÉCRAN PAGE PUBLIQUE ===================== -->
   <div id="screenPublic" class="hidden">
-    <button class="btn-secondaire btn-small" onclick="retourAccueil()" style="margin-bottom:16px;">← Retour</button>
+    <div style="padding: 20px 0; animation: fadeIn 0.5s ease-out;">
+      <button class="btn btn-secondary btn-small" onclick="retourAccueil()">← Retour</button>
+    </div>
     <div id="publicHero" class="public-hero"><h1 id="publicTitre"></h1></div>
     <div id="publicContenu" class="public-content"></div>
   </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -314,7 +761,7 @@
 
 <script>
 /* ============================================================
-   🔥 TA FIREBASE EXISTANTE
+   🔥 FIREBASE
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
@@ -330,7 +777,7 @@ const db = firebase.firestore();
 const storage = firebase.storage();
 
 /* ============================================================
-   ÉTAT GLOBAL
+   ÉTAT
    ============================================================ */
 let coachId = null;
 let currentUserEmail = '';
@@ -342,28 +789,69 @@ const show = id => $(id).classList.remove('hidden');
 const hide = id => $(id).classList.add('hidden');
 const escapeHtml = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-function toast(msg, color='#10b981') {
+function toast(msg, type='success') {
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.style.background = color;
+  t.className = 'toast ' + type;
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 400);
+  }, 3000);
 }
 
 /* ============================================================
-   THÈME
+   🌌 PARTICULES ANIMÉES
    ============================================================ */
-if (localStorage.getItem('coach_theme') === 'dark') {
-  document.body.classList.add('dark-mode');
-  $('themeToggle').textContent = '☀️';
+const canvas = $('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-$('themeToggle').addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  const dark = document.body.classList.contains('dark-mode');
-  $('themeToggle').textContent = dark ? '☀️' : '🌙';
-  localStorage.setItem('coach_theme', dark ? 'dark' : 'light');
-});
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor() {
+    this.reset();
+    this.y = Math.random() * canvas.height;
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 10;
+    this.size = Math.random() * 2.5 + 0.5;
+    this.speedY = Math.random() * 0.5 + 0.2;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.6 + 0.2;
+    this.twinkle = Math.random() * 0.05 + 0.02;
+  }
+  update() {
+    this.y -= this.speedY;
+    this.x += this.speedX;
+    if (this.y < -10) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'rgba(212, 175, 55, 0.8)';
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animate);
+}
+animate();
 
 /* ============================================================
    NAVIGATION
@@ -373,24 +861,21 @@ function gotoHome() {
   show('screenHome');
   chargerListeCoachs();
 }
-
 function gotoAuth() {
   hide('screenHome'); hide('screenEditor'); hide('screenPublic');
   show('screenAuth');
 }
-
 function gotoEditor() {
   hide('screenHome'); hide('screenAuth'); hide('screenPublic');
   show('screenEditor');
 }
-
 function gotoPublic() {
   hide('screenHome'); hide('screenAuth'); hide('screenEditor');
   show('screenPublic');
 }
 
 /* ============================================================
-   ACCUEIL — LISTE DES COACHS
+   ACCUEIL
    ============================================================ */
 async function chargerListeCoachs() {
   try {
@@ -404,18 +889,17 @@ async function chargerListeCoachs() {
     $('noCoachs').classList.add('hidden');
     $('listeCoachs').innerHTML = docs.map(d => {
       const data = d.data();
-      const primaire = data.couleurs?.primaire || '#cda434';
+      const primaire = data.couleurs?.primaire || '#d4af37';
+      const nom = data.nomCoach || data.email?.split('@')[0] || 'Coach';
       return `
-        <a href="?coach=${d.id}" class="coach-card" style="border-top:4px solid ${primaire};" onclick="event.preventDefault(); ouvrirPublic('${d.id}')">
-          <div style="font-size:2.5rem;">🧑‍🏫</div>
-          <strong>${escapeHtml(data.nomCoach || data.email?.split('@')[0] || 'Coach')}</strong>
-          <p style="color:#888; margin-top:6px; font-size:.85rem;">${escapeHtml(data.pageTitre || '')}</p>
+        <a class="coach-card" onclick="event.preventDefault(); ouvrirPublic('${d.id}')" style="cursor:pointer;">
+          <div class="coach-avatar" style="background: linear-gradient(135deg, ${primaire}, ${primaire}88);">🧑‍🏫</div>
+          <div class="coach-name">${escapeHtml(nom)}</div>
+          <div class="coach-subtitle">${escapeHtml(data.pageTitre || '')}</div>
         </a>
       `;
     }).join('');
-  } catch(e) {
-    console.error(e);
-  }
+  } catch(e) { console.error(e); }
 }
 
 /* ============================================================
@@ -427,26 +911,18 @@ $('btnEntrer').addEventListener('click', () => {
     else gotoAuth();
   });
 });
-
 $('btnGoogle').addEventListener('click', async () => {
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
   } catch(e) {
     $('msgAuth').textContent = '❌ ' + e.message;
-    $('msgAuth').style.color = '#ef4444';
   }
 });
-
 $('btnAnon').addEventListener('click', async () => {
-  try {
-    await auth.signInAnonymously();
-  } catch(e) {
-    $('msgAuth').textContent = '❌ ' + e.message;
-    $('msgAuth').style.color = '#ef4444';
-  }
+  try { await auth.signInAnonymously(); }
+  catch(e) { $('msgAuth').textContent = '❌ ' + e.message; }
 });
-
 $('btnLogout').addEventListener('click', async () => {
   await auth.signOut();
   location.reload();
@@ -459,20 +935,16 @@ auth.onAuthStateChanged(async user => {
     $('userEmail').textContent = currentUserEmail;
     await chargerDonnees();
     gotoEditor();
-    // Si l'URL contient ?coach=ID, on affiche direct la page publique
     const params = new URLSearchParams(location.search);
     if (params.get('coach')) ouvrirPublic(params.get('coach'));
   } else {
-    // Si URL contient ?coach=ID, afficher public sans auth
     const params = new URLSearchParams(location.search);
-    if (params.get('coach')) {
-      ouvrirPublic(params.get('coach'));
-    }
+    if (params.get('coach')) ouvrirPublic(params.get('coach'));
   }
 });
 
 /* ============================================================
-   CHARGER LES DONNÉES DU COACH
+   DONNÉES
    ============================================================ */
 async function chargerDonnees() {
   if (!coachId) return;
@@ -481,9 +953,9 @@ async function chargerDonnees() {
     if (snap.exists) {
       const d = snap.data();
       $('pageTitre').value = d.pageTitre || 'Mon parcours';
-      $('couleurPrimaire').value = d.couleurs?.primaire || '#cda434';
-      $('couleurSecondaire').value = d.couleurs?.secondaire || '#b8902a';
-      $('police').value = d.police || 'Montserrat';
+      $('couleurPrimaire').value = d.couleurs?.primaire || '#d4af37';
+      $('couleurSecondaire').value = d.couleurs?.secondaire || '#fceabb';
+      $('police').value = d.police || 'Inter';
       blocs = d.blocs || [];
       fichiers = d.fichiers || [];
     }
@@ -493,7 +965,6 @@ async function chargerDonnees() {
     majLienPublic();
   } catch(e) {
     console.error('Erreur chargement:', e);
-    toast('❌ Erreur: ' + e.message, '#ef4444');
   }
 }
 
@@ -529,22 +1000,22 @@ function renderBlocs() {
   c.innerHTML = blocs.map((b, i) => {
     let inner = '';
     if (b.type === 'titre' || b.type === 'citation') {
-      inner = `<input value="${escapeHtml(b.contenu)}" onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="${b.type === 'titre' ? 'Titre' : 'Citation'}">`;
+      inner = `<input type="text" value="${escapeHtml(b.contenu)}" onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="${b.type === 'titre' ? 'Titre' : 'Citation'}">`;
     } else if (b.type === 'texte') {
       inner = `<textarea onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="Texte...">${escapeHtml(b.contenu)}</textarea>`;
     } else if (b.type === 'image') {
-      inner = `<input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL image (https://...)">`;
+      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL image (https://...)">`;
     } else if (b.type === 'pdf') {
       inner = `
-        <input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL PDF" style="margin-bottom:6px;">
-        <input value="${escapeHtml(b.nom)}" onchange="updateBloc(${i}, 'nom', this.value)" placeholder="Nom du PDF">
+        <input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL PDF (https://...)" style="margin-bottom:8px;">
+        <input type="text" value="${escapeHtml(b.nom)}" onchange="updateBloc(${i}, 'nom', this.value)" placeholder="Nom affiché du PDF">
       `;
     } else if (b.type === 'video') {
-      inner = `<input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL vidéo YouTube ou mp4">`;
+      inner = `<input type="text" value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL vidéo (YouTube...)">`;
     }
     return `
       <div class="bloc">
-        <div class="bloc-actions"><button onclick="supprimerBloc(${i})">🗑️</button></div>
+        <div class="bloc-actions"><button onclick="supprimerBloc(${i})" title="Supprimer">🗑️</button></div>
         <span class="bloc-type">${b.type}</span>
         ${inner}
       </div>
@@ -563,13 +1034,13 @@ function supprimerBloc(i) {
 }
 
 /* ============================================================
-   FICHIERS (upload Firebase Storage)
+   FICHIERS
    ============================================================ */
 $('fileInput').addEventListener('change', async e => {
-  if (!coachId) return toast('❌ Connecte-toi d\'abord', '#ef4444');
+  if (!coachId) return toast('Connecte-toi d\'abord', 'error');
   for (const file of e.target.files) {
     try {
-      toast('⏳ Upload ' + file.name + '...', '#cda434');
+      toast('⏳ Upload ' + file.name + '...', 'info');
       const path = `coachs_aventure/${coachId}/${Date.now()}_${file.name}`;
       const ref = storage.ref(path);
       await ref.put(file);
@@ -578,7 +1049,7 @@ $('fileInput').addEventListener('change', async e => {
       toast('✅ ' + file.name + ' ajouté');
     } catch(err) {
       console.error(err);
-      toast('❌ Erreur upload: ' + err.message, '#ef4444');
+      toast('❌ Erreur upload : ' + err.message, 'error');
     }
   }
   renderFichiers();
@@ -587,13 +1058,13 @@ $('fileInput').addEventListener('change', async e => {
 function renderFichiers() {
   const c = $('fichiers');
   if (fichiers.length === 0) {
-    c.innerHTML = '<p style="opacity:.5; font-size:.9rem;">Aucun fichier.</p>';
+    c.innerHTML = '<p style="opacity:.5; font-size:.85rem;">Aucun fichier.</p>';
     return;
   }
   c.innerHTML = fichiers.map((f, i) => `
     <div class="file-item">
       <span>📄 ${escapeHtml(f.nom)} <small style="opacity:.6;">(${f.taille})</small></span>
-      <button onclick="supprimerFichier(${i})" style="background:none; border:none; cursor:pointer; color:var(--msg-rouge);">❌</button>
+      <button onclick="supprimerFichier(${i})">❌</button>
     </div>
   `).join('');
 }
@@ -614,10 +1085,10 @@ function renderPreview() {
   const html = blocs.map(b => {
     if (b.type === 'titre')    return `<h2 style="color:${p}">${escapeHtml(b.contenu)}</h2>`;
     if (b.type === 'texte')    return `<p>${escapeHtml(b.contenu)}</p>`;
-    if (b.type === 'citation') return `<blockquote style="border-left:3px solid ${p}; padding-left:12px; font-style:italic; margin:10px 0;">${escapeHtml(b.contenu)}</blockquote>`;
-    if (b.type === 'image' && b.url) return `<img src="${escapeHtml(b.url)}" style="max-width:100%; border-radius:6px;">`;
-    if (b.type === 'pdf' && b.url)   return `<a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">📎 ${escapeHtml(b.nom || 'Télécharger PDF')}</a>`;
-    if (b.type === 'video' && b.url) return `<a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">🎥 Voir la vidéo</a>`;
+    if (b.type === 'citation') return `<blockquote style="border-color:${p};">${escapeHtml(b.contenu)}</blockquote>`;
+    if (b.type === 'image' && b.url) return `<img src="${escapeHtml(b.url)}">`;
+    if (b.type === 'pdf' && b.url)   return `<a href="${escapeHtml(b.url)}" target="_blank">📎 ${escapeHtml(b.nom || 'Télécharger PDF')}</a>`;
+    if (b.type === 'video' && b.url) return `<a href="${escapeHtml(b.url)}" target="_blank">🎥 Voir la vidéo</a>`;
     return '';
   }).join('');
 
@@ -633,7 +1104,7 @@ function renderPreview() {
    SAUVEGARDER
    ============================================================ */
 $('btnSave').addEventListener('click', async () => {
-  if (!coachId) return toast('❌ Connecte-toi d\'abord', '#ef4444');
+  if (!coachId) return toast('Connecte-toi d\'abord', 'error');
   const btn = $('btnSave');
   btn.disabled = true;
   btn.textContent = '⏳ Sauvegarde...';
@@ -656,14 +1127,14 @@ $('btnSave').addEventListener('click', async () => {
     }, { merge: true });
 
     $('msgSave').textContent = '✅ Page sauvegardée et publiée !';
-    $('msgSave').className = 'success';
-    toast('✅ Page publiée !');
+    $('msgSave').style.color = '#10b981';
+    toast('✅ Page publiée avec succès !');
     majLienPublic();
   } catch(e) {
     console.error(e);
     $('msgSave').textContent = '❌ ' + e.message;
-    $('msgSave').className = 'error';
-    toast('❌ Erreur: ' + e.message, '#ef4444');
+    $('msgSave').style.color = '#f87171';
+    toast('❌ Erreur : ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = '💾 Sauvegarder et publier';
@@ -674,9 +1145,7 @@ function copierLien() {
   navigator.clipboard.writeText($('lienPublic').value);
   toast('📋 Lien copié !');
 }
-function voirPublic() {
-  ouvrirPublic(coachId);
-}
+function voirPublic() { ouvrirPublic(coachId); }
 
 /* ============================================================
    PAGE PUBLIQUE
@@ -684,42 +1153,48 @@ function voirPublic() {
 async function ouvrirPublic(id) {
   try {
     const snap = await db.collection('coachs_aventure').doc(id).get();
-    if (!snap.exists) {
-      toast('❌ Coach introuvable', '#ef4444');
-      return;
-    }
+    if (!snap.exists) return toast('Coach introuvable', 'error');
     const d = snap.data();
-    const p = d.couleurs?.primaire || '#cda434';
-    const s = d.couleurs?.secondaire || '#b8902a';
+    const p = d.couleurs?.primaire || '#d4af37';
+    const s = d.couleurs?.secondaire || '#fceabb';
 
     $('publicHero').style.background = `linear-gradient(135deg, ${p}, ${s})`;
     $('publicTitre').textContent = d.pageTitre || 'Mon parcours';
-    $('publicContenu').style.fontFamily = d.police || 'Montserrat';
+    $('publicContenu').style.fontFamily = d.police || 'Inter';
+
+    function youtubeEmbed(url) {
+      const m = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+      return m ? `<iframe class="public-video" src="https://www.youtube.com/embed/${m[1]}" allowfullscreen></iframe>` : null;
+    }
 
     const html = (d.blocs || []).map(b => {
-      if (b.type === 'titre')    return `<h2 style="color:${p}; margin-top:20px;">${escapeHtml(b.contenu)}</h2>`;
-      if (b.type === 'texte')    return `<p style="line-height:1.7;">${escapeHtml(b.contenu)}</p>`;
+      if (b.type === 'titre')    return `<h2 style="color:${p};">${escapeHtml(b.contenu)}</h2>`;
+      if (b.type === 'texte')    return `<p>${escapeHtml(b.contenu)}</p>`;
       if (b.type === 'citation') return `<blockquote style="border-color:${p};">${escapeHtml(b.contenu)}</blockquote>`;
       if (b.type === 'image')    return `<img src="${escapeHtml(b.url)}">`;
-      if (b.type === 'pdf')      return `<a href="${escapeHtml(b.url)}" target="_blank" class="pdf-link" style="background:${p};">📎 ${escapeHtml(b.nom || 'Télécharger')}</a>`;
-      if (b.type === 'video')    return `<p><a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">🎥 Voir la vidéo</a></p>`;
+      if (b.type === 'pdf')      return `<a href="${escapeHtml(b.url)}" target="_blank" style="background:${p};">📎 ${escapeHtml(b.nom || 'Télécharger')}</a>`;
+      if (b.type === 'video') {
+        const embed = youtubeEmbed(b.url);
+        if (embed) return embed;
+        return `<p><a href="${escapeHtml(b.url)}" target="_blank" style="background:${p};">🎥 Voir la vidéo</a></p>`;
+      }
       return '';
     }).join('');
 
     $('publicContenu').innerHTML = html || '<p style="opacity:.6;">Cette page est encore vide.</p>';
-
-    // Met à jour l'URL
     history.pushState({}, '', '?coach=' + id);
     gotoPublic();
+    window.scrollTo(0, 0);
   } catch(e) {
     console.error(e);
-    toast('❌ Erreur: ' + e.message, '#ef4444');
+    toast('❌ Erreur : ' + e.message, 'error');
   }
 }
 
 function retourAccueil() {
   history.pushState({}, '', location.pathname);
   gotoHome();
+  window.scrollTo(0, 0);
 }
 
 /* ============================================================
