@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Continuer l'Aventure 🏛️</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #f4f4f4;
+    --texte: #111111;
+    --dore: #cda434;
+    --dore-hover: #b8902a;
+    --carte: #ffffff;
+    --gris: #e0e0e0;
+    --msg-rouge: #ef4444;
+    --msg-vert: #10b981;
+  }
+  body.dark-mode {
+    --fond: #121212;
+    --texte: #f4f4f4;
+    --dore: #e5b83b;
+    --carte: #1e1e1e;
+    --gris: #333333;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:var(--fond); color:var(--texte);
+    min-height:100vh; padding:16px;
+    transition: background .3s, color .3s;
+  }
+  .container{
+    max-width:1000px; margin:0 auto;
+    background:var(--carte); border-radius:20px;
+    padding:30px; box-shadow:0 10px 30px rgba(0,0,0,.1);
+    border-top:6px solid var(--dore); position:relative;
+  }
+  #themeToggle{
+    position:absolute; top:20px; right:20px;
+    background:var(--gris); border:none; border-radius:50%;
+    width:44px; height:44px; cursor:pointer; font-size:1.2rem;
+  }
+  h1{font-size:clamp(24px,4vw,34px); text-align:center; margin-bottom:20px; font-weight:900;}
+  h2{color:var(--dore); margin:20px 0 12px; font-size:1.2rem;}
+  h3{margin:15px 0 8px; font-size:1rem;}
+  p{line-height:1.6; margin-bottom:10px;}
+  button{
+    padding:14px 20px; font-size:1rem; font-weight:800;
+    border-radius:12px; border:none; cursor:pointer;
+    transition:all .2s; font-family:inherit; text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  button:disabled{opacity:.5; cursor:not-allowed;}
+  .btn-primaire{background:var(--dore); color:#111;}
+  .btn-primaire:hover:not(:disabled){background:var(--dore-hover); transform:translateY(-2px);}
+  .btn-secondaire{background:var(--gris); color:var(--texte);}
+  .btn-danger{background:var(--msg-rouge); color:#fff;}
+  .btn-small{padding:8px 14px; font-size:.8rem;}
+  input, textarea, select{
+    font-size:1rem; padding:12px 14px; border-radius:10px;
+    border:2px solid var(--gris); width:100%;
+    background:var(--carte); color:var(--texte); outline:none;
+    font-family:inherit; font-weight:600;
+    transition: border-color .2s;
+  }
+  input:focus, textarea:focus, select:focus{border-color:var(--dore);}
+  textarea{min-height:100px; resize:vertical;}
+  label{display:block; font-weight:700; font-size:.9rem; margin:12px 0 6px;}
+  .row{display:flex; gap:12px; flex-wrap:wrap; margin:12px 0;}
+  .row > *{flex:1; min-width:140px;}
+  .hidden{display:none !important;}
+  .pill{
+    display:inline-block; padding:6px 14px; border-radius:999px;
+    background:var(--gris); font-size:.85rem; margin:3px; font-weight:700;
+  }
+  .status{text-align:center; margin:12px 0; font-weight:600;}
+  .error{color:var(--msg-rouge); font-weight:700; text-align:center;}
+  .success{color:var(--msg-vert); font-weight:700; text-align:center;}
+
+  /* Écran héros */
+  .hero{
+    text-align:center; padding:60px 20px;
+    background:linear-gradient(135deg, var(--dore), var(--dore-hover));
+    color:#111; border-radius:16px; margin-bottom:30px;
+  }
+  .hero h1{color:#111; font-size:clamp(28px,5vw,48px); margin-bottom:20px;}
+  .hero p{font-size:1.1rem; max-width:600px; margin:0 auto 30px;}
+  .btn-entrer{
+    padding:18px 50px; font-size:1.2rem;
+    background:#111; color:var(--dore);
+    border-radius:50px; animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(205,164,52,.7);}
+    50%{box-shadow:0 0 0 25px rgba(205,164,52,0);}
+  }
+  .btn-entrer:hover{transform:scale(1.05);}
+
+  /* Éditeur */
+  .editor-grid{
+    display:grid; grid-template-columns:1fr 320px; gap:24px; margin-top:20px;
+  }
+  @media(max-width:800px){.editor-grid{grid-template-columns:1fr;}}
+  .card{
+    background:var(--fond); border-radius:12px;
+    padding:20px; margin-bottom:16px;
+    border:1px solid var(--gris);
+  }
+  .bloc{
+    border:2px dashed var(--gris); border-radius:10px;
+    padding:15px; margin-bottom:12px; position:relative;
+    background:var(--carte); transition:border-color .2s;
+  }
+  .bloc:hover{border-color:var(--dore);}
+  .bloc-actions{
+    position:absolute; top:8px; right:8px; display:none; gap:5px;
+  }
+  .bloc:hover .bloc-actions{display:flex;}
+  .bloc-actions button{
+    background:var(--msg-rouge); color:white; border:none;
+    border-radius:5px; padding:4px 8px; cursor:pointer; font-size:.75rem;
+  }
+  .bloc-type{
+    color:var(--dore); font-size:.7rem;
+    text-transform:uppercase; letter-spacing:1px;
+    font-weight:900; display:block; margin-bottom:8px;
+  }
+  .add-bar{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+    gap:8px; margin-bottom:16px;
+  }
+  .add-bar button{
+    padding:10px; border:1px solid var(--dore);
+    background:var(--carte); color:var(--dore);
+    border-radius:6px; cursor:pointer; font-weight:700; font-size:.85rem;
+  }
+  .add-bar button:hover{background:var(--dore); color:#111;}
+
+  .color-input{
+    width:100%; height:50px; border:none;
+    border-radius:8px; cursor:pointer; padding:0;
+  }
+  .preview-box{
+    border:1px solid var(--gris); border-radius:8px;
+    padding:15px; background:var(--carte); min-height:150px;
+    font-size:.9rem;
+  }
+  .preview-box h2{font-size:1.1rem; margin:10px 0 6px; color:var(--dore);}
+  .preview-box img{max-width:100%; border-radius:6px;}
+
+  .file-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; background:var(--carte);
+    border-radius:6px; margin-bottom:6px; font-size:.85rem;
+  }
+
+  /* Liste des coachs */
+  .coach-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:16px; margin-top:16px;
+  }
+  .coach-card{
+    background:var(--carte); padding:20px; border-radius:12px;
+    text-decoration:none; color:var(--texte); text-align:center;
+    border:2px solid var(--gris); transition:all .2s;
+    display:block;
+  }
+  .coach-card:hover{border-color:var(--dore); transform:translateY(-3px);}
+
+  .toast{
+    position:fixed; bottom:20px; right:20px;
+    background:var(--msg-vert); color:white;
+    padding:14px 24px; border-radius:8px;
+    font-weight:700; z-index:9999;
+    animation:slideIn .3s;
+  }
+  @keyframes slideIn{from{transform:translateX(400px);} to{transform:translateX(0);}}
+
+  /* Page publique */
+  .public-hero{
+    padding:80px 20px; color:white; text-align:center;
+    border-radius:16px; margin-bottom:30px;
+  }
+  .public-hero h1{font-size:clamp(28px,5vw,48px); margin:0; color:white;}
+  .public-content{max-width:800px; margin:0 auto;}
+  .public-content img{max-width:100%; border-radius:10px; margin:15px 0;}
+  .public-content blockquote{
+    border-left:4px solid var(--dore); padding-left:20px;
+    margin:20px 0; font-style:italic; font-size:1.05rem;
+  }
+  .pdf-link{
+    display:inline-block; padding:12px 24px; border-radius:8px;
+    color:white; text-decoration:none; margin:8px 0;
+    background:var(--dore); font-weight:700;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <button id="themeToggle" title="Thème">🌙</button>
+
+  <!-- ===================== ÉCRAN ACCUEIL ===================== -->
+  <div id="screenHome">
+    <div class="hero">
+      <h1>🏛️ Continuer l'Aventure</h1>
+      <p>Ce lieu est un héritage vivant. Ici, chaque coach transmet son histoire, ses idées et ses ressources — pour que l'aventure ne s'arrête jamais.</p>
+      <button class="btn-entrer" id="btnEntrer">✨ Entrer dans l'espace</button>
+    </div>
+    <h2 style="text-align:center;">🧑‍🏫 Les coachs héritiers</h2>
+    <div id="listeCoachs" class="coach-grid"></div>
+    <p id="noCoachs" class="status" style="opacity:.6; margin-top:20px;">Aucun coach n'a encore publié son histoire.</p>
+  </div>
+
+  <!-- ===================== ÉCRAN AUTH ===================== -->
+  <div id="screenAuth" class="hidden">
+    <h2 style="text-align:center;">🔐 Connexion</h2>
+    <p class="status">Connecte-toi pour créer ton espace coach.</p>
+    <div class="row" style="justify-content:center; margin-top:24px;">
+      <button id="btnGoogle" class="btn-primaire" style="max-width:300px;">🔵 Se connecter avec Google</button>
+    </div>
+    <div class="row" style="justify-content:center; margin-top:12px;">
+      <button id="btnAnon" class="btn-secondaire" style="max-width:300px;">👤 Continuer anonymement</button>
+    </div>
+    <p id="msgAuth" class="status" style="margin-top:20px;"></p>
+  </div>
+
+  <!-- ===================== ÉCRAN ÉDITEUR ===================== -->
+  <div id="screenEditor" class="hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <h1>🧑‍🏫 Mon Espace Coach</h1>
+      <div>
+        <span id="userEmail" class="pill"></span>
+        <button id="btnLogout" class="btn-danger btn-small">Déconnexion</button>
+      </div>
+    </div>
+
+    <div class="editor-grid">
+      <!-- Colonne principale -->
+      <div>
+        <div class="card">
+          <h2>📖 Ma page</h2>
+          <label>Titre de ma page</label>
+          <input id="pageTitre" placeholder="Mon parcours" value="Mon parcours">
+
+          <h3>Ajouter un bloc :</h3>
+          <div class="add-bar">
+            <button onclick="addBloc('titre')">📌 Titre</button>
+            <button onclick="addBloc('texte')">📝 Texte</button>
+            <button onclick="addBloc('image')">🖼️ Image</button>
+            <button onclick="addBloc('pdf')">📎 PDF</button>
+            <button onclick="addBloc('video')">🎥 Vidéo</button>
+            <button onclick="addBloc('citation')">💬 Citation</button>
+          </div>
+          <div id="blocs"></div>
+        </div>
+
+        <div class="card">
+          <h2>📎 Mes fichiers (PDF, images)</h2>
+          <p style="font-size:.85rem; opacity:.7;">Upload direct — disponibles en téléchargement sur ta page publique.</p>
+          <input type="file" id="fileInput" multiple style="margin:12px 0;">
+          <div id="fichiers"></div>
+        </div>
+
+        <button class="btn-primaire" id="btnSave" style="width:100%; padding:18px; font-size:1.1rem;">💾 Sauvegarder et publier</button>
+        <p id="msgSave" class="status" style="margin-top:12px;"></p>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <div class="card">
+          <h2>🎨 Apparence</h2>
+          <label>Couleur principale</label>
+          <input type="color" id="couleurPrimaire" class="color-input" value="#cda434">
+          <label>Couleur secondaire</label>
+          <input type="color" id="couleurSecondaire" class="color-input" value="#b8902a">
+          <label>Police</label>
+          <select id="police">
+            <option value="Montserrat">Montserrat (moderne)</option>
+            <option value="Georgia">Georgia (classique)</option>
+            <option value="Arial">Arial (simple)</option>
+            <option value="Courier New">Courier (machine)</option>
+          </select>
+        </div>
+
+        <div class="card">
+          <h2>👁️ Aperçu</h2>
+          <div class="preview-box" id="preview"></div>
+        </div>
+
+        <div class="card">
+          <h2>🔗 Lien public</h2>
+          <p style="font-size:.8rem; opacity:.7;">Une fois publié, ton espace est accessible ici :</p>
+          <input id="lienPublic" readonly style="font-size:.75rem; margin-top:8px;">
+          <button class="btn-primaire btn-small" onclick="copierLien()" style="width:100%; margin-top:8px;">📋 Copier</button>
+          <button class="btn-secondaire btn-small" onclick="voirPublic()" style="width:100%; margin-top:6px;">👁️ Voir ma page publique</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ÉCRAN PAGE PUBLIQUE ===================== -->
+  <div id="screenPublic" class="hidden">
+    <button class="btn-secondaire btn-small" onclick="retourAccueil()" style="margin-bottom:16px;">← Retour</button>
+    <div id="publicHero" class="public-hero"><h1 id="publicTitre"></h1></div>
+    <div id="publicContenu" class="public-content"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
+<script>
+/* ============================================================
+   🔥 TA FIREBASE EXISTANTE
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
+  authDomain: "eeee-1387d.firebaseapp.com",
+  projectId: "eeee-1387d",
+  storageBucket: "eeee-1387d.firebasestorage.app",
+  messagingSenderId: "777961527724",
+  appId: "1:777961527724:web:5c222e42be24af0ab38209"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+/* ============================================================
+   ÉTAT GLOBAL
+   ============================================================ */
+let coachId = null;
+let currentUserEmail = '';
+let blocs = [];
+let fichiers = [];
+
+const $ = id => document.getElementById(id);
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
+const escapeHtml = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg, color='#10b981') {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.background = color;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+/* ============================================================
+   THÈME
+   ============================================================ */
+if (localStorage.getItem('coach_theme') === 'dark') {
+  document.body.classList.add('dark-mode');
+  $('themeToggle').textContent = '☀️';
+}
+$('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const dark = document.body.classList.contains('dark-mode');
+  $('themeToggle').textContent = dark ? '☀️' : '🌙';
+  localStorage.setItem('coach_theme', dark ? 'dark' : 'light');
+});
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function gotoHome() {
+  hide('screenAuth'); hide('screenEditor'); hide('screenPublic');
+  show('screenHome');
+  chargerListeCoachs();
+}
+
+function gotoAuth() {
+  hide('screenHome'); hide('screenEditor'); hide('screenPublic');
+  show('screenAuth');
+}
+
+function gotoEditor() {
+  hide('screenHome'); hide('screenAuth'); hide('screenPublic');
+  show('screenEditor');
+}
+
+function gotoPublic() {
+  hide('screenHome'); hide('screenAuth'); hide('screenEditor');
+  show('screenPublic');
+}
+
+/* ============================================================
+   ACCUEIL — LISTE DES COACHS
+   ============================================================ */
+async function chargerListeCoachs() {
+  try {
+    const snap = await db.collection('coachs_aventure').get();
+    const docs = snap.docs.filter(d => d.data().publie === true);
+    if (docs.length === 0) {
+      $('listeCoachs').innerHTML = '';
+      $('noCoachs').classList.remove('hidden');
+      return;
+    }
+    $('noCoachs').classList.add('hidden');
+    $('listeCoachs').innerHTML = docs.map(d => {
+      const data = d.data();
+      const primaire = data.couleurs?.primaire || '#cda434';
+      return `
+        <a href="?coach=${d.id}" class="coach-card" style="border-top:4px solid ${primaire};" onclick="event.preventDefault(); ouvrirPublic('${d.id}')">
+          <div style="font-size:2.5rem;">🧑‍🏫</div>
+          <strong>${escapeHtml(data.nomCoach || data.email?.split('@')[0] || 'Coach')}</strong>
+          <p style="color:#888; margin-top:6px; font-size:.85rem;">${escapeHtml(data.pageTitre || '')}</p>
+        </a>
+      `;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+$('btnEntrer').addEventListener('click', () => {
+  auth.onAuthStateChanged(user => {
+    if (user) gotoEditor();
+    else gotoAuth();
+  });
+});
+
+$('btnGoogle').addEventListener('click', async () => {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  } catch(e) {
+    $('msgAuth').textContent = '❌ ' + e.message;
+    $('msgAuth').style.color = '#ef4444';
+  }
+});
+
+$('btnAnon').addEventListener('click', async () => {
+  try {
+    await auth.signInAnonymously();
+  } catch(e) {
+    $('msgAuth').textContent = '❌ ' + e.message;
+    $('msgAuth').style.color = '#ef4444';
+  }
+});
+
+$('btnLogout').addEventListener('click', async () => {
+  await auth.signOut();
+  location.reload();
+});
+
+auth.onAuthStateChanged(async user => {
+  if (user) {
+    coachId = user.uid;
+    currentUserEmail = user.email || ('anonyme_' + user.uid.slice(0,6));
+    $('userEmail').textContent = currentUserEmail;
+    await chargerDonnees();
+    gotoEditor();
+    // Si l'URL contient ?coach=ID, on affiche direct la page publique
+    const params = new URLSearchParams(location.search);
+    if (params.get('coach')) ouvrirPublic(params.get('coach'));
+  } else {
+    // Si URL contient ?coach=ID, afficher public sans auth
+    const params = new URLSearchParams(location.search);
+    if (params.get('coach')) {
+      ouvrirPublic(params.get('coach'));
+    }
+  }
+});
+
+/* ============================================================
+   CHARGER LES DONNÉES DU COACH
+   ============================================================ */
+async function chargerDonnees() {
+  if (!coachId) return;
+  try {
+    const snap = await db.collection('coachs_aventure').doc(coachId).get();
+    if (snap.exists) {
+      const d = snap.data();
+      $('pageTitre').value = d.pageTitre || 'Mon parcours';
+      $('couleurPrimaire').value = d.couleurs?.primaire || '#cda434';
+      $('couleurSecondaire').value = d.couleurs?.secondaire || '#b8902a';
+      $('police').value = d.police || 'Montserrat';
+      blocs = d.blocs || [];
+      fichiers = d.fichiers || [];
+    }
+    renderBlocs();
+    renderFichiers();
+    renderPreview();
+    majLienPublic();
+  } catch(e) {
+    console.error('Erreur chargement:', e);
+    toast('❌ Erreur: ' + e.message, '#ef4444');
+  }
+}
+
+function majLienPublic() {
+  if (!coachId) return;
+  const base = location.origin + location.pathname;
+  $('lienPublic').value = base + '?coach=' + coachId;
+}
+
+/* ============================================================
+   BLOCS
+   ============================================================ */
+function addBloc(type) {
+  const defaults = {
+    titre:    { contenu: 'Mon titre' },
+    texte:    { contenu: 'Mon texte...' },
+    image:    { url: '' },
+    pdf:      { url: '', nom: '' },
+    video:    { url: '' },
+    citation: { contenu: '"Une citation inspirante"' },
+  };
+  blocs.push({ type, ...defaults[type], id: Date.now() });
+  renderBlocs();
+  renderPreview();
+}
+
+function renderBlocs() {
+  const c = $('blocs');
+  if (blocs.length === 0) {
+    c.innerHTML = '<p style="opacity:.5; text-align:center; padding:20px;">Ajoute ton premier bloc ci-dessus ☝️</p>';
+    return;
+  }
+  c.innerHTML = blocs.map((b, i) => {
+    let inner = '';
+    if (b.type === 'titre' || b.type === 'citation') {
+      inner = `<input value="${escapeHtml(b.contenu)}" onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="${b.type === 'titre' ? 'Titre' : 'Citation'}">`;
+    } else if (b.type === 'texte') {
+      inner = `<textarea onchange="updateBloc(${i}, 'contenu', this.value)" placeholder="Texte...">${escapeHtml(b.contenu)}</textarea>`;
+    } else if (b.type === 'image') {
+      inner = `<input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL image (https://...)">`;
+    } else if (b.type === 'pdf') {
+      inner = `
+        <input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL PDF" style="margin-bottom:6px;">
+        <input value="${escapeHtml(b.nom)}" onchange="updateBloc(${i}, 'nom', this.value)" placeholder="Nom du PDF">
+      `;
+    } else if (b.type === 'video') {
+      inner = `<input value="${escapeHtml(b.url)}" onchange="updateBloc(${i}, 'url', this.value)" placeholder="URL vidéo YouTube ou mp4">`;
+    }
+    return `
+      <div class="bloc">
+        <div class="bloc-actions"><button onclick="supprimerBloc(${i})">🗑️</button></div>
+        <span class="bloc-type">${b.type}</span>
+        ${inner}
+      </div>
+    `;
+  }).join('');
+}
+
+function updateBloc(i, key, val) {
+  blocs[i][key] = val;
+  renderPreview();
+}
+function supprimerBloc(i) {
+  blocs.splice(i, 1);
+  renderBlocs();
+  renderPreview();
+}
+
+/* ============================================================
+   FICHIERS (upload Firebase Storage)
+   ============================================================ */
+$('fileInput').addEventListener('change', async e => {
+  if (!coachId) return toast('❌ Connecte-toi d\'abord', '#ef4444');
+  for (const file of e.target.files) {
+    try {
+      toast('⏳ Upload ' + file.name + '...', '#cda434');
+      const path = `coachs_aventure/${coachId}/${Date.now()}_${file.name}`;
+      const ref = storage.ref(path);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      fichiers.push({ nom: file.name, url, taille: (file.size/1024/1024).toFixed(2) + ' MB' });
+      toast('✅ ' + file.name + ' ajouté');
+    } catch(err) {
+      console.error(err);
+      toast('❌ Erreur upload: ' + err.message, '#ef4444');
+    }
+  }
+  renderFichiers();
+});
+
+function renderFichiers() {
+  const c = $('fichiers');
+  if (fichiers.length === 0) {
+    c.innerHTML = '<p style="opacity:.5; font-size:.9rem;">Aucun fichier.</p>';
+    return;
+  }
+  c.innerHTML = fichiers.map((f, i) => `
+    <div class="file-item">
+      <span>📄 ${escapeHtml(f.nom)} <small style="opacity:.6;">(${f.taille})</small></span>
+      <button onclick="supprimerFichier(${i})" style="background:none; border:none; cursor:pointer; color:var(--msg-rouge);">❌</button>
+    </div>
+  `).join('');
+}
+
+function supprimerFichier(i) {
+  fichiers.splice(i, 1);
+  renderFichiers();
+}
+
+/* ============================================================
+   APERÇU
+   ============================================================ */
+function renderPreview() {
+  const p = $('couleurPrimaire').value;
+  const police = $('police').value;
+  $('preview').style.fontFamily = police;
+
+  const html = blocs.map(b => {
+    if (b.type === 'titre')    return `<h2 style="color:${p}">${escapeHtml(b.contenu)}</h2>`;
+    if (b.type === 'texte')    return `<p>${escapeHtml(b.contenu)}</p>`;
+    if (b.type === 'citation') return `<blockquote style="border-left:3px solid ${p}; padding-left:12px; font-style:italic; margin:10px 0;">${escapeHtml(b.contenu)}</blockquote>`;
+    if (b.type === 'image' && b.url) return `<img src="${escapeHtml(b.url)}" style="max-width:100%; border-radius:6px;">`;
+    if (b.type === 'pdf' && b.url)   return `<a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">📎 ${escapeHtml(b.nom || 'Télécharger PDF')}</a>`;
+    if (b.type === 'video' && b.url) return `<a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">🎥 Voir la vidéo</a>`;
+    return '';
+  }).join('');
+
+  $('preview').innerHTML = html || '<p style="opacity:.5;">Ajoute des blocs pour voir l\'aperçu...</p>';
+}
+
+['couleurPrimaire', 'couleurSecondaire', 'police'].forEach(id => {
+  $(id).addEventListener('input', renderPreview);
+  $(id).addEventListener('change', renderPreview);
+});
+
+/* ============================================================
+   SAUVEGARDER
+   ============================================================ */
+$('btnSave').addEventListener('click', async () => {
+  if (!coachId) return toast('❌ Connecte-toi d\'abord', '#ef4444');
+  const btn = $('btnSave');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sauvegarde...';
+
+  try {
+    await db.collection('coachs_aventure').doc(coachId).set({
+      email: currentUserEmail,
+      nomCoach: currentUserEmail.split('@')[0],
+      pageTitre: $('pageTitre').value || 'Mon parcours',
+      couleurs: {
+        primaire: $('couleurPrimaire').value,
+        secondaire: $('couleurSecondaire').value
+      },
+      police: $('police').value,
+      blocs: blocs,
+      fichiers: fichiers,
+      publie: true,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      cree_le: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    $('msgSave').textContent = '✅ Page sauvegardée et publiée !';
+    $('msgSave').className = 'success';
+    toast('✅ Page publiée !');
+    majLienPublic();
+  } catch(e) {
+    console.error(e);
+    $('msgSave').textContent = '❌ ' + e.message;
+    $('msgSave').className = 'error';
+    toast('❌ Erreur: ' + e.message, '#ef4444');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Sauvegarder et publier';
+  }
+});
+
+function copierLien() {
+  navigator.clipboard.writeText($('lienPublic').value);
+  toast('📋 Lien copié !');
+}
+function voirPublic() {
+  ouvrirPublic(coachId);
+}
+
+/* ============================================================
+   PAGE PUBLIQUE
+   ============================================================ */
+async function ouvrirPublic(id) {
+  try {
+    const snap = await db.collection('coachs_aventure').doc(id).get();
+    if (!snap.exists) {
+      toast('❌ Coach introuvable', '#ef4444');
+      return;
+    }
+    const d = snap.data();
+    const p = d.couleurs?.primaire || '#cda434';
+    const s = d.couleurs?.secondaire || '#b8902a';
+
+    $('publicHero').style.background = `linear-gradient(135deg, ${p}, ${s})`;
+    $('publicTitre').textContent = d.pageTitre || 'Mon parcours';
+    $('publicContenu').style.fontFamily = d.police || 'Montserrat';
+
+    const html = (d.blocs || []).map(b => {
+      if (b.type === 'titre')    return `<h2 style="color:${p}; margin-top:20px;">${escapeHtml(b.contenu)}</h2>`;
+      if (b.type === 'texte')    return `<p style="line-height:1.7;">${escapeHtml(b.contenu)}</p>`;
+      if (b.type === 'citation') return `<blockquote style="border-color:${p};">${escapeHtml(b.contenu)}</blockquote>`;
+      if (b.type === 'image')    return `<img src="${escapeHtml(b.url)}">`;
+      if (b.type === 'pdf')      return `<a href="${escapeHtml(b.url)}" target="_blank" class="pdf-link" style="background:${p};">📎 ${escapeHtml(b.nom || 'Télécharger')}</a>`;
+      if (b.type === 'video')    return `<p><a href="${escapeHtml(b.url)}" target="_blank" style="color:${p}; font-weight:700;">🎥 Voir la vidéo</a></p>`;
+      return '';
+    }).join('');
+
+    $('publicContenu').innerHTML = html || '<p style="opacity:.6;">Cette page est encore vide.</p>';
+
+    // Met à jour l'URL
+    history.pushState({}, '', '?coach=' + id);
+    gotoPublic();
+  } catch(e) {
+    console.error(e);
+    toast('❌ Erreur: ' + e.message, '#ef4444');
+  }
+}
+
+function retourAccueil() {
+  history.pushState({}, '', location.pathname);
+  gotoHome();
+}
+
+/* ============================================================
+   DÉMARRAGE
+   ============================================================ */
+chargerListeCoachs();
+window.addEventListener('popstate', () => {
+  const params = new URLSearchParams(location.search);
+  if (params.get('coach')) ouvrirPublic(params.get('coach'));
+  else gotoHome();
+});
+</script>
+</body>
+</html>
