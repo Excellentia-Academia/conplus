@@ -3,261 +3,538 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur Carnet Dictée & Épellation</title>
+<title>Générateur Carnet Dictée & Épellation — Pro</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #3730a3;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+
   body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 100%);
+    color: var(--text);
     min-height: 100vh;
     padding: 20px;
-    color: #333;
   }
-  .container {
-    max-width: 900px;
+
+  .app {
+    max-width: 1000px;
     margin: 0 auto;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(79,70,229,0.15);
+    overflow: hidden;
+    animation: appIn 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes appIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    padding: 35px 30px;
+    text-align: center;
+    position: relative;
     overflow: hidden;
   }
-  header {
-    background: linear-gradient(135deg, #764ba2, #667eea);
-    color: #fff;
-    padding: 30px;
-    text-align: center;
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(245,158,11,0.3), transparent 50%);
   }
-  header h1 { font-size: 1.8em; margin-bottom: 8px; }
-  header p { opacity: 0.9; font-size: 0.95em; }
+  header h1, header p { position: relative; z-index: 1; }
+  header h1 {
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  header p { opacity: 0.9; font-size: 0.95rem; }
+
+  /* ===== CONTENU ===== */
   .content { padding: 30px; }
-  .form-group { margin-bottom: 18px; }
+
+  .info {
+    background: linear-gradient(135deg, #eef2ff, #fce7f3);
+    border-left: 4px solid var(--primary);
+    padding: 15px 18px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .info strong { color: var(--primary); }
+
+  .section-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-title .num {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .form-group { margin-bottom: 16px; }
   label {
     display: block;
     font-weight: 600;
     margin-bottom: 6px;
-    color: #444;
-    font-size: 0.95em;
+    font-size: 0.88rem;
+    color: #334155;
   }
+  label .hint {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
   input, select, textarea {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
+    padding: 11px 14px;
+    border: 2px solid var(--border);
     border-radius: 10px;
-    font-size: 1em;
+    font-size: 0.95rem;
     font-family: inherit;
-    transition: border 0.3s;
+    background: #fff;
+    color: var(--text);
+    transition: all 0.2s;
   }
   input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
   }
+
   .row { display: flex; gap: 15px; flex-wrap: wrap; }
-  .row .form-group { flex: 1; min-width: 200px; }
-  button {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+  .row .form-group { flex: 1; min-width: 180px; }
+
+  /* ===== CHECKBOXES OPTIONS ===== */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .check-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #fff;
+    user-select: none;
+  }
+  .check-card:hover {
+    border-color: var(--primary);
+    background: #eef2ff;
+  }
+  .check-card input { width: auto; margin: 0; accent-color: var(--primary); }
+  .check-card.checked {
+    border-color: var(--primary);
+    background: #eef2ff;
+    color: var(--primary-dark);
+  }
+
+  /* ===== BOUTON PRINCIPAL ===== */
+  .btn-generate {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: #fff;
     border: none;
-    padding: 16px 30px;
-    font-size: 1.1em;
-    font-weight: 700;
-    border-radius: 12px;
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 14px;
     cursor: pointer;
     width: 100%;
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-top: 10px;
+    margin-top: 25px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 10px 30px rgba(79,70,229,0.35);
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
   }
-  button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+  .btn-generate:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(79,70,229,0.5);
   }
-  button:active { transform: translateY(0); }
-  .info {
-    background: #f0f4ff;
-    border-left: 4px solid #667eea;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 25px;
-    font-size: 0.9em;
-    color: #555;
-  }
+  .btn-generate:active { transform: translateY(-1px); }
+
+  /* ===== APERÇU ===== */
   .preview {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    font-size: 0.9em;
-    max-height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
+    margin-top: 25px;
+    padding: 0;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
     display: none;
-    font-family: 'Courier New', monospace;
+    animation: fadeUp 0.4s ease;
   }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .preview-head {
+    background: #f1f5f9;
+    padding: 12px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .preview-head .ok {
+    color: var(--success);
+    background: #d1fae5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+  .preview-body {
+    padding: 18px;
+    background: #fafafa;
+    font-family: 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    color: #475569;
+  }
+  .preview-body::-webkit-scrollbar { width: 8px; }
+  .preview-body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
   .footer {
     text-align: center;
+    padding: 18px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ===== ÉCRAN INDISPONIBLE ===== */
+  #offline {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
-    color: #999;
-    font-size: 0.85em;
+    animation: fadeIn 0.5s;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .offline-card {
+    max-width: 480px;
+    text-align: center;
+    padding: 45px 35px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    color: #fff;
+  }
+  .offline-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    animation: shake 2s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes shake {
+    0%, 100% { transform: rotate(0); }
+    25%      { transform: rotate(-8deg); }
+    75%      { transform: rotate(8deg); }
+  }
+  .offline-card h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: grad 3s linear infinite;
+    margin-bottom: 15px;
+  }
+  @keyframes grad {
+    0%   { background-position: 0% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .offline-card p {
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 600px) {
+    .content { padding: 20px; }
+    header { padding: 25px 20px; }
   }
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- ===== ÉCRAN INDISPONIBLE ===== -->
+<div id="offline">
+  <div class="offline-card">
+    <div class="offline-icon">🔧</div>
+    <h2>INDISPONIBLE</h2>
+    <p>Le générateur est en cours de maintenance.<br>Merci de revenir plus tard.</p>
+  </div>
+</div>
+
+<!-- ===== APPLICATION ===== -->
+<div class="app">
   <header>
-    <h1>📚 Générateur de Carnet d'Entraînement</h1>
-    <p>Dictée & Épellation — Programme hebdomadaire avec difficulté progressive</p>
+    <h1>📚 Générateur Carnet Dictée & Épellation</h1>
+    <p>Fiches pédagogiques complètes avec exercices, consignes et pratique guidée</p>
   </header>
 
   <div class="content">
     <div class="info">
-      💡 Remplis les champs ci-dessous, puis clique sur <strong>« Générer le fichier Word »</strong>. 
-      Un carnet complet de <strong>8 semaines</strong> sera créé avec programme, motivation, proverbes et difficulté croissante.
+      💡 <strong>Configure ton carnet</strong> : choisis les options d'exercices, les consignes et la pratique souhaitée. Le fichier Word généré contiendra des <strong>cases à cocher</strong>, des <strong>lignes d'écriture</strong>, des <strong>consignes claires</strong> et des <strong>exercices progressifs</strong>.
     </div>
+
+    <!-- ===== SECTION 1 : INFOS ÉLÈVE ===== -->
+    <div class="section-title"><span class="num">1</span> Informations de l'élève</div>
 
     <div class="row">
       <div class="form-group">
-        <label>👤 Nom de l'élève / du joueur</label>
+        <label>👤 Nom complet</label>
         <input type="text" id="nom" placeholder="Ex : Aïcha Diallo" value="Élève">
       </div>
       <div class="form-group">
-        <label>📅 Semaine de début (date)</label>
-        <input type="date" id="dateDebut">
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="form-group">
-        <label>🎯 Niveau de départ</label>
+        <label>🎓 Classe / Niveau</label>
         <select id="niveau">
           <option value="debutant">Débutant (CE1–CE2)</option>
           <option value="intermediaire" selected>Intermédiaire (CM1–CM2)</option>
           <option value="avance">Avancé (6e–5e)</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>📖 Nombre de semaines</label>
-        <select id="semaines">
-          <option value="4">4 semaines</option>
-          <option value="6">6 semaines</option>
-          <option value="8" selected>8 semaines</option>
-          <option value="12">12 semaines</option>
-        </select>
-      </div>
     </div>
 
     <div class="row">
       <div class="form-group">
-        <label>✍️ Thème principal (optionnel)</label>
-        <input type="text" id="theme" placeholder="Ex : animaux, nature, sport..." value="général">
+        <label>📅 Date de début</label>
+        <input type="date" id="dateDebut">
       </div>
       <div class="form-group">
-        <label>🗣️ Langue</label>
-        <select id="langue">
-          <option value="fr" selected>Français</option>
-          <option value="en">English</option>
+        <label>📖 Nombre de semaines</label>
+        <select id="semaines">
+          <option value="2">2 semaines</option>
+          <option value="4" selected>4 semaines</option>
+          <option value="6">6 semaines</option>
+          <option value="8">8 semaines</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>🏷️ Thème <span class="hint">(optionnel)</span></label>
+        <input type="text" id="theme" placeholder="Ex : animaux, nature..." value="général">
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2 : EXERCICES À INCLURE ===== -->
+    <div class="section-title"><span class="num">2</span> Exercices à inclure dans le carnet</div>
+
+    <div class="options-grid">
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="listeMots" checked>
+        📝 Liste de mots à épeler
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="copieMots" checked>
+        ✍️ Copie des mots (3 fois)
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="epellation" checked>
+        🗣️ Épellation à voix haute
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="dictee" checked>
+        📖 Dictée de la semaine
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="autodictee" checked>
+        🎧 Auto-dictée (mémorisation)
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="phraseInvente" checked>
+        💡 Invente une phrase
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="motsCroises">
+        🧩 Mots cachés / classement
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="correction" checked>
+        ✅ Auto-correction guidée
+      </label>
+      <label class="check-card checked">
+        <input type="checkbox" class="opt" value="bilan" checked>
+        📊 Bilan & auto-évaluation
+      </label>
+      <label class="check-card">
+        <input type="checkbox" class="opt" value="proverbe" checked>
+        💬 Proverbe du jour
+      </label>
+      <label class="check-card">
+        <input type="checkbox" class="opt" value="motivation" checked>
+        🌟 Motivation
+      </label>
+      <label class="check-card">
+        <input type="checkbox" class="opt" value="defi" checked>
+        🏆 Défi de la semaine
+      </label>
+    </div>
+
+    <!-- ===== SECTION 3 : CONSIGNES & PRATIQUE ===== -->
+    <div class="section-title"><span class="num">3</span> Consignes et pratique</div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>✏️ Nombre de mots par semaine</label>
+        <select id="nbMots">
+          <option value="5">5 mots</option>
+          <option value="8">8 mots</option>
+          <option value="10" selected>10 mots</option>
+          <option value="12">12 mots</option>
+          <option value="15">15 mots</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📝 Nombre de lignes de copie par mot</label>
+        <select id="nbCopies">
+          <option value="2">2 fois</option>
+          <option value="3" selected>3 fois</option>
+          <option value="4">4 fois</option>
+          <option value="5">5 fois</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>🎯 Difficulté progressive</label>
+        <select id="progression">
+          <option value="oui" selected>Oui — 3 paliers (facile → difficile)</option>
+          <option value="non">Non — difficulté constante</option>
         </select>
       </div>
     </div>
 
-    <button onclick="genererWord()">📄 Générer le fichier Word</button>
-    <div class="preview" id="preview"></div>
+    <div class="form-group">
+      <label>📋 Consignes personnalisées <span class="hint">(une par ligne — seront incluses dans le carnet)</span></label>
+      <textarea id="consignes" rows="4" placeholder="Ex :&#10;Lis chaque mot à voix haute avant de l'écrire.&#10;Vérifie l'orthographe dans le dictionnaire.&#10;Souligne les mots difficiles.">Lis chaque mot à voix haute avant de l'écrire.
+Épelle chaque mot lettre par lettre.
+Vérifie l'orthographe dans le dictionnaire.
+Souligne les mots que tu trouves difficiles.</textarea>
+    </div>
+
+    <button class="btn-generate" onclick="generer()">📄 Générer mon carnet Word complet</button>
+
+    <div class="preview" id="preview">
+      <div class="preview-head">
+        <span>👁️ Aperçu du carnet</span>
+        <span class="ok">✅ Fichier prêt</span>
+      </div>
+      <div class="preview-body" id="previewBody"></div>
+    </div>
   </div>
 
-  <div class="footer">Générateur local — aucune donnée envoyée sur Internet</div>
+  <div class="footer">Générateur local · Aucune donnée envoyée sur Internet</div>
 </div>
 
 <script>
-// ============ BANQUE DE MOTS PAR NIVEAU ET DIFFICULTÉ ============
+/* ========== MASQUER L'ÉCRAN INDISPONIBLE APRÈS 2.5s ========== */
+setTimeout(() => {
+  document.getElementById('offline').style.display = 'none';
+}, 2500);
+
+/* ========== CHECKBOX VISUEL ========== */
+document.querySelectorAll('.check-card input').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.check-card').classList.toggle('checked', cb.checked);
+  });
+});
+
+/* ========== BANQUE DE DONNÉES ========== */
 const banqueMots = {
   debutant: {
-    facile: ["chat", "chien", "maison", "école", "papa", "maman", "table", "livre", "eau", "pain", "ami", "soleil", "lune", "fleur", "jardin"],
-    moyen: ["jardinier", "bibliothèque", "chocolat", "éléphant", "papillon", "ordinateur", "vacances", "cuisine", "montagne", "rivière"],
-    difficile: ["extraordinaire", "magnifique", "intéressant", "attention", "apprentissage", "vocabulaire", "connaissance", "imagination"]
+    facile: ["chat","chien","maison","école","papa","maman","table","livre","eau","pain","ami","soleil","lune","fleur","jardin","porte","chien","oiseau","rouge","bleu"],
+    moyen: ["jardinier","bibliothèque","chocolat","éléphant","papillon","ordinateur","vacances","cuisine","montagne","rivière","attention","chanson","parapluie"],
+    difficile: ["extraordinaire","magnifique","intéressant","apprentissage","vocabulaire","connaissance","imagination","merveilleux"]
   },
   intermediaire: {
-    facile: ["aventure", "curieux", "silence", "lumière", "voyage", "courage", "nature", "forêt", "rêve", "espoir", "saison", "planète", "océan", "désert", "village"],
-    moyen: ["développement", "environnement", "communication", "gouvernement", "personnalité", "responsabilité", "informatique", "géographie", "philosophie", "enthousiasme"],
-    difficile: ["conscience", "excellence", "persévérance", "ambiguïté", "connaissance", "bienveillance", "indépendance", "effervescence", "intelligence"]
+    facile: ["aventure","curieux","silence","lumière","voyage","courage","nature","forêt","rêve","espoir","saison","planète","océan","désert","village","chemin","souvenir"],
+    moyen: ["développement","environnement","communication","gouvernement","personnalité","responsabilité","informatique","géographie","philosophie","enthousiasme","imagination","découverte"],
+    difficile: ["conscience","excellence","persévérance","ambiguïté","connaissance","bienveillance","indépendance","effervescence","intelligence","incompréhensible"]
   },
   avance: {
-    facile: ["paradoxe", "éphémère", "mélancolie", "harmonie", "métaphore", "allégorie", "rhétorique", "éloquence", "sagacité", "apogée", "dichotomie", "synergie"],
-    moyen: ["incontournable", "extraordinaire", "phénoménal", "sophistiqué", "inébranlable", "irréversible", "incompréhensible", "caractéristique", "détermination", "perspicacité"],
-    difficile: ["anticonstitutionnel", "incompréhensibilité", "intergouvernemental", "otorhinolaryngologiste", "anticonstitutionnellement", "hexakosioihexekontahexaphobie", "interdisciplinarité", "conceptualisation", "désinstitutionnalisation"]
+    facile: ["paradoxe","éphémère","mélancolie","harmonie","métaphore","allégorie","rhétorique","éloquence","sagacité","apogée","dichotomie","synergie","immuable"],
+    moyen: ["incontournable","extraordinaire","phénoménal","sophistiqué","inébranlable","irréversible","caractéristique","détermination","perspicacité","contradiction"],
+    difficile: ["anticonstitutionnel","incompréhensibilité","intergouvernemental","otorhinolaryngologiste","anticonstitutionnellement","interdisciplinarité","conceptualisation","désinstitutionnalisation"]
   }
 };
 
-// ============ PHRASES DE DICTÉE PAR NIVEAU ============
 const dictees = {
   debutant: {
-    facile: [
-      "Le chat dort sur le tapis.",
-      "Papa lit un livre à la maison.",
-      "Les enfants jouent dans le jardin.",
-      "La lune brille dans le ciel.",
-      "J'aime le pain et le chocolat."
-    ],
-    moyen: [
-      "Le jardinier arrose les fleurs du jardin.",
-      "Mon ami a une belle bibliothèque.",
-      "L'éléphant boit de l'eau à la rivière.",
-      "Nous partons en vacances à la montagne.",
-      "Le papillon vole au-dessus des fleurs."
-    ],
-    difficile: [
-      "L'apprentissage du vocabulaire demande de l'attention et de l'imagination.",
-      "La connaissance s'acquiert par un travail extraordinaire et intéressant.",
-      "Un magnifique papillon se pose sur une fleur extraordinaire."
-    ]
+    facile: ["Le chat dort sur le tapis.","Papa lit un livre à la maison.","Les enfants jouent dans le jardin.","La lune brille dans le ciel.","J'aime le pain et le chocolat."],
+    moyen: ["Le jardinier arrose les fleurs du jardin.","Mon ami a une belle bibliothèque.","L'éléphant boit de l'eau à la rivière.","Nous partons en vacances à la montagne."],
+    difficile: ["L'apprentissage du vocabulaire demande de l'attention et de l'imagination.","La connaissance s'acquiert par un travail extraordinaire.","Un magnifique papillon se pose sur une fleur."]
   },
   intermediaire: {
-    facile: [
-      "Le voyage vers la forêt fut une belle aventure.",
-      "Le silence de la nature inspire le courage.",
-      "Les saisons changent et la lumière revient.",
-      "L'océan cache des mystères profonds.",
-      "Chaque village possède son histoire."
-    ],
-    moyen: [
-      "Le développement durable exige une communication responsable.",
-      "La personnalité se forge à travers l'apprentissage et l'enthousiasme.",
-      "La géographie et la philosophie éclairent notre compréhension du monde.",
-      "L'environnement est une responsabilité partagée par tous les citoyens."
-    ],
-    difficile: [
-      "La persévérance et la bienveillance mènent à l'excellence et à la conscience.",
-      "L'indépendance intellectuelle suppose une connaissance approfondie et une intelligence vive.",
-      "L'effervescence créative transforme l'ambiguïté en clarté conceptuelle."
-    ]
+    facile: ["Le voyage vers la forêt fut une belle aventure.","Le silence de la nature inspire le courage.","Les saisons changent et la lumière revient.","L'océan cache des mystères profonds."],
+    moyen: ["Le développement durable exige une communication responsable.","La personnalité se forge à travers l'apprentissage et l'enthousiasme.","La géographie et la philosophie éclairent notre compréhension."],
+    difficile: ["La persévérance et la bienveillance mènent à l'excellence.","L'indépendance intellectuelle suppose une connaissance approfondie.","L'effervescence créative transforme l'ambiguïté en clarté."]
   },
   avance: {
-    facile: [
-      "L'harmonie éphémère du crépuscule inspire une douce mélancolie.",
-      "La métaphore et l'allégorie enrichissent la rhétorique.",
-      "L'éloquence n'est pas toujours synonyme de sagacité.",
-      "L'apogée de sa carrière fut marquée par une synergie remarquable."
-    ],
-    moyen: [
-      "La détermination et la perspicacité caractérisent un esprit incontournable.",
-      "Ce phénomène extraordinaire reste incompréhensible sans une analyse sophistiquée.",
-      "L'inébranlable volonté conduit à des résultats irréversibles et déterminants."
-    ],
-    difficile: [
-      "L'anticonstitutionnellement est un mot souvent cité pour sa longueur exceptionnelle.",
-      "La désinstitutionnalisation et la conceptualisation exigent une interdisciplinarité rigoureuse.",
-      "L'otorhinolaryngologiste étudie les pathologies complexes de la sphère ORL.",
-      "L'hexakosioihexekontahexaphobie désigne la peur irrationnelle du nombre 666."
-    ]
+    facile: ["L'harmonie éphémère du crépuscule inspire une douce mélancolie.","La métaphore et l'allégorie enrichissent la rhétorique.","L'éloquence n'est pas toujours synonyme de sagacité."],
+    moyen: ["La détermination et la perspicacité caractérisent un esprit incontournable.","Ce phénomène extraordinaire reste incompréhensible sans une analyse sophistiquée.","L'inébranlable volonté conduit à des résultats irréversibles."],
+    difficile: ["L'anticonstitutionnellement est un mot souvent cité pour sa longueur.","La désinstitutionnalisation et la conceptualisation exigent une interdisciplinarité rigoureuse.","L'otorhinolaryngologiste étudie les pathologies complexes de la sphère ORL."]
   }
 };
 
-// ============ PROVERBES ET MOTIVATIONS ============
 const proverbes = [
   "« C'est en forgeant qu'on devient forgeron. »",
   "« Petit à petit, l'oiseau fait son nid. »",
   "« La persévérance vient à bout de tout. »",
-  "« Qui sème le vent récolte la tempête. »",
-  "« L'habit ne fait pas le moine. »",
-  "« Pierre qui roule n'amasse pas mousse. »",
-  "« Après la pluie, le beau temps. »",
   "« Vouloir, c'est pouvoir. »",
   "« Les petits ruisseaux font les grandes rivières. »",
   "« Il n'y a pas de réussite sans effort. »",
@@ -273,12 +550,21 @@ const motivations = [
   "🏆 « Champion(ne) n'est pas celui qui ne tombe jamais, mais celui qui se relève toujours. »",
   "🌱 « Les graines que tu plantes aujourd'hui deviendront des arbres demain. »",
   "✨ « Crois en toi et tout devient possible. »",
-  "🔥 « La difficulté d'aujourd'hui est la force de demain. »",
-  "📚 « Lire, écrire, épeler : trois clés pour ouvrir le monde. »",
-  "🎉 « Félicitations pour ta persévérance, continue sur cette lancée ! »"
+  "🔥 « La difficulté d'aujourd'hui est la force de demain. »"
 ];
 
-// ============ FONCTIONS UTILITAIRES ============
+const defis = [
+  "Épelle 5 mots sans aucune erreur.",
+  "Écris une phrase contenant 3 mots de la liste.",
+  "Récite la dictée à un adulte sans faute.",
+  "Trouve un synonyme pour 3 mots de la liste.",
+  "Classe les mots par ordre alphabétique.",
+  "Écris les mots les plus difficiles 5 fois.",
+  "Invente une mini-histoire avec 4 mots.",
+  "Fais deviner 5 mots à quelqu'un sans les dire."
+];
+
+/* ========== UTILITAIRES ========== */
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -287,21 +573,20 @@ function shuffle(arr) {
   }
   return a;
 }
-
 function formatDate(date) {
   const d = new Date(date);
   const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
   const mois = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
   return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}`;
 }
-
 function addDays(date, days) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
   return d;
 }
+function pad(n) { return String(n).padStart(2, '0'); }
 
-// ============ GÉNÉRATION DU CONTENU ============
+/* ========== GÉNÉRATION DU CONTENU ========== */
 function genererContenu() {
   const nom = document.getElementById('nom').value || 'Élève';
   const dateDebutVal = document.getElementById('dateDebut').value;
@@ -309,7 +594,12 @@ function genererContenu() {
   const niveau = document.getElementById('niveau').value;
   const nbSemaines = parseInt(document.getElementById('semaines').value);
   const theme = document.getElementById('theme').value || 'général';
-  const langue = document.getElementById('langue').value;
+  const nbMots = parseInt(document.getElementById('nbMots').value);
+  const nbCopies = parseInt(document.getElementById('nbCopies').value);
+  const progression = document.getElementById('progression').value === 'oui';
+  const consignesPerso = document.getElementById('consignes').value.split('\n').filter(l => l.trim());
+
+  const optionsActives = Array.from(document.querySelectorAll('.opt:checked')).map(o => o.value);
 
   const niveauNom = {
     debutant: 'Débutant (CE1–CE2)',
@@ -319,177 +609,333 @@ function genererContenu() {
 
   const mots = banqueMots[niveau];
   const dics = dictees[niveau];
-
-  // Difficulté progressive : on répartit les semaines en 3 paliers
   const paliers = ['facile', 'moyen', 'difficile'];
-  const paliersNoms = { facile: '🟢 Facile', moyen: '🟡 Moyen', difficile: '🔴 Difficile' };
+  const paliersNoms = { facile: '🟢 FACILE', moyen: '🟡 MOYEN', difficile: '🔴 DIFFICILE' };
 
   let contenu = '';
 
-  // ===== PAGE DE GARDE =====
+  /* ===== PAGE DE GARDE ===== */
   contenu += `
-═══════════════════════════════════════════════════════════
-        📚 CARNET D'ENTRAÎNEMENT — DICTÉE & ÉPELLATION 📚
-═══════════════════════════════════════════════════════════
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║        📚  CARNET D'ENTRAÎNEMENT  📚                          ║
+║            DICTÉE  &  ÉPELLATION                              ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
 
-👤 Élève / Joueur : ${nom}
+👤 Élève            : ${nom}
+🎓 Niveau           : ${niveauNom}
+📅 Début            : ${formatDate(dateDebut)}
+📖 Durée            : ${nbSemaines} semaines
+🏷️ Thème            : ${theme}
+✏️ Mots / semaine   : ${nbMots}
+📝 Copies / mot     : ${nbCopies} fois
 
-📅 Date de début : ${formatDate(dateDebut)}
+───────────────────────────────────────────────────────────────
+                    🎯 OBJECTIF DU CARNET
+───────────────────────────────────────────────────────────────
 
-🎯 Niveau : ${niveauNom}
+Progresser en dictée et en épellation grâce à un entraînement
+régulier, structuré et motivant.
 
-📖 Nombre de semaines : ${nbSemaines}
+Chaque semaine, tu travailleras :
+   • L'épellation à voix haute
+   • La copie et la mémorisation des mots
+   • La dictée et l'auto-dictée
+   • La création de phrases
+   • L'auto-correction guidée
+   • Un bilan personnel
 
-🏷️ Thème : ${theme}
+───────────────────────────────────────────────────────────────
+                    📋 CONSIGNES GÉNÉRALES
+───────────────────────────────────────────────────────────────
+`;
+  consignesPerso.forEach((c, i) => {
+    contenu += `   ${i + 1}. ${c}\n`;
+  });
 
-═══════════════════════════════════════════════════════════
+  contenu += `
 
-💡 OBJECTIF : Progresser chaque semaine en dictée et en
-   épellation grâce à un entraînement régulier et motivant.
-
-   Chaque semaine comprend :
-   • Une liste de mots à épeler (difficulté croissante)
-   • Une phrase de dictée à travailler
-   • Un proverbe à méditer
-   • Une motivation pour rester concentré(e)
-   • Un espace pour noter ses résultats
-
-═══════════════════════════════════════════════════════════
+───────────────────────────────────────────────────────────────
+        ✨ Prêt(e) ? C'est parti pour ${nbSemaines} semaines ! ✨
+───────────────────────────────────────────────────────────────
 `;
 
-  // ===== SEMAINES =====
-  let indexProverbe = 0;
-  let indexMotivation = 0;
+  let idxProv = 0, idxMotiv = 0, idxDefi = 0;
 
+  /* ===== SEMAINES ===== */
   for (let s = 1; s <= nbSemaines; s++) {
-    // Déterminer le palier de difficulté
-    let palierIndex;
-    if (nbSemaines <= 4) {
-      palierIndex = s <= 2 ? 0 : (s === 3 ? 1 : 2);
-    } else if (nbSemaines <= 6) {
-      palierIndex = s <= 2 ? 0 : (s <= 4 ? 1 : 2);
-    } else if (nbSemaines <= 8) {
-      palierIndex = s <= 3 ? 0 : (s <= 6 ? 1 : 2);
-    } else {
-      palierIndex = s <= 4 ? 0 : (s <= 8 ? 1 : 2);
+    let palierIndex = 0;
+    if (progression) {
+      if (nbSemaines <= 2) palierIndex = s === 1 ? 0 : 2;
+      else if (nbSemaines <= 4) palierIndex = s <= 2 ? 0 : (s === 3 ? 1 : 2);
+      else if (nbSemaines <= 6) palierIndex = s <= 2 ? 0 : (s <= 4 ? 1 : 2);
+      else palierIndex = s <= 3 ? 0 : (s <= 6 ? 1 : 2);
     }
     const palier = paliers[palierIndex];
-
-    const debutSemaine = addDays(dateDebut, (s - 1) * 7);
-    const finSemaine = addDays(debutSemaine, 6);
-
-    // Sélectionner 10 mots de la difficulté correspondante
-    const motsSemaine = shuffle(mots[palier]).slice(0, 10);
-
-    // Sélectionner une dictée
-    const dicteeSemaine = shuffle(dics[palier])[0];
-
-    // Proverbe et motivation
-    const proverbe = proverbes[indexProverbe % proverbes.length];
-    indexProverbe++;
-    const motivation = motivations[indexMotivation % motivations.length];
-    indexMotivation++;
+    const debutSem = addDays(dateDebut, (s - 1) * 7);
+    const finSem = addDays(debutSem, 6);
+    const motsSem = shuffle(mots[palier]).slice(0, nbMots);
+    const dicteeSem = shuffle(dics[palier])[0];
+    const proverbe = proverbes[idxProv++ % proverbes.length];
+    const motivation = motivations[idxMotiv++ % motivations.length];
+    const defi = defis[idxDefi++ % defis.length];
 
     contenu += `
 
-═══════════════════════════════════════════════════════════
-   📅 SEMAINE ${s} — ${paliersNoms[palier]}
-   Du ${formatDate(debutSemaine)} au ${formatDate(finSemaine)}
-═══════════════════════════════════════════════════════════
 
-📖 LISTE DE MOTS À ÉPELER (${motsSemaine.length} mots) :
+╔═══════════════════════════════════════════════════════════════╗
+║  📅 SEMAINE ${s}  —  ${paliersNoms[palier].padEnd(15)}               ║
+║  Du ${formatDate(debutSem)} au ${formatDate(finSem)}
+╚═══════════════════════════════════════════════════════════════╝
 `;
 
-    motsSemaine.forEach((mot, i) => {
-      contenu += `   ${(i + 1).toString().padStart(2, ' ')}. ${mot.padEnd(30, ' ')} ☐ Épélé ☐ Écrit ☐ Réussi\n`;
-    });
+    /* --- EXERCICE 1 : LISTE DE MOTS --- */
+    if (optionsActives.includes('listeMots')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  📝 EXERCICE 1 — LISTE DE MOTS À ÉPELER                     │
+│  Consigne : Lis chaque mot. Épelle-le à voix haute.         │
+└─────────────────────────────────────────────────────────────┘
+`;
+      motsSem.forEach((mot, i) => {
+        contenu += `   ${pad(i + 1)}. ${mot.padEnd(28)} ☐ Épelé   ☐ Lu   ☐ Compris\n`;
+      });
+    }
 
-    contenu += `
-✍️ DICTÉE DE LA SEMAINE :
+    /* --- EXERCICE 2 : COPIE DES MOTS --- */
+    if (optionsActives.includes('copieMots')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  ✍️ EXERCICE 2 — COPIE DES MOTS (${nbCopies} fois)         │
+│  Consigne : Recopie chaque mot ${nbCopies} fois sans faute. │
+└─────────────────────────────────────────────────────────────┘
+`;
+      motsSem.forEach((mot, i) => {
+        contenu += `\n   Mot ${pad(i + 1)} : ${mot}\n`;
+        for (let c = 1; c <= nbCopies; c++) {
+          contenu += `   ${c}. _______________________________________________\n`;
+        }
+      });
+    }
 
-   « ${dicteeSemaine} »
+    /* --- EXERCICE 3 : ÉPELLATION --- */
+    if (optionsActives.includes('epellation')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  🗣️ EXERCICE 3 — ÉPELLATION À VOIX HAUTE                    │
+│  Consigne : Épelle chaque mot lettre par lettre.            │
+└─────────────────────────────────────────────────────────────┘
+`;
+      motsSem.slice(0, 5).forEach((mot, i) => {
+        contenu += `   ${pad(i + 1)}. ${mot.padEnd(25)} → ___ ___ ___ ___ ___ ___ ___ ___\n`;
+      });
+    }
 
-   ☐ Lu attentivement
-   ☐ Dicté par un adulte
-   ☐ Corrigé seul(e)
-   ☐ Recopié sans faute
+    /* --- EXERCICE 4 : DICTÉE --- */
+    if (optionsActives.includes('dictee')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  📖 EXERCICE 4 — DICTÉE DE LA SEMAINE                        │
+│  Consigne : Écoute et écris la phrase sans erreur.          │
+└─────────────────────────────────────────────────────────────┘
 
-💡 PROVERBE À MÉDITER :
+   Phrase à dicter :
+   « ${dicteeSem} »
+
+   Mon écriture :
+   _______________________________________________________________
+
+   _______________________________________________________________
+
+   _______________________________________________________________
+
+   ☐ Relu    ☐ Corrigé    ☐ Recopié sans faute
+`;
+    }
+
+    /* --- EXERCICE 5 : AUTO-DICTÉE --- */
+    if (optionsActives.includes('autodictee')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  🎧 EXERCICE 5 — AUTO-DICTÉE                                 │
+│  Consigne : Mémorise la phrase, puis écris-la de mémoire.   │
+└─────────────────────────────────────────────────────────────┘
+
+   Temps de mémorisation : ☐ 2 min   ☐ 5 min   ☐ 10 min
+
+   Mon écriture de mémoire :
+   _______________________________________________________________
+
+   _______________________________________________________________
+
+   _______________________________________________________________
+`;
+    }
+
+    /* --- EXERCICE 6 : INVENTE UNE PHRASE --- */
+    if (optionsActives.includes('phraseInvente')) {
+      const motsChoix = shuffle(motsSem).slice(0, 3);
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  💡 EXERCICE 6 — INVENTE UNE PHRASE                          │
+│  Consigne : Utilise les mots suivants dans une phrase.      │
+└─────────────────────────────────────────────────────────────┘
+
+   Mots imposés : ${motsChoix.join('  •  ')}
+
+   Ma phrase :
+   _______________________________________________________________
+
+   _______________________________________________________________
+`;
+    }
+
+    /* --- EXERCICE 7 : MOTS CACHÉS / CLASSEMENT --- */
+    if (optionsActives.includes('motsCroises')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  🧩 EXERCICE 7 — CLASSEMENT ALPHABÉTIQUE                     │
+│  Consigne : Classe les mots dans l'ordre alphabétique.      │
+└─────────────────────────────────────────────────────────────┘
+
+   Mots à classer : ${motsSem.slice(0, 6).join(', ')}
+
+   1. ____________________   4. ____________________
+   2. ____________________   5. ____________________
+   3. ____________________   6. ____________________
+`;
+    }
+
+    /* --- EXERCICE 8 : AUTO-CORRECTION --- */
+    if (optionsActives.includes('correction')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  ✅ EXERCICE 8 — AUTO-CORRECTION GUIDÉE                      │
+│  Consigne : Compare ton travail avec le modèle.             │
+└─────────────────────────────────────────────────────────────┘
+
+   ☐ J'ai relu chaque mot.
+   ☐ J'ai vérifié les accents.
+   ☐ J'ai vérifié les majuscules.
+   ☐ J'ai corrigé mes erreurs en rouge.
+   ☐ J'ai recopié les mots erronés 3 fois.
+
+   Mots que je dois revoir :
+   _______________________________________________________________
+`;
+    }
+
+    /* --- BILAN --- */
+    if (optionsActives.includes('bilan')) {
+      contenu += `
+┌─────────────────────────────────────────────────────────────┐
+│  📊 BILAN DE LA SEMAINE ${s}                                  │
+└─────────────────────────────────────────────────────────────┘
+
+   Épellation      : ____ / ${nbMots}     ☐ Excellent  ☐ Bien  ☐ À revoir
+   Dictée          : ____ erreurs       ☐ 0  ☐ 1-2  ☐ 3+
+   Auto-dictée     : ____ erreurs       ☐ 0  ☐ 1-2  ☐ 3+
+   Copie           : ☐ Sans faute  ☐ Quelques fautes  ☐ À refaire
+
+   Mon ressenti : ☐ 😀 Content  ☐ 🙂 Moyen  ☐ 😕 Difficile
+
+   Ce que j'ai appris :
+   _______________________________________________________________
+
+   Ce que je dois améliorer :
+   _______________________________________________________________
+`;
+    }
+
+    /* --- PROVERBE --- */
+    if (optionsActives.includes('proverbe')) {
+      contenu += `
+   💬 PROVERBE DE LA SEMAINE :
    ${proverbe}
-
-🌟 MOTIVATION DE LA SEMAINE :
-   ${motivation}
-
-📊 RÉSULTATS (à remplir) :
-
-   Épellation :   ____ / ${motsSemaine.length}
-   Dictée :       ____ erreurs
-   Auto-évaluation : ☐ Excellent  ☐ Bien  ☐ À revoir
-
-🔁 EXERCICES DE RENFORCEMENT :
-   • Écris chaque mot 3 fois.
-   • Épelle chaque mot à voix haute.
-   • Invente une phrase avec 5 mots de la liste.
-   • Récite la dictée à un adulte.
 `;
+    }
 
+    /* --- MOTIVATION --- */
+    if (optionsActives.includes('motivation')) {
+      contenu += `
+   🌟 MOTIVATION :
+   ${motivation}
+`;
+    }
+
+    /* --- DÉFI --- */
+    if (optionsActives.includes('defi')) {
+      contenu += `
+   🏆 DÉFI DE LA SEMAINE :
+   ${defi}
+
+   ☐ Défi relevé !
+`;
+    }
+
+    contenu += `\n`;
   }
 
-  // ===== PAGE FINALE =====
+  /* ===== PAGE FINALE ===== */
   contenu += `
 
-═══════════════════════════════════════════════════════════
-   🎉 FÉLICITATIONS POUR TON TRAVAIL ! 🎉
-═══════════════════════════════════════════════════════════
 
-   ${nom}, tu as terminé un cycle de ${nbSemaines} semaines
-   d'entraînement en dictée et en épellation.
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║              🎉 FÉLICITATIONS ${nom.toUpperCase().padEnd(20)} 🎉         ║
+║                                                               ║
+║  Tu as terminé ${nbSemaines} semaines d'entraînement !              ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
 
    Continue à pratiquer chaque jour, même 10 minutes :
    la régularité est la clé du succès !
 
    « Le succès est la somme de petits efforts répétés. »
 
-═══════════════════════════════════════════════════════════
+───────────────────────────────────────────────────────────────
    📝 NOTES PERSONNELLES :
-═══════════════════════════════════════════════════════════
+───────────────────────────────────────────────────────────────
 
-   _______________________________________________________
+   ___________________________________________________________
 
-   _______________________________________________________
+   ___________________________________________________________
 
-   _______________________________________________________
+   ___________________________________________________________
 
-   _______________________________________________________
+   ___________________________________________________________
 
-   _______________________________________________________
+   ___________________________________________________________
 
-═══════════════════════════════════════════════════════════
+   ___________________________________________________________
+
+───────────────────────────────────────────────────────────────
    Généré le ${formatDate(new Date())}
-═══════════════════════════════════════════════════════════
+───────────────────────────────────────────────────────────────
 `;
 
   return contenu;
 }
 
-// ============ GÉNÉRATION DU FICHIER WORD ============
-function genererWord() {
+/* ========== TÉLÉCHARGEMENT WORD ========== */
+function generer() {
   const contenu = genererContenu();
   const nom = document.getElementById('nom').value || 'Eleve';
 
-  // Afficher un aperçu
+  /* Aperçu */
   const preview = document.getElementById('preview');
   preview.style.display = 'block';
-  preview.textContent = contenu.substring(0, 800) + '\n\n[...]\n\n✅ Fichier prêt au téléchargement !';
+  document.getElementById('previewBody').textContent = contenu.substring(0, 1500) + '\n\n[...]';
 
-  // Créer le fichier Word (format HTML compatible Word)
+  /* Fichier Word */
   const htmlWord = `
 <html xmlns:o='urn:schemas-microsoft-com:office:office'
       xmlns:w='urn:schemas-microsoft-com:office:word'
       xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
 <meta charset="UTF-8">
-<title>Carnet Dictée Épellation</title>
+<title>Carnet Dictée Épellation — ${nom}</title>
 <!--[if gte mso 9]>
 <xml>
 <w:WordDocument>
@@ -499,21 +945,9 @@ function genererWord() {
 </xml>
 <![endif]-->
 <style>
-  @page { size: A4; margin: 2cm; }
-  body {
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 11pt;
-    line-height: 1.5;
-    color: #000;
-  }
-  pre {
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 10pt;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    line-height: 1.4;
-  }
-  h1 { color: #4a2c8a; }
+  @page { size: A4; margin: 1.8cm; }
+  body { font-family: 'Calibri', Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #000; }
+  pre { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; white-space: pre-wrap; word-wrap: break-word; line-height: 1.35; }
 </style>
 </head>
 <body>
@@ -522,26 +956,25 @@ function genererWord() {
 </html>
 `;
 
-  // Télécharger le fichier .doc
   const blob = new Blob(['\ufeff', htmlWord], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const lien = document.createElement('a');
   lien.href = url;
-  lien.download = `Carnet_Dictee_Epellation_${nom.replace(/\s+/g, '_')}.doc`;
+  lien.download = `Carnet_${nom.replace(/\s+/g, '_')}.doc`;
   document.body.appendChild(lien);
   lien.click();
   document.body.removeChild(lien);
   URL.revokeObjectURL(url);
+
+  setTimeout(() => preview.scrollIntoView({ behavior: 'smooth' }), 300);
 }
 
-// Initialiser la date du jour
-window.onload = function() {
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  document.getElementById('dateDebut').value = `${yyyy}-${mm}-${dd}`;
-};
+/* ========== DATE PAR DÉFAUT ========== */
+window.addEventListener('load', () => {
+  const t = new Date();
+  document.getElementById('dateDebut').value =
+    `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+});
 </script>
 </body>
 </html>
