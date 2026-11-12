@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recensement des Encadreurs — Groupe KA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --primary:#5c0a1a;--primary-light:#8b1327;--secondary:#f5a623;
+  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
+  --border:#ecd5d8;--success:#0f9d58;--danger:#c8102e;
+  --radius:14px;--shadow:0 4px 16px rgba(92,10,26,.08);
+  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
+  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
+.container{max-width:1320px;margin:0 auto;padding:0 24px}
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo-text strong{display:block;font-size:1.15rem;color:#fff}
+.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
+.hero{background:var(--grad-primary);color:#fff;padding:50px 0 60px;text-align:center}
+.hero h1{color:#fff;font-size:2.3rem;margin-bottom:12px;font-weight:900}
+.hero-sub{font-size:1.05rem;opacity:.9}
+.section{padding:36px 0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid var(--border)}
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;border:1px solid var(--border)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
+.stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
+.stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.table-wrap{overflow-x:auto;border-radius:12px}
+.table{width:100%;border-collapse:collapse;font-size:.9rem}
+.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;font-size:.82rem;text-transform:uppercase}
+.table td{padding:14px 12px;border-bottom:1px solid var(--border)}
+.table tbody tr:hover td{background:#fdf6f7}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
+.btn-primary{background:var(--grad-primary);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
+.btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.badge-role{display:inline-block;padding:3px 12px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;background:var(--primary);color:#fff;letter-spacing:.5px}
+.badge-role.k{background:#b91c2e}
+.badge-role.a{background:#8b1327}
+.badge-role.general{background:var(--secondary);color:var(--primary)}
+.badge-role.coordinateur{background:#0f9d58}
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px}
+.footer p{opacity:.85}
+input[type="search"]{padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.95rem;width:100%}
+input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.chart-container{position:relative;height:360px}
+@media(max-width:700px){
+  .hero h1{font-size:1.7rem}
+  .stat-value{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">
+      <div class="logo-text"><strong>Groupe KA</strong><small>Recensement des Encadreurs</small></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <a href="index.html" class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)">← Retour au registre</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Recensement Officiel des Encadreurs</h1>
+    <p class="hero-sub">Liste complète, effectifs exacts et statistiques par rôle</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="grid-stats">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotalEnc">0</div>
+        <div class="stat-label">Total Encadreurs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statEncK">0</div>
+        <div class="stat-label">Encadreurs K.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statEncA">0</div>
+        <div class="stat-label">Encadreurs A.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statPresents">0</div>
+        <div class="stat-label">Présents aujourd'hui</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+        <h2 style="font-size:1.4rem">📋 Liste complète des encadreurs</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input type="search" id="searchEnc" placeholder="Rechercher un encadreur..." style="max-width:280px">
+          <button class="btn btn-outline btn-sm" onclick="exporterRecensementCSV()">📤 Exporter CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Imprimer</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="tableRecensement">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom complet</th>
+              <th>Rôle</th>
+              <th>Statut aujourd'hui</th>
+              <th>Motif du jour</th>
+              <th>Total absences signalées</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:1.2rem;margin-bottom:16px">📊 Répartition par rôle</h2>
+      <div class="chart-container"><canvas id="chartRoles"></canvas></div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:1.2rem;margin-bottom:16px">📈 Absences signalées par encadreur (total)</h2>
+      <div class="chart-container"><canvas id="chartAbsences"></canvas></div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container"><p>© 2026 Groupe KA — Salamu-Amani · Recensement des Encadreurs</p></div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
+  authDomain: "registre-e3389.firebaseapp.com",
+  projectId: "registre-e3389",
+  storageBucket: "registre-e3389.firebasestorage.app",
+  messagingSenderId: "180998003518",
+  appId: "1:180998003518:web:43f1f6aa39941025206a6f",
+  measurementId: "G-L79ET2SX74"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function aujourdhui(){ const d=new Date(); d.setHours(0,0,0,0); const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),j=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${j}`; }
+const AUJOURDHUI = aujourdhui();
+
+let cacheEncadreurs = [];
+let cacheMotifs = [];
+let charts = {};
+
+function motifDuJour(encId){
+  return cacheMotifs.find(m => m.encadreurId === encId && m.date === AUJOURDHUI);
+}
+function countMotifsParEnc(encId){
+  return cacheMotifs.filter(m => m.encadreurId === encId).length;
+}
+function roleClass(role){
+  if(!role) return '';
+  if(role.includes('Général')) return 'general';
+  if(role.includes('Coordinateur')) return 'coordinateur';
+  if(role.includes(' A.')) return 'a';
+  if(role.includes(' K.')) return 'k';
+  return '';
+}
+
+function renderRecensement(filtre=''){
+  const tbody = document.querySelector('#tableRecensement tbody');
+  const data = cacheEncadreurs.filter(e => e.nom.toLowerCase().includes(filtre.toLowerCase()));
+
+  document.getElementById('statTotalEnc').textContent = cacheEncadreurs.length;
+  document.getElementById('statEncK').textContent = cacheEncadreurs.filter(e => (e.role||'').includes(' K.')).length;
+  document.getElementById('statEncA').textContent = cacheEncadreurs.filter(e => (e.role||'').includes(' A.')).length;
+  document.getElementById('statPresents').textContent = cacheEncadreurs.filter(e => !motifDuJour(e.id)).length;
+
+  if(data.length === 0){
+    tbody.innerHTML = '<tr><td colspan="6" class="center" style="padding:20px;color:var(--muted)">Aucun encadreur trouvé.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((e, i) => {
+    const m = motifDuJour(e.id);
+    const statut = m
+      ? '<span style="background:#fce8e6;color:#c8102e;padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">ABSENT SIGNALÉ</span>'
+      : '<span style="background:#e6f7ee;color:#0f9d58;padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">PRÉSENT</span>';
+    const motifTexte = m
+      ? `<span style="color:var(--danger);font-weight:600">${esc(m.type)}</span>${m.detail ? ' — <span class="muted">'+esc(m.detail)+'</span>' : ''}`
+      : '<span class="muted" style="font-style:italic">Aucun signalement</span>';
+    const totalAbs = countMotifsParEnc(e.id);
+    return `<tr>
+      <td><strong>${i+1}</strong></td>
+      <td><strong>${esc(e.nom)}</strong></td>
+      <td><span class="badge-role ${roleClass(e.role)}">${esc(e.role||'Encadreur')}</span></td>
+      <td>${statut}</td>
+      <td>${motifTexte}</td>
+      <td><strong style="color:var(--primary)">${totalAbs}</strong></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderChartRoles(){
+  if(charts.roles){ try{charts.roles.destroy();}catch(e){} }
+  const compte = {};
+  cacheEncadreurs.forEach(e => {
+    const r = e.role || 'Non défini';
+    compte[r] = (compte[r]||0) + 1;
+  });
+  const labels = Object.keys(compte);
+  const data = Object.values(compte);
+  const couleurs = ['#5c0a1a','#b91c2e','#f5a623','#0f9d58','#8b1327','#7a5c62'];
+
+  charts.roles = new Chart(document.getElementById('chartRoles'), {
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{data, backgroundColor:couleurs.slice(0, labels.length), borderWidth:2, borderColor:'#fff'}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom'}},
+      cutout:'55%'
+    }
+  });
+}
+
+function renderChartAbsences(){
+  if(charts.absences){ try{charts.absences.destroy();}catch(e){} }
+  const data = cacheEncadreurs.map(e => ({nom:e.nom, total:countMotifsParEnc(e.id)})).sort((a,b)=>b.total-a.total);
+  charts.absences = new Chart(document.getElementById('chartAbsences'), {
+    type:'bar',
+    data:{
+      labels:data.map(d=>d.nom),
+      datasets:[{
+        label:'Absences signalées',
+        data:data.map(d=>d.total),
+        backgroundColor:'#b91c2e',
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{beginAtZero:true, ticks:{stepSize:1}},
+        y:{ticks:{font:{size:11}, autoSkip:false}}
+      }
+    }
+  });
+}
+
+function exporterRecensementCSV(){
+  let csv = "Nom,Role,Statut du jour,Motif du jour,Total absences\n";
+  cacheEncadreurs.forEach(e => {
+    const m = motifDuJour(e.id);
+    csv += `"${e.nom.replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${m?'ABSENT':'PRESENT'}","${m?m.type:''}","${countMotifsParEnc(e.id)}"\n`;
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `recensement-encadreurs-${AUJOURDHUI}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+window.exporterRecensementCSV = exporterRecensementCSV;
+
+document.getElementById('searchEnc').addEventListener('input', e => renderRecensement(e.target.value));
+
+onSnapshot(collection(db, "encadreurs"), snap => {
+  cacheEncadreurs = [];
+  snap.forEach(d => cacheEncadreurs.push({id:d.id, ...d.data()}));
+  cacheEncadreurs.sort((a,b) => a.nom.localeCompare(b.nom));
+  renderRecensement(document.getElementById('searchEnc').value);
+  renderChartRoles();
+  renderChartAbsences();
+});
+
+onSnapshot(collection(db, "motifsEncadreurs"), snap => {
+  cacheMotifs = [];
+  snap.forEach(d => cacheMotifs.push({id:d.id, ...d.data()}));
+  renderRecensement(document.getElementById('searchEnc').value);
+  renderChartRoles();
+  renderChartAbsences();
+});
+</script>
+</body>
+</html>
