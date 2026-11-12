@@ -3,707 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Groupe KA — Registre de Présence</title>
+<title>Signaler une absence ou un retard — Groupe KA Nodasa</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --primary:#5c0a1a;--primary-light:#8b1327;--primary-mid:#6e0e1f;
-  --secondary:#f5a623;--secondary-light:#ffc857;
-  --red-professional:#b91c2e;--red-light:#e63946;--red-dark:#4a0512;
+  --primary:#5c0a1a;--primary-light:#8b1327;--secondary:#f5a623;
   --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
-  --border:#ecd5d8;--success:#0f9d58;--success-light:#e6f7ee;
-  --danger:#c8102e;--danger-light:#fce8e6;
-  --warning:#e65100;--warning-light:#fff3e0;
-  --radius:14px;--shadow-sm:0 1px 3px rgba(92,10,26,.08);
-  --shadow:0 4px 16px rgba(92,10,26,.08);--shadow-lg:0 12px 32px rgba(92,10,26,.14);
-  --shadow-xl:0 24px 48px rgba(92,10,26,.2);
+  --border:#ecd5d8;--success:#0f9d58;--danger:#c8102e;--warning:#e65100;
+  --radius:14px;--shadow:0 4px 16px rgba(92,10,26,.08);
   --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
   --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
+  --grad-success:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);
+  --grad-warning:linear-gradient(135deg,#e65100 0%,#f59e0b 100%);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacing:-.02em}
-.container{max-width:1320px;margin:0 auto;padding:0 24px}
-.hidden{display:none!important}
-.center{text-align:center}
-.muted{color:var(--muted);font-size:.9rem}
-
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:14px}
 .logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
 .logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
 .logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
-.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary-light)}
+.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
+.theme-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
 
-.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3);position:sticky;top:0;z-index:100}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:14px}
-.nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-
-.year-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem;letter-spacing:.5px;color:#fff}
-.year-badge .yb-icon{font-size:1rem}
-.year-badge.public{cursor:default}
-
-.year-select{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:10px 14px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;min-width:160px}
-.year-select:hover{background:rgba(255,255,255,.25)}
-.year-select option{color:var(--text);background:#fff}
-
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-decoration:none;letter-spacing:.3px}
-.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
-.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.35)}
-.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,157,88,.4)}
-.btn-danger{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff;box-shadow:0 4px 14px rgba(185,28,46,.3)}
-.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(185,28,46,.35)}
-.btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
-.btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent;box-shadow:0 4px 14px rgba(245,166,35,.35)}
-.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
-.btn-ghost:hover{background:rgba(255,255,255,.22)}
-.btn-block{width:100%;justify-content:center}
-.btn-sm{padding:7px 14px;font-size:.8rem}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
-
-.hero{background:var(--grad-primary);color:#fff;padding:60px 0 70px;text-align:center;position:relative;overflow:hidden}
+.hero{background:var(--grad-primary);color:#fff;padding:50px 0 60px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
 .hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(230,57,70,.4) 0%,transparent 60%);pointer-events:none}
 .hero .container{position:relative;z-index:1}
-.hero h1{color:#fff;font-size:2.6rem;margin-bottom:12px;font-weight:900;letter-spacing:-.03em}
-.hero-sub{font-size:1.1rem;opacity:.9;font-weight:400}
+.hero h1{color:#fff;font-size:2.3rem;margin-bottom:12px;font-weight:900}
+.hero-sub{font-size:1.05rem;opacity:.9}
 
-.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid var(--border);transition:box-shadow .3s}
-.card:hover{box-shadow:var(--shadow-lg)}
-.card-header{margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.card-header h2{font-size:1.4rem;font-weight:700}
 .section{padding:36px 0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;margin-bottom:24px;border:1px solid var(--border)}
+.card h2{font-size:1.4rem;margin-bottom:8px}
+.card .sub{color:var(--muted);font-size:.9rem;margin-bottom:24px}
 
 .form-group{margin-bottom:20px}
 .form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
-.form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-group label .req{color:var(--danger)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-group textarea{resize:vertical;min-height:90px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
 
-.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
+.type-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:600px){.type-choices{grid-template-columns:1fr}}
+.type-choice{padding:22px;border-radius:14px;border:3px solid var(--border);cursor:pointer;text-align:center;transition:all .25s;background:#fff;font-family:inherit}
+.type-choice:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(92,10,26,.12)}
+.type-choice input{display:none}
+.type-choice .tc-icon{font-size:2rem;margin-bottom:8px;display:block}
+.type-choice .tc-label{font-weight:700;font-size:1rem;color:var(--text)}
+.type-choice .tc-desc{font-size:.75rem;color:var(--muted);margin-top:4px}
+.type-choice.selected[data-type="absence"]{border-color:var(--danger);background:linear-gradient(135deg,#fff5f5 0%,#fce8e6 100%);box-shadow:0 8px 20px rgba(200,16,46,.2)}
+.type-choice.selected[data-type="absence"] .tc-label{color:var(--danger)}
+.type-choice.selected[data-type="retard"]{border-color:var(--warning);background:linear-gradient(135deg,#fff8f0 0%,#fff3e0 100%);box-shadow:0 8px 20px rgba(230,81,0,.2)}
+.type-choice.selected[data-type="retard"] .tc-label{color:var(--warning)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:10px;border:none;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
+.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
+.btn-block{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+.message{margin-top:18px;padding:16px 20px;border-radius:10px;font-weight:500;display:none;font-size:.95rem;line-height:1.5}
 .message.show{display:block}
-.message.success{background:var(--success-light);color:var(--success);border-left:4px solid var(--success)}
-.message.error{background:var(--danger-light);color:var(--danger);border-left:4px solid var(--danger)}
-.message.warning{background:var(--warning-light);color:var(--warning);border-left:4px solid var(--warning)}
+.message.success{background:#e6f7ee;color:#0f9d58;border-left:4px solid #0f9d58}
+.message.error{background:#fce8e6;color:#c8102e;border-left:4px solid #c8102e}
+.message.warning{background:#fff3e0;color:#e65100;border-left:4px solid #e65100}
 
-.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid var(--border)}
-.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
-.stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
-.stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.info-box{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-left:5px solid var(--primary);border-radius:10px;padding:18px 22px;margin-bottom:24px;font-size:.9rem}
+.info-box strong{color:var(--primary)}
 
-.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
-.tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s}
-.tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
-.tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(92,10,26,.25)}
-.tab-content{display:none}
-.tab-content.active{display:block}
+/* BANNIÈRE D'ÉTAT DU SIGNALEMENT */
+.status-banner{border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;transition:all .3s}
+.status-banner.open{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);border:3px solid var(--success)}
+.status-banner.waiting{background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);border:3px solid var(--warning)}
+.status-banner.closed{background:linear-gradient(135deg,#fce8e6 0%,#f8c4c0 100%);border:3px solid var(--danger)}
+.status-banner .sb-icon{font-size:2.5rem;flex-shrink:0}
+.status-banner .sb-text{flex:1;min-width:200px}
+.status-banner .sb-title{font-weight:800;font-size:1.15rem;margin-bottom:4px}
+.status-banner.open .sb-title{color:var(--success)}
+.status-banner.waiting .sb-title{color:var(--warning)}
+.status-banner.closed .sb-title{color:var(--danger)}
+.status-banner .sb-desc{font-size:.88rem;color:var(--text)}
+.status-banner .sb-details{font-size:.85rem;color:var(--text);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.15)}
+.status-banner .sb-details div{padding:3px 0}
+.status-banner .sb-details strong{color:var(--primary)}
 
-/* Sub-tabs Encadreurs */
-.sub-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
-.sub-tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s}
-.sub-tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
-.sub-tab.active{background:var(--grad-gold);color:var(--primary);box-shadow:0 4px 12px rgba(245,166,35,.3)}
-.subtab-content{display:none}
-.subtab-content.active{display:block}
+/* FORMULAIRE DÉSACTIVÉ */
+.form-disabled{position:relative;opacity:.55;pointer-events:none;user-select:none}
 
-.voyage-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm);flex-wrap:wrap}
-.voyage-tab{flex:1;min-width:140px;background:none;border:none;padding:14px 18px;font-family:inherit;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
-.voyage-tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
-.voyage-tab.active{background:var(--grad-primary);color:#fff;box-shadow:0 4px 12px rgba(92,10,26,.25)}
-.voyage-tab .count{display:inline-block;background:rgba(139,19,39,.1);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
-.voyage-tab.active .count{background:rgba(255,255,255,.25);color:#fff}
-
-.voyage-tab.validated{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);color:var(--success);border:2px solid var(--success)}
-.voyage-tab.validated .count{background:var(--success);color:#fff}
-.voyage-tab.validated::after{content:'✓';position:absolute;top:6px;right:10px;font-weight:900;color:var(--success);font-size:1rem}
-.voyage-tab.validated.active{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(15,157,88,.4)}
-.voyage-tab.validated.active::after{color:#fff}
-.voyage-tab.validated.active .count{background:rgba(255,255,255,.25);color:#fff}
-
-.table-wrap{overflow-x:auto;border-radius:12px}
-.table{width:100%;border-collapse:collapse;font-size:.88rem}
-.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;white-space:nowrap;font-size:.82rem;text-transform:uppercase}
-.table td{padding:14px 12px;border-bottom:1px solid var(--border)}
-.table tbody tr{transition:background .15s}
-.table tbody tr:hover td{background:#fdf6f7}
-
-.detail-row td{padding:0!important;border-bottom:2px solid var(--red-professional)!important;background:#fff8f9!important}
-.detail-content{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
-.detail-block{display:flex;flex-direction:column;gap:8px}
-.detail-block-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px}
-.detail-block-title .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.detail-block.present .detail-block-title{color:var(--success)}
-.detail-block.present .dot{background:var(--success)}
-.detail-block.absent .detail-block-title{color:var(--danger)}
-.detail-block.absent .dot{background:var(--danger)}
-.detail-block.excuse .detail-block-title{color:#f59e0b}
-.detail-block.excuse .dot{background:#f59e0b}
-.detail-dates{display:flex;flex-wrap:wrap;gap:8px}
-.detail-date{padding:6px 12px;border-radius:20px;font-size:.78rem;font-weight:600;white-space:nowrap}
-.detail-block.present .detail-date{background:var(--success-light);color:var(--success);border:1.5px solid var(--success)}
-.detail-block.absent .detail-date{background:var(--danger-light);color:var(--danger);border:1.5px solid var(--danger)}
-.detail-block.excuse .detail-date{background:var(--warning-light);color:#b45309;border:1.5px solid #f59e0b}
-.detail-empty{font-size:.82rem;color:var(--muted);font-style:italic}
-
-.nom-ka-cliquable{cursor:pointer;transition:color .2s;display:inline-flex;align-items:center;gap:6px}
-.nom-ka-cliquable:hover{color:var(--red-professional)}
-.nom-ka-cliquable::after{content:'▼';font-size:.65rem;opacity:.5;transition:transform .2s;display:inline-block}
-.nom-ka-cliquable.open::after{transform:rotate(180deg);opacity:1;color:var(--red-professional)}
-
-.date-banner{background:var(--grad-primary);color:#fff;padding:24px 28px;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow-lg);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden}
-.date-banner::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--grad-gold)}
-.date-banner .db-left .db-label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;opacity:.75;font-weight:600}
-.date-banner .db-left .db-date{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;letter-spacing:-.02em}
-.date-banner .db-left .db-time{font-size:.85rem;opacity:.8;margin-top:4px}
-.db-status{padding:10px 20px;border-radius:24px;font-weight:700;font-size:.85rem;letter-spacing:.5px;text-transform:uppercase}
-.db-status.open{background:var(--success);color:#fff}
-.db-status.closed{background:var(--red-professional);color:#fff}
-.db-status.special{background:var(--grad-gold);color:var(--primary)}
-
-.ka-row{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:16px 20px;background:var(--surface);border-radius:12px;border:2px solid var(--border);margin-bottom:14px;transition:all .25s}
-.ka-row:hover{border-color:var(--primary-light);box-shadow:0 6px 20px rgba(139,19,39,.1)}
-.ka-row.absence-alert{border-color:var(--danger);background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
-.ka-info .ka-nom{font-weight:700;font-size:1.05rem;color:var(--text);display:block;margin-bottom:4px}
-.ka-info .alert-3{font-size:.8rem;color:var(--danger);font-weight:700;margin-top:4px;display:block}
-
-.status-choices{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
-.status-choice{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none}
-.status-choice input[type="radio"]{appearance:none;-webkit-appearance:none;width:42px;height:42px;border-radius:50%;border:3px solid var(--border);cursor:pointer;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center;background:#fff}
-.status-choice input[type="radio"]:hover{transform:scale(1.08)}
-.status-choice input[type="radio"]:checked::after{content:'';width:22px;height:22px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-.status-choice.vert input[type="radio"]{border-color:var(--success)}
-.status-choice.vert input[type="radio"]:checked{background:var(--success);border-color:var(--success);box-shadow:0 4px 14px rgba(15,157,88,.35)}
-.status-choice.vert input[type="radio"]:checked::after{background:#fff}
-.status-choice.rouge input[type="radio"]{border-color:var(--red-professional)}
-.status-choice.rouge input[type="radio"]:checked{background:var(--red-professional);border-color:var(--red-professional);box-shadow:0 4px 14px rgba(200,16,46,.35)}
-.status-choice.rouge input[type="radio"]:checked::after{background:#fff}
-.status-choice.blanc input[type="radio"]{border-color:#f59e0b}
-.status-choice.blanc input[type="radio"]:checked{background:#f59e0b;border-color:#f59e0b;box-shadow:0 4px 14px rgba(245,158,11,.35)}
-.status-choice.blanc input[type="radio"]:checked::after{background:#fff}
-.status-choice .status-label{font-size:.72rem;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap}
-.status-choice.vert .status-label{color:var(--success)}
-.status-choice.rouge .status-label{color:var(--red-professional)}
-.status-choice.blanc .status-label{color:#f59e0b}
-
-.validation-bar{background:var(--surface);padding:20px 24px;margin-top:24px;border-radius:14px;box-shadow:var(--shadow-lg);display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--secondary)}
-.validation-bar .info-validation{font-weight:600;font-size:.95rem;color:var(--primary)}
-.validation-bar .info-validation span{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:12px;font-weight:800}
-
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-primary);padding:20px;position:relative;overflow:hidden}
-.login-screen::before{content:'';position:absolute;top:-30%;right:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(230,57,70,.3) 0%,transparent 60%);pointer-events:none}
-.login-screen::after{content:'';position:absolute;bottom:-30%;left:-15%;width:60%;height:160%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
-.login-card{background:var(--surface);border-radius:20px;padding:48px 40px;max-width:420px;width:100%;box-shadow:var(--shadow-xl);position:relative;z-index:1}
-.login-card h1{margin:20px 0 6px;font-size:1.5rem;text-align:center;line-height:1.2}
-.login-card .logo.center{justify-content:center;display:flex}
-.login-card .logo-img{width:96px;height:96px}
-.link-back{display:block;text-align:center;margin-top:20px;color:var(--muted);text-decoration:none;font-size:.85rem}
-.link-back:hover{color:var(--red-professional)}
-
-.dashboard-main{padding:36px 24px 80px}
-.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px;margin-bottom:24px;align-items:start}
-@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
-.chart-box{background:var(--surface);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);border:1px solid var(--border)}
-.chart-box h3{font-size:1.05rem;margin-bottom:6px;font-weight:700}
-.chart-box .chart-period{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
-.chart-box .chart-period .badge{background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.68rem;font-weight:800;letter-spacing:.5px}
-.chart-container{position:relative;height:320px}
-
-.chart-voyage-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;padding:7px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
-.nav-arrow{background:var(--grad-primary);color:#fff;border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px rgba(92,10,26,.3);flex-shrink:0;font-weight:700}
-.nav-arrow:hover:not(:disabled){transform:scale(1.12)}
-.nav-arrow:disabled{opacity:.3;cursor:not-allowed}
-.voyage-dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex:1}
-.voyage-dot{background:#fff;border:2px solid var(--border);padding:6px 12px;border-radius:16px;font-family:inherit;font-weight:600;font-size:.72rem;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
-.voyage-dot:hover{border-color:var(--primary-light);color:var(--primary)}
-.voyage-dot.active{background:var(--grad-primary);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(92,10,26,.25)}
-
-.filter-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.filter-card{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:9px 4px;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit;font-size:.68rem;font-weight:700;color:var(--muted);line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px}
-.filter-card:hover{border-color:var(--primary-light);color:var(--primary);transform:translateY(-1px)}
-.filter-card.active{background:var(--grad-gold);color:var(--primary);border-color:var(--secondary);box-shadow:0 4px 12px rgba(245,166,35,.35)}
-.filter-card .fc-icon{font-size:1.1rem;line-height:1}
-
-.chart-scroll{max-height:440px;overflow-y:auto;padding-right:6px;border-radius:10px}
-.chart-scroll::-webkit-scrollbar{width:8px}
-.chart-scroll::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
-.chart-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-.chart-scroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
-
-.alert-list{display:flex;flex-direction:column;gap:12px}
-.alert-item{padding:16px 20px;border-radius:10px;border-left:5px solid var(--red-professional);background:linear-gradient(90deg,var(--danger-light) 0%,#fff 100%);font-size:.9rem}
-.alert-item strong{color:var(--red-professional);font-weight:700}
-
-.historique{display:flex;flex-direction:column;gap:14px}
-.hist-item{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:12px;padding:18px 20px;border-left:4px solid var(--red-professional)}
-.hist-item .hist-date{font-weight:700;color:var(--primary);margin-bottom:8px;font-size:1rem}
-.hist-item .hist-stats{font-size:.85rem;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
-.hist-item .hist-stats span{font-weight:600}
-
-.export-buttons{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px}
-.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:32px 0;font-size:.85rem;margin-top:40px;position:relative}
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
 .footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
 .footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
 .footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
 
-.dim-list{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto;padding-right:6px}
-.dim-item{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:10px;gap:14px;flex-wrap:wrap;border-left:4px solid var(--primary-light)}
-.dim-item.special{border-left-color:var(--secondary);background:linear-gradient(135deg,#fffbf0 0%,#fff5e0 100%)}
-.dim-item .dim-date{font-weight:600;flex:1;min-width:220px;color:var(--primary)}
-.dim-item .dim-type{font-size:.7rem;padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--primary);color:#fff}
-.dim-item .dim-type.special{background:var(--secondary);color:var(--primary)}
-.dim-item .dim-status{font-size:.75rem;padding:5px 14px;border-radius:14px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
-.dim-item .dim-status.active{background:var(--success-light);color:var(--success)}
-.dim-item .dim-status.cancelled{background:var(--danger-light);color:var(--danger)}
-.dim-item .dim-actions{display:flex;gap:8px}
+.hidden{display:none!important}
 
-.badge-role{display:inline-block;padding:3px 12px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;background:var(--primary);color:#fff;letter-spacing:.5px}
-.badge-role.k{background:#b91c2e}
-.badge-role.a{background:#8b1327}
-.badge-role.general{background:var(--secondary);color:var(--primary)}
-.badge-role.coordinateur{background:#0f9d58}
+.confirm-box{text-align:center;padding:40px 20px}
+.confirm-box .check{font-size:4rem;margin-bottom:16px;display:block}
+.confirm-box h2{font-size:1.8rem;margin-bottom:12px}
+.confirm-box p{color:var(--muted);margin-bottom:24px;font-size:1rem}
+.confirm-box .details{background:var(--bg);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;font-size:.9rem}
+.confirm-box .details div{padding:6px 0;border-bottom:1px solid var(--border)}
+.confirm-box .details div:last-child{border-bottom:none}
+.confirm-box .details strong{color:var(--primary);display:inline-block;min-width:130px}
+
+html[data-theme="dark"]{
+  --bg:#121014;--surface:#1c1618;--text:#f0e8ea;--muted:#9a8a90;
+  --border:#2e2228;--primary:#ff9aa8;--primary-light:#ff7a8a;
+  --shadow:0 4px 16px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .type-choice{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .type-choice .tc-label{color:#f0e8ea}
+html[data-theme="dark"] .type-choice.selected[data-type="absence"]{background:linear-gradient(135deg,#2a1518 0%,#3a1620 100%)}
+html[data-theme="dark"] .type-choice.selected[data-type="retard"]{background:linear-gradient(135deg,#2a2015 0%,#3a2a15 100%)}
+html[data-theme="dark"] .info-box{background:linear-gradient(135deg,#1c1618 0%,#2a1a1e 100%)}
+html[data-theme="dark"] .confirm-box .details{background:#121014}
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] .form-group textarea{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .status-banner.open{background:linear-gradient(135deg,#163a28 0%,#0f2a1c 100%)}
+html[data-theme="dark"] .status-banner.waiting{background:linear-gradient(135deg,#3a2a15 0%,#2a2015 100%)}
+html[data-theme="dark"] .status-banner.closed{background:linear-gradient(135deg,#3a1620 0%,#2a1015 100%)}
+html[data-theme="dark"] .status-banner .sb-details{border-top-color:rgba(255,255,255,.15)}
 
 @media(max-width:700px){
-  .ka-row{grid-template-columns:1fr;gap:18px;padding:16px}
-  .status-choices{gap:20px;justify-content:space-around;width:100%}
-  .status-choice input[type="radio"]{width:48px;height:48px}
-  .hero h1{font-size:1.9rem}
-  .date-banner{padding:18px}
-  .date-banner .db-left .db-date{font-size:1.4rem}
-  .voyage-tabs{padding:6px}
-  .voyage-tab{padding:10px 12px;font-size:.82rem;min-width:auto}
+  .hero h1{font-size:1.7rem}
   .logo-img{width:48px;height:48px}
-  .detail-content{padding:16px}
-  .voyage-dot{padding:5px 9px;font-size:.68rem}
-  .filter-card{font-size:.62rem;padding:8px 3px}
-  .filter-card .fc-icon{font-size:1rem}
-  .chart-scroll{max-height:380px}
-  .year-select{min-width:120px;font-size:.8rem;padding:8px 10px}
+  .logo-text small{font-size:.65rem}
+  .card{padding:24px 18px}
 }
 </style>
+<script>
+(function(){
+  var saved = localStorage.getItem('ka-theme');
+  if(saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
 </head>
 <body>
 
-<div id="pagePublique">
-  <header class="header">
-    <div class="container header-inner">
-      <div class="logo">
-        <img src="IMG_6726.png" alt="Logo Groupe KA" class="logo-img">
-        <div class="logo-text"><strong>Groupe KA</strong><small>Registre de présence</small></div>
-      </div>
-      <div class="nav">
-        <span class="year-badge public" id="yearBadgePublic" title="Année initiatique consultée"><span class="yb-icon">📅</span>—</span>
-        <button class="btn btn-ghost" onclick="ouvrirLogin()">Commission Secrétariat</button>
-      </div>
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">
+      <img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="logo-img">
+      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Signalement d'absence / retard</small></div>
     </div>
-  </header>
-  <section class="hero"><div class="container"><h1>Liste de Présence des KA</h1><p class="hero-sub">Sélectionnez le voyage, cochez tous les KA, puis validez</p></div></section>
-  <section class="section"><div class="container">
-    <div class="date-banner" id="dateBanner">
-      <div class="db-left">
-        <div class="db-label">Séance du jour</div>
-        <div class="db-date" id="dbDate">—</div>
-        <div class="db-time" id="dbTime">—</div>
-      </div>
-      <div class="db-status" id="dbStatus">—</div>
-    </div>
-    <div id="dateMessage" class="message"></div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2>Liste de présence</h2>
-        <button class="btn btn-outline btn-sm" onclick="reinitialiserVoyage()">Réinitialiser ce voyage</button>
-      </div>
-      <div class="voyage-tabs" id="voyageTabs">
-        <button class="voyage-tab active" data-voyage="1">1er Voyage <span class="count">0</span></button>
-        <button class="voyage-tab" data-voyage="2">2ème Voyage <span class="count">0</span></button>
-        <button class="voyage-tab" data-voyage="3">3ème Voyage <span class="count">0</span></button>
-        <button class="voyage-tab" data-voyage="4">4ème Voyage <span class="count">0</span></button>
-      </div>
-      <div id="kaListeVoyage"></div>
-      <div class="validation-bar" id="validationBar">
-        <div class="info-validation"><span id="countChecked">0</span> / <span id="countTotal">0</span> KA cochés (ce voyage)</div>
-        <button class="btn btn-success" id="btnValider" onclick="validerVoyageCourant()">✓ Valider ce voyage</button>
-      </div>
-      <div id="validationMessage" class="message"></div>
-    </div>
-  </div></section>
-  <footer class="footer"><div class="container"><p><img src="IMG_6726.png" alt="Logo" class="footer-logo"> © 2026 Groupe KA — Salamu-Amani</p></div></footer>
-</div>
-
-<div id="loginScreen" class="login-screen hidden">
-  <div class="login-card">
-    <div class="logo center"><img src="IMG_6726.png" alt="Logo" class="logo-img"></div>
-    <h1>Commission Secrétariat</h1>
-    <p class="muted center">Accès protégé</p>
-    <form id="formLogin" style="margin-top:28px">
-      <div class="form-group"><label for="password">Mot de passe</label><input type="password" id="password" placeholder="••••••••" required></div>
-      <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
-    </form>
-    <div id="loginMessage" class="message"></div>
-    <a href="#" class="link-back" onclick="fermerLogin(event)">← Retour au site</a>
+    <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="Mode sombre / clair" aria-label="Basculer le thème">🌙</button>
   </div>
-</div>
+</header>
 
-<div id="dashboard" class="hidden">
-  <header class="header">
-    <div class="container header-inner">
-      <div class="logo">
-        <img src="IMG_6726.png" alt="Logo" class="logo-img">
-        <div class="logo-text"><strong>Commission Secrétariat</strong><small>Groupe KA</small></div>
-      </div>
-      <div class="nav">
-        <select class="year-select" id="yearSelect" onchange="changerAnnee(this.value)" title="Choisir l'année initiatique"></select>
-        <button class="btn btn-ghost btn-sm" onclick="ouvrirNouvelleAnnee()">＋ Année</button>
-        <button class="btn btn-ghost" onclick="deconnexion()">Déconnexion</button>
-      </div>
-    </div>
-  </header>
-  <div id="bannerArchive" class="message warning" style="display:none;margin:12px 24px 0;max-width:none">
-    🔒 <strong>Année archivée</strong> — cette année est en lecture seule. Les données sont conservées telles quelles et ne peuvent plus être modifiées. Créez une nouvelle année pour repartir à zéro.
+<section class="hero">
+  <div class="container">
+    <h1>Signaler une absence ou un retard</h1>
+    <p class="hero-sub">Remplissez le formulaire ci-dessous — votre signalement arrivera directement à la Commission</p>
   </div>
-  <main class="container dashboard-main">
-    <div class="grid-stats">
-      <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
-      <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Séances validées</div></div>
-      <div class="stat-card"><div class="stat-value" id="dashPresences">0</div><div class="stat-label">Présences validées</div></div>
-      <div class="stat-card"><div class="stat-value" id="dashAlertes">0</div><div class="stat-label">Alertes 3 absences</div></div>
-    </div>
-    <div class="card" id="cardAlertes" style="display:none">
-      <div class="card-header"><h2 style="color:var(--red-professional)">⚠️ Alertes — 3 absences successives</h2></div>
-      <div id="alertesList" class="alert-list"></div>
-    </div>
-    <div class="tabs">
-      <button class="tab active" data-tab="tab-graphiques">📊 Graphiques</button>
-      <button class="tab" data-tab="tab-classement">Classement</button>
-      <button class="tab" data-tab="tab-voyages">Par voyage</button>
-      <button class="tab" data-tab="tab-dates">📅 Gérer les dates</button>
-      <button class="tab" data-tab="tab-ajoutKA">Ajouter un KA</button>
-      <button class="tab" data-tab="tab-encadreurs">👥 Encadreurs</button>
-      <button class="tab" data-tab="tab-historique">Historique</button>
-      <button class="tab" data-tab="tab-export">Export</button>
-      <button class="tab" data-tab="tab-annees">🗓️ Années</button>
-    </div>
-    <div id="tab-graphiques" class="tab-content active">
-      <div class="chart-grid">
-        <div class="chart-box">
-          <h3>Présences par KA (Messe vs Activité) — % affiché en bout de barre</h3>
-          <div class="chart-period">Période : <span class="badge" id="chart1PeriodLabel">—</span></div>
-          <div class="chart-voyage-nav">
-            <button class="nav-arrow" id="chart1Prev" aria-label="Voyage précédent">◀</button>
-            <div class="voyage-dots" id="voyageDots1">
-              <button class="voyage-dot active" data-v="1">1er</button>
-              <button class="voyage-dot" data-v="2">2ème</button>
-              <button class="voyage-dot" data-v="3">3ème</button>
-              <button class="voyage-dot" data-v="4">4ème</button>
-            </div>
-            <button class="nav-arrow" id="chart1Next" aria-label="Voyage suivant">▶</button>
-          </div>
-          <div class="chart-scroll" id="chart1Scroll">
-            <div class="chart-container" id="chartParKAContainer" style="height:320px"><canvas id="chartParKA"></canvas></div>
-          </div>
-        </div>
-        <div class="chart-box">
-          <h3>Répartition globale</h3>
-          <div class="chart-period">Filtre : <span class="badge" id="chart2PeriodLabel">Tout depuis le début</span></div>
-          <div class="filter-cards" style="grid-template-columns:repeat(4,1fr)">
-            <button class="filter-card" data-filtre="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
-            <button class="filter-card" data-filtre="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
-            <button class="filter-card" data-filtre="annee"><span class="fc-icon">📅</span>Année<br>active</button>
-            <button class="filter-card active" data-filtre="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
-          </div>
-          <div class="filter-cards" id="sousFiltres" style="grid-template-columns:repeat(3,1fr);margin-top:-6px">
-            <button class="filter-card active" data-sousfiltre="tous"><span class="fc-icon">∑</span>Tous</button>
-            <button class="filter-card" data-sousfiltre="messe"><span class="fc-icon">⛪</span>Messe</button>
-            <button class="filter-card" data-sousfiltre="activite"><span class="fc-icon">🎯</span>Activité</button>
-          </div>
-          <div class="chart-container"><canvas id="chartGlobal"></canvas></div>
-        </div>
-      </div>
-      <div class="chart-grid">
-        <div class="chart-box">
-          <h3>Présences par voyage</h3>
-          <div class="chart-period">Filtre : <span class="badge" id="chart3PeriodLabel">Tout depuis le début</span></div>
-          <div class="filter-cards" style="grid-template-columns:repeat(3,1fr)">
-            <button class="filter-card" data-filtre3="seance"><span class="fc-icon">📍</span>Séance<br>du jour</button>
-            <button class="filter-card" data-filtre3="mois"><span class="fc-icon">🗓️</span>Ce<br>mois</button>
-            <button class="filter-card active" data-filtre3="tout"><span class="fc-icon">📊</span>Tout<br>début</button>
-          </div>
-          <div class="chart-container"><canvas id="chartVoyages"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <h3>Taux de présence par KA (%) — % affiché en bout de barre</h3>
-          <div class="chart-period">Période : <span class="badge" id="chart4PeriodLabel">Cette année initiatique</span></div>
-          <div class="chart-voyage-nav">
-            <button class="nav-arrow" id="chart4Prev" aria-label="Voyage précédent">◀</button>
-            <div class="voyage-dots" id="voyageDots4">
-              <button class="voyage-dot active" data-v="1">1er</button>
-              <button class="voyage-dot" data-v="2">2ème</button>
-              <button class="voyage-dot" data-v="3">3ème</button>
-              <button class="voyage-dot" data-v="4">4ème</button>
-            </div>
-            <button class="nav-arrow" id="chart4Next" aria-label="Voyage suivant">▶</button>
-          </div>
-          <div class="chart-scroll" id="chart4Scroll">
-            <div class="chart-container" id="chartTauxContainer" style="height:320px"><canvas id="chartTaux"></canvas></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="tab-classement" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h2>Classement complet</h2><input type="search" id="searchKA" placeholder="Rechercher un KA..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:300px"></div>
-        <div class="table-wrap">
-          <table class="table" id="tableClassement">
-            <thead><tr><th>#</th><th>Nom du KA</th><th>Voyage</th><th>Messe</th><th>Activité</th><th>Absences</th><th>Absences signalées</th><th>Taux</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div id="tab-voyages" class="tab-content"><div id="gridVoyages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px"></div></div>
-    <div id="tab-dates" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h2>Programmer une activité à une date précise</h2></div>
-        <p class="muted" style="margin-bottom:16px">Les dimanches sont ouverts automatiquement. Ajoutez ici une date spéciale (activité, événement) qui ouvrira la saisie un autre jour de la semaine.</p>
-        <form id="formAjoutDate">
-          <div class="form-row">
-            <div class="form-group"><label for="newDate">Date</label><input type="date" id="newDate" required></div>
-            <div class="form-group"><label for="newTypeDate">Type</label><select id="newTypeDate" required><option value="activite">Activité</option><option value="evenement">Événement spécial</option></select></div>
-          </div>
-          <div class="form-group"><label for="newLibelle">Libellé (optionnel)</label><input type="text" id="newLibelle" placeholder="Ex : Sortie pédagogique"></div>
-          <button type="submit" class="btn btn-primary">Programmer la date</button>
-        </form>
-        <div id="ajoutDateMessage" class="message"></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Toutes les séances programmées</h2></div>
-        <div id="dimList" class="dim-list"></div>
-      </div>
-    </div>
-    <div id="tab-ajoutKA" class="tab-content">
-      <div class="card" style="display:none">
-        <div class="card-header"><h2>Charger la liste officielle des KA</h2></div>
-        <p class="muted" style="margin-bottom:16px">Si des KA officiels ne sont pas encore dans le système (nouveau groupe, Firebase vide, mise à jour...), cliquez sur ce bouton. Les KA déjà présents ne seront pas dupliqués. Seuls les manquants seront ajoutés.</p>
-        <button class="btn btn-success" onclick="chargerKAOfficiels()">📥 Charger tous les KA officiels</button>
-        <div id="chargementMessage" class="message"></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Ajouter un KA manuellement</h2></div>
-        <form id="formAjoutKA">
-          <div class="form-row">
-            <div class="form-group"><label for="newNom">Nom complet du KA</label><input type="text" id="newNom" required placeholder="Ex : K. Amina KABASELE"></div>
-            <div class="form-group"><label for="newVoyage">Voyage</label><select id="newVoyage" required><option value="">— Choisir —</option><option value="1">1er Voyage</option><option value="2">2ème Voyage</option><option value="3">3ème Voyage</option><option value="4">4ème Voyage</option></select></div>
-          </div>
-          <button type="submit" class="btn btn-primary">Ajouter le KA</button>
-        </form>
-        <div id="ajoutMessage" class="message"></div>
-      </div>
-      <div class="card"><div class="card-header"><h2>Liste des KA</h2></div><div id="listeKASecretariat"></div></div>
-    </div>
-    <div id="tab-encadreurs" class="tab-content">
-      <div class="sub-tabs">
-        <button class="sub-tab active" data-subtab="subtab-liste">📋 Liste des encadreurs</button>
-        <button class="sub-tab" data-subtab="subtab-absences">🚩 Absence signalée</button>
-        <button class="sub-tab" data-subtab="subtab-activation">⚡ Activer le signalement</button>
-      </div>
+</section>
 
-      <div id="subtab-liste" class="subtab-content active">
-        <div class="card">
-          <div class="card-header">
-            <h2>👥 Liste des encadreurs</h2>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <input type="search" id="searchEncadreur" placeholder="Rechercher un encadreur..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
-              <button class="btn btn-outline btn-sm" onclick="exporterEncadreursCSV()">📤 Exporter CSV</button>
-              <a href="recensement-encadreurs.html" target="_blank" class="btn btn-outline btn-sm">🔗 Page de recensement</a>
-            </div>
+<section class="section">
+  <div class="container">
+
+    <!-- BANNIÈRE D'ÉTAT DU SIGNALEMENT (synchronisée en temps réel) -->
+    <div id="statusBanner" class="status-banner closed">
+      <span class="sb-icon" id="statusIcon">⏸</span>
+      <div class="sb-text">
+        <div class="sb-title" id="statusTitle">Vérification en cours…</div>
+        <div class="sb-desc" id="statusDesc">Connexion au centre de contrôle…</div>
+        <div class="sb-details" id="statusDetails" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="info-box" id="infoBox">
+      <strong>📢 Encadreurs uniquement</strong><br>
+      Ce formulaire permet de signaler une <strong>absence</strong> ou un <strong>retard</strong>. 
+      Votre signalement est enregistré automatiquement et visible par la Commission Secrétariat.
+    </div>
+
+    <!-- FORMULAIRE -->
+    <div class="card" id="cardFormulaire">
+      <h2>📝 Nouveau signalement</h2>
+      <p class="sub">Tous les champs marqués d'un <span style="color:var(--danger)">*</span> sont obligatoires.</p>
+
+      <form id="formSignalement">
+
+        <label style="display:block;font-weight:600;margin-bottom:12px;font-size:.88rem;color:var(--primary)">Type de signalement <span style="color:var(--danger)">*</span></label>
+        <div class="type-choices">
+          <label class="type-choice" data-type="absence">
+            <input type="radio" name="typeSignalement" value="absence" required>
+            <span class="tc-icon">❌</span>
+            <span class="tc-label">Absence</span>
+            <span class="tc-desc">Je ne serai pas présent(e)</span>
+          </label>
+          <label class="type-choice" data-type="retard">
+            <input type="radio" name="typeSignalement" value="retard" required>
+            <span class="tc-icon">⏰</span>
+            <span class="tc-label">Retard</span>
+            <span class="tc-desc">Je serai en retard</span>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nomInput">Nom complet <span class="req">*</span></label>
+            <input type="text" id="nomInput" required placeholder="Ex : Ya Lwanga Maurice Fefe" autocomplete="off">
           </div>
-          <p class="muted" style="margin-bottom:16px">
-            Total d'encadreurs enregistrés : <strong id="totalEncadreursLabel">0</strong> · 
-            Présents aujourd'hui : <strong id="presentEncadreursLabel" style="color:var(--success)">0</strong> · 
-            Absents signalés : <strong id="absentEncadreursLabel" style="color:var(--danger)">0</strong>
-          </p>
-          <div class="table-wrap">
-            <table class="table" id="tableEncadreurs">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Nom de l'encadreur</th>
-                  <th>Rôle</th>
-                  <th>Statut aujourd'hui</th>
-                  <th>Motif / Signalement</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+          <div class="form-group">
+            <label for="roleSelect">Rôle <span class="req">*</span></label>
+            <select id="roleSelect" required>
+              <option value="">— Choisir —</option>
+              <option value="Mukasa/Kasima">Mukasa/Kasima</option>
+              <option value="Lwanga/Kahenga">Lwanga/Kahenga</option>
+              <option value="Kaggwa/Meka">Kaggwa/Meka</option>
+              <option value="Mulumba/Bakoma">Mulumba/Bakoma</option>
+              <option value="Stagiaire">Stagiaire</option>
+            </select>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header"><h2>➕ Ajouter un encadreur</h2></div>
-          <form id="formAjoutEncadreur">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="newNomEncadreur">Nom complet de l'encadreur</label>
-                <input type="text" id="newNomEncadreur" required placeholder="Ex : K. Jean MUKENDI">
-              </div>
-              <div class="form-group">
-                <label for="newRoleEncadreur">Rôle / Fonction</label>
-                <select id="newRoleEncadreur" required>
-                  <option value="">— Choisir —</option>
-                  <option value="Encadreur K.">Encadreur K.</option>
-                  <option value="Encadreur A.">Encadreur A.</option>
-                  <option value="Encadreur Général">Encadreur Général</option>
-                  <option value="Encadreur Adjoint">Encadreur Adjoint</option>
-                  <option value="Coordinateur">Coordinateur</option>
-                </select>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Ajouter l'encadreur</button>
-          </form>
-          <div id="ajoutEncadreurMessage" class="message"></div>
-          <div style="margin-top:16px">
-            <button class="btn btn-success" onclick="chargerEncadreursOfficiels()">📥 Charger la liste officielle des encadreurs</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateInput">Date concernée <span class="req">*</span></label>
+            <input type="date" id="dateInput" required>
+          </div>
+          <div class="form-group">
+            <label for="motifSelect">Motif <span class="req">*</span></label>
+            <select id="motifSelect" required>
+              <option value="">— Choisir un motif —</option>
+              <option value="Maladie">Maladie</option>
+              <option value="Voyage">Voyage</option>
+              <option value="Raison familiale">Raison familiale</option>
+              <option value="Obligation professionnelle">Obligation professionnelle</option>
+              <option value="Transport / Embouteillage">Transport / Embouteillage</option>
+              <option value="Retard imprévu">Retard imprévu</option>
+              <option value="Absence non justifiée">Absence non justifiée</option>
+              <option value="Autre">Autre</option>
+            </select>
           </div>
         </div>
-      </div>
 
-      <div id="subtab-absences" class="subtab-content">
-        <div class="card">
-          <div class="card-header"><h2>🚩 Absence signalée</h2></div>
-          <div id="activationBannerAbsences" class="message" style="display:none;margin-bottom:16px"></div>
-          <p class="muted" style="margin-bottom:16px">Signalez un motif lorsqu'un encadreur est absent. Chaque signalement est horodaté et conservé.</p>
-          <form id="formMotifAbsence">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="motifEncadreur">Encadreur concerné</label>
-                <select id="motifEncadreur" required></select>
-              </div>
-              <div class="form-group">
-                <label for="motifType">Type de motif</label>
-                <select id="motifType" required>
-                  <option value="">— Choisir —</option>
-                  <option value="Maladie">Maladie</option>
-                  <option value="Voyage">Voyage</option>
-                  <option value="Raison familiale">Raison familiale</option>
-                  <option value="Obligation professionnelle">Obligation professionnelle</option>
-                  <option value="Retard">Retard</option>
-                  <option value="Absence non justifiée">Absence non justifiée</option>
-                  <option value="Autre">Autre</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="motifDetail">Détail / Commentaire (optionnel)</label>
-              <input type="text" id="motifDetail" placeholder="Ex : Rendez-vous médical à l'hôpital">
-            </div>
-            <button type="submit" class="btn btn-danger" id="btnSignalerAbsence">🚩 Signaler l'absence</button>
-          </form>
-          <div id="motifMessage" class="message"></div>
+        <div class="form-group">
+          <label for="detailInput">Détail / Commentaire (optionnel)</label>
+          <textarea id="detailInput" placeholder="Ex : Rendez-vous médical à l'hôpital, je serai présent vers 10h…"></textarea>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h2>📨 Signalements reçus des encadreurs <span id="nbSignalementsExternes" style="background:var(--danger);color:#fff;padding:2px 12px;border-radius:12px;font-size:.8rem;margin-left:8px">0</span></h2>
-          </div>
-          <p class="muted" style="margin-bottom:16px">
-            Ces signalements proviennent directement de la page <strong>signaler-absence.html</strong> utilisée par les encadreurs. 
-            Cliquez sur <strong>« Marquer comme traité »</strong> pour archiver un signalement.
-          </p>
-          <div id="listeSignalementsExternes" class="historique"></div>
-        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="btnEnvoyer" disabled>
+          🔒 Signalement inactif
+        </button>
+      </form>
 
-        <div class="card">
-          <div class="card-header"><h2>📜 Historique des motifs d'absence</h2></div>
-          <div id="historiqueMotifs" class="historique"></div>
-        </div>
-      </div>
+      <div id="messageSignalement" class="message"></div>
+    </div>
 
-      <div id="subtab-activation" class="subtab-content">
-        <div class="card">
-          <div class="card-header"><h2>⚡ Activer le signalement d'absence</h2></div>
-          <p class="muted" style="margin-bottom:20px">
-            Programmez la période pendant laquelle le signalement sera possible. 
-            Le signalement s'ouvrira automatiquement à la date de début et se fermera à la date de fin. 
-            Une fois la période terminée, les signalements sont automatiquement archivés dans l'historique.
-          </p>
-
-          <div id="activationStatusBox" style="padding:24px;border-radius:14px;margin-bottom:20px;text-align:center;background:var(--bg)">
-            <p class="muted">Chargement…</p>
-          </div>
-
-          <div id="formActivationDates" style="background:var(--bg);padding:20px;border-radius:12px;margin-bottom:20px;border:1px solid var(--border)">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="activationDebut">📅 Date et heure de début</label>
-                <input type="datetime-local" id="activationDebut" required>
-              </div>
-              <div class="form-group">
-                <label for="activationFin">📅 Date et heure de fin</label>
-                <input type="datetime-local" id="activationFin" required>
-              </div>
-            </div>
-          </div>
-
-          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-            <button class="btn btn-success" id="btnActiverSignalement" onclick="activerSignalement()">⚡ Programmer le signalement</button>
-            <button class="btn btn-danger" id="btnDesactiverSignalement" onclick="desactiverSignalement()" style="display:none">⏹ Désactiver maintenant</button>
-          </div>
-          <div id="activationMessage" class="message"></div>
-        </div>
+    <!-- CONFIRMATION -->
+    <div class="card hidden" id="cardConfirmation">
+      <div class="confirm-box">
+        <span class="check">✅</span>
+        <h2>Signalement envoyé !</h2>
+        <p>Votre signalement a bien été enregistré et transmis à la Commission Secrétariat.</p>
+        <div class="details" id="detailsConfirmation"></div>
+        <button class="btn btn-primary" onclick="nouveauSignalement()">➕ Faire un autre signalement</button>
       </div>
     </div>
-    <div id="tab-historique" class="tab-content"><div class="card"><div class="card-header"><h2>Historique par séance</h2></div><div id="historique" class="historique"></div></div></div>
-    <div id="tab-export" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h2>Exporter</h2></div>
-        <p class="muted" style="margin-bottom:16px">Les exports CSV/JSON concernent uniquement l'année sélectionnée : <strong id="exportYearLabel">—</strong></p>
-        <div class="export-buttons">
-          <button class="btn btn-primary" onclick="exportCSV()">Exporter en CSV</button>
-          <button class="btn btn-outline" onclick="exportJSON()">Exporter en JSON</button>
-          <button class="btn btn-outline" onclick="window.print()">Imprimer</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>📄 Rapport statistique Word</h2></div>
-        <p class="muted" style="margin-bottom:16px">
-          Génère un fichier Word (<code>.doc</code>) modifiable, avec logo, en-tête, pied de page, tableaux et graphiques.
-          Le rapport couvre <strong>uniquement l'année initiatique actuellement sélectionnée</strong> (<strong id="rapportYearLabel">—</strong>).
-          Vous pourrez l'ouvrir dans Microsoft Word, le modifier, l'imprimer ou l'envoyer.
-        </p>
-        <button class="btn btn-success" onclick="genererRapportWord()">📥 Générer le rapport Word</button>
-        <div id="rapportMessage" class="message"></div>
-      </div>
-    </div>
-    <div id="tab-annees" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h2>Gérer les années initiatiques</h2></div>
-        <p class="muted" style="margin-bottom:16px">Chaque année initiatique est totalement indépendante : les KA, présences, dates et validations d'une année n'apparaissent que dans cette année. Dès qu'une nouvelle année est créée, toutes les années antérieures passent automatiquement en lecture seule (archivées) — leurs données restent consultables pour toujours.</p>
-        <form id="formAjoutAnnee" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-          <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
-            <label for="newAnneeInput">Nouvelle année initiatique (ex. 2027-2028)</label>
-            <input type="text" id="newAnneeInput" placeholder="2027-2028" required pattern="\d{4}-\d{4}">
-          </div>
-          <button type="submit" class="btn btn-primary">Créer l'année</button>
-        </form>
-        <div id="anneeMessage" class="message"></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Années existantes</h2></div>
-        <div id="listeAnnees" class="dim-list"></div>
-      </div>
-    </div>
-  </main>
-</div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Signalement d'absence / retard</p></div>
+</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -718,972 +300,69 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const CONFIG = {
-  PASSWORD_HASH: "",
-  PASSWORD_DEMO: "GroupeKA2026!",
-  SESSION_KEY: "ka_session",
-  SESSION_DUREE: 60*60*1000,
-  CODE_ANNULATION: "2K27",
-  CODE_SUPPRESSION: "20K7",
-  VOYAGES: {1:"1er Voyage",2:"2ème Voyage",3:"3ème Voyage",4:"4ème Voyage"},
-  DATE_FIN: "2100-12-31",
-  ANNEE_STORAGE_KEY: "ka_annee_courante",
-  ANNEE_DEFAUT: "2026-2027"
-};
-
-async function sha256(s){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+/* ============ UTILS ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function norm(s){ return s.trim().replace(/\s+/g,' ').toLowerCase(); }
-
 function dateToISO(d){
   const y = d.getFullYear();
   const m = String(d.getMonth()+1).padStart(2,'0');
   const day = String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
 }
-function aujourdhui(){ const d = new Date(); d.setHours(0,0,0,0); return dateToISO(d); }
 function formatDateFr(iso){
   return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
-function formatDateCourte(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
-}
-function nomJour(iso){
-  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  return jours[new Date(iso+"T00:00:00").getDay()];
-}
-function nomMois(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+function formatDateHeure(iso){
+  if(!iso) return '—';
+  return new Date(iso).toLocaleString('fr-FR', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
 }
 function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
   if(!el) return;
   el.textContent=msg; el.className='message show '+type;
-  setTimeout(()=>{el.className='message';},8000);
 }
 
-function genererDimanches(){
-  const dimanches = [];
-  const d = new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - d.getDay());
-  const fin = new Date(CONFIG.DATE_FIN + "T23:59:59");
-  while(d <= fin){
-    if(d.getDay() === 0) dimanches.push(dateToISO(d));
-    d.setDate(d.getDate()+7);
-  }
-  return dimanches;
+/* ============ THÈME ============ */
+function updateThemeButton(){
+  const btn = document.getElementById('themeToggle');
+  if(!btn) return;
+  btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
 }
-const DIMANCHES_AUTO = genererDimanches();
-
-let cacheKAs = [];
-let cachePresences = {};
-let cacheDatesAnnulees = {};
-let cacheDatesSpeciales = {};
-let cacheVoyagesValides = {};
-let selectionCourante = {};
-let voyageSelectionnee = 1;
-let kaOuvert = null;
-
-let chart1Voyage = 1;
-let chart4Voyage = 1;
-let filtreRepartition = 'tout';
-let sousFiltreRepartition = 'tous';
-let filtreVoyages = 'tout';
-let cacheAnneesMeta = {};
-
-const aujourdhuiISO = aujourdhui();
-
-let anneeCourante = CONFIG.ANNEE_DEFAUT;
-let anneesDisponibles = [];
-let listenAnneesUnsub = null;
-let listenersAnnee = [];
-
-/* === ENCADREURS === */
-let cacheEncadreurs = [];
-let cacheMotifsEncadreurs = [];
-let listenersEncadreurs = [];
-let cacheSignalementsExternes = [];
-let signalementsExternesUnsub = null;
-
-function cheminEncadreurs(){ return collection(db, "encadreurs"); }
-function cheminEncadreurId(id){ return doc(db, "encadreurs", id); }
-function cheminMotifsEncadreurs(){ return collection(db, "motifsEncadreurs"); }
-function cheminMotifEncadreurId(id){ return doc(db, "motifsEncadreurs", id); }
-
-function anneeStorageLire(){
-  try { return localStorage.getItem(CONFIG.ANNEE_STORAGE_KEY); } catch(e){ return null; }
-}
-function anneeStorageEcrire(a){
-  try { localStorage.setItem(CONFIG.ANNEE_STORAGE_KEY, a); } catch(e){}
-}
-function validerFormatAnnee(a){
-  return /^\d{4}-\d{4}$/.test(a) && Number(a.slice(5)) === Number(a.slice(0,4))+1;
-}
-function anneeCouranteEstArchivee(){
-  const meta = cacheAnneesMeta[anneeCourante];
-  return !!(meta && meta.archivee === true);
-}
-function refuserSiArchivee(){
-  if(anneeCouranteEstArchivee()){
-    alert("🔒 Cette année est archivée (lecture seule). Aucune modification n'est possible.");
-    return true;
-  }
-  return false;
-}
-
-function cheminKA(){ return collection(db, "annees", anneeCourante, "kas"); }
-function cheminKAId(id){ return doc(db, "annees", anneeCourante, "kas", id); }
-function cheminPresences(){ return collection(db, "annees", anneeCourante, "presences"); }
-function cheminPresenceId(d){ return doc(db, "annees", anneeCourante, "presences", d); }
-function cheminDatesAnnulees(){ return collection(db, "annees", anneeCourante, "datesAnnulees"); }
-function cheminDateAnnuleeId(d){ return doc(db, "annees", anneeCourante, "datesAnnulees", d); }
-function cheminDatesSpeciales(){ return collection(db, "annees", anneeCourante, "datesSpeciales"); }
-function cheminDateSpecialeId(d){ return doc(db, "annees", anneeCourante, "datesSpeciales", d); }
-function cheminVoyagesValides(){ return collection(db, "annees", anneeCourante, "voyagesValides"); }
-function cheminVoyageValideId(d){ return doc(db, "annees", anneeCourante, "voyagesValides", d); }
-
-async function assurerAnneeExiste(a){
-  const docAnnee = doc(db, "annees", a);
-  const snap = await getDoc(docAnnee);
-  if(!snap.exists()){
-    await setDoc(docAnnee, {
-      creeLe: new Date().toISOString(),
-      libelle: a,
-      archivee: false
-    });
-  }
-  return a;
-}
-
-async function chargerAnneesDepuisFirestore(){
-  const snap = await getDocs(collection(db, "annees"));
-  const annees = [];
-  snap.forEach(d => annees.push(d.id));
-  annees.sort();
-  return annees;
-}
-
-function remplirSelectAnnees(){
-  const sel = document.getElementById('yearSelect');
-  if(!sel) return;
-  sel.innerHTML = anneesDisponibles.map(a => {
-    const meta = cacheAnneesMeta[a] || {};
-    const suffixe = meta.archivee === true ? ' 🔒' : '';
-    return `<option value="${a}" ${a===anneeCourante?'selected':''}>${a}${suffixe}</option>`;
-  }).join('');
-  const badge = document.getElementById('yearBadgePublic');
-  if(badge) badge.innerHTML = `<span class="yb-icon">📅</span>${anneeCourante}`;
-  const exportLabel = document.getElementById('exportYearLabel');
-  if(exportLabel) exportLabel.textContent = anneeCourante;
-  const rapportLabel = document.getElementById('rapportYearLabel');
-  if(rapportLabel) rapportLabel.textContent = anneeCourante;
-}
-
-function detacherListenersAnnee(){
-  listenersAnnee.forEach(l => { try{ l.unsub(); }catch(e){} });
-  listenersAnnee = [];
-}
-
-async function attacherListenersAnnee(){
-  detacherListenersAnnee();
-
-  listenersAnnee.push({unsub: onSnapshot(cheminKA(), snap => {
-    cacheKAs = [];
-    snap.forEach(d => cacheKAs.push({id:d.id, ...d.data()}));
-    cacheKAs.sort((a,b)=> a.voyage-b.voyage || a.nom.localeCompare(b.nom));
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  })});
-
-  listenersAnnee.push({unsub: onSnapshot(cheminPresences(), snap => {
-    cachePresences = {};
-    snap.forEach(d => { cachePresences[d.id] = d.data(); });
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  })});
-
-  listenersAnnee.push({unsub: onSnapshot(cheminDatesAnnulees(), snap => {
-    cacheDatesAnnulees = {};
-    snap.forEach(d => { cacheDatesAnnulees[d.id] = d.data(); });
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  })});
-
-  listenersAnnee.push({unsub: onSnapshot(cheminDatesSpeciales(), snap => {
-    cacheDatesSpeciales = {};
-    snap.forEach(d => { cacheDatesSpeciales[d.id] = d.data(); });
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  })});
-
-  listenersAnnee.push({unsub: onSnapshot(cheminVoyagesValides(), snap => {
-    cacheVoyagesValides = {};
-    snap.forEach(d => { cacheVoyagesValides[d.id] = d.data(); });
-    rafraichirTempsReel();
-    if(!document.getElementById('dashboard').classList.contains('hidden')) chargerDashboard();
-  })});
-}
-
-function attacherListenersEncadreurs(){
-  listenersEncadreurs.forEach(l => { try{ l.unsub(); }catch(e){} });
-  listenersEncadreurs = [];
-
-  listenersEncadreurs.push({unsub: onSnapshot(cheminEncadreurs(), snap => {
-    cacheEncadreurs = [];
-    snap.forEach(d => cacheEncadreurs.push({id:d.id, ...d.data()}));
-    cacheEncadreurs.sort((a,b) => a.nom.localeCompare(b.nom));
-    if(!document.getElementById('dashboard').classList.contains('hidden')){
-      renderEncadreurs();
-      remplirSelectMotifEncadreur();
-    }
-  })});
-
-  listenersEncadreurs.push({unsub: onSnapshot(cheminMotifsEncadreurs(), snap => {
-    cacheMotifsEncadreurs = [];
-    snap.forEach(d => cacheMotifsEncadreurs.push({id:d.id, ...d.data()}));
-    cacheMotifsEncadreurs.sort((a,b) => (b.dateSignalement||'').localeCompare(a.dateSignalement||''));
-    if(!document.getElementById('dashboard').classList.contains('hidden')){
-      renderEncadreurs();
-      renderHistoriqueMotifs();
-    }
-  })});
-
-  /* ⭐ NOUVEAU : écoute des signalements de la page signaler-absence.html */
-  if(signalementsExternesUnsub) { try{ signalementsExternesUnsub(); }catch(e){} }
-  signalementsExternesUnsub = onSnapshot(collection(db, "signalements"), snap => {
-    cacheSignalementsExternes = [];
-    snap.forEach(d => cacheSignalementsExternes.push({id:d.id, ...d.data()}));
-    cacheSignalementsExternes.sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
-    if(!document.getElementById('dashboard').classList.contains('hidden')){
-      renderSignalementsExternes();
-    }
-  });
-}
-
-async function changerAnnee(nouvelleAnnee){
-  if(!nouvelleAnnee || nouvelleAnnee === anneeCourante) return;
-  const ok = await assurerAnneeExiste(nouvelleAnnee);
-  if(!ok) return;
-  anneeCourante = nouvelleAnnee;
-  anneeStorageEcrire(anneeCourante);
-
-  cacheKAs = [];
-  cachePresences = {};
-  cacheDatesAnnulees = {};
-  cacheDatesSpeciales = {};
-  cacheVoyagesValides = {};
-  selectionCourante = {};
-  kaOuvert = null;
-  voyageSelectionnee = 1;
-  chart1Voyage = 1;
-  chart4Voyage = 1;
-  filtreRepartition = 'tout';
-  sousFiltreRepartition = 'tous';
-  filtreVoyages = 'tout';
-
-  remplirSelectAnnees();
-  await attacherListenersAnnee();
-  renderBanniereArchive();
-
-  if(!document.getElementById('dashboard').classList.contains('hidden')){
-    chargerDashboard();
-  }
-  rafraichirTempsReel();
-}
-
-async function ouvrirNouvelleAnnee(){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  document.querySelector('.tab[data-tab="tab-annees"]').classList.add('active');
-  document.getElementById('tab-annees').classList.add('active');
-
-  const input = document.getElementById('newAnneeInput');
-  const debut = Number(anneeCourante.slice(0,4)) + 1;
-  const suggestion = `${debut}-${debut+1}`;
-  if(input && !input.value) input.value = suggestion;
-}
-
-async function creerAnnee(annee){
-  annee = annee.trim();
-  if(!validerFormatAnnee(annee)){
-    return afficherMessage('anneeMessage', "Format attendu : AAAA-AAAA (ex. 2027-2028), avec la deuxième année = première + 1.", 'error');
-  }
-  if(anneesDisponibles.includes(annee)){
-    return afficherMessage('anneeMessage', "Cette année existe déjà.", 'warning');
-  }
-  try {
-    await assurerAnneeExiste(annee);
-
-    const debutNouvelle = Number(annee.slice(0,4));
-    for(const autre of anneesDisponibles){
-      if(autre === annee) continue;
-      const debutAutre = Number(autre.slice(0,4));
-      if(debutAutre < debutNouvelle){
-        await setDoc(doc(db, "annees", autre), { archivee: true, archiveeLe: new Date().toISOString() }, {merge:true});
-      }
-    }
-
-    anneesDisponibles = await chargerAnneesDepuisFirestore();
-    const snap = await getDocs(collection(db, "annees"));
-    cacheAnneesMeta = {};
-    snap.forEach(d => { cacheAnneesMeta[d.id] = d.data() || {}; });
-
-    remplirSelectAnnees();
-    renderListeAnnees();
-    afficherMessage('anneeMessage', `✓ Année ${annee} créée. Les années antérieures sont désormais archivées (lecture seule).`, 'success');
-    await changerAnnee(annee);
-  } catch(e){
-    afficherMessage('anneeMessage', "Erreur : " + e.message, 'error');
-  }
-}
-
-function renderListeAnnees(){
-  const cont = document.getElementById('listeAnnees');
-  if(!cont) return;
-  if(anneesDisponibles.length === 0){
-    cont.innerHTML = '<p class="muted center" style="padding:20px">Aucune année.</p>';
-    return;
-  }
-  cont.innerHTML = anneesDisponibles.map(a => {
-    const active = a === anneeCourante;
-    const meta = cacheAnneesMeta[a] || {};
-    const archivee = meta.archivee === true;
-    let badge;
-    if(active)         badge = '<span class="dim-type special">ACTIVE</span>';
-    else if(archivee)  badge = '<span class="dim-type" style="background:#7a5c62">ARCHIVÉE 🔒</span>';
-    else               badge = '<span class="dim-type">—</span>';
-    return `<div class="dim-item ${archivee?'special':''}">
-      <div class="dim-date">📅 ${a}${archivee?' <span class="muted" style="font-size:.75rem">(lecture seule)</span>':''}</div>
-      ${badge}
-      <div class="dim-actions">
-        ${active ? '' : `<button class="btn btn-primary btn-sm" onclick="changerAnnee('${a}')">Consulter</button>`}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderBanniereArchive(){
-  const banner = document.getElementById('bannerArchive');
-  if(!banner) return;
-  banner.style.display = anneeCouranteEstArchivee() ? 'block' : 'none';
-}
-
-function statutDuJour(){
-  const special = cacheDatesSpeciales[aujourdhuiISO];
-  const estDimanche = new Date(aujourdhuiISO+"T00:00:00").getDay() === 0;
-  const annule = cacheDatesAnnulees[aujourdhuiISO];
-
-  if(annule) return {ouvert:false, raison:"ANNULÉ", detail:"Cette séance a été annulée par la Commission Secrétariat."};
-  if(estDimanche) return {ouvert:true, raison:"DIMANCHE", detail:""};
-  if(special) return {ouvert:true, raison: special.type === 'activite' ? "ACTIVITÉ" : "ÉVÉNEMENT", detail: special.libelle || ""};
-  return {ouvert:false, raison:"FERMÉ", detail:"La saisie n'est ouverte que le dimanche, ou lorsqu'une activité est programmée."};
-}
-function estVoyageValide(date, voyage){
-  const v = cacheVoyagesValides[date];
-  return v && v[voyage] === true;
-}
-
-function renderBanniere(){
-  const statut = statutDuJour();
-  document.getElementById('dbDate').textContent = formatDateFr(aujourdhuiISO);
-  document.getElementById('dbTime').textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  const st = document.getElementById('dbStatus');
-  st.textContent = statut.raison;
-  st.className = 'db-status ' + (statut.ouvert ? (statut.raison === 'DIMANCHE' ? 'open' : 'special') : 'closed');
-
-  const dm = document.getElementById('dateMessage');
-  if(!statut.ouvert){
-    dm.textContent = statut.detail;
-    dm.className = 'message show error';
-  } else {
-    dm.textContent = "✓ Saisie ouverte : " + (statut.detail || statut.raison);
-    dm.className = 'message show success';
-  }
-}
-
-function updateVoyageTabCounts(){
-  [1,2,3,4].forEach(v => {
-    const count = cacheKAs.filter(k => k.voyage === v).length;
-    const tab = document.querySelector(`.voyage-tab[data-voyage="${v}"]`);
-    if(!tab) return;
-    const span = tab.querySelector('.count');
-    if(span) span.textContent = count;
-    if(estVoyageValide(aujourdhuiISO, v)) tab.classList.add('validated');
-    else tab.classList.remove('validated');
-  });
-}
-
-function renderKaListeVoyage(){
-  updateVoyageTabCounts();
-  const container = document.getElementById('kaListeVoyage');
-  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-
-  if(kasVoyage.length === 0){
-    container.innerHTML = '<p class="muted center" style="padding:20px">Aucun KA dans ce voyage pour cette année.</p>';
-    document.getElementById('countChecked').textContent = 0;
-    document.getElementById('countTotal').textContent = 0;
-    return;
-  }
-
-  const statut = statutDuJour();
-  const dejaValide = estVoyageValide(aujourdhuiISO, voyageSelectionnee);
-  const archivee = anneeCouranteEstArchivee();
-  const existant = cachePresences[aujourdhuiISO] || {};
-  const disabled = (!statut.ouvert || dejaValide || archivee) ? 'disabled' : '';
-
-  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
-
-  const kizito = kasVoyage.filter(k => k.nom.startsWith('K.'));
-  const anuarite = kasVoyage.filter(k => k.nom.startsWith('A.'));
-
-  const renderRow = (ka) => {
-    let alert3 = false;
-    let compteur = 0, maxCompteur = 0;
-    dims.forEach(d => {
-      const p = cachePresences[d] || {};
-      if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
-      else if(p[ka.id]) compteur = 0;
-    });
-    if(maxCompteur >= 3) alert3 = true;
-
-    const val = selectionCourante[ka.id] || existant[ka.id] || "";
-
-    return `<div class="ka-row ${alert3?'absence-alert':''}">
-      <div class="ka-info">
-        <span class="ka-nom">${esc(ka.nom)}</span>
-        ${alert3?'<span class="alert-3">⚠️ 3 absences successives</span>':''}
-      </div>
-      <div class="status-choices">
-        <label class="status-choice vert"><input type="radio" name="status-${ka.id}" value="present" ${val==='present'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','present')"><span class="status-label">Présent</span></label>
-        <label class="status-choice rouge"><input type="radio" name="status-${ka.id}" value="absent" ${val==='absent'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','absent')"><span class="status-label">Absent</span></label>
-        <label class="status-choice blanc"><input type="radio" name="status-${ka.id}" value="excuse" ${val==='excuse'?'checked':''} ${disabled} onchange="setStatus('${ka.id}','excuse')"><span class="status-label">Abs. signalée</span></label>
-      </div>
-    </div>`;
-  };
-
-  let html = '';
-  if(kizito.length){
-    html += `<h3 style="font-size:1rem;color:var(--primary);margin:6px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--red-professional);text-transform:uppercase;letter-spacing:1.5px">Kizito (K.)</h3>`;
-    html += kizito.map(renderRow).join('');
-  }
-  if(anuarite.length){
-    html += `<h3 style="font-size:1rem;color:var(--primary);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--secondary);text-transform:uppercase;letter-spacing:1.5px">Anuarite (A.)</h3>`;
-    html += anuarite.map(renderRow).join('');
-  }
-
-  container.innerHTML = html;
-  updateCount();
-
-  const btn = document.getElementById('btnValider');
-  if(archivee){ btn.disabled = true; btn.textContent = "🔒 Année archivée"; }
-  else if(!statut.ouvert){ btn.disabled = true; btn.textContent = "🔒 Saisie fermée"; }
-  else if(dejaValide){ btn.disabled = true; btn.textContent = "✓ Voyage validé (fait)"; }
-  else { btn.disabled = false; btn.textContent = "✓ Valider ce voyage"; }
-}
-
-function setStatus(id, val){
-  if(refuserSiArchivee()) return;
-  const statut = statutDuJour();
-  if(!statut.ouvert) return;
-  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee)) return;
-  selectionCourante[id] = val;
-  updateCount();
-}
-
-function updateCount(){
-  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-  const checked = kasVoyage.filter(k => selectionCourante[k.id]).length;
-  document.getElementById('countChecked').textContent = checked;
-  document.getElementById('countTotal').textContent = kasVoyage.length;
-}
-
-async function validerVoyageCourant(){
-  if(refuserSiArchivee()) return;
-  const statut = statutDuJour();
-  if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
-  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
-    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
-
-  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-  const nonCoches = kasVoyage.filter(k => !selectionCourante[k.id]);
-  if(nonCoches.length > 0){
-    return afficherMessage('validationMessage',
-      `Veuillez cocher TOUS les KA de ce voyage avant de valider. Il reste ${nonCoches.length} KA non coché${nonCoches.length>1?'s':''}.`,
-      'error');
-  }
-
-  try {
-    const existing = cachePresences[aujourdhuiISO] || {};
-    await setDoc(cheminPresenceId(aujourdhuiISO), {...existing, ...selectionCourante});
-    await setDoc(cheminVoyageValideId(aujourdhuiISO), {[voyageSelectionnee]: true}, {merge:true});
-    kasVoyage.forEach(k => delete selectionCourante[k.id]);
-    afficherMessage('validationMessage',"✓ Voyage validé définitivement. Ce voyage est maintenant verrouillé.",'success');
-    updateCount();
-    renderKaListeVoyage();
-  } catch(e){
-    afficherMessage('validationMessage',"Erreur : "+e.message,'error');
-  }
-}
-
-function reinitialiserVoyage(){
-  if(refuserSiArchivee()) return;
-  const statut = statutDuJour();
-  if(!statut.ouvert) return afficherMessage('validationMessage', statut.detail, 'error');
-  if(estVoyageValide(aujourdhuiISO, voyageSelectionnee))
-    return afficherMessage('validationMessage',"Ce voyage a déjà été validé.",'error');
-  const kasVoyage = cacheKAs.filter(k => k.voyage === voyageSelectionnee);
-  kasVoyage.forEach(k => delete selectionCourante[k.id]);
-  renderKaListeVoyage();
-  afficherMessage('validationMessage',"✓ Sélection réinitialisée pour ce voyage.",'success');
-}
-
-function ouvrirLogin(){ document.getElementById('pagePublique').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
-function fermerLogin(e){ e.preventDefault(); document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('pagePublique').classList.remove('hidden'); }
-
-function creerSession(){ sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify({expire:Date.now()+CONFIG.SESSION_DUREE})); }
-function sessionValide(){
-  try{
-    const s = JSON.parse(sessionStorage.getItem(CONFIG.SESSION_KEY));
-    if(!s) return false;
-    if(Date.now() > s.expire){ sessionStorage.removeItem(CONFIG.SESSION_KEY); return false; }
-    s.expire = Date.now()+CONFIG.SESSION_DUREE;
-    sessionStorage.setItem(CONFIG.SESSION_KEY, JSON.stringify(s));
-    return true;
-  }catch(e){ return false; }
-}
-function detruireSession(){ sessionStorage.removeItem(CONFIG.SESSION_KEY); }
-
-async function verifierMotDePasse(mdp){
-  if(CONFIG.PASSWORD_DEMO && mdp === CONFIG.PASSWORD_DEMO) return true;
-  const h = await sha256(mdp);
-  return h === CONFIG.PASSWORD_HASH;
-}
-
-document.getElementById('formLogin').addEventListener('submit', async e => {
-  e.preventDefault();
-  const mdp = document.getElementById('password').value;
-  const ok = await verifierMotDePasse(mdp);
-  if(ok){
-    creerSession();
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('password').value = '';
-    chargerDashboard();
-  } else afficherMessage('loginMessage',"Mot de passe incorrect.",'error');
-});
-
-function deconnexion(){
-  detruireSession();
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('pagePublique').classList.remove('hidden');
-  kaOuvert = null;
-}
-
-let charts = {};
-function chargerDashboard(){
-  renderBanniereArchive();
-  renderStats();
-  renderAlertes();
-  renderClassement();
-  renderVoyages();
-  renderDates();
-  renderListeKASecretariat();
-  renderHistorique();
-  renderGraphiques();
-  renderListeAnnees();
-  renderEncadreurs();
-  renderHistoriqueMotifs();
-  remplirSelectMotifEncadreur();
-  renderActivationUI();
-  renderSignalementsExternes();
-}
-
-function renderStats(){
-  document.getElementById('dashTotalKA').textContent = cacheKAs.length;
-  const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0);
-  document.getElementById('dashDimanches').textContent = dims.length;
-  let total = 0;
-  dims.forEach(d => { total += Object.keys(cachePresences[d]).length; });
-  document.getElementById('dashPresences').textContent = total;
-}
-
-function calculerAlertes(){
-  const alertes = [];
-  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
-  cacheKAs.forEach(ka => {
-    let compteur = 0, maxCompteur = 0;
-    dims.forEach(d => {
-      const p = cachePresences[d] || {};
-      if(p[ka.id] === "absent"){ compteur++; maxCompteur = Math.max(maxCompteur, compteur); }
-      else if(p[ka.id]) compteur = 0;
-    });
-    if(maxCompteur >= 3) alertes.push({ka, maxCompteur});
-  });
-  return alertes;
-}
-
-function renderAlertes(){
-  const alertes = calculerAlertes();
-  document.getElementById('dashAlertes').textContent = alertes.length;
-  const card = document.getElementById('cardAlertes');
-  if(alertes.length === 0){ card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  document.getElementById('alertesList').innerHTML = alertes.map(a =>
-    `<div class="alert-item"><strong>${esc(a.ka.nom)}</strong> (${CONFIG.VOYAGES[a.ka.voyage]}) — ${a.maxCompteur} absences successives consécutives.</div>`
-  ).join('');
-}
-
-function calculerStats(){
-  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
-  return cacheKAs.map(ka => {
-    let messe=0, activite=0, absent=0, excuse=0, present=0;
-    dims.forEach(d => {
-      const p = cachePresences[d] || {};
-      const s = p[ka.id];
-      if(s === "present"){ present++; messe++; activite++; }
-      else if(s === "absent"){ absent++; }
-      else if(s === "excuse"){ excuse++; }
-    });
-    const total = dims.length;
-    const taux = total ? Math.round((present/total)*100) : 0;
-    return {...ka, messe, activite, absent, excuse, present, total, taux};
-  }).sort((a,b)=> b.present-a.present || a.nom.localeCompare(b.nom));
-}
-
-function calculerStatsParVoyageEtTypeMoisCourant(voyage){
-  const now = new Date();
-  const moisCourant = now.getMonth();
-  const anneeCivile = now.getFullYear();
-
-  const dimsMesse = [];
-  const dimsActivite = [];
-  Object.keys(cachePresences).forEach(d => {
-    if(cacheDatesAnnulees[d]) return;
-    const dt = new Date(d+"T00:00:00");
-    if(dt.getMonth() !== moisCourant || dt.getFullYear() !== anneeCivile) return;
-    const isSpecial = cacheDatesSpeciales[d];
-    const isDimanche = dt.getDay() === 0;
-    if(isSpecial){ dimsActivite.push(d); }
-    else if(isDimanche){ dimsMesse.push(d); }
-  });
-
-  const kas = cacheKAs.filter(k => k.voyage === voyage);
-  return kas.map(ka => {
-    let presentMesse = 0, presentActivite = 0;
-    dimsMesse.forEach(d => {
-      if((cachePresences[d] || {})[ka.id] === 'present') presentMesse++;
-    });
-    dimsActivite.forEach(d => {
-      if((cachePresences[d] || {})[ka.id] === 'present') presentActivite++;
-    });
-    const tauxMesse = dimsMesse.length ? Math.round(presentMesse / dimsMesse.length * 100) : 0;
-    const tauxActivite = dimsActivite.length ? Math.round(presentActivite / dimsActivite.length * 100) : 0;
-    return {ka, tauxMesse, tauxActivite, nbMesse: dimsMesse.length, nbActivite: dimsActivite.length};
-  });
-}
-
-function calculerDetailsKA(kaId){
-  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
-  const details = {present:[], absent:[], excuse:[]};
-  dims.forEach(d => {
-    const p = cachePresences[d] || {};
-    const s = p[kaId];
-    if(s === "present") details.present.push(d);
-    else if(s === "absent") details.absent.push(d);
-    else if(s === "excuse") details.excuse.push(d);
-  });
-  return details;
-}
-
-window.toggleDetailKA = function(kaId){
-  kaOuvert = (kaOuvert === kaId) ? null : kaId;
-  renderClassement(document.getElementById('searchKA')?.value || '');
+window.toggleTheme = function(){
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('ka-theme', next);
+  updateThemeButton();
 };
+updateThemeButton();
 
-function construireDetail(details){
-  const renderBlock = (titre, dates, cls) => {
-    if(dates.length === 0) return '';
-    return `<div class="detail-block ${cls}">
-      <div class="detail-block-title"><span class="dot"></span>${titre} (${dates.length})</div>
-      <div class="detail-dates">${dates.map(d => `<span class="detail-date">${formatDateCourte(d)}</span>`).join('')}</div>
-    </div>`;
-  };
-  const blocks = [
-    renderBlock('Présent', details.present, 'present'),
-    renderBlock('Absent', details.absent, 'absent'),
-    renderBlock('Absence signalée', details.excuse, 'excuse')
-  ].filter(Boolean).join('');
-  if(!blocks) return '<div class="detail-content"><p class="detail-empty">Aucune donnée enregistrée pour ce KA.</p></div>';
-  return `<div class="detail-content">${blocks}</div>`;
-}
+/* ============ INITIALISATION DATE ============ */
+const today = new Date();
+document.getElementById('dateInput').value = dateToISO(today);
+document.getElementById('dateInput').max = dateToISO(today);
 
-function renderClassement(filtre=''){
-  const tbody = document.querySelector('#tableClassement tbody');
-  const data = calculerStats().filter(k => k.nom.toLowerCase().includes(filtre.toLowerCase()));
-  if(data.length === 0){ tbody.innerHTML='<tr><td colspan="8" class="center muted" style="padding:20px">Aucun KA.</td></tr>'; return; }
-  tbody.innerHTML = data.map((k,i) => {
-    const cls = k.taux>=75?'success':(k.taux>=50?'warning':'danger');
-    const ouvert = kaOuvert === k.id;
-    const rowMain = `<tr>
-      <td><strong>${i+1}</strong></td>
-      <td><strong class="nom-ka-cliquable ${ouvert?'open':''}" onclick="toggleDetailKA('${k.id}')">${esc(k.nom)}</strong></td>
-      <td>${CONFIG.VOYAGES[k.voyage]}</td>
-      <td>${k.messe}</td><td>${k.activite}</td>
-      <td><span style="color:var(--red-professional);font-weight:700">${k.absent}</span></td>
-      <td><span style="color:#f59e0b;font-weight:700">${k.excuse}</span></td>
-      <td><span style="background:var(--${cls}-light);color:var(--${cls});padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">${k.taux}%</span></td>
-    </tr>`;
-    let rowDetail = '';
-    if(ouvert){
-      const details = calculerDetailsKA(k.id);
-      rowDetail = `<tr class="detail-row"><td colspan="8">${construireDetail(details)}</td></tr>`;
-    }
-    return rowMain + rowDetail;
-  }).join('');
-}
-
-function renderVoyages(){
-  const grid = document.getElementById('gridVoyages');
-  const stats = calculerStats();
-  grid.innerHTML = [1,2,3,4].map(v => {
-    const liste = cacheKAs.filter(k => k.voyage === v);
-    return `<div class="chart-box">
-      <h3>${CONFIG.VOYAGES[v]}</h3>
-      <div style="font-size:2rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${liste.length}</div>
-      <div class="muted" style="font-size:.8rem;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">KA enregistrés</div>
-      <div style="max-height:220px;overflow-y:auto;font-size:.85rem">
-        ${liste.map(k => {
-          const s = stats.find(x=>x.id===k.id);
-          return `<div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span>${esc(k.nom)}</span><span style="font-weight:600;color:var(--primary)">${s?s.present:0} prés.</span></div>`;
-        }).join('') || '<div class="muted">Aucun KA</div>'}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function statutDate(d){
-  if(cacheDatesAnnulees[d]) return {label:"ANNULÉ", class:"cancelled"};
-  const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
-  const special = cacheDatesSpeciales[d];
-  if(!isDimanche && !special) return {label:"FERMÉ", class:"cancelled"};
-  const vv = cacheVoyagesValides[d] || {};
-  const nbValides = Object.keys(vv).filter(k => vv[k] === true).length;
-  if(nbValides === 4) return {label:"VALIDÉ", class:"active"};
-  if(nbValides > 0) return {label:`${nbValides}/4 VALIDÉ`, class:"active"};
-  return {label:"OUVERT", class:"active"};
-}
-
-function renderDates(){
-  const container = document.getElementById('dimList');
-  const datesSet = new Set(DIMANCHES_AUTO);
-  Object.keys(cacheDatesSpeciales).forEach(d => datesSet.add(d));
-  const dates = Array.from(datesSet).sort();
-
-  container.innerHTML = dates.map(d => {
-    const annule = cacheDatesAnnulees[d];
-    const special = cacheDatesSpeciales[d];
-    const isDimanche = new Date(d+"T00:00:00").getDay() === 0;
-    let typeLabel, typeClass;
-    if(special){ typeLabel = special.type === 'activite' ? 'ACTIVITÉ' : 'ÉVÉNEMENT'; typeClass = 'special'; }
-    else if(isDimanche){ typeLabel = 'DIMANCHE'; typeClass = ''; }
-    else { typeLabel = 'JOUR'; typeClass = ''; }
-
-    const st = statutDate(d);
-
-    return `<div class="dim-item ${special?'special':''}">
-      <div class="dim-date">${formatDateFr(d)}${special && special.libelle ? ' — '+esc(special.libelle) : ''}</div>
-      <span class="dim-type ${typeClass}">${typeLabel}</span>
-      <span class="dim-status ${st.class}">${st.label}</span>
-      <div class="dim-actions">
-        ${annule ? `<button class="btn btn-success btn-sm" onclick="reactiverDate('${d}')">Réactiver</button>`
-                 : `<button class="btn btn-danger btn-sm" onclick="annulerDate('${d}')">Annuler</button>`}
-        ${special ? `<button class="btn btn-outline btn-sm" onclick="supprimerDateSpecial('${d}')">Retirer</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function annulerDate(d){
-  if(refuserSiArchivee()) return;
-  const code = prompt("Entrez le code d'annulation :");
-  if(code !== CONFIG.CODE_ANNULATION) return alert("Code incorrect.");
-  await setDoc(cheminDateAnnuleeId(d),{annule:true, date:new Date().toISOString()});
-}
-async function reactiverDate(d){
-  if(refuserSiArchivee()) return;
-  await deleteDoc(cheminDateAnnuleeId(d));
-}
-async function supprimerDateSpecial(d){
-  if(refuserSiArchivee()) return;
-  if(confirm("Retirer cette date spéciale ?")) await deleteDoc(cheminDateSpecialeId(d));
-}
-
-document.getElementById('formAjoutDate').addEventListener('submit', async e => {
-  e.preventDefault();
-  if(refuserSiArchivee()) return;
-  const date = document.getElementById('newDate').value;
-  const type = document.getElementById('newTypeDate').value;
-  const libelle = document.getElementById('newLibelle').value.trim();
-  if(!date) return afficherMessage('ajoutDateMessage',"Date invalide.",'error');
-  try{
-    await setDoc(cheminDateSpecialeId(date),{type, libelle, ajouteLe:new Date().toISOString()});
-    document.getElementById('newDate').value = '';
-    document.getElementById('newLibelle').value = '';
-    afficherMessage('ajoutDateMessage',"✓ Date programmée avec succès.",'success');
-    renderDates();
-  } catch(err){ afficherMessage('ajoutDateMessage',"Erreur : "+err.message,'error'); }
-});
-
-function renderListeKASecretariat(){
-  const container = document.getElementById('listeKASecretariat');
-  if(cacheKAs.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucun KA pour cette année.</p>'; return; }
-  const parVoyage = {1:[],2:[],3:[],4:[]};
-  cacheKAs.forEach(k => { if(parVoyage[k.voyage]) parVoyage[k.voyage].push(k); });
-  let html = '';
-  [1,2,3,4].forEach(v => {
-    if(parVoyage[v].length === 0) return;
-    html += `<div style="margin-bottom:22px">
-      <h3 style="font-size:1.05rem;margin-bottom:12px;color:var(--primary);border-bottom:2px solid var(--border);padding-bottom:8px">${CONFIG.VOYAGES[v]} <span style="background:var(--grad-gold);color:var(--primary);padding:2px 10px;border-radius:10px;font-size:.75rem;margin-left:8px">${parVoyage[v].length}</span></h3>`;
-    parVoyage[v].forEach(k => {
-      html += `<div class="ka-row">
-        <div class="ka-info"><span class="ka-nom">${esc(k.nom)}</span></div>
-        <button class="btn btn-danger btn-sm" onclick="supprimerKA('${k.id}')">Supprimer</button>
-      </div>`;
-    });
-    html += `</div>`;
+/* ============ CHOIX DU TYPE (visuel) ============ */
+document.querySelectorAll('.type-choice').forEach(choice => {
+  const input = choice.querySelector('input[type="radio"]');
+  choice.addEventListener('click', () => {
+    if(document.getElementById('btnEnvoyer').disabled) return;
+    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
+    choice.classList.add('selected');
+    input.checked = true;
   });
-  container.innerHTML = html;
-}
-
-async function supprimerKA(id){
-  if(refuserSiArchivee()) return;
-  const code = prompt("Code de suppression requis :");
-  if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
-  if(!confirm("Supprimer définitivement ce KA ?")) return;
-  await deleteDoc(cheminKAId(id));
-}
-
-document.getElementById('formAjoutKA').addEventListener('submit', async e => {
-  e.preventDefault();
-  if(refuserSiArchivee()) return;
-  const nom = document.getElementById('newNom').value.trim().replace(/\s+/g,' ');
-  const voyage = Number(document.getElementById('newVoyage').value);
-  if(!nom || nom.length < 2) return afficherMessage('ajoutMessage',"Nom trop court.",'error');
-  if(![1,2,3,4].includes(voyage)) return afficherMessage('ajoutMessage',"Voyage invalide.",'error');
-  if(cacheKAs.some(k => norm(k.nom) === norm(nom))) return afficherMessage('ajoutMessage',"Ce KA existe déjà.",'error');
-  const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  await setDoc(cheminKAId(id), {nom, voyage, createdAt: new Date().toISOString()});
-  document.getElementById('newNom').value = '';
-  document.getElementById('newVoyage').value = '';
-  afficherMessage('ajoutMessage',"✓ KA ajouté avec succès.",'success');
 });
 
-function renderHistorique(){
-  const container = document.getElementById('historique');
-  const dims = Object.keys(cachePresences).filter(d => Object.keys(cachePresences[d]).length>0).sort().reverse();
-  if(dims.length === 0){ container.innerHTML='<p class="muted center" style="padding:20px">Aucune séance enregistrée pour cette année.</p>'; return; }
-  container.innerHTML = dims.map(d => {
-    const p = cachePresences[d];
-    let presents=0, absents=0, excuses=0;
-    Object.values(p).forEach(s => {
-      if(s==="present") presents++;
-      else if(s==="absent") absents++;
-      else if(s==="excuse") excuses++;
-    });
-    const vv = cacheVoyagesValides[d] || {};
-    const nbV = Object.keys(vv).filter(k => vv[k] === true).length;
-    return `<div class="hist-item">
-      <div class="hist-date">${formatDateFr(d)} ${cacheDatesAnnulees[d]?'<span style="color:var(--danger)">[ANNULÉ]</span>':''} <span style="background:var(--primary);color:#fff;padding:2px 10px;border-radius:10px;font-size:.7rem;margin-left:8px">${nbV}/4 voyages validés</span></div>
-      <div class="hist-stats"><span style="color:var(--success)">✓ ${presents} présents</span><span style="color:var(--red-professional)">✗ ${absents} absents</span><span style="color:#f59e0b">⚠ ${excuses} signalés</span></div>
-    </div>`;
-  }).join('');
-}
-
 /* ============================================================
-   MODULE ENCADREURS
-   ============================================================ */
-function motifDuJourPourEncadreur(encadreurId){
-  return cacheMotifsEncadreurs.find(m => m.encadreurId === encadreurId && m.date === aujourdhuiISO);
-}
-
-function roleBadgeClass(role){
-  if(!role) return '';
-  if(role.includes('Général')) return 'general';
-  if(role.includes('Coordinateur')) return 'coordinateur';
-  if(role.includes(' A.')) return 'a';
-  if(role.includes(' K.')) return 'k';
-  return '';
-}
-
-/* ============================================================
-   SIGNALEMENTS EXTERNES (page signaler-absence.html)
-   ============================================================ */
-function renderSignalementsExternes(){
-  const cont = document.getElementById('listeSignalementsExternes');
-  if(!cont) return;
-
-  const badge = document.getElementById('nbSignalementsExternes');
-  if(badge) badge.textContent = cacheSignalementsExternes.length;
-
-  if(cacheSignalementsExternes.length === 0){
-    cont.innerHTML = '<p class="muted center" style="padding:20px">Aucun signalement reçu pour le moment.</p>';
-    return;
-  }
-
-  cont.innerHTML = cacheSignalementsExternes.map(s => {
-    const typeLabel = s.type === 'absence'
-      ? '<span style="background:var(--danger);color:#fff;padding:3px 12px;border-radius:12px;font-size:.72rem;font-weight:700">❌ ABSENCE</span>'
-      : '<span style="background:var(--warning);color:#fff;padding:3px 12px;border-radius:12px;font-size:.72rem;font-weight:700">⏰ RETARD</span>';
-    const motifTxt = s.motif ? `<span><strong>Motif :</strong> ${esc(s.motif)}</span>` : '';
-    const detailTxt = s.detail ? `<div class="hist-stats" style="margin-top:6px"><span>📝 ${esc(s.detail)}</span></div>` : '';
-    return `
-      <div class="hist-item" style="border-left-color:${s.type==='absence'?'var(--danger)':'var(--warning)'}">
-        <div class="hist-date">${formatDateFr(s.date)} — <strong>${esc(s.nom)}</strong> ${typeLabel}</div>
-        <div class="hist-stats" style="margin-top:6px">
-          <span><strong>Rôle :</strong> ${esc(s.role||'—')}</span>
-          ${motifTxt}
-        </div>
-        ${detailTxt}
-        <div class="hist-stats" style="margin-top:8px;align-items:center">
-          <span class="muted" style="font-size:.75rem">Envoyé le ${new Date(s.createdAt).toLocaleString('fr-FR')}</span>
-          <button class="btn btn-success btn-sm" onclick="marquerSignalementTraite('${s.id}')">✓ Marquer comme traité</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-window.marquerSignalementTraite = async function(id){
-  if(refuserSiArchivee()) return;
-  if(!confirm("Marquer ce signalement comme traité ? Il sera déplacé dans l'historique.")) return;
-  try {
-    const s = cacheSignalementsExternes.find(x => x.id === id);
-    if(!s) return;
-    await setDoc(doc(db, "historiqueSignalements", 'hist_' + id), {
-      ...s,
-      archiveLe: new Date().toISOString(),
-      traite: true
-    }, {merge:true});
-    await deleteDoc(doc(db, "signalements", id));
-  } catch(e){
-    alert("Erreur : " + e.message);
-  }
-};
-
-/* ============================================================
-   ACTIVATION SIGNALEMENT — DÉBUT / FIN PROGRAMMÉS
+   SYNCHRONISATION AVEC L'ACTIVATION (config/signalementEncadreurs)
+   Champs : actif, debutLe, finLe
    ============================================================ */
 let cacheActivation = { actif: false, debutLe: null, finLe: null };
-let cacheHistoriqueSignalements = [];
-let activationUnsub = null;
-let historiqueSignalementsUnsub = null;
+let signalementActif = false;
 
 function cheminActivation(){ return doc(db, "config", "signalementEncadreurs"); }
-function cheminHistoriqueSignalements(){ return collection(db, "historiqueSignalements"); }
-function cheminHistoriqueSignalementId(id){ return doc(db, "historiqueSignalements", id); }
 
 function estSignalementActif(){
   if(!cacheActivation.actif) return false;
@@ -1704,1497 +383,175 @@ function estSignalementExpire(){
   return new Date(cacheActivation.finLe) < new Date();
 }
 
-window.activerSignalement = async function(){
-  if(refuserSiArchivee()) return;
+function rendreFormulaireActif(etat){
+  // etat : 'actif' | 'attente' | 'expire' | 'inactif'
+  signalementActif = (etat === 'actif');
 
-  const debutInput = document.getElementById('activationDebut');
-  const finInput = document.getElementById('activationFin');
-  const debutVal = debutInput ? debutInput.value : '';
-  const finVal = finInput ? finInput.value : '';
+  const btn = document.getElementById('btnEnvoyer');
+  const form = document.getElementById('formSignalement');
+  const banner = document.getElementById('statusBanner');
+  const icon = document.getElementById('statusIcon');
+  const title = document.getElementById('statusTitle');
+  const desc = document.getElementById('statusDesc');
+  const details = document.getElementById('statusDetails');
 
-  if(!debutVal || !finVal){
-    return afficherMessage('activationMessage', "Veuillez préciser la date de début et la date de fin du signalement.", 'error');
-  }
-
-  const debut = new Date(debutVal);
-  const fin = new Date(finVal);
-  if(fin <= debut){
-    return afficherMessage('activationMessage', "La date de fin doit être postérieure à la date de début.", 'error');
-  }
-
-  try {
-    await setDoc(cheminActivation(), {
-      actif: true,
-      debutLe: debut.toISOString(),
-      finLe: fin.toISOString(),
-      activeLe: new Date().toISOString()
-    }, {merge:true});
-    afficherMessage('activationMessage', "✓ Signalement programmé.", 'success');
-    await archiverSignalementsExpires();
-  } catch(e){
-    afficherMessage('activationMessage', "Erreur : " + e.message, 'error');
-  }
-};
-
-window.desactiverSignalement = async function(){
-  if(refuserSiArchivee()) return;
-  if(!confirm("Désactiver le signalement maintenant ?")) return;
-  try {
-    await setDoc(cheminActivation(), { actif: false, debutLe: null, finLe: null }, {merge:true});
-    afficherMessage('activationMessage', "✓ Signalement désactivé.", 'success');
-    await archiverSignalementsExpires();
-  } catch(e){
-    afficherMessage('activationMessage', "Erreur : " + e.message, 'error');
-  }
-};
-
-async function archiverSignalementsExpires(){
-  try {
-    if(!cacheActivation.finLe) return;
-    if(new Date(cacheActivation.finLe) > new Date()) return;
-    if(!cacheActivation.actif) return;
-
-    const snap = await getDocs(collection(db, "signalements"));
-    const signalements = [];
-    snap.forEach(d => signalements.push({id: d.id, ...d.data()}));
-
-    if(signalements.length === 0) return;
-
-    let archives = 0;
-    for(const s of signalements){
-      const histId = 'hist_' + s.id;
-      await setDoc(cheminHistoriqueSignalementId(histId), {
-        ...s,
-        archiveLe: new Date().toISOString(),
-        periodeDebut: cacheActivation.debutLe,
-        periodeFin: cacheActivation.finLe
-      }, {merge:true});
-      await deleteDoc(doc(db, "signalements", s.id));
-      archives++;
-    }
-    console.log(`✓ ${archives} signalement(s) archivé(s) vers l'historique.`);
-  } catch(e){
-    console.error("Erreur archivage signalements:", e);
-  }
-}
-
-function formaterDateHeure(iso){
-  if(!iso) return '—';
-  return new Date(iso).toLocaleString('fr-FR', {
-    weekday:'long', day:'numeric', month:'long', year:'numeric',
-    hour:'2-digit', minute:'2-digit'
-  });
-}
-
-function renderActivationUI(){
-  const actif = estSignalementActif();
-  const enAttente = estSignalementEnAttente();
-  const expire = estSignalementExpire();
-  const statusBox = document.getElementById('activationStatusBox');
-  if(statusBox){
-    if(actif){
-      const remaining = new Date(cacheActivation.finLe) - new Date();
-      const jours = Math.floor(remaining / 86400000);
-      const h = Math.max(0, Math.floor((remaining % 86400000) / 3600000));
-      const m = Math.max(0, Math.floor((remaining % 3600000) / 60000));
-      const decompte = jours > 0 ? `${jours}j ${h}h ${m}min` : `${h}h ${m}min`;
-      statusBox.style.background = 'linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%)';
-      statusBox.style.border = '2px solid var(--success)';
-      statusBox.innerHTML = `<div style="font-size:2.5rem;margin-bottom:8px">✅</div>
-        <div style="font-size:1.3rem;font-weight:800;color:var(--success);margin-bottom:8px">SIGNALEMENT ACTIF</div>
-        <div style="color:var(--text);font-size:.95rem;margin-bottom:6px"><strong>Début :</strong> ${formaterDateHeure(cacheActivation.debutLe)}</div>
-        <div style="color:var(--text);font-size:.95rem;margin-bottom:6px"><strong>Fin :</strong> ${formaterDateHeure(cacheActivation.finLe)}</div>
-        <div style="color:var(--success);font-size:1rem;font-weight:700;margin-top:10px">⏳ Expire dans ${decompte}</div>`;
-    } else if(enAttente){
-      statusBox.style.background = 'linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%)';
-      statusBox.style.border = '2px solid var(--warning)';
-      statusBox.innerHTML = `<div style="font-size:2.5rem;margin-bottom:8px">⏳</div>
-        <div style="font-size:1.3rem;font-weight:800;color:var(--warning);margin-bottom:8px">EN ATTENTE</div>
-        <div style="color:var(--text);font-size:.95rem;margin-bottom:6px"><strong>Début :</strong> ${formaterDateHeure(cacheActivation.debutLe)}</div>
-        <div style="color:var(--text);font-size:.95rem"><strong>Fin :</strong> ${formaterDateHeure(cacheActivation.finLe)}</div>
-        <div class="muted" style="font-size:.85rem;margin-top:10px">Le signalement s'ouvrira automatiquement à la date de début.</div>`;
-    } else if(expire){
-      statusBox.style.background = 'linear-gradient(135deg,#fce8e6 0%,#f8c4c0 100%)';
-      statusBox.style.border = '2px solid var(--danger)';
-      statusBox.innerHTML = `<div style="font-size:2.5rem;margin-bottom:8px">⌛</div>
-        <div style="font-size:1.3rem;font-weight:800;color:var(--danger);margin-bottom:8px">PÉRIODE TERMINÉE</div>
-        <div style="color:var(--text);font-size:.95rem;margin-bottom:6px"><strong>Début :</strong> ${formaterDateHeure(cacheActivation.debutLe)}</div>
-        <div style="color:var(--text);font-size:.95rem"><strong>Fin :</strong> ${formaterDateHeure(cacheActivation.finLe)}</div>
-        <div class="muted" style="font-size:.85rem;margin-top:10px">Les signalements ont été archivés dans l'historique.</div>`;
-    } else {
-      statusBox.style.background = 'linear-gradient(135deg,#fce8e6 0%,#f8c4c0 100%)';
-      statusBox.style.border = '2px solid var(--danger)';
-      statusBox.innerHTML = `<div style="font-size:2.5rem;margin-bottom:8px">⏸</div>
-        <div style="font-size:1.3rem;font-weight:800;color:var(--danger);margin-bottom:8px">SIGNALEMENT INACTIF</div>
-        <div style="color:var(--text);font-size:1rem">Programmez une période pour permettre le signalement.</div>`;
-    }
-  }
-
-  const btnAct = document.getElementById('btnActiverSignalement');
-  const btnDes = document.getElementById('btnDesactiverSignalement');
-  const formAct = document.getElementById('formActivationDates');
-  if(btnAct) btnAct.style.display = (actif || enAttente) ? 'none' : 'inline-flex';
-  if(btnDes) btnDes.style.display = (actif || enAttente) ? 'inline-flex' : 'none';
-  if(formAct) formAct.style.display = (actif || enAttente) ? 'none' : 'block';
-
-  const banner = document.getElementById('activationBannerAbsences');
-  if(banner){
-    if(actif){
-      banner.style.display = 'block';
-      banner.className = 'message show success';
-      banner.textContent = "✅ Le signalement d'absence est actif.";
-    } else if(enAttente){
-      banner.style.display = 'block';
-      banner.className = 'message show warning';
-      banner.textContent = "⏳ Le signalement ouvrira à la date programmée.";
-    } else {
-      banner.style.display = 'block';
-      banner.className = 'message show warning';
-      banner.textContent = "⚠️ Le signalement d'absence est inactif. Programmez une période dans « Activer le signalement ».";
-    }
-  }
-
-  const btnSubmit = document.getElementById('btnSignalerAbsence');
-  if(btnSubmit) btnSubmit.disabled = !actif;
-}
-
-function attacherListenerActivation(){
-  if(activationUnsub) { try{ activationUnsub(); }catch(e){} }
-  activationUnsub = onSnapshot(cheminActivation(), snap => {
-    if(snap.exists()){
-      cacheActivation = snap.data() || { actif: false, debutLe: null, finLe: null };
-    } else {
-      cacheActivation = { actif: false, debutLe: null, finLe: null };
-    }
-    renderActivationUI();
-    if(!document.getElementById('dashboard').classList.contains('hidden')){
-      renderEncadreurs();
-      renderHistoriqueMotifs();
-    }
-    if(estSignalementExpire()){
-      archiverSignalementsExpires();
-    }
-  });
-
-  if(historiqueSignalementsUnsub) { try{ historiqueSignalementsUnsub(); }catch(e){} }
-  historiqueSignalementsUnsub = onSnapshot(cheminHistoriqueSignalements(), snap => {
-    cacheHistoriqueSignalements = [];
-    snap.forEach(d => cacheHistoriqueSignalements.push({id:d.id, ...d.data()}));
-    cacheHistoriqueSignalements.sort((a,b) =>
-      (b.archiveLe || b.createdAt || '').localeCompare(a.archiveLe || a.createdAt || '')
-    );
-    if(!document.getElementById('dashboard').classList.contains('hidden')){
-      renderHistoriqueMotifs();
-    }
-  });
-}
-
-function renderEncadreurs(filtre=''){
-  const tbody = document.querySelector('#tableEncadreurs tbody');
-  if(!tbody) return;
-
-  const data = cacheEncadreurs.filter(e => e.nom.toLowerCase().includes(filtre.toLowerCase()));
-
-  const totalEl = document.getElementById('totalEncadreursLabel');
-  if(totalEl) totalEl.textContent = cacheEncadreurs.length;
-  const presents = cacheEncadreurs.filter(e => !motifDuJourPourEncadreur(e.id)).length;
-  const absents = cacheEncadreurs.filter(e => motifDuJourPourEncadreur(e.id)).length;
-  const presEl = document.getElementById('presentEncadreursLabel');
-  if(presEl) presEl.textContent = presents;
-  const absEl = document.getElementById('absentEncadreursLabel');
-  if(absEl) absEl.textContent = absents;
-
-  if(data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="6" class="center muted" style="padding:20px">Aucun encadreur enregistré.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = data.map((e, i) => {
-    const motifJour = motifDuJourPourEncadreur(e.id);
-    const statut = motifJour
-      ? `<span style="background:var(--danger-light);color:var(--danger);padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">ABSENT SIGNALÉ</span>`
-      : `<span style="background:var(--success-light);color:var(--success);padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">PRÉSENT</span>`;
-    const motifTexte = motifJour
-      ? `<span style="color:var(--danger);font-weight:600">${esc(motifJour.type)}</span>${motifJour.detail ? ' — <span class="muted">'+esc(motifJour.detail)+'</span>' : ''}`
-      : '<span class="muted" style="font-style:italic">Aucun signalement</span>';
-    return `<tr>
-      <td><strong>${i+1}</strong></td>
-      <td><strong>${esc(e.nom)}</strong></td>
-      <td><span class="badge-role ${roleBadgeClass(e.role)}">${esc(e.role||'Encadreur')}</span></td>
-      <td>${statut}</td>
-      <td>${motifTexte}</td>
-      <td>
-        ${motifJour
-          ? `<button class="btn btn-success btn-sm" onclick="annulerMotifEncadreur('${motifJour.id}')">Annuler signalement</button>`
-          : `<button class="btn btn-danger btn-sm" onclick="signalerAbsenceRapide('${e.id}')" ${estSignalementActif() ? '' : 'disabled title="Signalement inactif"'}>Signaler absent</button>`}
-        <button class="btn btn-outline btn-sm" onclick="supprimerEncadreur('${e.id}')" style="margin-left:6px">Supprimer</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function remplirSelectMotifEncadreur(){
-  const sel = document.getElementById('motifEncadreur');
-  if(!sel) return;
-  sel.innerHTML = '<option value="">— Choisir un encadreur —</option>' +
-    cacheEncadreurs.map(e => `<option value="${e.id}">${esc(e.nom)} (${esc(e.role||'Encadreur')})</option>`).join('');
-}
-
-async function signalerAbsenceRapide(encadreurId){
-  if(refuserSiArchivee()) return;
-  if(!estSignalementActif()){
-    alert("⚠️ Le signalement est inactif. Allez dans « Activer le signalement » pour programmer une période.");
-    return;
-  }
-  const enc = cacheEncadreurs.find(e => e.id === encadreurId);
-  if(!enc) return;
-  const type = prompt(`Motif d'absence pour ${enc.nom} :\n(Maladie / Voyage / Raison familiale / Obligation professionnelle / Retard / Autre)`);
-  if(!type) return;
-  const detail = prompt("Détail (optionnel) :") || "";
-  await enregistrerMotif(encadreurId, type, detail);
-}
-
-async function enregistrerMotif(encadreurId, type, detail){
-  if(refuserSiArchivee()) return;
-  if(!estSignalementActif()){
-    alert("⚠️ Le signalement est inactif. Activez une période dans « Activer le signalement ».");
-    return;
-  }
-  const enc = cacheEncadreurs.find(e => e.id === encadreurId);
-  if(!enc) return;
-  const id = 'motif_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  await setDoc(cheminMotifEncadreurId(id), {
-    encadreurId,
-    encadreurNom: enc.nom,
-    encadreurRole: enc.role || 'Encadreur',
-    type,
-    detail,
-    date: aujourdhuiISO,
-    dateSignalement: new Date().toISOString(),
-    annee: anneeCourante
-  });
-}
-
-async function annulerMotifEncadreur(motifId){
-  if(refuserSiArchivee()) return;
-  if(!confirm("Annuler ce signalement d'absence ?")) return;
-  await deleteDoc(cheminMotifEncadreurId(motifId));
-}
-
-async function supprimerEncadreur(id){
-  if(refuserSiArchivee()) return;
-  const enc = cacheEncadreurs.find(e => e.id === id);
-  if(!enc) return;
-  if(!confirm(`Supprimer définitivement l'encadreur ${enc.nom} ?`)) return;
-  const code = prompt("Code de suppression requis :");
-  if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
-  await deleteDoc(cheminEncadreurId(id));
-}
-
-function renderHistoriqueMotifs(){
-  const cont = document.getElementById('historiqueMotifs');
-  if(!cont) return;
-
-  let html = '';
-
-  const enCours = cacheMotifsEncadreurs;
-  if(enCours.length > 0){
-    html += `<div style="margin-bottom:22px">
-      <h3 style="font-size:1.05rem;margin-bottom:12px;color:var(--primary);border-bottom:2px solid var(--success);padding-bottom:8px">
-        🟢 Signalements en cours <span style="background:var(--success);color:#fff;padding:2px 10px;border-radius:10px;font-size:.75rem;margin-left:8px">${enCours.length}</span>
-      </h3>`;
-    html += enCours.map(m => `
-      <div class="hist-item" style="border-left-color:var(--success)">
-        <div class="hist-date">${formatDateFr(m.date)} — <strong>${esc(m.encadreurNom)}</strong> <span style="background:var(--danger);color:#fff;padding:2px 10px;border-radius:10px;font-size:.7rem;margin-left:8px">${esc(m.type)}</span></div>
-        ${m.detail ? `<div class="hist-stats"><span>📝 ${esc(m.detail)}</span></div>` : ''}
-        <div class="hist-stats" style="margin-top:6px">
-          <span class="muted" style="font-size:.75rem">Signalé le ${new Date(m.dateSignalement).toLocaleString('fr-FR')}</span>
-          <button class="btn btn-danger btn-sm" onclick="annulerMotifEncadreur('${m.id}')">Annuler</button>
-        </div>
-      </div>
-    `).join('');
-    html += `</div>`;
-  }
-
-  if(cacheHistoriqueSignalements.length > 0){
-    html += `<div style="margin-top:22px">
-      <h3 style="font-size:1.05rem;margin-bottom:12px;color:var(--primary);border-bottom:2px solid var(--muted);padding-bottom:8px">
-        📚 Historique des signalements archivés <span style="background:var(--muted);color:#fff;padding:2px 10px;border-radius:10px;font-size:.75rem;margin-left:8px">${cacheHistoriqueSignalements.length}</span>
-      </h3>`;
-    html += cacheHistoriqueSignalements.map(m => `
-      <div class="hist-item" style="border-left-color:var(--muted);background:linear-gradient(135deg,#f5f0f1 0%,#ebe4e5 100%)">
-        <div class="hist-date">${formatDateFr(m.date)} — <strong>${esc(m.encadreurNom || m.nom || '')}</strong> <span style="background:var(--primary);color:#fff;padding:2px 10px;border-radius:10px;font-size:.7rem;margin-left:8px">${esc(m.type || '')}</span></div>
-        ${m.detail ? `<div class="hist-stats"><span>📝 ${esc(m.detail)}</span></div>` : ''}
-        <div class="hist-stats" style="margin-top:6px">
-          <span class="muted" style="font-size:.75rem">Signalé le ${new Date(m.dateSignalement || m.createdAt).toLocaleString('fr-FR')} · Archivé le ${new Date(m.archiveLe).toLocaleString('fr-FR')}</span>
-        </div>
-      </div>
-    `).join('');
-    html += `</div>`;
-  }
-
-  if(!html){
-    cont.innerHTML = '<p class="muted center" style="padding:20px">Aucun signalement enregistré.</p>';
-    return;
-  }
-  cont.innerHTML = html;
-}
-
-function exporterEncadreursCSV(){
-  let csv = "Nom,Role,Statut du jour,Motif du jour\n";
-  cacheEncadreurs.forEach(e => {
-    const m = motifDuJourPourEncadreur(e.id);
-    csv += `"${e.nom.replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${m?'ABSENT':'PRESENT'}","${m?m.type:''}"\n`;
-  });
-  telecharger(csv, `encadreurs-${anneeCourante}.csv`, 'text/csv');
-}
-
-const ENCADREURS_LISTE = [
-  {nom:"K. Jean MUKENDI", role:"Encadreur Général"},
-  {nom:"K. Pierre KABEYA", role:"Encadreur Adjoint"},
-  {nom:"A. Marie KALALA", role:"Coordinateur"},
-  {nom:"K. Paul TSHIMANGA", role:"Encadreur K."},
-  {nom:"A. Jeanne MUTOMBO", role:"Encadreur A."}
-];
-
-window.chargerEncadreursOfficiels = async function(){
-  if(refuserSiArchivee()) return;
-  const msg = document.getElementById('ajoutEncadreurMessage');
-  if(msg){ msg.textContent = "Chargement en cours..."; msg.className = 'message show warning'; }
-  let ajoutes = 0, dejaPresents = 0, erreurs = 0;
-  for(const e of ENCADREURS_LISTE){
-    if(cacheEncadreurs.some(x => norm(x.nom) === norm(e.nom))){ dejaPresents++; continue; }
-    try{
-      const id = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      await setDoc(cheminEncadreurId(id), {nom:e.nom, role:e.role, createdAt:new Date().toISOString()});
-      ajoutes++;
-    } catch(err){ erreurs++; console.log("Erreur:", e.nom, err.message); }
-  }
-  if(msg){
-    msg.innerHTML = `✅ <strong>${ajoutes}</strong> encadreurs ajoutés · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total base officielle : ${ENCADREURS_LISTE.length}.`;
-    msg.className = 'message show success';
-  }
-};
-
-document.getElementById('searchEncadreur')?.addEventListener('input', e => renderEncadreurs(e.target.value));
-
-document.getElementById('formAjoutEncadreur')?.addEventListener('submit', async e => {
-  e.preventDefault();
-  if(refuserSiArchivee()) return;
-  const nom = document.getElementById('newNomEncadreur').value.trim().replace(/\s+/g,' ');
-  const role = document.getElementById('newRoleEncadreur').value;
-  if(!nom || nom.length < 2) return afficherMessage('ajoutEncadreurMessage', "Nom trop court.", 'error');
-  if(cacheEncadreurs.some(x => norm(x.nom) === norm(nom)))
-    return afficherMessage('ajoutEncadreurMessage', "Cet encadreur existe déjà.", 'error');
-  const id = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-  await setDoc(cheminEncadreurId(id), {nom, role, createdAt:new Date().toISOString()});
-  document.getElementById('newNomEncadreur').value = '';
-  document.getElementById('newRoleEncadreur').value = '';
-  afficherMessage('ajoutEncadreurMessage', "✓ Encadreur ajouté.", 'success');
-});
-
-document.getElementById('formMotifAbsence')?.addEventListener('submit', async e => {
-  e.preventDefault();
-  if(refuserSiArchivee()) return;
-  if(!estSignalementActif()){
-    return afficherMessage('motifMessage', "Le signalement est inactif. Programmez une période dans « Activer le signalement ».", 'warning');
-  }
-  const encadreurId = document.getElementById('motifEncadreur').value;
-  const type = document.getElementById('motifType').value;
-  const detail = document.getElementById('motifDetail').value.trim();
-  if(!encadreurId || !type) return afficherMessage('motifMessage', "Sélectionnez un encadreur et un motif.", 'error');
-  if(motifDuJourPourEncadreur(encadreurId))
-    return afficherMessage('motifMessage', "Un motif a déjà été signalé aujourd'hui pour cet encadreur.", 'warning');
-  await enregistrerMotif(encadreurId, type, detail);
-  document.getElementById('motifDetail').value = '';
-  afficherMessage('motifMessage', "✓ Absence signalée avec succès.", 'success');
-});
-
-window.annulerMotifEncadreur = annulerMotifEncadreur;
-window.supprimerEncadreur = supprimerEncadreur;
-window.signalerAbsenceRapide = signalerAbsenceRapide;
-window.exporterEncadreursCSV = exporterEncadreursCSV;
-
-function getDatesFiltrees(mode){
-  const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]).sort();
-  const now = new Date();
-  const moisCourant = now.getMonth();
-  const anneeCivile = now.getFullYear();
-
-  if(mode === 'seance'){
-    return cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
-  }
-  if(mode === 'mois'){
-    return dims.filter(d => {
-      const dt = new Date(d+"T00:00:00");
-      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCivile;
-    });
-  }
-  if(mode === 'annee'){
-    return dims;
-  }
-  return null;
-}
-
-function setContainerHeight(containerId, nbItems){
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  el.style.height = Math.max(320, nbItems * 26 + 80) + 'px';
-}
-
-function renderChart1(){
-  if(charts.parKA){ try{charts.parKA.destroy();}catch(e){} }
-  const data = calculerStatsParVoyageEtTypeMoisCourant(chart1Voyage);
-  const labels = data.map(d => d.ka.nom);
-
-  const badge = document.getElementById('chart1PeriodLabel');
-  if(badge) badge.textContent = nomMois(aujourdhuiISO) + ' · ' + anneeCourante;
-
-  document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.v) === chart1Voyage);
-  });
-  document.getElementById('chart1Prev').disabled = (chart1Voyage === 1);
-  document.getElementById('chart1Next').disabled = (chart1Voyage === 4);
-
-  setContainerHeight('chartParKAContainer', Math.max(data.length, 5));
-
-  const pluginPourcentage = {
-    id: 'pluginPourcentageChart1',
-    afterDatasetsDraw(chart){
-      const {ctx} = chart;
-      ctx.save();
-      ctx.font = 'bold 11px Inter, sans-serif';
-      ctx.fillStyle = '#1a0a0f';
-      ctx.textBaseline = 'middle';
-      chart.data.datasets.forEach((dataset, dsIndex) => {
-        const meta = chart.getDatasetMeta(dsIndex);
-        meta.data.forEach((bar, i) => {
-          const val = dataset.data[i];
-          if(val === undefined || val === null) return;
-          ctx.fillText(val + '%', bar.x + 6, bar.y);
-        });
-      });
-      ctx.restore();
-    }
-  };
-
-  charts.parKA = new Chart(document.getElementById('chartParKA'), {
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Messe (ce mois)', data:data.map(d=>d.tauxMesse), backgroundColor:'#0f9d58', borderRadius:6},
-        {label:'Activité (ce mois)', data:data.map(d=>d.tauxActivite), backgroundColor:'#b91c2e', borderRadius:6}
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      indexAxis:'y',
-      layout:{padding:{right:50}},
-      plugins:{
-        legend:{position:'top'},
-        tooltip:{callbacks:{label: ctx => {
-          const d = data[ctx.dataIndex];
-          return ctx.datasetIndex === 0
-            ? `Messe : ${d.tauxMesse}% (${d.nbMesse} dim. ce mois)`
-            : `Activité : ${d.tauxActivite}% (${d.nbActivite} date${d.nbActivite>1?'s':''} ce mois)`;
-        }}}
-      },
-      scales:{
-        x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
-        y:{ticks:{font:{size:11}, autoSkip:false}}
-      }
-    },
-    plugins:[pluginPourcentage]
-  });
-}
-
-function renderChart2(){
-  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
-    c.classList.toggle('active', c.dataset.filtre === filtreRepartition);
-  });
-  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.sousfiltre === sousFiltreRepartition);
-  });
-
-  const badge = document.getElementById('chart2PeriodLabel');
-  if(badge){
-    const libelleFiltre =
-      filtreRepartition === 'seance' ? 'Séance du jour' :
-      filtreRepartition === 'mois'   ? 'Ce mois' :
-      filtreRepartition === 'annee'  ? 'Année active' :
-                                       'Tout depuis le début';
-    const libelleSous =
-      sousFiltreRepartition === 'tous' ? '' :
-      sousFiltreRepartition === 'messe' ? ' · Messe' : ' · Activité';
-    badge.textContent = libelleFiltre + libelleSous + ' · ' + anneeCourante;
-  }
-
-  if(charts.global){ try{charts.global.destroy();}catch(e){} }
-
-  if(filtreRepartition === 'tout'){
-    renderChart2Tout();
-    return;
-  }
-
-  const dims = getDatesFiltrees(filtreRepartition) || [];
-  dessinerDoughnut(dims);
-}
-
-function dessinerDoughnut(dims){
-  let totalP = 0, totalA = 0, totalE = 0;
-  dims.forEach(d => {
-    const p = cachePresences[d] || {};
-    Object.values(p).forEach(s => {
-      if(s === 'present') totalP++;
-      else if(s === 'absent') totalA++;
-      else if(s === 'excuse') totalE++;
-    });
-  });
-
-  charts.global = new Chart(document.getElementById('chartGlobal'), {
-    type:'doughnut',
-    data:{
-      labels:['Présents','Absents','Absences signalées'],
-      datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#c8102e','#f59e0b'], borderWidth:0}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
-  });
-}
-
-async function renderChart2Tout(){
-  try {
-    let totalP = 0, totalA = 0, totalE = 0;
-
-    for(const a of anneesDisponibles){
-      const presSnap = await getDocs(collection(db, "annees", a, "presences"));
-      const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
-      const annulees = new Set();
-      annSnap.forEach(d => annulees.add(d.id));
-      const specSnap = await getDocs(collection(db, "annees", a, "datesSpeciales"));
-      const speciales = new Set();
-      specSnap.forEach(d => speciales.add(d.id));
-
-      presSnap.forEach(d => {
-        const date = d.id;
-        if(annulees.has(date)) return;
-
-        const isSpeciale = speciales.has(date);
-        const isDimanche = new Date(date+"T00:00:00").getDay() === 0;
-        if(sousFiltreRepartition === 'messe' && !(isDimanche && !isSpeciale)) return;
-        if(sousFiltreRepartition === 'activite' && !isSpeciale) return;
-
-        Object.values(d.data() || {}).forEach(s => {
-          if(s === 'present') totalP++;
-          else if(s === 'absent') totalA++;
-          else if(s === 'excuse') totalE++;
-        });
-      });
-    }
-
-    charts.global = new Chart(document.getElementById('chartGlobal'), {
-      type:'doughnut',
-      data:{
-        labels:['Présents','Absents','Absences signalées'],
-        datasets:[{data:[totalP,totalA,totalE], backgroundColor:['#0f9d58','#c8102e','#f59e0b'], borderWidth:0}]
-      },
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
-    });
-  } catch(e){
-    console.error("Erreur répartition globale :", e);
-    charts.global = new Chart(document.getElementById('chartGlobal'), {
-      type:'doughnut',
-      data:{labels:['Erreur'], datasets:[{data:[1], backgroundColor:['#c8102e']}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
-    });
-  }
-}
-
-function calculerStatsVoyagesParFiltre(mode){
-  let datesConcernees = [];
-
-  if(mode === 'seance'){
-    datesConcernees = cachePresences[aujourdhuiISO] ? [aujourdhuiISO] : [];
-  } else if(mode === 'mois'){
-    const now = new Date();
-    const moisCourant = now.getMonth();
-    const anneeCivile = now.getFullYear();
-    datesConcernees = Object.keys(cachePresences).filter(d => {
-      if(cacheDatesAnnulees[d]) return false;
-      const dt = new Date(d+"T00:00:00");
-      return dt.getMonth() === moisCourant && dt.getFullYear() === anneeCivile;
-    });
+  if(etat === 'actif'){
+    banner.className = 'status-banner open';
+    icon.textContent = '✅';
+    title.textContent = 'Signalement OUVERT';
+    const remaining = new Date(cacheActivation.finLe) - new Date();
+    const jours = Math.floor(remaining / 86400000);
+    const h = Math.max(0, Math.floor((remaining % 86400000) / 3600000));
+    const m = Math.max(0, Math.floor((remaining % 3600000) / 60000));
+    const decompte = jours > 0 ? `${jours}j ${h}h ${m}min` : `${h}h ${m}min`;
+    desc.textContent = `Vous pouvez signaler votre absence ou retard. Encore ouvert pendant ${decompte}.`;
+    details.style.display = 'block';
+    details.innerHTML = `
+      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
+      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
+    `;
+    btn.disabled = false;
+    btn.textContent = '📤 Envoyer mon signalement';
+    form.classList.remove('form-disabled');
+  } else if(etat === 'attente'){
+    banner.className = 'status-banner waiting';
+    icon.textContent = '⏳';
+    title.textContent = 'Signalement pas encore ouvert';
+    desc.textContent = `Le signalement s'ouvrira automatiquement à la date de début programmée par la Commission.`;
+    details.style.display = 'block';
+    details.innerHTML = `
+      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
+      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
+    `;
+    btn.disabled = true;
+    btn.textContent = '⏳ Signalement pas encore ouvert';
+    form.classList.add('form-disabled');
+  } else if(etat === 'expire'){
+    banner.className = 'status-banner closed';
+    icon.textContent = '⌛';
+    title.textContent = 'Période de signalement terminée';
+    desc.textContent = `La période programmée par la Commission est terminée. Vous ne pouvez plus signaler.`;
+    details.style.display = 'block';
+    details.innerHTML = `
+      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
+      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
+    `;
+    btn.disabled = true;
+    btn.textContent = '⌛ Période terminée';
+    form.classList.add('form-disabled');
   } else {
-    datesConcernees = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
+    banner.className = 'status-banner closed';
+    icon.textContent = '🔒';
+    title.textContent = 'Signalement FERMÉ';
+    desc.textContent = "Le signalement n'est pas activé par la Commission. Le formulaire sera disponible dès que la Commission programme une période.";
+    details.style.display = 'none';
+    details.innerHTML = '';
+    btn.disabled = true;
+    btn.textContent = '🔒 Signalement inactif';
+    form.classList.add('form-disabled');
   }
-
-  return [1,2,3,4].map(v => {
-    const kasVoyage = cacheKAs.filter(k => k.voyage === v);
-    let presents = 0, absents = 0, excuses = 0;
-    datesConcernees.forEach(d => {
-      const p = cachePresences[d] || {};
-      kasVoyage.forEach(ka => {
-        const s = p[ka.id];
-        if(s === 'present') presents++;
-        else if(s === 'absent') absents++;
-        else if(s === 'excuse') excuses++;
-      });
-    });
-    const total = presents + absents + excuses;
-    const taux = total ? Math.round((presents / total) * 100) : 0;
-    return {voyage: v, presents, absents, excuses, total, taux};
-  });
 }
 
-function renderChart3(){
-  if(charts.voyages){ try{charts.voyages.destroy();}catch(e){} }
+function getEtatSignalement(){
+  if(estSignalementActif()) return 'actif';
+  if(estSignalementEnAttente()) return 'attente';
+  if(estSignalementExpire()) return 'expire';
+  return 'inactif';
+}
 
-  const donnees = calculerStatsVoyagesParFiltre(filtreVoyages);
-
-  const badge = document.getElementById('chart3PeriodLabel');
-  if(badge){
-    badge.textContent =
-      filtreVoyages === 'seance' ? 'Séance du jour' :
-      filtreVoyages === 'mois'   ? 'Ce mois' :
-                                   'Tout depuis le début';
+/* Écoute en temps réel de l'activation */
+onSnapshot(cheminActivation(), snap => {
+  if(snap.exists()){
+    const data = snap.data() || {};
+    cacheActivation = {
+      actif: data.actif === true,
+      debutLe: data.debutLe || null,
+      finLe: data.finLe || null
+    };
+  } else {
+    cacheActivation = { actif: false, debutLe: null, finLe: null };
   }
-
-  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
-    c.classList.toggle('active', c.dataset.filtre3 === filtreVoyages);
-  });
-
-  const labels = [1,2,3,4].map(v => CONFIG.VOYAGES[v]);
-
-  const pluginPourcentage = {
-    id: 'pluginPourcentageChart3',
-    afterDatasetsDraw(chart){
-      const {ctx} = chart;
-      ctx.save();
-      ctx.font = 'bold 11px Inter, sans-serif';
-      ctx.fillStyle = '#1a0a0f';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      const meta = chart.getDatasetMeta(0);
-      meta.data.forEach((bar, i) => {
-        const val = donnees[i].taux;
-        if(val === undefined || val === null) return;
-        ctx.fillText(val + '%', bar.x, bar.y - 4);
-      });
-      ctx.restore();
-    }
-  };
-
-  charts.voyages = new Chart(document.getElementById('chartVoyages'), {
-    type:'bar',
-    data:{
-      labels,
-      datasets:[{
-        label:'Présences',
-        data: donnees.map(d => d.presents),
-        backgroundColor:'#f5a623',
-        borderRadius:8
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      layout:{padding:{top:24}},
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          callbacks:{
-            label: ctx => {
-              const d = donnees[ctx.dataIndex];
-              return [
-                `Présences : ${d.presents}`,
-                `Absences : ${d.absents}`,
-                `Signalées : ${d.excuses}`,
-                `Taux : ${d.taux}%`
-              ];
-            }
-          }
-        }
-      },
-      scales:{y:{beginAtZero:true}}
-    },
-    plugins:[pluginPourcentage]
-  });
-}
-
-function renderChart4(){
-  if(charts.taux){ try{charts.taux.destroy();}catch(e){} }
-  const stats = calculerStats().filter(s => s.voyage === chart4Voyage);
-  const labels = stats.map(s => s.nom);
-
-  document.querySelectorAll('#voyageDots4 .voyage-dot').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.v) === chart4Voyage);
-  });
-  document.getElementById('chart4Prev').disabled = (chart4Voyage === 1);
-  document.getElementById('chart4Next').disabled = (chart4Voyage === 4);
-
-  setContainerHeight('chartTauxContainer', Math.max(stats.length, 5));
-
-  const pluginPourcentage = {
-    id: 'pluginPourcentageChart4',
-    afterDatasetsDraw(chart){
-      const {ctx} = chart;
-      ctx.save();
-      ctx.font = 'bold 11px Inter, sans-serif';
-      ctx.fillStyle = '#1a0a0f';
-      ctx.textBaseline = 'middle';
-      const meta = chart.getDatasetMeta(0);
-      meta.data.forEach((bar, i) => {
-        const val = stats[i].taux;
-        if(val === undefined || val === null) return;
-        ctx.fillText(val + '%', bar.x + 6, bar.y);
-      });
-      ctx.restore();
-    }
-  };
-
-  charts.taux = new Chart(document.getElementById('chartTaux'), {
-    type:'bar',
-    data:{
-      labels,
-      datasets:[{
-        label:'Taux (%)',
-        data:stats.map(s=>s.taux),
-        backgroundColor:stats.map(s=>s.taux>=75?'#0f9d58':(s.taux>=50?'#f59e0b':'#c8102e')),
-        borderRadius:6
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      indexAxis:'y',
-      layout:{padding:{right:50}},
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label: ctx => `${ctx.parsed.x}%`}}
-      },
-      scales:{
-        x:{beginAtZero:true, max:100, ticks:{callback:v=>v+'%'}},
-        y:{ticks:{font:{size:11}, autoSkip:false}}
-      }
-    },
-    plugins:[pluginPourcentage]
-  });
-}
-
-function renderGraphiques(){
-  renderChart1();
-  renderChart2();
-  renderChart3();
-  renderChart4();
-}
-
-function bindChart1Nav(){
-  document.getElementById('chart1Prev').addEventListener('click', () => {
-    if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); }
-  });
-  document.getElementById('chart1Next').addEventListener('click', () => {
-    if(chart1Voyage < 4){ chart1Voyage++; renderChart1(); }
-  });
-  document.querySelectorAll('#voyageDots1 .voyage-dot').forEach(b => {
-    b.addEventListener('click', () => {
-      chart1Voyage = Number(b.dataset.v);
-      renderChart1();
-    });
-  });
-}
-function bindChart4Nav(){
-  document.getElementById('chart4Prev').addEventListener('click', () => {
-    if(chart4Voyage > 1){ chart4Voyage--; renderChart4(); }
-  });
-  document.getElementById('chart4Next').addEventListener('click', () => {
-    if(chart4Voyage < 4){ chart4Voyage++; renderChart4(); }
-  });
-  document.querySelectorAll('#voyageDots4 .voyage-dot').forEach(b => {
-    b.addEventListener('click', () => {
-      chart4Voyage = Number(b.dataset.v);
-      renderChart4();
-    });
-  });
-}
-
-function bindFilterCards(){
-  document.querySelectorAll('.filter-card[data-filtre]').forEach(c => {
-    c.addEventListener('click', () => {
-      filtreRepartition = c.dataset.filtre;
-      renderChart2();
-    });
-  });
-  document.querySelectorAll('#sousFiltres .filter-card').forEach(c => {
-    c.addEventListener('click', () => {
-      sousFiltreRepartition = c.dataset.sousfiltre;
-      renderChart2();
-    });
-  });
-  document.querySelectorAll('.filter-card[data-filtre3]').forEach(c => {
-    c.addEventListener('click', () => {
-      filtreVoyages = c.dataset.filtre3;
-      renderChart3();
-    });
-  });
-}
-
-function addSwipe(containerId, onSwipeLeft, onSwipeRight){
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  let startX = 0, startY = 0;
-  el.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, {passive:true});
-  el.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50){
-      if(dx < 0) onSwipeLeft();
-      else onSwipeRight();
-    }
-  }, {passive:true});
-}
-
-function bindSwipeCharts(){
-  addSwipe('chart1Scroll',
-    () => { if(chart1Voyage < 4){ chart1Voyage++; renderChart1(); } },
-    () => { if(chart1Voyage > 1){ chart1Voyage--; renderChart1(); } }
-  );
-  addSwipe('chart4Scroll',
-    () => { if(chart4Voyage < 4){ chart4Voyage++; renderChart4(); } },
-    () => { if(chart4Voyage > 1){ chart4Voyage--; renderChart4(); } }
-  );
-}
-
-bindChart1Nav();
-bindChart4Nav();
-bindFilterCards();
-bindSwipeCharts();
-
-document.querySelectorAll('.sub-tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.sub-tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.subtab-content').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    const target = document.getElementById(t.dataset.subtab);
-    if(target) target.classList.add('active');
-  });
+  rendreFormulaireActif(getEtatSignalement());
+}, err => {
+  console.error("Erreur Firestore activation :", err);
+  rendreFormulaireActif('inactif');
 });
 
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
-});
+/* Vérification toutes les 30 secondes (compte à rebours + transition auto) */
+setInterval(() => {
+  rendreFormulaireActif(getEtatSignalement());
+}, 30000);
 
-document.querySelectorAll('.voyage-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.voyage-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    voyageSelectionnee = Number(tab.dataset.voyage);
-    renderKaListeVoyage();
-  });
-});
-
-document.getElementById('searchKA').addEventListener('input', e => renderClassement(e.target.value));
-
-document.getElementById('formAjoutAnnee').addEventListener('submit', e => {
+/* ============ SOUMISSION ============ */
+document.getElementById('formSignalement').addEventListener('submit', async e => {
   e.preventDefault();
-  creerAnnee(document.getElementById('newAnneeInput').value);
+
+  if(!estSignalementActif()){
+    return afficherMessage('messageSignalement', "Le signalement n'est pas ouvert actuellement. Attendez que la Commission programme et ouvre une période.", 'warning');
+  }
+
+  const typeInput = document.querySelector('input[name="typeSignalement"]:checked');
+  const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
+  const role = document.getElementById('roleSelect').value;
+  const date = document.getElementById('dateInput').value;
+  const motif = document.getElementById('motifSelect').value;
+  const detail = document.getElementById('detailInput').value.trim();
+
+  if(!typeInput) return afficherMessage('messageSignalement', "Veuillez choisir : Absence ou Retard.", 'error');
+  if(!nom || nom.length < 2) return afficherMessage('messageSignalement', "Veuillez écrire votre nom complet.", 'error');
+  if(!role) return afficherMessage('messageSignalement', "Veuillez choisir votre rôle.", 'error');
+  if(!date) return afficherMessage('messageSignalement', "Veuillez choisir une date.", 'error');
+  if(!motif) return afficherMessage('messageSignalement', "Veuillez choisir un motif.", 'error');
+
+  const type = typeInput.value;
+  const btn = document.getElementById('btnEnvoyer');
+  btn.disabled = true;
+  btn.textContent = "⏳ Envoi en cours…";
+
+  try {
+    const id = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    const signalement = {
+      type,
+      nom,
+      role,
+      date,
+      motif,
+      detail,
+      createdAt: new Date().toISOString(),
+      statut: 'nouveau'
+    };
+    await setDoc(doc(db, "signalements", id), signalement);
+
+    document.getElementById('cardFormulaire').classList.add('hidden');
+    document.getElementById('cardConfirmation').classList.remove('hidden');
+    document.getElementById('detailsConfirmation').innerHTML = `
+      <div><strong>Type :</strong> ${type === 'absence' ? '❌ Absence' : '⏰ Retard'}</div>
+      <div><strong>Nom :</strong> ${esc(nom)}</div>
+      <div><strong>Rôle :</strong> ${esc(role)}</div>
+      <div><strong>Date concernée :</strong> ${formatDateFr(date)}</div>
+      <div><strong>Motif :</strong> ${esc(motif)}</div>
+      ${detail ? `<div><strong>Détail :</strong> ${esc(detail)}</div>` : ''}
+    `;
+
+    document.getElementById('formSignalement').reset();
+    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
+    document.getElementById('dateInput').value = dateToISO(today);
+    document.getElementById('messageSignalement').className = 'message';
+  } catch(err){
+    console.error(err);
+    afficherMessage('messageSignalement', "Erreur : " + err.message, 'error');
+  } finally {
+    rendreFormulaireActif(getEtatSignalement());
+  }
 });
 
-function exportCSV(){
-  const stats = calculerStats();
-  let csv = "Annee,Nom,Voyage,Messe,Activite,Absences,Absences signalees,Taux\n";
-  stats.forEach(s => { csv += `"${anneeCourante}","${s.nom.replace(/"/g,'""')}",${CONFIG.VOYAGES[s.voyage]},${s.messe},${s.activite},${s.absent},${s.excuse},${s.taux}%\n`; });
-  telecharger(csv,`groupe-ka-${anneeCourante}.csv`,'text/csv');
-}
-function exportJSON(){
-  const data = {annee: anneeCourante, kas:cacheKAs, presences:cachePresences, datesAnnulees:cacheDatesAnnulees, datesSpeciales:cacheDatesSpeciales, voyagesValides:cacheVoyagesValides, exporte:new Date().toISOString()};
-  telecharger(JSON.stringify(data,null,2),`groupe-ka-sauvegarde-${anneeCourante}.json`,'application/json');
-}
-function telecharger(c,nom,type){
-  const blob = new Blob([c],{type}); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download=nom; a.click(); URL.revokeObjectURL(url);
-}
-
-/* ============================================================
-   RAPPORT WORD (.doc)
-   ============================================================ */
-async function chargerDonneesRapportAnneeActive(){
-  const a = anneeCourante;
-  const toutesPresences = [];
-  const annuleesGlobal = new Set();
-  const tousKAs = [];
-
-  const kasSnap = await getDocs(collection(db, "annees", a, "kas"));
-  kasSnap.forEach(d => {
-    const data = d.data() || {};
-    tousKAs.push({annee: a, id: d.id, nom: data.nom, voyage: data.voyage});
-  });
-  const presSnap = await getDocs(collection(db, "annees", a, "presences"));
-  presSnap.forEach(d => {
-    toutesPresences.push({annee: a, date: d.id, data: d.data() || {}});
-  });
-  const annSnap = await getDocs(collection(db, "annees", a, "datesAnnulees"));
-  annSnap.forEach(d => annuleesGlobal.add(a + "|" + d.id));
-
-  const presencesValides = toutesPresences.filter(p => !annuleesGlobal.has(p.annee + "|" + p.date));
-  presencesValides.sort((a,b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-
-  return {annees: [a], tousKAs, presencesValides};
-}
-
-function calculerStatistiquesRapport(donnees){
-  const {tousKAs, presencesValides} = donnees;
-
-  let totalPresences = 0, totalAbsences = 0, totalExcuses = 0;
-  presencesValides.forEach(p => {
-    Object.values(p.data).forEach(s => {
-      if(s === "present") totalPresences++;
-      else if(s === "absent") totalAbsences++;
-      else if(s === "excuse") totalExcuses++;
-    });
-  });
-  const totalMarques = totalPresences + totalAbsences + totalExcuses;
-  const tauxGlobal = totalMarques ? Math.round((totalPresences / totalMarques) * 100) : 0;
-
-  const statsParKA = tousKAs.map(ka => {
-    let present = 0, absent = 0, excuse = 0;
-    presencesValides.forEach(p => {
-      const s = p.data[ka.id];
-      if(s === "present") present++;
-      else if(s === "absent") absent++;
-      else if(s === "excuse") excuse++;
-    });
-    const total = present + absent + excuse;
-    const taux = total ? Math.round((present / total) * 100) : 0;
-    return {...ka, present, absent, excuse, total, taux};
-  });
-
-  const classement = statsParKA.slice().sort((a,b) =>
-    b.present - a.present || b.taux - a.taux || a.nom.localeCompare(b.nom)
-  );
-  classement.forEach((k,i) => k.rang = i+1);
-
-  const parVoyage = [1,2,3,4].map(v => {
-    const kasV = statsParKA.filter(k => k.voyage === v);
-    const presents = kasV.reduce((acc,k) => acc + k.present, 0);
-    const absents = kasV.reduce((acc,k) => acc + k.absent, 0);
-    const excuses = kasV.reduce((acc,k) => acc + k.excuse, 0);
-    const total = presents + absents + excuses;
-    const taux = total ? Math.round((presents / total) * 100) : 0;
-    return {voyage: v, nbKA: kasV.length, presents, absents, excuses, taux};
-  });
-
-  const dates = presencesValides.map(p => p.date).sort();
-  const dateDebut = dates.length ? dates[0] : null;
-  const dateFin = dates.length ? dates[dates.length-1] : null;
-
-  return {
-    totalPresences, totalAbsences, totalExcuses, totalMarques, tauxGlobal,
-    statsParKA, classement, parVoyage,
-    nbSeances: presencesValides.length,
-    nbKA: tousKAs.length,
-    dateDebut, dateFin
-  };
-}
-
-function genererGraphiquesRapport(stats){
-  const resultats = {doughnut: null, parKA: null, parVoyage: null};
-
-  try {
-    const canvas1 = document.createElement('canvas');
-    canvas1.width = 600; canvas1.height = 400;
-    const chart1 = new Chart(canvas1.getContext('2d'), {
-      type:'doughnut',
-      data:{
-        labels:['Présents','Absents','Absences signalées'],
-        datasets:[{
-          data:[stats.totalPresences, stats.totalAbsences, stats.totalExcuses],
-          backgroundColor:['#0f9d58','#c8102e','#f59e0b'],
-          borderWidth:2, borderColor:'#fff'
-        }]
-      },
-      options:{
-        responsive:false, animation:false,
-        plugins:{
-          legend:{position:'bottom', labels:{font:{size:14, family:'Times New Roman'}}},
-          title:{display:true, text:'Répartition globale des présences', font:{size:16, family:'Times New Roman'}}
-        },
-        cutout:'55%'
-      }
-    });
-    chart1.update();
-    resultats.doughnut = canvas1.toDataURL('image/png');
-    chart1.destroy();
-  } catch(e){ console.error("Erreur doughnut:", e); }
-
-  try {
-    const topKA = stats.statsParKA.slice().sort((a,b) => b.taux - a.taux || b.present - a.present);
-    const hauteur = Math.max(400, topKA.length * 26 + 100);
-    const canvas2 = document.createElement('canvas');
-    canvas2.width = 900; canvas2.height = hauteur;
-    const chart2 = new Chart(canvas2.getContext('2d'), {
-      type:'bar',
-      data:{
-        labels: topKA.map(k => k.nom),
-        datasets:[{
-          label:'Taux de présence (%)',
-          data: topKA.map(k => k.taux),
-          backgroundColor: topKA.map(k => k.taux >= 75 ? '#0f9d58' : (k.taux >= 50 ? '#f59e0b' : '#c8102e')),
-          borderRadius:4
-        }]
-      },
-      options:{
-        responsive:false, animation:false, indexAxis:'y',
-        plugins:{
-          legend:{display:false},
-          title:{display:true, text:'Taux de présence par KA (%)', font:{size:16, family:'Times New Roman'}}
-        },
-        scales:{
-          x:{beginAtZero:true, max:100, ticks:{callback:v => v+'%', font:{family:'Times New Roman'}}},
-          y:{ticks:{font:{size:11, family:'Times New Roman'}, autoSkip:false}}
-        }
-      }
-    });
-    chart2.update();
-    resultats.parKA = canvas2.toDataURL('image/png');
-    chart2.destroy();
-  } catch(e){ console.error("Erreur parKA:", e); }
-
-  try {
-    const canvas3 = document.createElement('canvas');
-    canvas3.width = 800; canvas3.height = 400;
-    const chart3 = new Chart(canvas3.getContext('2d'), {
-      type:'bar',
-      data:{
-        labels: stats.parVoyage.map(v => CONFIG.VOYAGES[v.voyage]),
-        datasets:[{
-          label:'Présences totales',
-          data: stats.parVoyage.map(v => v.presents),
-          backgroundColor:'#f5a623', borderRadius:8
-        }]
-      },
-      options:{
-        responsive:false, animation:false,
-        plugins:{
-          legend:{display:false},
-          title:{display:true, text:'Présences par voyage', font:{size:16, family:'Times New Roman'}}
-        },
-        scales:{
-          y:{beginAtZero:true, ticks:{font:{family:'Times New Roman'}}},
-          x:{ticks:{font:{family:'Times New Roman'}}}
-        }
-      }
-    });
-    chart3.update();
-    resultats.parVoyage = canvas3.toDataURL('image/png');
-    chart3.destroy();
-  } catch(e){ console.error("Erreur parVoyage:", e); }
-
-  return resultats;
-}
-
-function construireHtmlRapport(stats, graphiques, logoSrc){
-  const dateGen = new Date().toLocaleDateString('fr-FR', {
-    weekday:'long', day:'numeric', month:'long', year:'numeric'
-  });
-  const heureGen = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-  const periode = (stats.dateDebut && stats.dateFin)
-    ? `du ${formatDateFr(stats.dateDebut)} au ${formatDateFr(stats.dateFin)}`
-    : '—';
-
-  const logoHtml = logoSrc
-    ? `<div style="text-align:center;margin-bottom:20px"><img src="${logoSrc}" alt="Logo Groupe KA" style="width:100px;height:100px;object-fit:contain"></div>`
-    : '';
-
-  const lignesClassement = stats.classement.map(k => `
-    <tr>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${k.rang}</td>
-      <td style="padding:8px;border:1px solid #999">${esc(k.nom)}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${CONFIG.VOYAGES[k.voyage] || '—'}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${k.present}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${k.absent}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${k.excuse}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999;font-weight:bold">${k.taux}%</td>
-    </tr>
-  `).join('');
-
-  const lignesVoyages = stats.parVoyage.map(v => `
-    <tr>
-      <td style="padding:8px;border:1px solid #999">${CONFIG.VOYAGES[v.voyage]}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${v.nbKA}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${v.presents}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${v.absents}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999">${v.excuses}</td>
-      <td style="text-align:center;padding:8px;border:1px solid #999;font-weight:bold">${v.taux}%</td>
-    </tr>
-  `).join('');
-
-  const imgDoughnut = graphiques.doughnut
-    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.doughnut}" alt="Répartition globale" style="max-width:600px;width:100%"></div>`
-    : '';
-  const imgParKA = graphiques.parKA
-    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.parKA}" alt="Taux par KA" style="max-width:900px;width:100%"></div>`
-    : '';
-  const imgParVoyage = graphiques.parVoyage
-    ? `<div style="text-align:center;margin:16px 0"><img src="${graphiques.parVoyage}" alt="Présences par voyage" style="max-width:800px;width:100%"></div>`
-    : '';
-
-  return `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="UTF-8">
-<title>Rapport Groupe KA ${anneeCourante}</title>
-<!--[if gte mso 9]>
-<xml>
-<w:WordDocument>
-<w:View>Print</w:View>
-<w:Zoom>100</w:Zoom>
-<w:DoNotOptimizeForBrowser/>
-</w:WordDocument>
-</xml>
-<![endif]-->
-<style>
-@page {
-  size: A4;
-  margin: 2cm 1.5cm 2cm 1.5cm;
-  mso-header-margin: 1cm;
-  mso-footer-margin: 1cm;
-}
-body {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 12.5pt;
-  line-height: 1.5;
-  color: #000;
-  margin: 0;
-}
-h1 {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 20pt;
-  font-weight: bold;
-  color: #5c0a1a;
-  text-align: center;
-  margin: 10px 0;
-  text-transform: uppercase;
-}
-h2 {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 15pt;
-  font-weight: bold;
-  color: #5c0a1a;
-  border-bottom: 2px solid #5c0a1a;
-  padding-bottom: 4px;
-  margin: 24px 0 12px 0;
-}
-h3 {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 13pt;
-  font-weight: bold;
-  color: #5c0a1a;
-  margin: 16px 0 8px 0;
-}
-p {
-  margin: 8px 0;
-  text-align: justify;
-}
-.sous-titre {
-  text-align: center;
-  font-size: 13pt;
-  font-style: italic;
-  color: #555;
-  margin-bottom: 4px;
-}
-.date-gen {
-  text-align: center;
-  font-size: 11pt;
-  color: #666;
-  margin-bottom: 20px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 12px 0;
-  font-size: 11pt;
-}
-th {
-  background-color: #5c0a1a;
-  color: #fff;
-  padding: 8px;
-  border: 1px solid #5c0a1a;
-  text-align: left;
-  font-weight: bold;
-}
-td {
-  padding: 8px;
-  border: 1px solid #999;
-}
-.info-box {
-  border: 2px solid #5c0a1a;
-  background-color: #fdf6f7;
-  padding: 12px;
-  margin: 16px 0;
-}
-.signature {
-  margin-top: 60px;
-  text-align: right;
-}
-.signature-ligne {
-  border-top: 1px solid #000;
-  width: 200px;
-  margin-left: auto;
-  margin-top: 40px;
-  padding-top: 4px;
-  text-align: center;
-}
-.footer-page {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 9pt;
-  color: #888;
-  border-top: 1px solid #ccc;
-  padding-top: 4px;
-}
-</style>
-</head>
-<body>
-
-${logoHtml}
-
-<h1>Rapport Statistique de Présence</h1>
-<p class="sous-titre">Groupe KA — Commission Secrétariat</p>
-<p class="sous-titre" style="color:#5c0a1a;font-weight:bold;font-style:normal">Année initiatique : ${anneeCourante}</p>
-<p class="date-gen">Généré le ${dateGen} à ${heureGen}</p>
-
-<div class="info-box">
-  <p style="margin:4px 0"><strong>Année initiatique :</strong> ${anneeCourante}</p>
-  <p style="margin:4px 0"><strong>Période couverte :</strong> ${periode}</p>
-  <p style="margin:4px 0"><strong>Nombre total de KA :</strong> ${stats.nbKA}</p>
-  <p style="margin:4px 0"><strong>Nombre total de séances :</strong> ${stats.nbSeances}</p>
-</div>
-
-<h2>1. Synthèse générale</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Indicateur</th>
-      <th style="text-align:center">Valeur</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>Présences enregistrées</td><td style="text-align:center">${stats.totalPresences}</td></tr>
-    <tr><td>Absences enregistrées</td><td style="text-align:center">${stats.totalAbsences}</td></tr>
-    <tr><td>Absences signalées</td><td style="text-align:center">${stats.totalExcuses}</td></tr>
-    <tr><td><strong>Total des marquages</strong></td><td style="text-align:center"><strong>${stats.totalMarques}</strong></td></tr>
-    <tr><td><strong>Taux global de présence</strong></td><td style="text-align:center"><strong>${stats.tauxGlobal}%</strong></td></tr>
-  </tbody>
-</table>
-<p>Sur l'année initiatique <strong>${anneeCourante}</strong>, le Groupe KA a enregistré <strong>${stats.totalPresences} présences</strong> sur un total de <strong>${stats.totalMarques} marquages</strong>, soit un taux global de présence de <strong>${stats.tauxGlobal}%</strong>.</p>
-
-${imgDoughnut}
-
-<h2>2. Classement complet des KA</h2>
-<p>Classement de tous les KA de l'année <strong>${anneeCourante}</strong>, triés par nombre de présences décroissant.</p>
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:center">Rang</th>
-      <th>Nom du KA</th>
-      <th style="text-align:center">Voyage</th>
-      <th style="text-align:center">Présences</th>
-      <th style="text-align:center">Absences</th>
-      <th style="text-align:center">Signalées</th>
-      <th style="text-align:center">Taux</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${lignesClassement}
-  </tbody>
-</table>
-
-${imgParKA}
-
-<h2>3. Statistiques par voyage</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Voyage</th>
-      <th style="text-align:center">KA</th>
-      <th style="text-align:center">Présences</th>
-      <th style="text-align:center">Absences</th>
-      <th style="text-align:center">Signalées</th>
-      <th style="text-align:center">Taux</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${lignesVoyages}
-  </tbody>
-</table>
-
-${imgParVoyage}
-
-<div class="signature">
-  <p><strong>La Commission Secrétariat</strong></p>
-  <div class="signature-ligne">Signature</div>
-</div>
-
-<p class="footer-page">Rapport généré automatiquement par le Registre de Présence Groupe KA — ${dateGen} — Année ${anneeCourante}</p>
-
-</body>
-</html>`;
-}
-
-async function genererRapportWord(){
-  const msg = document.getElementById('rapportMessage');
-  msg.textContent = "Génération en cours... Veuillez patienter.";
-  msg.className = 'message show warning';
-
-  try {
-    const donnees = await chargerDonneesRapportAnneeActive();
-    const stats = calculerStatistiquesRapport(donnees);
-    const graphiques = genererGraphiquesRapport(stats);
-
-    let logoSrc = null;
-    try {
-      const resp = await fetch('IMG_6726.png');
-      const blob = await resp.blob();
-      logoSrc = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
-    } catch(e){ console.warn("Logo non chargé:", e); }
-
-    const html = construireHtmlRapport(stats, graphiques, logoSrc);
-    const dateISO = dateToISO(new Date());
-    const nomFichier = `Rapport_GroupeKA_${anneeCourante}_${dateISO}.doc`;
-    const blobFinal = new Blob(['\ufeff', html], {type: 'application/msword'});
-    const url = URL.createObjectURL(blobFinal);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = nomFichier;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    msg.innerHTML = `✅ Rapport généré avec succès : <strong>${nomFichier}</strong><br>
-      Année ${anneeCourante} · ${stats.nbSeances} séances · ${stats.nbKA} KA · taux global ${stats.tauxGlobal}%`;
-    msg.className = 'message show success';
-  } catch(e){
-    console.error("Erreur génération rapport:", e);
-    msg.textContent = "Erreur lors de la génération : " + e.message;
-    msg.className = 'message show error';
-  }
-}
-
-window.ouvrirLogin = ouvrirLogin;
-window.fermerLogin = fermerLogin;
-window.deconnexion = deconnexion;
-window.setStatus = setStatus;
-window.reinitialiserVoyage = reinitialiserVoyage;
-window.validerVoyageCourant = validerVoyageCourant;
-window.supprimerKA = supprimerKA;
-window.annulerDate = annulerDate;
-window.reactiverDate = reactiverDate;
-window.supprimerDateSpecial = supprimerDateSpecial;
-window.exportCSV = exportCSV;
-window.exportJSON = exportJSON;
-window.sha256 = sha256;
-window.changerAnnee = changerAnnee;
-window.ouvrirNouvelleAnnee = ouvrirNouvelleAnnee;
-window.genererRapportWord = genererRapportWord;
-
-const KA_TEST = [
-  {nom:"K. Nicolas BABALE", voyage:2},{nom:"K. Joseph BABALE", voyage:2},{nom:"K. John MUYAMBA", voyage:2},{nom:"K. Junior KIKAKEDI", voyage:2},{nom:"K. Dianna MULUNDA", voyage:2},{nom:"K. Didier NLANDU J.", voyage:2},{nom:"K. Jules MANZAMBI", voyage:2},{nom:"K. Rachlin MIDO", voyage:2},{nom:"K. Antoine MBONGU", voyage:2},{nom:"K. Bruno TUBWINGE", voyage:2},{nom:"K. Vismy SAIDI", voyage:2},{nom:"K. Gervais LENGWA", voyage:2},{nom:"K. Israel NSILU", voyage:2},
-  {nom:"A. Patricia MUTHU", voyage:2},{nom:"A. Viviane RAMAZANI", voyage:2},{nom:"A. Vanessa MASIKA", voyage:2},{nom:"A. Divine MWIKA", voyage:2},{nom:"A. Maria LUEMBA", voyage:2},{nom:"A. Enya MBANGALA", voyage:2},{nom:"A. Angelique NDERI", voyage:2},{nom:"A. Maria MAVINGA", voyage:2},{nom:"A. Norianna KASAKWA", voyage:2},{nom:"A. Bienveillance KIALA", voyage:2},{nom:"A. Helena NKEMBI", voyage:2},{nom:"A. Maria KANAMBAKI", voyage:2},{nom:"A. Gode MIDO", voyage:2},{nom:"A. Perla BELAWO", voyage:2},{nom:"A. Nicole TSHIBANGU", voyage:2},{nom:"A. Parfaite LENGWA", voyage:2},{nom:"A. Eliana WADIPOYI", voyage:2},{nom:"A. Noella MBELA", voyage:2},{nom:"A. Espoire SINGA", voyage:2},{nom:"A. Lajoie SINGA", voyage:2},{nom:"A. Kersene TSHIBANGU", voyage:2},{nom:"A. Clémence SAFARI", voyage:2},{nom:"A. Glorianna BELEMO", voyage:2},{nom:"A. Merveille MIANDA", voyage:2},{nom:"A. Consolate SAIDI", voyage:2},
-  {nom:"K. Moïse SINGA", voyage:3},{nom:"K. Credo SINGA", voyage:3},{nom:"K. David LUBO", voyage:3},{nom:"K. Daniel DIPONGO", voyage:3},{nom:"K. David MAYADILA", voyage:3},{nom:"K. Marcelo ONAKUDU", voyage:3},{nom:"K. Jervie SHUTSHA", voyage:3},{nom:"K. Dieu Merci KABONGO", voyage:3},{nom:"K. Messi LENGWA", voyage:3},{nom:"K. Matthieu MUTANGALA", voyage:3},{nom:"K. Dave KIPELEKA", voyage:3},
-  {nom:"A. Triomphe BOKIKA", voyage:3},{nom:"A. Claudia MADIDISH", voyage:3},{nom:"A. Phideline KIKETA", voyage:3},{nom:"A. Phongella IMANA", voyage:3},{nom:"A. Helena MAKABA", voyage:3},{nom:"A. Nestolla RAMAZANI", voyage:3},{nom:"A. Valerie NDAMBA", voyage:3},{nom:"A. Emilie KIKA", voyage:3},{nom:"A. Nestivie BOTOKO", voyage:3},{nom:"A. Abigael LUMEYA", voyage:3},{nom:"A. Claudine PEMBE", voyage:3},{nom:"A. Hortance MBONDA", voyage:3},{nom:"A. Larose BOTULU", voyage:3},{nom:"A. Lumiere KOTOBA", voyage:3},{nom:"A. Marta BINJA", voyage:3},{nom:"A. Lajoie TSHIBOLA", voyage:3},
-  {nom:"K. Marcel KILOMBO", voyage:4},{nom:"K. Jeremie AKILI", voyage:4},{nom:"K. Josaphat LUZOLO", voyage:4},{nom:"K. Winner SAIDI", voyage:4},{nom:"K. Grael MUYISI", voyage:4},
-  {nom:"A. Bienfait MADIDISHI", voyage:4},{nom:"A. Aubaine SINGA", voyage:4},{nom:"A. Thérèse KAPINGA", voyage:4},{nom:"A. Hèle MBELE", voyage:4},{nom:"A. Ruth IBANGA", voyage:4},{nom:"A. Immaculée MALONGA", voyage:4},{nom:"A. Chancelvie MOLOKO", voyage:4},{nom:"A. Hermelie MUYUKU", voyage:4},{nom:"A. Nana KIALA", voyage:4},{nom:"A. Ben Alicia MOLOKO", voyage:4},{nom:"A. Winnie MONGILA", voyage:4},{nom:"A. Marie-Fortune KAWE", voyage:4}
-];
-
-window.chargerKAOfficiels = async function(){
-  if(refuserSiArchivee()) return;
-  const msg = document.getElementById('chargementMessage');
-  msg.textContent = "Chargement en cours...";
-  msg.className = 'message show warning';
-  let ajoutes = 0, dejaPresents = 0, erreurs = 0;
-  for(const k of KA_TEST){
-    const existe = cacheKAs.some(x => norm(x.nom) === norm(k.nom));
-    if(existe){ dejaPresents++; continue; }
-    try{
-      const id = 'ka_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      await setDoc(cheminKAId(id), {nom:k.nom, voyage:k.voyage, createdAt:new Date().toISOString()});
-      ajoutes++;
-    } catch(e){ erreurs++; console.log("Erreur :", k.nom, e.message); }
-  }
-  msg.innerHTML = `✅ <strong>${ajoutes}</strong> KA ajoutés à l'année <strong>${anneeCourante}</strong> · ${dejaPresents} déjà présents · ${erreurs} erreurs. Total officiel : ${KA_TEST.length} KA.`;
-  msg.className = 'message show success';
+window.nouveauSignalement = function(){
+  document.getElementById('cardConfirmation').classList.add('hidden');
+  document.getElementById('cardFormulaire').classList.remove('hidden');
+  document.getElementById('messageSignalement').className = 'message';
+  rendreFormulaireActif(getEtatSignalement());
+  window.scrollTo({top:0, behavior:'smooth'});
 };
-
-function rafraichirTempsReel(){
-  renderBanniere();
-  renderKaListeVoyage();
-}
-
-async function init(){
-  listenAnneesUnsub = onSnapshot(collection(db, "annees"), snap => {
-    anneesDisponibles = [];
-    cacheAnneesMeta = {};
-    snap.forEach(d => {
-      anneesDisponibles.push(d.id);
-      cacheAnneesMeta[d.id] = d.data() || {};
-    });
-    anneesDisponibles.sort();
-    remplirSelectAnnees();
-    renderListeAnnees();
-    renderBanniereArchive();
-  });
-
-  await assurerAnneeExiste(CONFIG.ANNEE_DEFAUT);
-
-  let anneeVoulue = anneeStorageLire();
-  if(!anneeVoulue){
-    const existantes = await chargerAnneesDepuisFirestore();
-    anneeVoulue = existantes.length ? existantes[existantes.length-1] : CONFIG.ANNEE_DEFAUT;
-  }
-  anneeCourante = anneeVoulue;
-  anneeStorageEcrire(anneeCourante);
-
-  await attacherListenersAnnee();
-  attacherListenersEncadreurs();
-  attacherListenerActivation();
-  renderBanniereArchive();
-
-  if(sessionValide()){
-    document.getElementById('pagePublique').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    chargerDashboard();
-  }
-
-  setInterval(()=>{
-    const el = document.getElementById('dbTime');
-    if(el) el.textContent = nomJour(aujourdhuiISO) + " · " + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  }, 1000);
-
-  setInterval(()=>{
-    renderActivationUI();
-    if(estSignalementExpire()){
-      archiverSignalementsExpres();
-    }
-  }, 30000);
-}
-init();
 </script>
 </body>
 </html>
