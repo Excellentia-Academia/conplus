@@ -93,6 +93,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;border:1px solid var(--border)}
 .stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold)}
+.stat-card.clickable{cursor:pointer}
+.stat-card.clickable::after{content:'👁 Cliquer pour voir';position:absolute;bottom:8px;left:0;right:0;font-size:.68rem;color:var(--muted);opacity:0;transition:opacity .2s;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.stat-card.clickable:hover::after{opacity:1}
 .stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
 .stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
 
@@ -103,7 +106,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .tab-content{display:none}
 .tab-content.active{display:block}
 
-/* Sub-tabs Encadreurs */
 .sub-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;background:var(--surface);padding:8px;border-radius:14px;box-shadow:var(--shadow-sm)}
 .sub-tab{background:none;border:none;padding:12px 20px;font-family:inherit;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .25s}
 .sub-tab:hover{color:var(--primary);background:rgba(139,19,39,.06)}
@@ -267,7 +269,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .badge-role.general{background:var(--secondary);color:var(--primary)}
 .badge-role.coordinateur{background:#0f9d58}
 
-/* === SECTION RÔLES ENCADREURS === */
 .role-section{margin-bottom:28px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);background:var(--surface)}
 .role-section-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .role-section-header h3{font-size:1.1rem;font-weight:700;color:#fff;margin:0;font-family:'Playfair Display',serif;letter-spacing:.3px}
@@ -285,7 +286,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .role-list{padding:8px 12px 14px}
 .role-empty{padding:20px;text-align:center;color:var(--muted);font-style:italic;font-size:.85rem}
 
-/* === LIGNE ENCADREUR AVEC BOUTONS ACTION === */
 .role-person{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap}
 .role-person:last-child{border-bottom:none}
 .role-person .rp-left{display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px}
@@ -296,10 +296,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .btn-edit:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(245,166,35,.35)}
 .btn-del{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-del:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(185,28,46,.35)}
-.btn-signaler{background:linear-gradient(135deg,#c8102e 0%,#e63946 100%);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
-.btn-signaler:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(200,16,46,.35)}
 
-/* === ABSENCES PAR DATE === */
 .absence-date-card{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:12px;border-left:4px solid var(--danger);margin-bottom:12px;overflow:hidden;transition:all .25s}
 .absence-date-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
 .absence-date-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;cursor:pointer;user-select:none;flex-wrap:wrap}
@@ -321,17 +318,35 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .absence-person-row .apr-motif{font-size:.82rem;color:var(--primary);font-weight:600;display:block;margin-top:4px}
 .absence-person-row .apr-detail{font-size:.78rem;color:var(--muted);font-style:italic;display:block;margin-top:2px}
 
-/* === MODALE === */
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,10,15,.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
 .modal-overlay.show{opacity:1;pointer-events:auto}
 .modal-box{background:var(--surface);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.4);max-width:480px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.92);transition:transform .25s;border:1px solid var(--border)}
 .modal-overlay.show .modal-box{transform:scale(1)}
+.modal-box.large{max-width:820px}
 .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}
 .modal-header h3{font-size:1.2rem;font-weight:700;margin:0}
 .modal-close{background:none;border:none;font-size:1.5rem;color:var(--muted);cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .modal-close:hover{background:var(--bg);color:var(--primary)}
 .modal-body{padding:24px}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+
+.alert-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:linear-gradient(135deg,#fff5f5 0%,#fce8e6 100%);border-radius:10px;border-left:4px solid var(--danger);margin-bottom:10px;gap:14px;flex-wrap:wrap}
+.alert-row .ar-left{flex:1;min-width:180px}
+.alert-row .ar-nom{font-weight:700;color:var(--text);display:block;font-size:1rem}
+.alert-row .ar-info{font-size:.8rem;color:var(--muted);margin-top:4px}
+.alert-row .ar-info strong{color:var(--danger)}
+.btn-recu{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-recu:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,157,88,.35)}
+.btn-recu:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.alert-section-title{font-size:.85rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.alert-section-title .count-badge{background:var(--danger);color:#fff;padding:2px 10px;border-radius:10px;font-size:.75rem}
+.alert-section-title.success .count-badge{background:var(--success)}
+
+.alert-historique-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface);border-radius:10px;border-left:4px solid var(--success);margin-bottom:10px;gap:12px;flex-wrap:wrap}
+.alert-historique-item .ahi-left{flex:1;min-width:180px}
+.alert-historique-item .ahi-nom{font-weight:700;color:var(--text);display:block}
+.alert-historique-item .ahi-date{font-size:.75rem;color:var(--muted);margin-top:3px}
 
 @media(max-width:700px){
   .ka-row{grid-template-columns:1fr;gap:18px;padding:16px}
@@ -437,10 +452,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
       <div class="stat-card"><div class="stat-value" id="dashTotalKA">0</div><div class="stat-label">KA enregistrés</div></div>
       <div class="stat-card"><div class="stat-value" id="dashDimanches">0</div><div class="stat-label">Séances validées</div></div>
       <div class="stat-card"><div class="stat-value" id="dashPresences">0</div><div class="stat-label">Présences validées</div></div>
-      <div class="stat-card"><div class="stat-value" id="dashAlertes">0</div><div class="stat-label">Alertes 3 absences</div></div>
+      <div class="stat-card clickable" onclick="ouvrirModalAlertes()"><div class="stat-value" id="dashAlertes">0</div><div class="stat-label">Alertes 3 absences</div></div>
     </div>
     <div class="card" id="cardAlertes" style="display:none">
-      <div class="card-header"><h2 style="color:var(--red-professional)">⚠️ Alertes — 3 absences successives</h2></div>
+      <div class="card-header">
+        <h2 style="color:var(--red-professional)">⚠️ Alertes — 3 absences successives</h2>
+        <button class="btn btn-danger btn-sm" onclick="ouvrirModalAlertes()">👁 Voir la liste</button>
+      </div>
       <div id="alertesList" class="alert-list"></div>
     </div>
     <div class="tabs">
@@ -683,6 +701,23 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
   </main>
 </div>
 
+<!-- ============ MODALE : ALERTES 3 ABSENCES ============ -->
+<div id="modalAlertes" class="modal-overlay">
+  <div class="modal-box large">
+    <div class="modal-header">
+      <h3>⚠️ Alertes — KA avec 3 absences successives</h3>
+      <button class="modal-close" onclick="fermerModalAlertes()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalAlertesEnCours"></div>
+      <div id="modalAlertesHistorique" style="margin-top:24px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="fermerModalAlertes()">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ MODALE : AJOUTER UN ENCADREUR ============ -->
 <div id="modalAjoutEncadreur" class="modal-overlay">
   <div class="modal-box">
@@ -858,8 +893,13 @@ let listenersEncadreurs = [];
 let cacheSignalementsExternes = [];
 let signalementsExternesUnsub = null;
 
+/* === ALERTES KA === */
+let cacheAlertesTraitees = [];
+let alertesTraiteesUnsub = null;
+
 function cheminEncadreurs(){ return collection(db, "encadreurs"); }
 function cheminEncadreurId(id){ return doc(db, "encadreurs", id); }
+function cheminAlertesTraitees(){ return collection(db, "alertesKATraitees"); }
 
 function anneeStorageLire(){
   try { return localStorage.getItem(CONFIG.ANNEE_STORAGE_KEY); } catch(e){ return null; }
@@ -995,6 +1035,19 @@ function attacherListenersEncadreurs(){
     cacheSignalementsExternes.sort((a,b) => (b.date||'').localeCompare(a.date||''));
     if(!document.getElementById('dashboard').classList.contains('hidden')){
       renderAbsencesParDate();
+    }
+  });
+}
+
+function attacherListenerAlertesTraitees(){
+  if(alertesTraiteesUnsub) { try{ alertesTraiteesUnsub(); }catch(e){} }
+  alertesTraiteesUnsub = onSnapshot(cheminAlertesTraitees(), snap => {
+    cacheAlertesTraitees = [];
+    snap.forEach(d => cacheAlertesTraitees.push({id:d.id, ...d.data()}));
+    cacheAlertesTraitees.sort((a,b) => (b.traiteLe||'').localeCompare(a.traiteLe||''));
+    if(!document.getElementById('dashboard').classList.contains('hidden')){
+      renderAlertes();
+      renderModalAlertes();
     }
   });
 }
@@ -1333,6 +1386,7 @@ function chargerDashboard(){
   renderEncadreurs();
   renderAbsencesParDate();
   renderActivationUI();
+  renderModalAlertes();
 }
 
 function renderStats(){
@@ -1359,16 +1413,124 @@ function calculerAlertes(){
   return alertes;
 }
 
+function estAlerteTraitee(kaId, maxCompteur){
+  return cacheAlertesTraitees.some(t =>
+    t.kaId === kaId &&
+    t.annee === anneeCourante &&
+    t.maxCompteur === maxCompteur
+  );
+}
+
 function renderAlertes(){
   const alertes = calculerAlertes();
-  document.getElementById('dashAlertes').textContent = alertes.length;
+  const nonTraitees = alertes.filter(a => !estAlerteTraitee(a.ka.id, a.maxCompteur));
+
+  document.getElementById('dashAlertes').textContent = nonTraitees.length;
   const card = document.getElementById('cardAlertes');
-  if(alertes.length === 0){ card.style.display = 'none'; return; }
+  if(nonTraitees.length === 0){ card.style.display = 'none'; return; }
   card.style.display = 'block';
-  document.getElementById('alertesList').innerHTML = alertes.map(a =>
+  document.getElementById('alertesList').innerHTML = nonTraitees.map(a =>
     `<div class="alert-item"><strong>${esc(a.ka.nom)}</strong> (${CONFIG.VOYAGES[a.ka.voyage]}) — ${a.maxCompteur} absences successives consécutives.</div>`
   ).join('');
 }
+
+function renderModalAlertes(){
+  const enCoursEl = document.getElementById('modalAlertesEnCours');
+  const histEl = document.getElementById('modalAlertesHistorique');
+  if(!enCoursEl || !histEl) return;
+
+  const alertes = calculerAlertes();
+  const nonTraitees = alertes.filter(a => !estAlerteTraitee(a.ka.id, a.maxCompteur));
+
+  if(nonTraitees.length === 0){
+    enCoursEl.innerHTML = `
+      <div class="alert-section-title success">
+        <span class="count-badge">0</span>
+        <span>Aucune alerte en cours</span>
+      </div>
+      <p class="muted center" style="padding:20px">Tous les KA sont en ordre.</p>
+    `;
+  } else {
+    enCoursEl.innerHTML = `
+      <div class="alert-section-title">
+        <span class="count-badge">${nonTraitees.length}</span>
+        <span>KA en alerte — 3 absences successives</span>
+      </div>
+      ${nonTraitees.map(a => `
+        <div class="alert-row">
+          <div class="ar-left">
+            <span class="ar-nom">${esc(a.ka.nom)}</span>
+            <div class="ar-info">
+              ${CONFIG.VOYAGES[a.ka.voyage]} · <strong>${a.maxCompteur} absences successives</strong>
+            </div>
+          </div>
+          <button class="btn-recu" onclick="marquerAlerteTraitee('${a.ka.id}', ${a.maxCompteur})">✓ Reçu</button>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  const histPourAnnee = cacheAlertesTraitees.filter(t => t.annee === anneeCourante);
+  if(histPourAnnee.length === 0){
+    histEl.innerHTML = `
+      <div class="alert-section-title">
+        <span class="count-badge">0</span>
+        <span>Historique des alertes traitées</span>
+      </div>
+      <p class="muted center" style="padding:20px">Aucun historique pour cette année.</p>
+    `;
+  } else {
+    histEl.innerHTML = `
+      <div class="alert-section-title success">
+        <span class="count-badge">${histPourAnnee.length}</span>
+        <span>Historique des alertes traitées</span>
+      </div>
+      ${histPourAnnee.map(t => `
+        <div class="alert-historique-item">
+          <div class="ahi-left">
+            <span class="ahi-nom">${esc(t.kaNom)}</span>
+            <div class="ahi-date">
+              ${CONFIG.VOYAGES[t.kaVoyage] || ''} · ${t.maxCompteur} absences
+            </div>
+          </div>
+          <div class="ahi-date" style="text-align:right;min-width:180px">
+            ✅ Reçu le ${new Date(t.traiteLe).toLocaleString('fr-FR')}
+          </div>
+        </div>
+      `).join('')}
+    `;
+  }
+}
+
+window.ouvrirModalAlertes = function(){
+  renderModalAlertes();
+  document.getElementById('modalAlertes').classList.add('show');
+};
+window.fermerModalAlertes = function(){
+  document.getElementById('modalAlertes').classList.remove('show');
+};
+
+window.marquerAlerteTraitee = async function(kaId, maxCompteur){
+  if(refuserSiArchivee()) return;
+  const ka = cacheKAs.find(k => k.id === kaId);
+  if(!ka) return;
+
+  if(!confirm(`Marquer l'alerte de "${ka.nom}" comme traitée (reçue) ?`)) return;
+
+  try {
+    const id = 'alert_' + kaId + '_' + maxCompteur + '_' + Date.now().toString(36);
+    await setDoc(doc(db, "alertesKATraitees", id), {
+      kaId,
+      kaNom: ka.nom,
+      kaVoyage: ka.voyage,
+      maxCompteur,
+      annee: anneeCourante,
+      traiteLe: new Date().toISOString()
+    });
+  } catch(e){
+    alert("Erreur : " + e.message);
+  }
+};
 
 function calculerStats(){
   const dims = Object.keys(cachePresences).filter(d => !cacheDatesAnnulees[d]);
@@ -1675,7 +1837,6 @@ function renderEncadreurs(filtre=''){
             <span class="rp-date">${e.createdAt ? new Date(e.createdAt).toLocaleDateString('fr-FR') : ''}</span>
           </div>
           <div class="rp-actions">
-            <button class="btn-signaler" onclick="signalerAbsenceEncadreur('${e.id}')">🚩 Signaler absent</button>
             <button class="btn-edit" onclick="ouvrirModalModifEncadreur('${e.id}')">✏️ Modifier</button>
             <button class="btn-del" onclick="supprimerEncadreur('${e.id}')">🗑 Supprimer</button>
           </div>
@@ -1688,7 +1849,6 @@ function renderEncadreurs(filtre=''){
   cont.innerHTML = html;
 }
 
-/* === AJOUTER UN ENCADREUR === */
 window.ouvrirModalAjoutEncadreur = function(){
   document.getElementById('modalNomEncadreur').value = '';
   document.getElementById('modalRoleEncadreur').value = '';
@@ -1728,7 +1888,6 @@ window.sauvegarderNouvelEncadreur = async function(){
   }
 };
 
-/* === MODIFIER UN ENCADREUR (code 20K7) === */
 window.ouvrirModalModifEncadreur = function(id){
   const enc = cacheEncadreurs.find(e => e.id === id);
   if(!enc) return;
@@ -1769,7 +1928,6 @@ window.sauvegarderModifEncadreur = async function(){
   }
 };
 
-/* === SUPPRIMER UN ENCADREUR (code 20K7) === */
 window.supprimerEncadreur = async function(id){
   if(refuserSiArchivee()) return;
   const enc = cacheEncadreurs.find(e => e.id === id);
@@ -1781,38 +1939,6 @@ window.supprimerEncadreur = async function(id){
   if(!confirm(`Supprimer définitivement l'encadreur "${enc.nom}" ?`)) return;
   try {
     await deleteDoc(cheminEncadreurId(id));
-  } catch(e){
-    alert("Erreur : " + e.message);
-  }
-};
-
-/* === SIGNALER UN ENCADREUR ABSENT (part dans historiqueSignalements) === */
-window.signalerAbsenceEncadreur = async function(id){
-  if(refuserSiArchivee()) return;
-  const enc = cacheEncadreurs.find(e => e.id === id);
-  if(!enc) return;
-
-  const type = prompt(`Motif d'absence pour ${enc.nom} :\n(Maladie / Voyage / Raison familiale / Obligation professionnelle / Retard / Autre)`);
-  if(!type) return;
-  const detail = prompt("Détail (optionnel) :") || "";
-
-  try {
-    const now = new Date();
-    const dateISO = dateToISO(now);
-    const sigId = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-    await setDoc(doc(db, "historiqueSignalements", sigId), {
-      type: 'absence',
-      nom: enc.nom,
-      role: enc.role || 'Rien',
-      date: dateISO,
-      motif: type,
-      detail,
-      createdAt: now.toISOString(),
-      archiveLe: now.toISOString(),
-      statut: 'traite',
-      source: 'commission'
-    });
-    alert(`✓ Absence de "${enc.nom}" signalée et enregistrée dans l'historique.`);
   } catch(e){
     alert("Erreur : " + e.message);
   }
@@ -3087,6 +3213,7 @@ async function init(){
   await attacherListenersAnnee();
   attacherListenersEncadreurs();
   attacherListenerActivation();
+  attacherListenerAlertesTraitees();
   renderBanniereArchive();
 
   if(sessionValide()){
