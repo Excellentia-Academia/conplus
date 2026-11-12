@@ -3,9 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recensement des Encadreurs — Groupe KA Nodasa</title>
+<title>Signaler une absence ou un retard — Groupe KA Nodasa</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --primary:#5c0a1a;--primary-light:#8b1327;--secondary:#f5a623;
+  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
+  --border:#ecd5d8;--success:#0f9d58;--danger:#c8102e;--warning:#e65100;
+  --radius:14px;--shadow:0 4px 16px rgba(92,10,26,.08);
+  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
+  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
+  --grad-success:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);
+  --grad-warning:linear-gradient(135deg,#e65100 0%,#f59e0b 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
+.logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
+.logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
+.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
+.theme-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.theme-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
+
+.hero{background:var(--grad-primary);color:#fff;padding:50px 0 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(230,57,70,.4) 0%,transparent 60%);pointer-events:none}
+.hero .container{position:relative;z-index:1}
+.hero h1{color:#fff;font-size:2.3rem;margin-bottom:12px;font-weight:900}
+.hero-sub{font-size:1.05rem;opacity:.9}
+
+.section{padding:36px 0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;margin-bottom:24px;border:1px solid var(--border)}
+.card h2{font-size:1.4rem;margin-bottom:8px}
+.card .sub{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
+.form-group label .req{color:var(--danger)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+
+/* Choix type signalement */
+.type-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:600px){.type-choices{grid-template-columns:1fr}}
+.type-choice{padding:22px;border-radius:14px;border:3px solid var(--border);cursor:pointer;text-align:center;transition:all .25s;background:#fff;font-family:inherit}
+.type-choice:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(92,10,26,.12)}
+.type-choice input{display:none}
+.type-choice .tc-icon{font-size:2rem;margin-bottom:8px;display:block}
+.type-choice .tc-label{font-weight:700;font-size:1rem;color:var(--text)}
+.type-choice .tc-desc{font-size:.75rem;color:var(--muted);margin-top:4px}
+.type-choice.selected[data-type="absence"]{border-color:var(--danger);background:linear-gradient(135deg,#fff5f5 0%,#fce8e6 100%);box-shadow:0 8px 20px rgba(200,16,46,.2)}
+.type-choice.selected[data-type="absence"] .tc-label{color:var(--danger)}
+.type-choice.selected[data-type="retard"]{border-color:var(--warning);background:linear-gradient(135deg,#fff8f0 0%,#fff3e0 100%);box-shadow:0 8px 20px rgba(230,81,0,.2)}
+.type-choice.selected[data-type="retard"] .tc-label{color:var(--warning)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:10px;border:none;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
+.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
+.btn-block{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+.message{margin-top:18px;padding:16px 20px;border-radius:10px;font-weight:500;display:none;font-size:.95rem;line-height:1.5}
+.message.show{display:block}
+.message.success{background:#e6f7ee;color:#0f9d58;border-left:4px solid #0f9d58}
+.message.error{background:#fce8e6;color:#c8102e;border-left:4px solid #c8102e}
+.message.warning{background:#fff3e0;color:#e65100;border-left:4px solid #e65100}
+
+.info-box{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-left:5px solid var(--primary);border-radius:10px;padding:18px 22px;margin-bottom:24px;font-size:.9rem}
+.info-box strong{color:var(--primary)}
+
+.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
+.footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
+.footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
+
+.hidden{display:none!important}
+
+/* Confirmation */
+.confirm-box{text-align:center;padding:40px 20px}
+.confirm-box .check{font-size:4rem;margin-bottom:16px;display:block}
+.confirm-box h2{font-size:1.8rem;margin-bottom:12px}
+.confirm-box p{color:var(--muted);margin-bottom:24px;font-size:1rem}
+.confirm-box .details{background:var(--bg);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;font-size:.9rem}
+.confirm-box .details div{padding:6px 0;border-bottom:1px solid var(--border)}
+.confirm-box .details div:last-child{border-bottom:none}
+.confirm-box .details strong{color:var(--primary);display:inline-block;min-width:130px}
+
+/* Mode sombre */
+html[data-theme="dark"]{
+  --bg:#121014;--surface:#1c1618;--text:#f0e8ea;--muted:#9a8a90;
+  --border:#2e2228;--primary:#ff9aa8;--primary-light:#ff7a8a;
+  --shadow:0 4px 16px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .type-choice{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .type-choice .tc-label{color:#f0e8ea}
+html[data-theme="dark"] .type-choice.selected[data-type="absence"]{background:linear-gradient(135deg,#2a1518 0%,#3a1620 100%)}
+html[data-theme="dark"] .type-choice.selected[data-type="retard"]{background:linear-gradient(135deg,#2a2015 0%,#3a2a15 100%)}
+html[data-theme="dark"] .info-box{background:linear-gradient(135deg,#1c1618 0%,#2a1a1e 100%)}
+html[data-theme="dark"] .confirm-box .details{background:#121014}
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] .form-group textarea{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8ea}
+
+@media(max-width:700px){
+  .hero h1{font-size:1.7rem}
+  .logo-img{width:48px;height:48px}
+  .logo-text small{font-size:.65rem}
+  .card{padding:24px 18px}
+}
+</style>
 <script>
 (function(){
   var saved = localStorage.getItem('ka-theme');
@@ -16,130 +131,6 @@
   }
 })();
 </script>
-<style>
-:root{
-  --primary:#5c0a1a;--primary-light:#8b1327;--secondary:#f5a623;
-  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
-  --border:#ecd5d8;--success:#0f9d58;--danger:#c8102e;
-  --radius:14px;--shadow:0 4px 16px rgba(92,10,26,.08);
-  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
-  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
-  --table-hover:#fdf6f7;
-  --role-mukasa:#0f9d58;
-  --role-lwanga:#f5a623;
-  --role-kaggwa:#2563eb;
-  --role-mulumba:#a1a1aa;
-  --role-stagiaire:#c8102e;
-}
-
-/* ============ MODE SOMBRE ============ */
-html[data-theme="dark"]{
-  --bg:#121014;
-  --surface:#1c1618;
-  --text:#f0e8ea;
-  --muted:#9a8a90;
-  --border:#2e2228;
-  --primary:#ff9aa8;
-  --primary-light:#ff7a8a;
-  --success:#22c55e;
-  --danger:#ef4444;
-  --shadow:0 4px 16px rgba(0,0,0,.35);
-  --table-hover:#251a1e;
-  --role-mukasa:#22c55e;
-  --role-lwanga:#fbbf24;
-  --role-kaggwa:#3b82f6;
-  --role-mulumba:#e5e7eb;
-  --role-stagiaire:#ef4444;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;transition:background .25s,color .25s}
-h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
-.container{max-width:1320px;margin:0 auto;padding:0 24px}
-.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:14px}
-.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
-.logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
-.logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
-.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
-
-.theme-btn{
-  background:rgba(255,255,255,.15);
-  border:1.5px solid rgba(255,255,255,.3);
-  color:#fff;
-  width:44px;height:44px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:1.15rem;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
-.theme-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
-
-.hero{background:var(--grad-primary);color:#fff;padding:50px 0 60px;text-align:center}
-.hero h1{color:#fff;font-size:2.3rem;margin-bottom:12px;font-weight:900}
-.hero-sub{font-size:1.05rem;opacity:.9}
-.section{padding:36px 0}
-.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;border:1px solid var(--border);transition:background .25s,border-color .25s}
-.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:28px}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);position:relative;border:1px solid var(--border);transition:background .25s,border-color .25s}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-gold);border-radius:var(--radius) var(--radius) 0 0}
-.stat-value{font-size:2.4rem;font-weight:800;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Playfair Display',serif;line-height:1.1}
-html[data-theme="dark"] .stat-value{
-  background:linear-gradient(135deg,#ff9aa8 0%,#ff6b7a 50%,#ef4444 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.stat-label{color:var(--muted);font-size:.82rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
-.table-wrap{overflow-x:auto;border-radius:12px}
-.table{width:100%;border-collapse:collapse;font-size:.9rem}
-.table th{background:var(--grad-primary);color:#fff;padding:14px 12px;text-align:left;font-weight:600;font-size:.82rem;text-transform:uppercase}
-.table td{padding:14px 12px;border-bottom:1px solid var(--border);color:var(--text)}
-.table tbody tr:hover td{background:var(--table-hover)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
-.btn-primary{background:var(--grad-primary);color:#fff}
-.btn-sm{padding:7px 14px;font-size:.8rem}
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
-.form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:var(--surface);color:var(--text)}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
-.form-group select option{background:var(--surface);color:var(--text)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}}
-.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
-.message.show{display:block}
-.message.success{background:#e6f7ee;color:#0f9d58;border-left:4px solid #0f9d58}
-.message.error{background:#fce8e6;color:#c8102e;border-left:4px solid #c8102e}
-.message.warning{background:#fff3e0;color:#e65100;border-left:4px solid #e65100}
-html[data-theme="dark"] .message.success{background:#163a28;color:#4ade80;border-left-color:#22c55e}
-html[data-theme="dark"] .message.error{background:#3a1620;color:#f87171;border-left-color:#ef4444}
-html[data-theme="dark"] .message.warning{background:#3a2a15;color:#fbbf24;border-left-color:#f59e0b}
-
-/* ============ BADGES RÔLES (couleurs alignées sur le graphique) ============ */
-.badge-role{display:inline-block;padding:4px 14px;border-radius:14px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid transparent}
-.badge-role.mukasa   {background:#0f9d58;color:#fff}
-.badge-role.lwanga   {background:#f5a623;color:#1a0a0f}
-.badge-role.kaggwa   {background:#2563eb;color:#fff}
-.badge-role.mulumba  {background:#e5e7eb;color:#1f2937;border-color:#9ca3af}
-.badge-role.stagiaire{background:#c8102e;color:#fff}
-html[data-theme="dark"] .badge-role.mukasa   {background:#22c55e;color:#0a1a10}
-html[data-theme="dark"] .badge-role.lwanga   {background:#fbbf24;color:#1a0a0f}
-html[data-theme="dark"] .badge-role.kaggwa   {background:#3b82f6;color:#fff}
-html[data-theme="dark"] .badge-role.mulumba  {background:#e5e7eb;color:#111827;border-color:#6b7280}
-html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
-
-.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
-.footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
-.footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
-.chart-container{position:relative;height:360px}
-@media(max-width:700px){
-  .hero h1{font-size:1.7rem}
-  .stat-value{font-size:2rem}
-  .logo-text small{font-size:.65rem}
-  .logo-img{width:48px;height:48px}
-}
-</style>
 </head>
 <body>
 
@@ -147,7 +138,7 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
   <div class="container header-inner">
     <div class="logo">
       <img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="logo-img">
-      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Recensement des Encadreurs</small></div>
+      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Signalement d'absence / retard</small></div>
     </div>
     <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="Mode sombre / clair" aria-label="Basculer le thème">🌙</button>
   </div>
@@ -155,25 +146,53 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
 
 <section class="hero">
   <div class="container">
-    <h1>Recensement des Encadreurs</h1>
-    <p class="hero-sub">Choisissez votre rôle, écrivez votre nom complet — objectif : le nombre exact d'encadreurs</p>
+    <h1>Signaler une absence ou un retard</h1>
+    <p class="hero-sub">Remplissez le formulaire ci-dessous — votre signalement arrivera directement à la Commission</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
 
+    <div class="info-box" id="infoBox">
+      <strong>📢 Encadreurs uniquement</strong><br>
+      Ce formulaire permet de signaler une <strong>absence</strong> ou un <strong>retard</strong>. 
+      Votre signalement est enregistré automatiquement et visible par la Commission Secrétariat.
+    </div>
+
     <!-- FORMULAIRE -->
-    <div class="card">
-      <div class="card-header" style="margin-bottom:22px">
-        <h2 style="font-size:1.4rem">➕ Je m'enregistre comme encadreur</h2>
-      </div>
-      <form id="formRecensement">
+    <div class="card" id="cardFormulaire">
+      <h2>📝 Nouveau signalement</h2>
+      <p class="sub">Tous les champs marqués d'un <span style="color:var(--danger)">*</span> sont obligatoires.</p>
+
+      <form id="formSignalement">
+
+        <!-- Choix du type -->
+        <label style="display:block;font-weight:600;margin-bottom:12px;font-size:.88rem;color:var(--primary)">Type de signalement <span style="color:var(--danger)">*</span></label>
+        <div class="type-choices">
+          <label class="type-choice" data-type="absence">
+            <input type="radio" name="typeSignalement" value="absence" required>
+            <span class="tc-icon">❌</span>
+            <span class="tc-label">Absence</span>
+            <span class="tc-desc">Je ne serai pas présent(e)</span>
+          </label>
+          <label class="type-choice" data-type="retard">
+            <input type="radio" name="typeSignalement" value="retard" required>
+            <span class="tc-icon">⏰</span>
+            <span class="tc-label">Retard</span>
+            <span class="tc-desc">Je serai en retard</span>
+          </label>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
-            <label for="roleSelect">Rôle *</label>
+            <label for="nomInput">Nom complet <span class="req">*</span></label>
+            <input type="text" id="nomInput" required placeholder="Ex : Ya Lwanga Maurice Fefe" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="roleSelect">Rôle <span class="req">*</span></label>
             <select id="roleSelect" required>
-              <option value="">— Choisir un rôle —</option>
+              <option value="">— Choisir —</option>
               <option value="Mukasa/Kasima">Mukasa/Kasima</option>
               <option value="Lwanga/Kahenga">Lwanga/Kahenga</option>
               <option value="Kaggwa/Meka">Kaggwa/Meka</option>
@@ -181,84 +200,63 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
               <option value="Stagiaire">Stagiaire</option>
             </select>
           </div>
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
-            <label for="nomInput">Nom complet *</label>
-            <input type="text" id="nomInput" required placeholder="Ex : Ya Kahenga Nora Mutandi" autocomplete="off">
+            <label for="dateInput">Date concernée <span class="req">*</span></label>
+            <input type="date" id="dateInput" required>
+          </div>
+          <div class="form-group">
+            <label for="motifSelect">Motif <span class="req">*</span></label>
+            <select id="motifSelect" required>
+              <option value="">— Choisir un motif —</option>
+              <option value="Maladie">Maladie</option>
+              <option value="Voyage">Voyage</option>
+              <option value="Raison familiale">Raison familiale</option>
+              <option value="Obligation professionnelle">Obligation professionnelle</option>
+              <option value="Transport / Embouteillage">Transport / Embouteillage</option>
+              <option value="Retard imprévu">Retard imprévu</option>
+              <option value="Absence non justifiée">Absence non justifiée</option>
+              <option value="Autre">Autre</option>
+            </select>
           </div>
         </div>
-        <p class="muted" style="font-size:.8rem;margin-top:-8px;margin-bottom:18px;font-style:italic">
-          💡 Écrivez votre nom complet tel qu'il doit apparaître (ex : <strong>Ya Kahenga Nora Mutandi</strong>, <strong>Ya Lwanga Maurice Fefe</strong>…)
-        </p>
-        <button type="submit" class="btn btn-primary">✓ Valider mon enregistrement</button>
+
+        <div class="form-group">
+          <label for="detailInput">Détail / Commentaire (optionnel)</label>
+          <textarea id="detailInput" placeholder="Ex : Rendez-vous médical à l'hôpital, je serai présent vers 10h…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="btnEnvoyer">
+          📤 Envoyer mon signalement
+        </button>
       </form>
-      <div id="messageRecensement" class="message"></div>
+
+      <div id="messageSignalement" class="message"></div>
     </div>
 
-    <!-- STATISTIQUES -->
-    <div class="grid-stats">
-      <div class="stat-card">
-        <div class="stat-value" id="statTotalEnc">0</div>
-        <div class="stat-label">Total Encadreurs</div>
+    <!-- CONFIRMATION -->
+    <div class="card hidden" id="cardConfirmation">
+      <div class="confirm-box">
+        <span class="check">✅</span>
+        <h2>Signalement envoyé !</h2>
+        <p>Votre signalement a bien été enregistré et transmis à la Commission Secrétariat.</p>
+        <div class="details" id="detailsConfirmation"></div>
+        <button class="btn btn-primary" onclick="nouveauSignalement()">➕ Faire un autre signalement</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statMukasaKasima">0</div>
-        <div class="stat-label">Mukasa/Kasima</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statLwangaKahenga">0</div>
-        <div class="stat-label">Lwanga/Kahenga</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statKaggwaMeka">0</div>
-        <div class="stat-label">Kaggwa/Meka</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statMulumbaBakoma">0</div>
-        <div class="stat-label">Mulumba/Bakoma</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statStagiaire">0</div>
-        <div class="stat-label">Stagiaires</div>
-      </div>
-    </div>
-
-    <!-- LISTE -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px">
-        <h2 style="font-size:1.4rem">📋 Liste complète des encadreurs</h2>
-        <input type="search" id="searchEnc" placeholder="Rechercher un encadreur..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px;background:var(--surface);color:var(--text)">
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="tableRecensement">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nom complet</th>
-              <th>Rôle</th>
-              <th>Date d'enregistrement</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- GRAPHIQUE -->
-    <div class="card">
-      <h2 style="font-size:1.2rem;margin-bottom:16px">📊 Répartition par rôle</h2>
-      <div class="chart-container"><canvas id="chartRoles"></canvas></div>
     </div>
 
   </div>
 </section>
 
 <footer class="footer">
-  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Recensement des Encadreurs</p></div>
+  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Signalement d'absence / retard</p></div>
 </footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -275,25 +273,20 @@ const db = getFirestore(app);
 
 /* ============ UTILS ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function norm(s){ return String(s).trim().replace(/\s+/g,' ').toLowerCase(); }
+function dateToISO(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function formatDateFr(iso){
-  if(!iso) return '—';
-  return new Date(iso).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 function afficherMessage(id,msg,type){
   const el=document.getElementById(id);
   if(!el) return;
   el.textContent=msg; el.className='message show '+type;
-  setTimeout(()=>{el.className='message';},8000);
 }
-
-/* ============ CACHE LOCAL ============ */
-let cacheEncadreurs = [];
-let charts = {};
-
-/* ============ FIREBASE ============ */
-function cheminEncadreurs(){ return collection(db, "encadreurs"); }
-function cheminEncadreurId(id){ return doc(db, "encadreurs", id); }
 
 /* ============ THÈME ============ */
 function updateThemeButton(){
@@ -307,154 +300,92 @@ window.toggleTheme = function(){
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('ka-theme', next);
   updateThemeButton();
-  renderChartRoles();
 };
-
-/* ============ COULEURS DES RÔLES ============ */
-const ROLES = ['Mukasa/Kasima','Lwanga/Kahenga','Kaggwa/Meka','Mulumba/Bakoma','Stagiaire'];
-
-function getRoleColors(){
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  return {
-    'Mukasa/Kasima'   : isDark ? '#22c55e' : '#0f9d58', // vert
-    'Lwanga/Kahenga'  : isDark ? '#fbbf24' : '#f5a623', // jaune
-    'Kaggwa/Meka'     : isDark ? '#3b82f6' : '#2563eb', // bleu
-    'Mulumba/Bakoma'  : isDark ? '#e5e7eb' : '#a1a1aa', // blanc / gris visible
-    'Stagiaire'       : isDark ? '#ef4444' : '#c8102e'  // rouge
-  };
-}
-
-/* ============ RENDU ============ */
-function roleBadgeClass(role){
-  if(!role) return '';
-  const r = role.toLowerCase();
-  if(r.includes('mukasa')) return 'mukasa';
-  if(r.includes('lwanga')) return 'lwanga';
-  if(r.includes('kaggwa')) return 'kaggwa';
-  if(r.includes('mulumba')) return 'mulumba';
-  if(r.includes('stagiaire')) return 'stagiaire';
-  return '';
-}
-
-function renderStats(){
-  document.getElementById('statTotalEnc').textContent = cacheEncadreurs.length;
-  document.getElementById('statMukasaKasima').textContent = cacheEncadreurs.filter(e => e.role === 'Mukasa/Kasima').length;
-  document.getElementById('statLwangaKahenga').textContent = cacheEncadreurs.filter(e => e.role === 'Lwanga/Kahenga').length;
-  document.getElementById('statKaggwaMeka').textContent = cacheEncadreurs.filter(e => e.role === 'Kaggwa/Meka').length;
-  document.getElementById('statMulumbaBakoma').textContent = cacheEncadreurs.filter(e => e.role === 'Mulumba/Bakoma').length;
-  document.getElementById('statStagiaire').textContent = cacheEncadreurs.filter(e => e.role === 'Stagiaire').length;
-}
-
-function renderListe(filtre=''){
-  const tbody = document.querySelector('#tableRecensement tbody');
-  const data = cacheEncadreurs.filter(e => (e.nom||'').toLowerCase().includes(filtre.toLowerCase()));
-
-  if(data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">Aucun encadreur enregistré pour le moment.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = data.map((e, i) => {
-    const badge = `<span class="badge-role ${roleBadgeClass(e.role)}">${esc(e.role)}</span>`;
-    return `<tr>
-      <td><strong>${i+1}</strong></td>
-      <td><strong>${esc(e.nom)}</strong></td>
-      <td>${badge}</td>
-      <td class="muted" style="font-size:.82rem">${formatDateFr(e.createdAt)}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderChartRoles(){
-  if(charts.roles){ try{charts.roles.destroy();}catch(e){} }
-
-  const colors = getRoleColors();
-  const palette = ROLES.map(r => colors[r]);
-  const compte = ROLES.map(r => cacheEncadreurs.filter(e => e.role === r).length);
-
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const legendColor = isDark ? '#f0e8ea' : '#1a0a0f';
-
-  charts.roles = new Chart(document.getElementById('chartRoles'), {
-    type:'doughnut',
-    data:{
-      labels: ROLES,
-      datasets:[{
-        data: compte,
-        backgroundColor: palette,
-        borderWidth: 2,
-        borderColor: isDark ? '#1c1618' : '#ffffff'
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{
-          position:'bottom',
-          labels:{color: legendColor, font:{size:12, weight:'600'}, padding:14}
-        },
-        tooltip:{
-          callbacks:{label: ctx => `${ctx.label} : ${ctx.parsed} encadreur(s)`}
-        }
-      },
-      cutout:'55%'
-    }
-  });
-}
-
-/* ============ FORMULAIRE ============ */
-document.getElementById('formRecensement').addEventListener('submit', async e => {
-  e.preventDefault();
-
-  const role = document.getElementById('roleSelect').value;
-  const nomSaisi = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
-
-  if(!role) return afficherMessage('messageRecensement', "Veuillez choisir un rôle.", 'error');
-  if(!nomSaisi || nomSaisi.length < 2) return afficherMessage('messageRecensement', "Veuillez écrire votre nom complet.", 'error');
-
-  const doublon = cacheEncadreurs.find(x =>
-    norm(x.nom) === norm(nomSaisi) && x.role === role
-  );
-  if(doublon){
-    return afficherMessage('messageRecensement',
-      `Ce nom est déjà enregistré dans ce rôle (${role}).`,
-      'warning');
-  }
-
-  try {
-    const id = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-    await setDoc(cheminEncadreurId(id), {
-      nom: nomSaisi,
-      role,
-      createdAt: new Date().toISOString()
-    });
-    afficherMessage('messageRecensement',
-      `✓ Enregistré : ${nomSaisi} — ${role}`,
-      'success');
-    document.getElementById('formRecensement').reset();
-  } catch(err){
-    console.error(err);
-    afficherMessage('messageRecensement', "Erreur : " + err.message, 'error');
-  }
-});
-
-/* ============ RECHERCHE ============ */
-document.getElementById('searchEnc').addEventListener('input', e => renderListe(e.target.value));
-
-/* ============ INIT THÈME (bouton) ============ */
 updateThemeButton();
 
-/* ============ TEMPS RÉEL FIREBASE ============ */
-onSnapshot(cheminEncadreurs(), snap => {
-  cacheEncadreurs = [];
-  snap.forEach(d => cacheEncadreurs.push({id:d.id, ...d.data()}));
-  cacheEncadreurs.sort((a,b) => (a.nom||'').localeCompare(b.nom||''));
-  renderStats();
-  renderListe(document.getElementById('searchEnc').value);
-  renderChartRoles();
-}, err => {
-  console.error("Erreur Firestore :", err);
+/* ============ INITIALISATION DATE ============ */
+const today = new Date();
+document.getElementById('dateInput').value = dateToISO(today);
+document.getElementById('dateInput').max = dateToISO(today);
+
+/* ============ CHOIX DU TYPE (visuel) ============ */
+document.querySelectorAll('.type-choice').forEach(choice => {
+  const input = choice.querySelector('input[type="radio"]');
+  choice.addEventListener('click', () => {
+    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
+    choice.classList.add('selected');
+    input.checked = true;
+  });
 });
+
+/* ============ SOUMISSION ============ */
+document.getElementById('formSignalement').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const typeInput = document.querySelector('input[name="typeSignalement"]:checked');
+  const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
+  const role = document.getElementById('roleSelect').value;
+  const date = document.getElementById('dateInput').value;
+  const motif = document.getElementById('motifSelect').value;
+  const detail = document.getElementById('detailInput').value.trim();
+
+  if(!typeInput) return afficherMessage('messageSignalement', "Veuillez choisir : Absence ou Retard.", 'error');
+  if(!nom || nom.length < 2) return afficherMessage('messageSignalement', "Veuillez écrire votre nom complet.", 'error');
+  if(!role) return afficherMessage('messageSignalement', "Veuillez choisir votre rôle.", 'error');
+  if(!date) return afficherMessage('messageSignalement', "Veuillez choisir une date.", 'error');
+  if(!motif) return afficherMessage('messageSignalement', "Veuillez choisir un motif.", 'error');
+
+  const type = typeInput.value;
+  const btn = document.getElementById('btnEnvoyer');
+  btn.disabled = true;
+  btn.textContent = "⏳ Envoi en cours…";
+
+  try {
+    const id = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    const signalement = {
+      type,            // "absence" ou "retard"
+      nom,
+      role,
+      date,            // date concernée (YYYY-MM-DD)
+      motif,
+      detail,
+      createdAt: new Date().toISOString(),
+      statut: 'nouveau'
+    };
+    await setDoc(doc(db, "signalements", id), signalement);
+
+    // Affichage confirmation
+    document.getElementById('cardFormulaire').classList.add('hidden');
+    document.getElementById('cardConfirmation').classList.remove('hidden');
+    document.getElementById('detailsConfirmation').innerHTML = `
+      <div><strong>Type :</strong> ${type === 'absence' ? '❌ Absence' : '⏰ Retard'}</div>
+      <div><strong>Nom :</strong> ${esc(nom)}</div>
+      <div><strong>Rôle :</strong> ${esc(role)}</div>
+      <div><strong>Date concernée :</strong> ${formatDateFr(date)}</div>
+      <div><strong>Motif :</strong> ${esc(motif)}</div>
+      ${detail ? `<div><strong>Détail :</strong> ${esc(detail)}</div>` : ''}
+    `;
+
+    document.getElementById('formSignalement').reset();
+    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
+    document.getElementById('dateInput').value = dateToISO(today);
+    afficherMessage('messageSignalement', '', 'success');
+    document.getElementById('messageSignalement').className = 'message';
+  } catch(err){
+    console.error(err);
+    afficherMessage('messageSignalement', "Erreur : " + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "📤 Envoyer mon signalement";
+  }
+});
+
+window.nouveauSignalement = function(){
+  document.getElementById('cardConfirmation').classList.add('hidden');
+  document.getElementById('cardFormulaire').classList.remove('hidden');
+  document.getElementById('messageSignalement').className = 'message';
+  window.scrollTo({top:0, behavior:'smooth'});
+};
 </script>
 </body>
 </html>
