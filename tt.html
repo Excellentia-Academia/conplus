@@ -291,11 +291,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary);letter-spacin
 .role-person .rp-left{display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px}
 .role-person .rp-nom{font-weight:600;color:var(--text)}
 .role-person .rp-date{font-size:.72rem;color:var(--muted)}
-.role-person .rp-actions{display:flex;gap:6px;flex-shrink:0}
+.role-person .rp-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
 .btn-edit{background:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);color:#5c0a1a;border:none;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-edit:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(245,166,35,.35)}
 .btn-del{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-del:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(185,28,46,.35)}
+.btn-signaler{background:linear-gradient(135deg,#c8102e 0%,#e63946 100%);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-signaler:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(200,16,46,.35)}
 
 /* === ABSENCES PAR DATE === */
 .absence-date-card{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-radius:12px;border-left:4px solid var(--danger);margin-bottom:12px;overflow:hidden;transition:all .25s}
@@ -1673,6 +1675,7 @@ function renderEncadreurs(filtre=''){
             <span class="rp-date">${e.createdAt ? new Date(e.createdAt).toLocaleDateString('fr-FR') : ''}</span>
           </div>
           <div class="rp-actions">
+            <button class="btn-signaler" onclick="signalerAbsenceEncadreur('${e.id}')">🚩 Signaler absent</button>
             <button class="btn-edit" onclick="ouvrirModalModifEncadreur('${e.id}')">✏️ Modifier</button>
             <button class="btn-del" onclick="supprimerEncadreur('${e.id}')">🗑 Supprimer</button>
           </div>
@@ -1725,7 +1728,7 @@ window.sauvegarderNouvelEncadreur = async function(){
   }
 };
 
-/* === MODIFIER UN ENCADREUR === */
+/* === MODIFIER UN ENCADREUR (code 20K7) === */
 window.ouvrirModalModifEncadreur = function(id){
   const enc = cacheEncadreurs.find(e => e.id === id);
   if(!enc) return;
@@ -1741,6 +1744,10 @@ window.fermerModalModifEncadreur = function(){
 };
 window.sauvegarderModifEncadreur = async function(){
   if(refuserSiArchivee()) return;
+
+  const code = prompt("Code de modification requis :");
+  if(code !== CONFIG.CODE_SUPPRESSION) return afficherMessage('modalModifMessage', "Code incorrect.", 'error');
+
   const id = document.getElementById('modifEncadreurId').value;
   const nom = document.getElementById('modifNomEncadreur').value.trim().replace(/\s+/g,' ');
   const role = document.getElementById('modifRoleEncadreur').value;
@@ -1762,14 +1769,50 @@ window.sauvegarderModifEncadreur = async function(){
   }
 };
 
-/* === SUPPRIMER UN ENCADREUR === */
+/* === SUPPRIMER UN ENCADREUR (code 20K7) === */
 window.supprimerEncadreur = async function(id){
   if(refuserSiArchivee()) return;
   const enc = cacheEncadreurs.find(e => e.id === id);
   if(!enc) return;
+
+  const code = prompt("Code de suppression requis :");
+  if(code !== CONFIG.CODE_SUPPRESSION) return alert("Code incorrect.");
+
   if(!confirm(`Supprimer définitivement l'encadreur "${enc.nom}" ?`)) return;
   try {
     await deleteDoc(cheminEncadreurId(id));
+  } catch(e){
+    alert("Erreur : " + e.message);
+  }
+};
+
+/* === SIGNALER UN ENCADREUR ABSENT (part dans historiqueSignalements) === */
+window.signalerAbsenceEncadreur = async function(id){
+  if(refuserSiArchivee()) return;
+  const enc = cacheEncadreurs.find(e => e.id === id);
+  if(!enc) return;
+
+  const type = prompt(`Motif d'absence pour ${enc.nom} :\n(Maladie / Voyage / Raison familiale / Obligation professionnelle / Retard / Autre)`);
+  if(!type) return;
+  const detail = prompt("Détail (optionnel) :") || "";
+
+  try {
+    const now = new Date();
+    const dateISO = dateToISO(now);
+    const sigId = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    await setDoc(doc(db, "historiqueSignalements", sigId), {
+      type: 'absence',
+      nom: enc.nom,
+      role: enc.role || 'Rien',
+      date: dateISO,
+      motif: type,
+      detail,
+      createdAt: now.toISOString(),
+      archiveLe: now.toISOString(),
+      statut: 'traite',
+      source: 'commission'
+    });
+    alert(`✓ Absence de "${enc.nom}" signalée et enregistrée dans l'historique.`);
   } catch(e){
     alert("Erreur : " + e.message);
   }
