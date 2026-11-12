@@ -42,20 +42,35 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .btn-primary{background:var(--grad-primary);color:#fff}
 .btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
 .btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent}
+.btn-danger{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff}
+.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff}
 .btn-sm{padding:7px 14px;font-size:.8rem}
-.badge-role{display:inline-block;padding:3px 12px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;background:var(--primary);color:#fff;letter-spacing:.5px}
-.badge-role.k{background:#b91c2e}
-.badge-role.a{background:#8b1327}
-.badge-role.general{background:var(--secondary);color:var(--primary)}
-.badge-role.coordinateur{background:#0f9d58}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
+.form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+.message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
+.message.show{display:block}
+.message.success{background:#e6f7ee;color:var(--success);border-left:4px solid var(--success)}
+.message.error{background:#fce8e6;color:var(--danger);border-left:4px solid var(--danger)}
+.message.warning{background:#fff3e0;color:#e65100;border-left:4px solid #e65100}
+.badge-role{display:inline-block;padding:4px 14px;border-radius:14px;font-size:.72rem;font-weight:700;text-transform:uppercase;background:var(--primary);color:#fff;letter-spacing:.5px}
+.badge-role.mukasa{background:#5c0a1a}
+.badge-role.lwanga{background:#b91c2e}
+.badge-role.kaggwa{background:#f5a623;color:#5c0a1a}
+.badge-role.mulumba{background:#8b1327}
+.badge-role.stagiaire{background:#7a5c62}
 .footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px}
 .footer p{opacity:.85}
-input[type="search"]{padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.95rem;width:100%}
-input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
 .chart-container{position:relative;height:360px}
+.hidden{display:none!important}
 @media(max-width:700px){
   .hero h1{font-size:1.7rem}
   .stat-value{font-size:2rem}
+  .logo-text small{font-size:.65rem}
 }
 </style>
 </head>
@@ -74,40 +89,90 @@ input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px 
 
 <section class="hero">
   <div class="container">
-    <h1>Recensement Officiel des Encadreurs</h1>
-    <p class="hero-sub">Liste complète, effectifs exacts et statistiques par rôle</p>
+    <h1>Recensement des Encadreurs</h1>
+    <p class="hero-sub">Choisissez votre rôle, écrivez votre nom — l'objectif : connaître le nombre exact d'encadreurs</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
 
+    <!-- CARTE DE RECENSEMENT -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom:22px">
+        <h2 style="font-size:1.4rem">➕ Je m'enregistre comme encadreur</h2>
+      </div>
+      <form id="formRecensement">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="roleSelect">Rôle *</label>
+            <select id="roleSelect" required>
+              <option value="">— Choisir un rôle —</option>
+              <option value="Mukasa/Kasima">Mukasa/Kasima</option>
+              <option value="Lwanga/Kahenga">Lwanga/Kahenga</option>
+              <option value="Kaggwa/Meka">Kaggwa/Meka</option>
+              <option value="Mulumba/Bakoma">Mulumba/Bakoma</option>
+              <option value="Stagiaire">Stagiaire</option>
+            </select>
+          </div>
+
+          <!-- Sous-choix Lwanga / Kahenga (visible uniquement si rôle Lwanga/Kahenga) -->
+          <div class="form-group hidden" id="groupeSousChoix">
+            <label for="sousChoixSelect">Précisez *</label>
+            <select id="sousChoixSelect">
+              <option value="">— Choisir —</option>
+              <option value="Ya Lwanga">Ya Lwanga</option>
+              <option value="Ya Kahenga">Ya Kahenga</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nomInput">Nom complet *</label>
+          <input type="text" id="nomInput" required placeholder="Ex : Jean MUKENDI" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn btn-primary">✓ Valider mon enregistrement</button>
+      </form>
+      <div id="messageRecensement" class="message"></div>
+    </div>
+
+    <!-- STATISTIQUES -->
     <div class="grid-stats">
       <div class="stat-card">
         <div class="stat-value" id="statTotalEnc">0</div>
         <div class="stat-label">Total Encadreurs</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="statEncK">0</div>
-        <div class="stat-label">Encadreurs K.</div>
+        <div class="stat-value" id="statMukasaKasima">0</div>
+        <div class="stat-label">Mukasa/Kasima</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="statEncA">0</div>
-        <div class="stat-label">Encadreurs A.</div>
+        <div class="stat-value" id="statLwangaKahenga">0</div>
+        <div class="stat-label">Lwanga/Kahenga</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="statPresents">0</div>
-        <div class="stat-label">Présents aujourd'hui</div>
+        <div class="stat-value" id="statKaggwaMeka">0</div>
+        <div class="stat-label">Kaggwa/Meka</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statMulumbaBakoma">0</div>
+        <div class="stat-label">Mulumba/Bakoma</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statStagiaire">0</div>
+        <div class="stat-label">Stagiaires</div>
       </div>
     </div>
 
+    <!-- LISTE COMPLÈTE -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px">
         <h2 style="font-size:1.4rem">📋 Liste complète des encadreurs</h2>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <input type="search" id="searchEnc" placeholder="Rechercher un encadreur..." style="max-width:280px">
-          <button class="btn btn-outline btn-sm" onclick="exporterRecensementCSV()">📤 Exporter CSV</button>
-          <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Imprimer</button>
+          <input type="search" id="searchEnc" placeholder="Rechercher un encadreur..." style="padding:11px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;max-width:280px">
+          <button type="button" class="btn btn-outline btn-sm" onclick="exporterRecensementCSV()">📤 Exporter CSV</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Imprimer</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -117,9 +182,9 @@ input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px 
               <th>#</th>
               <th>Nom complet</th>
               <th>Rôle</th>
-              <th>Statut aujourd'hui</th>
-              <th>Motif du jour</th>
-              <th>Total absences signalées</th>
+              <th>Sous-rôle</th>
+              <th>Date d'enregistrement</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -127,14 +192,10 @@ input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px 
       </div>
     </div>
 
+    <!-- GRAPHIQUE RÉPARTITION -->
     <div class="card">
       <h2 style="font-size:1.2rem;margin-bottom:16px">📊 Répartition par rôle</h2>
       <div class="chart-container"><canvas id="chartRoles"></canvas></div>
-    </div>
-
-    <div class="card">
-      <h2 style="font-size:1.2rem;margin-bottom:16px">📈 Absences signalées par encadreur (total)</h2>
-      <div class="chart-container"><canvas id="chartAbsences"></canvas></div>
     </div>
 
   </div>
@@ -146,7 +207,7 @@ input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px 
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -161,144 +222,194 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ============ UTILS ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function aujourdhui(){ const d=new Date(); d.setHours(0,0,0,0); const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),j=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${j}`; }
-const AUJOURDHUI = aujourdhui();
+function norm(s){ return String(s).trim().replace(/\s+/g,' ').toLowerCase(); }
+function formatDateFr(iso){
+  if(!iso) return '—';
+  return new Date(iso).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+}
+function afficherMessage(id,msg,type){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg; el.className='message show '+type;
+  setTimeout(()=>{el.className='message';},8000);
+}
 
+/* ============ CACHE LOCAL ============ */
 let cacheEncadreurs = [];
-let cacheMotifs = [];
 let charts = {};
 
-function motifDuJour(encId){
-  return cacheMotifs.find(m => m.encadreurId === encId && m.date === AUJOURDHUI);
-}
-function countMotifsParEnc(encId){
-  return cacheMotifs.filter(m => m.encadreurId === encId).length;
-}
-function roleClass(role){
+/* ============ RÉFÉRENCES FIREBASE ============ */
+function cheminEncadreurs(){ return collection(db, "encadreurs"); }
+function cheminEncadreurId(id){ return doc(db, "encadreurs", id); }
+
+/* ============ RENDU ============ */
+function roleBadgeClass(role){
   if(!role) return '';
-  if(role.includes('Général')) return 'general';
-  if(role.includes('Coordinateur')) return 'coordinateur';
-  if(role.includes(' A.')) return 'a';
-  if(role.includes(' K.')) return 'k';
+  const r = role.toLowerCase();
+  if(r.includes('mukasa')) return 'mukasa';
+  if(r.includes('lwanga')) return 'lwanga';
+  if(r.includes('kaggwa')) return 'kaggwa';
+  if(r.includes('mulumba')) return 'mulumba';
+  if(r.includes('stagiaire')) return 'stagiaire';
   return '';
 }
 
-function renderRecensement(filtre=''){
+function renderStats(){
+  document.getElementById('statTotalEnc').textContent = cacheEncadreurs.length;
+  document.getElementById('statMukasaKasima').textContent = cacheEncadreurs.filter(e => e.role === 'Mukasa/Kasima').length;
+  document.getElementById('statLwangaKahenga').textContent = cacheEncadreurs.filter(e => e.role === 'Lwanga/Kahenga').length;
+  document.getElementById('statKaggwaMeka').textContent = cacheEncadreurs.filter(e => e.role === 'Kaggwa/Meka').length;
+  document.getElementById('statMulumbaBakoma').textContent = cacheEncadreurs.filter(e => e.role === 'Mulumba/Bakoma').length;
+  document.getElementById('statStagiaire').textContent = cacheEncadreurs.filter(e => e.role === 'Stagiaire').length;
+}
+
+function renderListe(filtre=''){
   const tbody = document.querySelector('#tableRecensement tbody');
   const data = cacheEncadreurs.filter(e => e.nom.toLowerCase().includes(filtre.toLowerCase()));
 
-  document.getElementById('statTotalEnc').textContent = cacheEncadreurs.length;
-  document.getElementById('statEncK').textContent = cacheEncadreurs.filter(e => (e.role||'').includes(' K.')).length;
-  document.getElementById('statEncA').textContent = cacheEncadreurs.filter(e => (e.role||'').includes(' A.')).length;
-  document.getElementById('statPresents').textContent = cacheEncadreurs.filter(e => !motifDuJour(e.id)).length;
-
   if(data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="6" class="center" style="padding:20px;color:var(--muted)">Aucun encadreur trouvé.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">Aucun encadreur enregistré pour le moment.</td></tr>';
     return;
   }
 
   tbody.innerHTML = data.map((e, i) => {
-    const m = motifDuJour(e.id);
-    const statut = m
-      ? '<span style="background:#fce8e6;color:#c8102e;padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">ABSENT SIGNALÉ</span>'
-      : '<span style="background:#e6f7ee;color:#0f9d58;padding:5px 14px;border-radius:14px;font-weight:700;font-size:.8rem">PRÉSENT</span>';
-    const motifTexte = m
-      ? `<span style="color:var(--danger);font-weight:600">${esc(m.type)}</span>${m.detail ? ' — <span class="muted">'+esc(m.detail)+'</span>' : ''}`
-      : '<span class="muted" style="font-style:italic">Aucun signalement</span>';
-    const totalAbs = countMotifsParEnc(e.id);
+    const badge = `<span class="badge-role ${roleBadgeClass(e.role)}">${esc(e.role)}</span>`;
+    const sousRole = e.sousRole ? `<strong>${esc(e.sousRole)}</strong>` : '<span class="muted" style="font-style:italic">—</span>';
     return `<tr>
       <td><strong>${i+1}</strong></td>
       <td><strong>${esc(e.nom)}</strong></td>
-      <td><span class="badge-role ${roleClass(e.role)}">${esc(e.role||'Encadreur')}</span></td>
-      <td>${statut}</td>
-      <td>${motifTexte}</td>
-      <td><strong style="color:var(--primary)">${totalAbs}</strong></td>
+      <td>${badge}</td>
+      <td>${sousRole}</td>
+      <td class="muted" style="font-size:.82rem">${formatDateFr(e.createdAt)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="supprimerEncadreur('${e.id}')">Supprimer</button></td>
     </tr>`;
   }).join('');
 }
 
 function renderChartRoles(){
   if(charts.roles){ try{charts.roles.destroy();}catch(e){} }
-  const compte = {};
-  cacheEncadreurs.forEach(e => {
-    const r = e.role || 'Non défini';
-    compte[r] = (compte[r]||0) + 1;
-  });
-  const labels = Object.keys(compte);
-  const data = Object.values(compte);
-  const couleurs = ['#5c0a1a','#b91c2e','#f5a623','#0f9d58','#8b1327','#7a5c62'];
+
+  const roles = ['Mukasa/Kasima','Lwanga/Kahenga','Kaggwa/Meka','Mulumba/Bakoma','Stagiaire'];
+  const compte = roles.map(r => cacheEncadreurs.filter(e => e.role === r).length);
+  const couleurs = ['#5c0a1a','#b91c2e','#f5a623','#8b1327','#7a5c62'];
 
   charts.roles = new Chart(document.getElementById('chartRoles'), {
     type:'doughnut',
     data:{
-      labels,
-      datasets:[{data, backgroundColor:couleurs.slice(0, labels.length), borderWidth:2, borderColor:'#fff'}]
+      labels: roles,
+      datasets:[{data:compte, backgroundColor:couleurs, borderWidth:2, borderColor:'#fff'}]
     },
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom'}},
+      plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label: ctx => `${ctx.label} : ${ctx.parsed} encadreur(s)`}}},
       cutout:'55%'
     }
   });
 }
 
-function renderChartAbsences(){
-  if(charts.absences){ try{charts.absences.destroy();}catch(e){} }
-  const data = cacheEncadreurs.map(e => ({nom:e.nom, total:countMotifsParEnc(e.id)})).sort((a,b)=>b.total-a.total);
-  charts.absences = new Chart(document.getElementById('chartAbsences'), {
-    type:'bar',
-    data:{
-      labels:data.map(d=>d.nom),
-      datasets:[{
-        label:'Absences signalées',
-        data:data.map(d=>d.total),
-        backgroundColor:'#b91c2e',
-        borderRadius:6
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false, indexAxis:'y',
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{beginAtZero:true, ticks:{stepSize:1}},
-        y:{ticks:{font:{size:11}, autoSkip:false}}
-      }
-    }
-  });
-}
+/* ============ GESTION DU FORMULAIRE ============ */
+const roleSelect = document.getElementById('roleSelect');
+const groupeSousChoix = document.getElementById('groupeSousChoix');
+const sousChoixSelect = document.getElementById('sousChoixSelect');
 
-function exporterRecensementCSV(){
-  let csv = "Nom,Role,Statut du jour,Motif du jour,Total absences\n";
+roleSelect.addEventListener('change', () => {
+  if(roleSelect.value === 'Lwanga/Kahenga'){
+    groupeSousChoix.classList.remove('hidden');
+    sousChoixSelect.required = true;
+  } else {
+    groupeSousChoix.classList.add('hidden');
+    sousChoixSelect.required = false;
+    sousChoixSelect.value = '';
+  }
+});
+
+document.getElementById('formRecensement').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const role = roleSelect.value;
+  const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
+  let sousRole = null;
+
+  if(!role) return afficherMessage('messageRecensement', "Veuillez choisir un rôle.", 'error');
+  if(!nom || nom.length < 2) return afficherMessage('messageRecensement', "Veuillez écrire votre nom complet.", 'error');
+
+  if(role === 'Lwanga/Kahenga'){
+    sousRole = sousChoixSelect.value;
+    if(!sousRole) return afficherMessage('messageRecensement', "Précisez : Ya Lwanga ou Ya Kahenga.", 'error');
+  }
+
+  // Vérification doublon : même nom + même rôle
+  const doublon = cacheEncadreurs.find(x =>
+    norm(x.nom) === norm(nom) && x.role === role && (x.sousRole||'') === (sousRole||'')
+  );
+  if(doublon){
+    return afficherMessage('messageRecensement',
+      `Ce nom est déjà enregistré dans ce rôle (${role}${sousRole?' — '+sousRole:''}).`,
+      'warning');
+  }
+
+  try {
+    const id = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    await setDoc(cheminEncadreurId(id), {
+      nom,
+      role,
+      sousRole: sousRole || null,
+      createdAt: new Date().toISOString()
+    });
+    afficherMessage('messageRecensement',
+      `✓ Enregistré : ${nom} — ${role}${sousRole?' — '+sousRole:''}`,
+      'success');
+    document.getElementById('formRecensement').reset();
+    groupeSousChoix.classList.add('hidden');
+    sousChoixSelect.required = false;
+  } catch(err){
+    console.error(err);
+    afficherMessage('messageRecensement', "Erreur : " + err.message, 'error');
+  }
+});
+
+/* ============ SUPPRESSION (réservée Commission) ============ */
+window.supprimerEncadreur = async function(id){
+  const enc = cacheEncadreurs.find(x => x.id === id);
+  if(!enc) return;
+  if(!confirm(`Supprimer définitivement l'encadreur ${enc.nom} ?`)) return;
+  try {
+    await deleteDoc(cheminEncadreurId(id));
+  } catch(e){
+    alert("Erreur : " + e.message);
+  }
+};
+
+/* ============ EXPORT CSV ============ */
+window.exporterRecensementCSV = function(){
+  let csv = "Nom,Role,Sous-role,Date enregistrement\n";
   cacheEncadreurs.forEach(e => {
-    const m = motifDuJour(e.id);
-    csv += `"${e.nom.replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${m?'ABSENT':'PRESENT'}","${m?m.type:''}","${countMotifsParEnc(e.id)}"\n`;
+    csv += `"${(e.nom||'').replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${(e.sousRole||'').replace(/"/g,'""')}","${e.createdAt||''}"\n`;
   });
-  const blob = new Blob([csv], {type:'text/csv'});
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `recensement-encadreurs-${AUJOURDHUI}.csv`; a.click();
+  a.href = url;
+  a.download = `recensement-encadreurs-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
   URL.revokeObjectURL(url);
-}
-window.exporterRecensementCSV = exporterRecensementCSV;
+};
 
-document.getElementById('searchEnc').addEventListener('input', e => renderRecensement(e.target.value));
+/* ============ RECHERCHE ============ */
+document.getElementById('searchEnc').addEventListener('input', e => renderListe(e.target.value));
 
-onSnapshot(collection(db, "encadreurs"), snap => {
+/* ============ TEMPS RÉEL FIREBASE ============ */
+onSnapshot(cheminEncadreurs(), snap => {
   cacheEncadreurs = [];
   snap.forEach(d => cacheEncadreurs.push({id:d.id, ...d.data()}));
   cacheEncadreurs.sort((a,b) => a.nom.localeCompare(b.nom));
-  renderRecensement(document.getElementById('searchEnc').value);
+  renderStats();
+  renderListe(document.getElementById('searchEnc').value);
   renderChartRoles();
-  renderChartAbsences();
-});
-
-onSnapshot(collection(db, "motifsEncadreurs"), snap => {
-  cacheMotifs = [];
-  snap.forEach(d => cacheMotifs.push({id:d.id, ...d.data()}));
-  renderRecensement(document.getElementById('searchEnc').value);
-  renderChartRoles();
-  renderChartAbsences();
+}, err => {
+  console.error("Erreur Firestore :", err);
 });
 </script>
 </body>
