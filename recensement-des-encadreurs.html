@@ -31,8 +31,6 @@
   --role-mulumba:#a1a1aa;
   --role-stagiaire:#c8102e;
 }
-
-/* ============ MODE SOMBRE ============ */
 html[data-theme="dark"]{
   --bg:#121014;
   --surface:#1c1618;
@@ -51,7 +49,6 @@ html[data-theme="dark"]{
   --role-mulumba:#e5e7eb;
   --role-stagiaire:#ef4444;
 }
-
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;transition:background .25s,color .25s}
 h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
@@ -63,7 +60,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
 .logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
 .logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
-
 .theme-btn{
   background:rgba(255,255,255,.15);
   border:1.5px solid rgba(255,255,255,.3);
@@ -98,7 +94,10 @@ html[data-theme="dark"] .stat-value{
 .table tbody tr:hover td{background:var(--table-hover)}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
 .btn-primary{background:var(--grad-primary);color:#fff}
+.btn-warning{background:linear-gradient(135deg,#e65100 0%,#f59e0b 100%);color:#fff;box-shadow:0 4px 14px rgba(230,81,0,.3)}
+.btn-warning:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(230,81,0,.4)}
 .btn-sm{padding:7px 14px;font-size:.8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 .form-group{margin-bottom:20px}
 .form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
 .form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:var(--surface);color:var(--text)}
@@ -115,7 +114,6 @@ html[data-theme="dark"] .message.success{background:#163a28;color:#4ade80;border
 html[data-theme="dark"] .message.error{background:#3a1620;color:#f87171;border-left-color:#ef4444}
 html[data-theme="dark"] .message.warning{background:#3a2a15;color:#fbbf24;border-left-color:#f59e0b}
 
-/* ============ BADGES RÔLES (couleurs alignées sur le graphique) ============ */
 .badge-role{display:inline-block;padding:4px 14px;border-radius:14px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1px solid transparent}
 .badge-role.mukasa   {background:#0f9d58;color:#fff}
 .badge-role.lwanga   {background:#f5a623;color:#1a0a0f}
@@ -127,6 +125,14 @@ html[data-theme="dark"] .badge-role.lwanga   {background:#fbbf24;color:#1a0a0f}
 html[data-theme="dark"] .badge-role.kaggwa   {background:#3b82f6;color:#fff}
 html[data-theme="dark"] .badge-role.mulumba  {background:#e5e7eb;color:#111827;border-color:#6b7280}
 html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
+
+.migration-box{background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);border:2px solid var(--warning,#e65100);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.migration-box .mb-icon{font-size:2rem}
+.migration-box .mb-text{flex:1;min-width:200px}
+.migration-box .mb-title{font-weight:800;font-size:1.05rem;color:#e65100;margin-bottom:6px}
+.migration-box .mb-desc{font-size:.85rem;color:var(--text)}
+html[data-theme="dark"] .migration-box{background:linear-gradient(135deg,#3a2a15 0%,#2a1e10 100%)}
+html[data-theme="dark"] .migration-box .mb-title{color:#fbbf24}
 
 .footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
 .footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
@@ -147,7 +153,7 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
   <div class="container header-inner">
     <div class="logo">
       <img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="logo-img">
-      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Recensement des Encadreurs</small></div>
+      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Recensement des Encadreurs · 2026-2027</small></div>
     </div>
     <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="Mode sombre / clair" aria-label="Basculer le thème">🌙</button>
   </div>
@@ -156,12 +162,22 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
 <section class="hero">
   <div class="container">
     <h1>Recensement des Encadreurs</h1>
-    <p class="hero-sub">Choisissez votre rôle, écrivez votre nom complet </p>
+    <p class="hero-sub">Année initiatique 2026-2027 — Choisissez votre rôle et écrivez votre nom complet</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
+
+    <!-- BOUTON DE MIGRATION (visible une seule fois) -->
+    <div id="migrationBox" class="migration-box" style="display:none">
+      <span class="mb-icon">🔄</span>
+      <div class="mb-text">
+        <div class="mb-title">Migration des anciens encadreurs</div>
+        <div class="mb-desc">Des encadreurs sont encore dans l'ancienne collection globale. Cliquez pour les copier automatiquement dans l'année <strong>2026-2027</strong>.</div>
+      </div>
+      <button class="btn btn-warning" id="btnMigrer" onclick="migrerAnciensEncadreurs()">🔄 Migrer les anciens encadreurs</button>
+    </div>
 
     <!-- FORMULAIRE -->
     <div class="card">
@@ -189,7 +205,7 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
         <p class="muted" style="font-size:.8rem;margin-top:-8px;margin-bottom:18px;font-style:italic">
           💡 Écrivez votre nom complet tel qu'il doit apparaître (ex : <strong>Ya Kahenga Nora Mutandi</strong>, <strong>Ya Lwanga Maurice Fefe</strong>…)
         </p>
-        <button type="submit" class="btn btn-primary">✓ Valider mon enregistrement</button>
+        <button type="submit" class="btn btn-primary" id="btnEnvoyer">✓ Valider mon enregistrement</button>
       </form>
       <div id="messageRecensement" class="message"></div>
     </div>
@@ -253,12 +269,12 @@ html[data-theme="dark"] .badge-role.stagiaire{background:#ef4444;color:#fff}
 </section>
 
 <footer class="footer">
-  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Recensement des Encadreurs</p></div>
+  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Recensement des Encadreurs · 2026-2027</p></div>
 </footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -272,6 +288,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+/* ============ ANNÉE FIXE ============ */
+const ANNEE = "2026-2027";
 
 /* ============ UTILS ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -292,8 +311,9 @@ let cacheEncadreurs = [];
 let charts = {};
 
 /* ============ FIREBASE ============ */
-function cheminEncadreurs(){ return collection(db, "encadreurs"); }
-function cheminEncadreurId(id){ return doc(db, "encadreurs", id); }
+function cheminEncadreurs(){ return collection(db, "annees", ANNEE, "encadreurs"); }
+function cheminEncadreurId(id){ return doc(db, "annees", ANNEE, "encadreurs", id); }
+function cheminAnciensEncadreurs(){ return collection(db, "encadreurs"); }
 
 /* ============ THÈME ============ */
 function updateThemeButton(){
@@ -316,11 +336,11 @@ const ROLES = ['Mukasa/Kasima','Lwanga/Kahenga','Kaggwa/Meka','Mulumba/Bakoma','
 function getRoleColors(){
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   return {
-    'Mukasa/Kasima'   : isDark ? '#22c55e' : '#0f9d58', // vert
-    'Lwanga/Kahenga'  : isDark ? '#fbbf24' : '#f5a623', // jaune
-    'Kaggwa/Meka'     : isDark ? '#3b82f6' : '#2563eb', // bleu
-    'Mulumba/Bakoma'  : isDark ? '#e5e7eb' : '#a1a1aa', // blanc / gris visible
-    'Stagiaire'       : isDark ? '#ef4444' : '#c8102e'  // rouge
+    'Mukasa/Kasima'   : isDark ? '#22c55e' : '#0f9d58',
+    'Lwanga/Kahenga'  : isDark ? '#fbbf24' : '#f5a623',
+    'Kaggwa/Meka'     : isDark ? '#3b82f6' : '#2563eb',
+    'Mulumba/Bakoma'  : isDark ? '#e5e7eb' : '#a1a1aa',
+    'Stagiaire'       : isDark ? '#ef4444' : '#c8102e'
   };
 }
 
@@ -417,7 +437,7 @@ document.getElementById('formRecensement').addEventListener('submit', async e =>
   );
   if(doublon){
     return afficherMessage('messageRecensement',
-      `Ce nom est déjà enregistré dans ce rôle (${role}).`,
+      `Ce nom est déjà enregistré dans ce rôle (${role}) pour l'année ${ANNEE}.`,
       'warning');
   }
 
@@ -429,7 +449,7 @@ document.getElementById('formRecensement').addEventListener('submit', async e =>
       createdAt: new Date().toISOString()
     });
     afficherMessage('messageRecensement',
-      `✓ Enregistré : ${nomSaisi} — ${role}`,
+      `✓ Enregistré dans ${ANNEE} : ${nomSaisi} — ${role}`,
       'success');
     document.getElementById('formRecensement').reset();
   } catch(err){
@@ -440,6 +460,85 @@ document.getElementById('formRecensement').addEventListener('submit', async e =>
 
 /* ============ RECHERCHE ============ */
 document.getElementById('searchEnc').addEventListener('input', e => renderListe(e.target.value));
+
+/* ============ MIGRATION DES ANCIENS ENCADREURS ============ */
+async function verifierMigrationNecessaire(){
+  try {
+    const snap = await getDocs(cheminAnciensEncadreurs());
+    const anciens = [];
+    snap.forEach(d => anciens.push({id:d.id, ...d.data()}));
+    if(anciens.length === 0){
+      // Aucun ancien encadreur à migrer → cache le bouton
+      document.getElementById('migrationBox').style.display = 'none';
+      return;
+    }
+    // Vérifie combien restent à migrer (pas encore présents dans l'année)
+    const aMigrer = anciens.filter(a =>
+      !cacheEncadreurs.some(x => norm(x.nom) === norm(a.nom) && x.role === a.role)
+    );
+    if(aMigrer.length === 0){
+      document.getElementById('migrationBox').style.display = 'none';
+    } else {
+      document.getElementById('migrationBox').style.display = 'flex';
+    }
+  } catch(e){
+    console.warn("Erreur vérification migration :", e);
+    document.getElementById('migrationBox').style.display = 'none';
+  }
+}
+
+window.migrerAnciensEncadreurs = async function(){
+  const btn = document.getElementById('btnMigrer');
+  btn.disabled = true;
+  btn.textContent = "⏳ Migration en cours…";
+
+  try {
+    const snap = await getDocs(cheminAnciensEncadreurs());
+    const anciens = [];
+    snap.forEach(d => anciens.push({id:d.id, ...d.data()}));
+
+    if(anciens.length === 0){
+      afficherMessage('messageRecensement', "Aucun ancien encadreur à migrer.", 'warning');
+      document.getElementById('migrationBox').style.display = 'none';
+      return;
+    }
+
+    let migres = 0, ignores = 0, invalides = 0;
+
+    for(const a of anciens){
+      if(!a.nom || !a.role){ invalides++; continue; }
+      // Ignore les doublons
+      const existe = cacheEncadreurs.some(x =>
+        norm(x.nom) === norm(a.nom) && x.role === a.role
+      );
+      if(existe){ ignores++; continue; }
+
+      const newId = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      await setDoc(doc(db, "annees", ANNEE, "encadreurs", newId), {
+        nom: a.nom,
+        role: a.role,
+        createdAt: a.createdAt || new Date().toISOString(),
+        migreLe: new Date().toISOString()
+      });
+      migres++;
+    }
+
+    afficherMessage('messageRecensement',
+      `✅ Migration terminée : ${migres} encadreur(s) migré(s) · ${ignores} déjà présents · ${invalides} invalides.`,
+      'success');
+
+    // Cache le bouton une fois la migration terminée
+    if(migres > 0 || ignores > 0){
+      document.getElementById('migrationBox').style.display = 'none';
+    }
+  } catch(e){
+    console.error(e);
+    afficherMessage('messageRecensement', "Erreur migration : " + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🔄 Migrer les anciens encadreurs";
+  }
+};
 
 /* ============ INIT THÈME (bouton) ============ */
 updateThemeButton();
@@ -452,6 +551,8 @@ onSnapshot(cheminEncadreurs(), snap => {
   renderStats();
   renderListe(document.getElementById('searchEnc').value);
   renderChartRoles();
+  // Vérifie s'il reste des anciens encadreurs à migrer
+  verifierMigrationNecessaire();
 }, err => {
   console.error("Erreur Firestore :", err);
 });
