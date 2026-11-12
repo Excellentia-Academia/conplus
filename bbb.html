@@ -51,7 +51,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
 
-/* Choix type signalement */
 .type-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
 @media(max-width:600px){.type-choices{grid-template-columns:1fr}}
 .type-choice{padding:22px;border-radius:14px;border:3px solid var(--border);cursor:pointer;text-align:center;transition:all .25s;background:#fff;font-family:inherit}
@@ -80,6 +79,20 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .info-box{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-left:5px solid var(--primary);border-radius:10px;padding:18px 22px;margin-bottom:24px;font-size:.9rem}
 .info-box strong{color:var(--primary)}
 
+/* BANNIÈRE D'ÉTAT DU SIGNALEMENT */
+.status-banner{border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;transition:all .3s}
+.status-banner.open{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);border:3px solid var(--success)}
+.status-banner.closed{background:linear-gradient(135deg,#fce8e6 0%,#f8c4c0 100%);border:3px solid var(--danger)}
+.status-banner .sb-icon{font-size:2.5rem;flex-shrink:0}
+.status-banner .sb-text{flex:1;min-width:200px}
+.status-banner .sb-title{font-weight:800;font-size:1.15rem;margin-bottom:4px}
+.status-banner.open .sb-title{color:var(--success)}
+.status-banner.closed .sb-title{color:var(--danger)}
+.status-banner .sb-desc{font-size:.88rem;color:var(--text)}
+
+/* FORMULAIRE DÉSACTIVÉ */
+.form-disabled{position:relative;opacity:.55;pointer-events:none;user-select:none}
+
 .footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
 .footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
 .footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
@@ -87,7 +100,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 
 .hidden{display:none!important}
 
-/* Confirmation */
 .confirm-box{text-align:center;padding:40px 20px}
 .confirm-box .check{font-size:4rem;margin-bottom:16px;display:block}
 .confirm-box h2{font-size:1.8rem;margin-bottom:12px}
@@ -97,7 +109,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .confirm-box .details div:last-child{border-bottom:none}
 .confirm-box .details strong{color:var(--primary);display:inline-block;min-width:130px}
 
-/* Mode sombre */
 html[data-theme="dark"]{
   --bg:#121014;--surface:#1c1618;--text:#f0e8ea;--muted:#9a8a90;
   --border:#2e2228;--primary:#ff9aa8;--primary-light:#ff7a8a;
@@ -113,6 +124,8 @@ html[data-theme="dark"] .form-group input,
 html[data-theme="dark"] .form-group select,
 html[data-theme="dark"] .form-group textarea{background:#1c1618;color:#f0e8ea}
 html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8ea}
+html[data-theme="dark"] .status-banner.open{background:linear-gradient(135deg,#163a28 0%,#0f2a1c 100%)}
+html[data-theme="dark"] .status-banner.closed{background:linear-gradient(135deg,#3a1620 0%,#2a1015 100%)}
 
 @media(max-width:700px){
   .hero h1{font-size:1.7rem}
@@ -154,6 +167,15 @@ html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8
 <section class="section">
   <div class="container">
 
+    <!-- BANNIÈRE D'ÉTAT DU SIGNALEMENT (synchronisée en temps réel) -->
+    <div id="statusBanner" class="status-banner closed">
+      <span class="sb-icon" id="statusIcon">⏸</span>
+      <div class="sb-text">
+        <div class="sb-title" id="statusTitle">Vérification en cours…</div>
+        <div class="sb-desc" id="statusDesc">Connexion au centre de contrôle…</div>
+      </div>
+    </div>
+
     <div class="info-box" id="infoBox">
       <strong>📢 Encadreurs uniquement</strong><br>
       Ce formulaire permet de signaler une <strong>absence</strong> ou un <strong>retard</strong>. 
@@ -167,7 +189,6 @@ html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8
 
       <form id="formSignalement">
 
-        <!-- Choix du type -->
         <label style="display:block;font-weight:600;margin-bottom:12px;font-size:.88rem;color:var(--primary)">Type de signalement <span style="color:var(--danger)">*</span></label>
         <div class="type-choices">
           <label class="type-choice" data-type="absence">
@@ -228,8 +249,8 @@ html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8
           <textarea id="detailInput" placeholder="Ex : Rendez-vous médical à l'hôpital, je serai présent vers 10h…"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block" id="btnEnvoyer">
-          📤 Envoyer mon signalement
+        <button type="submit" class="btn btn-primary btn-block" id="btnEnvoyer" disabled>
+          🔒 Signalement inactif
         </button>
       </form>
 
@@ -256,7 +277,7 @@ html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -312,15 +333,99 @@ document.getElementById('dateInput').max = dateToISO(today);
 document.querySelectorAll('.type-choice').forEach(choice => {
   const input = choice.querySelector('input[type="radio"]');
   choice.addEventListener('click', () => {
+    if(document.getElementById('btnEnvoyer').disabled) return;
     document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
     choice.classList.add('selected');
     input.checked = true;
   });
 });
 
+/* ============================================================
+   SYNCHRONISATION AVEC L'ACTIVATION 24H (config/signalementEncadreurs)
+   ============================================================ */
+let cacheActivation = { actif: false, expireLe: null };
+let signalementActif = false;
+
+function cheminActivation(){ return doc(db, "config", "signalementEncadreurs"); }
+
+function estSignalementActif(){
+  if(!cacheActivation.actif) return false;
+  if(!cacheActivation.expireLe) return false;
+  return new Date(cacheActivation.expireLe) > new Date();
+}
+
+function rendreFormulaireActif(actif){
+  signalementActif = actif;
+  const btn = document.getElementById('btnEnvoyer');
+  const form = document.getElementById('formSignalement');
+  const banner = document.getElementById('statusBanner');
+  const icon = document.getElementById('statusIcon');
+  const title = document.getElementById('statusTitle');
+  const desc = document.getElementById('statusDesc');
+
+  if(actif){
+    banner.className = 'status-banner open';
+    icon.textContent = '✅';
+    title.textContent = 'Signalement OUVERT';
+    const remaining = new Date(cacheActivation.expireLe) - new Date();
+    const h = Math.max(0, Math.floor(remaining / 3600000));
+    const m = Math.max(0, Math.floor((remaining % 3600000) / 60000));
+    desc.textContent = `Vous pouvez signaler votre absence ou retard. Encore ouvert pendant ${h}h ${m}min.`;
+    btn.disabled = false;
+    btn.textContent = '📤 Envoyer mon signalement';
+    form.classList.remove('form-disabled');
+  } else {
+    banner.className = 'status-banner closed';
+    icon.textContent = '🔒';
+    title.textContent = 'Signalement FERMÉ';
+    desc.textContent = "Le signalement n'est pas activé par la Commission. Le formulaire sera disponible dès que la Commission l'active.";
+    btn.disabled = true;
+    btn.textContent = '🔒 Signalement inactif';
+    form.classList.add('form-disabled');
+  }
+}
+
+/* Écoute en temps réel de l'activation */
+onSnapshot(cheminActivation(), snap => {
+  if(snap.exists()){
+    cacheActivation = snap.data() || { actif: false, expireLe: null };
+  } else {
+    cacheActivation = { actif: false, expireLe: null };
+  }
+  const actif = estSignalementActif();
+  rendreFormulaireActif(actif);
+  if(!actif && cacheActivation.actif && cacheActivation.expireLe && new Date(cacheActivation.expireLe) <= new Date()){
+    // Expiré : on remet à inactif dans Firebase
+    setDoc(cheminActivation(), { actif: false, expireLe: null }, {merge:true});
+  }
+}, err => {
+  console.error("Erreur Firestore activation :", err);
+  rendreFormulaireActif(false);
+});
+
+/* Vérification toutes les 30 secondes (compte à rebours + expiration auto) */
+setInterval(() => {
+  if(signalementActif){
+    const actif = estSignalementActif();
+    if(!actif){
+      if(cacheActivation.actif && cacheActivation.expireLe && new Date(cacheActivation.expireLe) <= new Date()){
+        setDoc(cheminActivation(), { actif: false, expireLe: null }, {merge:true});
+      }
+      rendreFormulaireActif(false);
+    } else {
+      // Rafraîchir le compte à rebours
+      rendreFormulaireActif(true);
+    }
+  }
+}, 30000);
+
 /* ============ SOUMISSION ============ */
 document.getElementById('formSignalement').addEventListener('submit', async e => {
   e.preventDefault();
+
+  if(!estSignalementActif()){
+    return afficherMessage('messageSignalement', "Le signalement est actuellement inactif. La Commission doit l'activer pour que vous puissiez signaler.", 'warning');
+  }
 
   const typeInput = document.querySelector('input[name="typeSignalement"]:checked');
   const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
@@ -343,10 +448,10 @@ document.getElementById('formSignalement').addEventListener('submit', async e =>
   try {
     const id = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
     const signalement = {
-      type,            // "absence" ou "retard"
+      type,
       nom,
       role,
-      date,            // date concernée (YYYY-MM-DD)
+      date,
       motif,
       detail,
       createdAt: new Date().toISOString(),
@@ -354,7 +459,6 @@ document.getElementById('formSignalement').addEventListener('submit', async e =>
     };
     await setDoc(doc(db, "signalements", id), signalement);
 
-    // Affichage confirmation
     document.getElementById('cardFormulaire').classList.add('hidden');
     document.getElementById('cardConfirmation').classList.remove('hidden');
     document.getElementById('detailsConfirmation').innerHTML = `
@@ -369,14 +473,13 @@ document.getElementById('formSignalement').addEventListener('submit', async e =>
     document.getElementById('formSignalement').reset();
     document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
     document.getElementById('dateInput').value = dateToISO(today);
-    afficherMessage('messageSignalement', '', 'success');
     document.getElementById('messageSignalement').className = 'message';
   } catch(err){
     console.error(err);
     afficherMessage('messageSignalement', "Erreur : " + err.message, 'error');
   } finally {
-    btn.disabled = false;
-    btn.textContent = "📤 Envoyer mon signalement";
+    // Restaurer l'état selon l'activation courante
+    rendreFormulaireActif(estSignalementActif());
   }
 });
 
@@ -384,6 +487,7 @@ window.nouveauSignalement = function(){
   document.getElementById('cardConfirmation').classList.add('hidden');
   document.getElementById('cardFormulaire').classList.remove('hidden');
   document.getElementById('messageSignalement').className = 'message';
+  rendreFormulaireActif(estSignalementActif());
   window.scrollTo({top:0, behavior:'smooth'});
 };
 </script>
