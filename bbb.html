@@ -42,14 +42,12 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .btn-primary{background:var(--grad-primary);color:#fff}
 .btn-outline{background:transparent;border:2px solid var(--secondary);color:var(--secondary)}
 .btn-outline:hover{background:var(--grad-gold);color:var(--primary);border-color:transparent}
-.btn-danger{background:linear-gradient(135deg,#b91c2e 0%,#e63946 100%);color:#fff}
-.btn-success{background:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);color:#fff}
 .btn-sm{padding:7px 14px;font-size:.8rem}
-.btn:disabled{opacity:.45;cursor:not-allowed}
 .form-group{margin-bottom:20px}
 .form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
 .form-group input,.form-group select{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
+.form-group input:disabled{background:#f5f0f1;color:var(--muted);cursor:not-allowed}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
 .message{margin-top:18px;padding:14px 18px;border-radius:10px;font-weight:500;display:none;font-size:.9rem}
@@ -63,6 +61,9 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 .badge-role.kaggwa{background:#f5a623;color:#5c0a1a}
 .badge-role.mulumba{background:#8b1327}
 .badge-role.stagiaire{background:#7a5c62}
+.apercu-nom{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border:2px dashed var(--primary-light);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:1rem}
+.apercu-nom .apercu-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;color:var(--muted);margin-bottom:6px;display:block}
+.apercu-nom .apercu-valeur{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--primary)}
 .footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px}
 .footer p{opacity:.85}
 .chart-container{position:relative;height:360px}
@@ -116,11 +117,11 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
             </select>
           </div>
 
-          <!-- Sous-choix Lwanga / Kahenga (visible uniquement si rôle Lwanga/Kahenga) -->
-          <div class="form-group hidden" id="groupeSousChoix">
-            <label for="sousChoixSelect">Précisez *</label>
-            <select id="sousChoixSelect">
-              <option value="">— Choisir —</option>
+          <!-- Choix du TITRE (uniquement pour Lwanga/Kahenga) -->
+          <div class="form-group hidden" id="groupeTitre">
+            <label for="titreSelect">Titre *</label>
+            <select id="titreSelect">
+              <option value="">— Choisir un titre —</option>
               <option value="Ya Lwanga">Ya Lwanga</option>
               <option value="Ya Kahenga">Ya Kahenga</option>
             </select>
@@ -129,7 +130,13 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 
         <div class="form-group">
           <label for="nomInput">Nom complet *</label>
-          <input type="text" id="nomInput" required placeholder="Ex : Jean MUKENDI" autocomplete="off">
+          <input type="text" id="nomInput" required placeholder="Ex : Credo Musao" autocomplete="off">
+        </div>
+
+        <!-- Aperçu du nom complet -->
+        <div class="apercu-nom" id="apercuNom">
+          <span class="apercu-label">Aperçu du nom complet qui sera enregistré</span>
+          <span class="apercu-valeur" id="apercuNomValeur">—</span>
         </div>
 
         <button type="submit" class="btn btn-primary">✓ Valider mon enregistrement</button>
@@ -182,9 +189,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
               <th>#</th>
               <th>Nom complet</th>
               <th>Rôle</th>
-              <th>Sous-rôle</th>
               <th>Date d'enregistrement</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -207,7 +212,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
@@ -267,23 +272,20 @@ function renderStats(){
 
 function renderListe(filtre=''){
   const tbody = document.querySelector('#tableRecensement tbody');
-  const data = cacheEncadreurs.filter(e => e.nom.toLowerCase().includes(filtre.toLowerCase()));
+  const data = cacheEncadreurs.filter(e => (e.nom||'').toLowerCase().includes(filtre.toLowerCase()));
 
   if(data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">Aucun encadreur enregistré pour le moment.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">Aucun encadreur enregistré pour le moment.</td></tr>';
     return;
   }
 
   tbody.innerHTML = data.map((e, i) => {
     const badge = `<span class="badge-role ${roleBadgeClass(e.role)}">${esc(e.role)}</span>`;
-    const sousRole = e.sousRole ? `<strong>${esc(e.sousRole)}</strong>` : '<span class="muted" style="font-style:italic">—</span>';
     return `<tr>
       <td><strong>${i+1}</strong></td>
       <td><strong>${esc(e.nom)}</strong></td>
       <td>${badge}</td>
-      <td>${sousRole}</td>
       <td class="muted" style="font-size:.82rem">${formatDateFr(e.createdAt)}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="supprimerEncadreur('${e.id}')">Supprimer</button></td>
     </tr>`;
   }).join('');
 }
@@ -311,82 +313,100 @@ function renderChartRoles(){
 
 /* ============ GESTION DU FORMULAIRE ============ */
 const roleSelect = document.getElementById('roleSelect');
-const groupeSousChoix = document.getElementById('groupeSousChoix');
-const sousChoixSelect = document.getElementById('sousChoixSelect');
+const groupeTitre = document.getElementById('groupeTitre');
+const titreSelect = document.getElementById('titreSelect');
+const nomInput = document.getElementById('nomInput');
+const apercuNomValeur = document.getElementById('apercuNomValeur');
+
+function calculerNomComplet(){
+  const role = roleSelect.value;
+  const titre = titreSelect.value;
+  const nom = nomInput.value.trim().replace(/\s+/g,' ');
+  if(role === 'Lwanga/Kahenga'){
+    if(titre && nom) return `${titre} ${nom}`;
+    if(titre) return `${titre} …`;
+    if(nom) return `… ${nom}`;
+    return '—';
+  }
+  return nom || '—';
+}
+
+function mettreAJourApercu(){
+  apercuNomValeur.textContent = calculerNomComplet();
+}
 
 roleSelect.addEventListener('change', () => {
   if(roleSelect.value === 'Lwanga/Kahenga'){
-    groupeSousChoix.classList.remove('hidden');
-    sousChoixSelect.required = true;
+    groupeTitre.classList.remove('hidden');
+    titreSelect.required = true;
   } else {
-    groupeSousChoix.classList.add('hidden');
-    sousChoixSelect.required = false;
-    sousChoixSelect.value = '';
+    groupeTitre.classList.add('hidden');
+    titreSelect.required = false;
+    titreSelect.value = '';
   }
+  mettreAJourApercu();
 });
+
+titreSelect.addEventListener('change', mettreAJourApercu);
+nomInput.addEventListener('input', mettreAJourApercu);
 
 document.getElementById('formRecensement').addEventListener('submit', async e => {
   e.preventDefault();
 
   const role = roleSelect.value;
-  const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
-  let sousRole = null;
+  const titre = titreSelect.value;
+  const nomSaisi = nomInput.value.trim().replace(/\s+/g,' ');
 
   if(!role) return afficherMessage('messageRecensement', "Veuillez choisir un rôle.", 'error');
-  if(!nom || nom.length < 2) return afficherMessage('messageRecensement', "Veuillez écrire votre nom complet.", 'error');
+  if(!nomSaisi || nomSaisi.length < 2) return afficherMessage('messageRecensement', "Veuillez écrire votre nom complet.", 'error');
+
+  // Construction du nom final
+  let nomFinal = nomSaisi;
+  let titreEnregistre = null;
 
   if(role === 'Lwanga/Kahenga'){
-    sousRole = sousChoixSelect.value;
-    if(!sousRole) return afficherMessage('messageRecensement', "Précisez : Ya Lwanga ou Ya Kahenga.", 'error');
+    if(!titre) return afficherMessage('messageRecensement', "Précisez votre titre : Ya Lwanga ou Ya Kahenga.", 'error');
+    nomFinal = `${titre} ${nomSaisi}`;
+    titreEnregistre = titre;
   }
 
-  // Vérification doublon : même nom + même rôle
+  // Vérification doublon (même nom complet + même rôle)
   const doublon = cacheEncadreurs.find(x =>
-    norm(x.nom) === norm(nom) && x.role === role && (x.sousRole||'') === (sousRole||'')
+    norm(x.nom) === norm(nomFinal) && x.role === role
   );
   if(doublon){
     return afficherMessage('messageRecensement',
-      `Ce nom est déjà enregistré dans ce rôle (${role}${sousRole?' — '+sousRole:''}).`,
+      `Ce nom est déjà enregistré dans ce rôle (${role}).`,
       'warning');
   }
 
   try {
     const id = 'enc_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
     await setDoc(cheminEncadreurId(id), {
-      nom,
+      nom: nomFinal,
+      nomSaisi: nomSaisi,
       role,
-      sousRole: sousRole || null,
+      titre: titreEnregistre,
       createdAt: new Date().toISOString()
     });
     afficherMessage('messageRecensement',
-      `✓ Enregistré : ${nom} — ${role}${sousRole?' — '+sousRole:''}`,
+      `✓ Enregistré : ${nomFinal} — ${role}`,
       'success');
     document.getElementById('formRecensement').reset();
-    groupeSousChoix.classList.add('hidden');
-    sousChoixSelect.required = false;
+    groupeTitre.classList.add('hidden');
+    titreSelect.required = false;
+    mettreAJourApercu();
   } catch(err){
     console.error(err);
     afficherMessage('messageRecensement', "Erreur : " + err.message, 'error');
   }
 });
 
-/* ============ SUPPRESSION (réservée Commission) ============ */
-window.supprimerEncadreur = async function(id){
-  const enc = cacheEncadreurs.find(x => x.id === id);
-  if(!enc) return;
-  if(!confirm(`Supprimer définitivement l'encadreur ${enc.nom} ?`)) return;
-  try {
-    await deleteDoc(cheminEncadreurId(id));
-  } catch(e){
-    alert("Erreur : " + e.message);
-  }
-};
-
 /* ============ EXPORT CSV ============ */
 window.exporterRecensementCSV = function(){
-  let csv = "Nom,Role,Sous-role,Date enregistrement\n";
+  let csv = "Nom complet,Role,Date enregistrement\n";
   cacheEncadreurs.forEach(e => {
-    csv += `"${(e.nom||'').replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${(e.sousRole||'').replace(/"/g,'""')}","${e.createdAt||''}"\n`;
+    csv += `"${(e.nom||'').replace(/"/g,'""')}","${(e.role||'').replace(/"/g,'""')}","${e.createdAt||''}"\n`;
   });
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
   const url = URL.createObjectURL(blob);
@@ -404,7 +424,7 @@ document.getElementById('searchEnc').addEventListener('input', e => renderListe(
 onSnapshot(cheminEncadreurs(), snap => {
   cacheEncadreurs = [];
   snap.forEach(d => cacheEncadreurs.push({id:d.id, ...d.data()}));
-  cacheEncadreurs.sort((a,b) => a.nom.localeCompare(b.nom));
+  cacheEncadreurs.sort((a,b) => (a.nom||'').localeCompare(b.nom||''));
   renderStats();
   renderListe(document.getElementById('searchEnc').value);
   renderChartRoles();
