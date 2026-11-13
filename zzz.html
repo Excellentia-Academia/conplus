@@ -9,6 +9,7 @@
 </head>
 <body class="flex items-center justify-center min-h-screen">
 
+    <!-- ÉCRAN DE CONNEXION -->
     <div id="login-screen" class="bg-gray-900 p-10 rounded-lg shadow-2xl w-full max-w-md border border-gray-800">
         <h2 class="text-3xl text-center mb-6 text-[#C5A880]">Espace Admin</h2>
         <form id="login-form" class="space-y-4">
@@ -21,10 +22,10 @@
                 <input type="password" id="password" required class="w-full bg-black border border-gray-700 rounded p-3 text-white">
             </div>
             <button type="submit" class="w-full bg-[#C5A880] text-black font-bold py-3 rounded hover:bg-white transition">Se connecter</button>
-            <p id="login-error" class="text-red-500 text-sm text-center hidden">Identifiants incorrects.</p>
         </form>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="dashboard-screen" class="hidden w-full max-w-4xl p-6">
         <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-4">
             <h1 class="text-2xl font-bold text-[#C5A880]">Gestion de la Boutique</h1>
@@ -52,22 +53,15 @@
                         </select>
                     </div>
                     
-                    <!-- LE CHOIX : SOIT URL, SOIT UPLOAD -->
-                    <div class="border border-gray-700 p-4 rounded bg-black">
-                        <p class="text-sm text-[#C5A880] font-bold mb-2">Image du vêtement</p>
-                        
-                        <label class="block text-xs text-gray-400 mb-1">Option 1 : Lien URL (Rapide)</label>
-                        <input type="url" id="prod-image-url" placeholder="https://..." class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white mb-4 text-sm">
-                        
-                        <div class="text-center text-xs text-gray-500 mb-2">--- OU ---</div>
-
-                        <label class="block text-xs text-gray-400 mb-1">Option 2 : Uploader un fichier</label>
-                        <input type="file" id="prod-image-file" accept="image/*" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C5A880] file:text-black hover:file:bg-white cursor-pointer">
+                    <!-- OPTION UNIQUE : PHOTO -->
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Photo du vêtement</label>
+                        <input type="file" id="prod-image" accept="image/*" required class="w-full bg-black border border-gray-700 rounded p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C5A880] file:text-black hover:file:bg-white cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">L'image sera convertie en lien URL automatiquement.</p>
                     </div>
 
                     <button type="submit" id="submit-btn" class="w-full bg-[#C5A880] text-black font-bold py-2 rounded hover:bg-white transition mt-4">Ajouter à la boutique</button>
-                    <p id="add-status" class="text-green-500 text-sm text-center hidden mt-2">Vêtement ajouté avec succès !</p>
-                    <p id="upload-status" class="text-yellow-500 text-sm text-center hidden mt-2">Traitement en cours...</p>
+                    <p id="add-status" class="text-green-500 text-sm text-center hidden mt-2">Vêtement ajouté !</p>
                 </form>
             </div>
 
@@ -81,8 +75,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        // On n'a plus besoin de Firebase Storage !
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
@@ -96,14 +90,13 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         // Connexion
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-                .then(() => document.getElementById('login-error').classList.add('hidden'))
-                .catch(() => document.getElementById('login-error').classList.remove('hidden'));
+                .then(() => document.getElementById('login-screen').classList.add('hidden'))
+                .catch(() => alert("Identifiants incorrects"));
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
@@ -119,25 +112,31 @@
             }
         });
 
-        // Compression d'image (seulement si on choisit l'upload)
-        async function compressImage(file) {
-            return new Promise((resolve) => {
+        // LA FONCTION MAGIQUE : Transforme la photo en URL Base64 ultra-légère
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
                     const img = new Image();
                     img.src = event.target.result;
                     img.onload = () => {
+                        // On crée un canvas pour réduire la taille de l'image
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; 
+                        const MAX_WIDTH = 600; // Taille max (600px suffit pour un e-commerce)
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
+                        
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
+                        
+                        // On transforme le résultat en URL texte (Base64)
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.6); // 60% de qualité
+                        resolve(dataUrl);
                     };
                 };
+                reader.onerror = (error) => reject(error);
             });
         }
 
@@ -147,56 +146,36 @@
             const nom = document.getElementById('prod-name').value;
             const prix = document.getElementById('prod-price').value;
             const categorie = document.getElementById('prod-category').value;
+            const file = document.getElementById('prod-image').files[0];
             
-            const urlInput = document.getElementById('prod-image-url').value;
-            const fileInput = document.getElementById('prod-image-file').files[0];
-            
-            const status = document.getElementById('add-status');
-            const uploadStatus = document.getElementById('upload-status');
             const submitBtn = document.getElementById('submit-btn');
+            const status = document.getElementById('add-status');
 
-            let finalImageUrl = "";
+            if (!file) return alert("Veuillez sélectionner une image.");
 
-            // Si l'utilisateur a mis un lien URL
-            if (urlInput.trim() !== "") {
-                finalImageUrl = urlInput;
-                uploadStatus.classList.remove('hidden');
-                uploadStatus.innerText = "Enregistrement de l'URL...";
-            } 
-            // Sinon, s'il a choisi un fichier
-            else if (fileInput) {
-                uploadStatus.classList.remove('hidden');
-                uploadStatus.innerText = "Compression et envoi (quelques secondes)...";
-                submitBtn.disabled = true;
-                try {
-                    const compressedFile = await compressImage(fileInput);
-                    const storageRef = ref(storage, 'vetements/' + Date.now() + '.jpg');
-                    await uploadBytes(storageRef, compressedFile);
-                    finalImageUrl = await getDownloadURL(storageRef);
-                } catch (error) {
-                    alert("Erreur lors de l'upload du fichier.");
-                    uploadStatus.classList.add('hidden');
-                    submitBtn.disabled = false;
-                    return;
-                }
-            } else {
-                return alert("Veuillez fournir un lien URL ou uploader une photo.");
-            }
-
-            // Enregistrement dans Firestore (avec l'URL finale, qu'elle vienne d'internet ou de l'upload)
             try {
                 submitBtn.disabled = true;
-                await addDoc(collection(db, "vetements"), { nom, prix, categorie, image: finalImageUrl });
+                submitBtn.innerText = "Transformation en cours...";
+
+                // 1. On transforme la photo en lien URL (Base64)
+                const imageUrl = await convertToBase64(file);
+
+                // 2. On enregistre DIRECTEMENT dans Firestore
+                await addDoc(collection(db, "vetements"), { nom, prix, categorie, image: imageUrl });
                 
                 status.classList.remove('hidden');
-                uploadStatus.classList.add('hidden');
                 document.getElementById('add-product-form').reset();
                 submitBtn.disabled = false;
+                submitBtn.innerText = "Ajouter à la boutique";
+                
                 setTimeout(() => status.classList.add('hidden'), 3000);
                 loadAdminProducts();
+                
             } catch (error) {
-                alert("Erreur d'enregistrement dans la base.");
+                console.error(error);
+                alert("Erreur lors de l'ajout.");
                 submitBtn.disabled = false;
+                submitBtn.innerText = "Ajouter à la boutique";
             }
         });
 
