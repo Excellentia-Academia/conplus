@@ -3,152 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Création de Sites Web Pro | Donnez vie à vos idées</title>
+    <title>Pro Web Agency | Création de sites web exceptionnels</title>
+    <!-- Tailwind CSS pour le design -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Polices modernes -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0a0a0a; color: #ffffff; overflow-x: hidden; }
+        body { font-family: 'Outfit', sans-serif; background-color: #f8f9fa; color: #1a1a1a; overflow-x: hidden; }
         .heading-font { font-family: 'Playfair Display', serif; }
-        .gold-text { color: #D4AF37; }
-        .gold-bg { background-color: #D4AF37; }
         
-        /* Animations */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        /* Dégradé texte */
+        .text-gradient {
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .promo-banner { animation: pulse-gold 2s infinite; }
 
-        /* Effet de survol sur les cartes */
-        .service-card { transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #333; }
-        .service-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2); border-color: #D4AF37; }
+        /* Animations d'apparition au défilement */
+        .fade-up { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* Carrousel d'images */
+        .carousel {
+            display: flex;
+            width: 300%;
+            animation: slide 20s infinite ease-in-out;
+        }
+        .carousel img { width: 33.333%; height: 100vh; object-fit: cover; }
+        @keyframes slide {
+            0%, 25% { transform: translateX(0); }
+            33%, 58% { transform: translateX(-33.333%); }
+            66%, 91% { transform: translateX(-66.666%); }
+            100% { transform: translateX(0); }
+        }
+        
+        /* Overlay sombre sur les images pour lire le texte */
+        .overlay {
+            background: linear-gradient(rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0.7));
+        }
+
+        /* Animation Promo */
+        @keyframes flash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+        .promo-flash { animation: flash 2s infinite; }
+
+        /* Effet brillant sur les cartes de prix */
+        .price-card { transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .price-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-25deg); transition: 0.5s;
+        }
+        .price-card:hover::before { left: 150%; }
+        .price-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.4); }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <!-- SECTION HERO (Accueil) -->
-    <header class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative" style="background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.95)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1920&q=80') center/cover;">
-        
-        <!-- Bannière Promo Animée -->
-        <div class="promo-banner bg-[#D4AF37] text-black font-bold px-6 py-2 rounded-full mb-8 fade-in">
-            🔥 SEMAINE PROMOTIONNELLE : -30% sur tous les sites vitrines ! 🔥
+    <!-- HERO SECTION AVEC CARROUSEL -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Images défilantes (Restaurants, Boutiques, Diaspora, Tech) -->
+        <div class="carousel absolute top-0 left-0 w-full h-full z-0">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" alt="Restaurant">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1920&q=80" alt="Boutique">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80" alt="Agence Web Diaspora">
         </div>
+        <div class="overlay absolute inset-0 z-10"></div>
 
-        <h1 class="heading-font text-5xl md:text-7xl font-bold mb-6 fade-in text-white">
-            Votre présence en ligne <br>
-            <span class="gold-text">Sur-Mesure</span>
-        </h1>
-        <p class="text-gray-300 text-lg md:text-xl max-w-2xl mb-10 fade-in">
-            Nous créons des sites web professionnels, rapides et sécurisés pour les entrepreneurs, les commerces et la diaspora. 
-            Donnez à votre business l'image qu'il mérite.
-        </p>
-        <a href="#contact" class="gold-bg text-black font-bold py-4 px-10 rounded-full hover:bg-yellow-500 transition duration-300 fade-in transform hover:scale-105">
-            Démarrer mon projet
-        </a>
+        <!-- Contenu texte -->
+        <div class="relative z-20 text-center px-4 max-w-5xl mx-auto mt-20">
+            <div class="promo-flash inline-block bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold px-6 py-2 rounded-full mb-6 shadow-lg border border-purple-400">
+                🚀 PROMO SPÉCIALE : Jusqu'au 30 Novembre 2026 (-30%) 🚀
+            </div>
+            <h1 class="heading-font text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
+                Dominez le Web avec <br>
+                <span class="text-gradient">Un Site Exceptionnel</span>
+            </h1>
+            <p class="text-gray-200 text-lg md:text-2xl mb-10 max-w-3xl mx-auto drop-shadow-md">
+                Restaurants, Boutiques, Entreprises, Diaspora. Nous créons l'empreinte digitale qui fait décoller votre chiffre d'affaires. Design premium, sécurité absolue.
+            </p>
+            <a href="#offres" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-4 px-12 rounded-full text-lg shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:shadow-[0_0_30px_rgba(168,85,247,0.8)] transform hover:-translate-y-1 transition duration-300">
+                Voir nos Offres
+            </a>
+        </div>
     </header>
 
-    <!-- SECTION SERVICES -->
-    <section class="py-24 px-4 bg-[#0f0f0f]">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="heading-font text-4xl text-center mb-16 fade-in">Nos <span class="gold-text">Services</span></h2>
+    <!-- SECTION SERVICES (Tout ce qu'on fait) -->
+    <section class="py-24 px-4 bg-white relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Tout pour votre <span class="text-gradient">Présence en Ligne</span></h2>
+                <p class="text-gray-500 max-w-2xl mx-auto text-lg">Que vous soyez un restaurant local ou une entreprise de la diaspora, nous avons la solution.</p>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Carte 1 -->
-                <div class="service-card bg-[#1a1a1a] p-8 rounded-2xl fade-in">
-                    <div class="text-4xl mb-4">💼</div>
-                    <h3 class="text-xl font-bold mb-2">Site Vitrine Pro</h3>
-                    <p class="text-gray-400 text-sm">Parfait pour présenter votre activité, vos services et attirer de nouveaux clients locaux ou internationaux.</p>
+                <div class="fade-up bg-gray-50 p-8 rounded-3xl hover:bg-white hover:shadow-2xl border border-gray-100 transition duration-300">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🍽️</div>
+                    <h3 class="text-2xl font-bold mb-3">Sites Restaurants & Menus</h3>
+                    <p class="text-gray-600">Menus interactifs, réservation en ligne, commande WhatsApp. Donnez faim à vos clients avant même qu'ils n'arrivent.</p>
                 </div>
                 <!-- Carte 2 -->
-                <div class="service-card bg-[#1a1a1a] p-8 rounded-2xl fade-in" style="transition-delay: 0.1s;">
-                    <div class="text-4xl mb-4">🛒</div>
-                    <h3 class="text-xl font-bold mb-2">Boutique E-commerce</h3>
-                    <p class="text-gray-400 text-sm">Vendez vos produits en ligne. Paiement sécurisé (Mobile Money, Stripe) et gestion facile de vos stocks.</p>
+                <div class="fade-up bg-gray-50 p-8 rounded-3xl hover:bg-white hover:shadow-2xl border border-gray-100 transition duration-300" style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🛍️</div>
+                    <h3 class="text-2xl font-bold mb-3">E-commerce & Boutiques</h3>
+                    <p class="text-gray-600">Vendez 24h/24. Intégration de paiement sécurisé (Mobile Money, Stripe, PayPal) et gestion simple de vos produits.</p>
                 </div>
                 <!-- Carte 3 -->
-                <div class="service-card bg-[#1a1a1a] p-8 rounded-2xl fade-in" style="transition-delay: 0.2s;">
-                    <div class="text-4xl mb-4">🌍</div>
-                    <h3 class="text-xl font-bold mb-2">Spécial Diaspora</h3>
-                    <p class="text-gray-400 text-sm">Vous êtes à l'étranger ? Gérez votre business au pays à distance avec un site web moderne et un dashboard dédié.</p>
+                <div class="fade-up bg-gray-50 p-8 rounded-3xl hover:bg-white hover:shadow-2xl border border-gray-100 transition duration-300" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🌍</div>
+                    <h3 class="text-2xl font-bold mb-3">Espace Diaspora Dédié</h3>
+                    <p class="text-gray-600">Vous investissez au pays depuis l'étranger ? Suivez votre business en temps réel avec un tableau de bord sur-mesure.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION FORMULAIRE (Contact / WhatsApp) -->
-    <section id="contact" class="py-24 px-4 bg-black relative">
-        <div class="max-w-3xl mx-auto bg-[#111] p-10 rounded-3xl border border-gray-800 fade-in shadow-2xl">
-            <h2 class="heading-font text-3xl text-center mb-2">Lancez votre <span class="gold-text">Projet</span></h2>
-            <p class="text-center text-gray-400 mb-8">Remplissez ce formulaire et nous vous répondrons sous 24h via WhatsApp.</p>
-            
-            <form id="whatsappForm" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- SECTION OFFRES & PRIX -->
+    <section id="offres" class="py-24 px-4 bg-[#0f172a] text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Des Tarifs <span class="text-gradient">Transparents</span></h2>
+                <p class="text-gray-400 text-lg">Choisissez le pack qui correspond à vos ambitions.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <!-- Pack 1 -->
+                <div class="price-card fade-up bg-[#1e293b] p-8 rounded-3xl border border-gray-700">
+                    <h3 class="text-2xl font-bold mb-2">Pack Vitrine</h3>
+                    <p class="text-gray-400 mb-6 text-sm">Parfait pour démarrer</p>
+                    <div class="text-4xl font-extrabold mb-6">150$ <span class="text-lg text-gray-500 font-normal line-through">250$</span></div>
+                    <ul class="space-y-3 mb-8 text-gray-300">
+                        <li>✅ Design moderne (1 à 4 pages)</li>
+                        <li>✅ Bouton WhatsApp direct</li>
+                        <li>✅ Nom de domaine (.com) 1 an</li>
+                        <li>✅ Sécurité HTTPS</li>
+                    </ul>
+                    <a href="#contact" class="block text-center w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-xl font-bold transition">Choisir ce pack</a>
+                </div>
+
+                <!-- Pack 2 (Recommandé) -->
+                <div class="price-card fade-up bg-gradient-to-b from-indigo-900 to-purple-900 p-10 rounded-3xl border-2 border-purple-500 transform scale-105 shadow-2xl relative">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pink-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">LE PLUS POPULAIRE</div>
+                    <h3 class="text-3xl font-bold mb-2 text-white">Pack Business</h3>
+                    <p class="text-purple-200 mb-6 text-sm">Pour dominer le marché</p>
+                    <div class="text-5xl font-extrabold mb-6 text-white">350$ <span class="text-lg text-purple-300 font-normal line-through">500$</span></div>
+                    <ul class="space-y-3 mb-8 text-purple-100">
+                        <li>✨ Tout le pack Vitrine</li>
+                        <li>✨ Boutique E-commerce incluse</li>
+                        <li>✨ Espace Admin (modifiez seul)</li>
+                        <li>✨ Emails professionnels</li>
+                        <li>✨ Maintenance 1 mois offerte</li>
+                    </ul>
+                    <a href="#contact" class="block text-center w-full bg-white text-purple-900 hover:bg-gray-100 py-3 rounded-xl font-bold transition shadow-lg">Je le veux !</a>
+                </div>
+
+                <!-- Pack 3 -->
+                <div class="price-card fade-up bg-[#1e293b] p-8 rounded-3xl border border-gray-700">
+                    <h3 class="text-2xl font-bold mb-2">Pack Diaspora</h3>
+                    <p class="text-gray-400 mb-6 text-sm">Gestion à distance</p>
+                    <div class="text-4xl font-extrabold mb-6">500$ <span class="text-lg text-gray-500 font-normal line-through">700$</span></div>
+                    <ul class="space-y-3 mb-8 text-gray-300">
+                        <li>💎 Tout le pack Business</li>
+                        <li>💎 Dashboard Diaspora sur-mesure</li>
+                        <li>💎 Suivi des ventes en temps réel</li>
+                        <li>💎 Assistance prioritaire 24/7</li>
+                    </ul>
+                    <a href="#contact" class="block text-center w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-xl font-bold transition">Choisir ce pack</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION FORMULAIRE DE CONTACT -->
+    <section id="contact" class="py-24 px-4 bg-gray-50 relative overflow-hidden">
+        <!-- Forme décorative -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 transform -translate-x-1/2 translate-y-1/2"></div>
+
+        <div class="max-w-4xl mx-auto relative z-10 fade-up">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+                <!-- Côté gauche (Info) -->
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-10 md:w-2/5 flex flex-col justify-between">
                     <div>
-                        <label class="block text-sm text-gray-400 mb-2">Nom complet</label>
-                        <input type="text" id="nom" required class="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-[#D4AF37] transition">
+                        <h3 class="text-3xl font-bold mb-4">Discutons de votre projet</h3>
+                        <p class="text-indigo-100 mb-8">Laissez-nous vos coordonnées. Nous vous répondons sous 24h avec une proposition sur-mesure.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">Type de projet</label>
-                        <select id="projet" class="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-[#D4AF37] transition">
-                            <option>Site Vitrine</option>
-                            <option>Boutique E-commerce</option>
-                            <option>Menu Restaurant</option>
-                            <option>Portfolio / CV</option>
-                        </select>
+                    <div class="space-y-4 text-sm">
+                        <p class="flex items-center gap-3"><span class="text-xl">📞</span> +243 890 000 000</p>
+                        <p class="flex items-center gap-3"><span class="text-xl">✉️</span> contact@prowebagency.com</p>
+                        <p class="flex items-center gap-3"><span class="text-xl">📍</span> Kinshasa, RDC & International</p>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">Décrivez brièvement votre besoin</label>
-                    <textarea id="message" rows="4" required class="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-[#D4AF37] transition"></textarea>
+
+                <!-- Côté droit (Formulaire) -->
+                <div class="p-10 md:w-3/5 bg-white">
+                    <form id="whatsappForm" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Nom complet</label>
+                                <input type="text" id="nom" required placeholder="Jean Dupont" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Téléphone / WhatsApp</label>
+                                <input type="tel" id="tel" required placeholder="+243..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                            <input type="email" id="email" required placeholder="jean@exemple.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Type de projet</label>
+                            <select id="projet" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                                <option>Pack Vitrine (150$)</option>
+                                <option>Pack Business (350$)</option>
+                                <option>Pack Diaspora (500$)</option>
+                                <option>Autre demande sur-mesure</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Votre message</label>
+                            <textarea id="message" rows="3" required placeholder="Décrivez votre activité..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition duration-300 text-lg">
+                            Envoyer ma demande
+                        </button>
+                    </form>
                 </div>
-                <button type="submit" class="w-full gold-bg text-black font-bold py-4 rounded-lg hover:bg-yellow-500 transition duration-300 text-lg">
-                    Envoyer via WhatsApp
-                </button>
-            </form>
+            </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="text-center py-8 border-t border-gray-900 text-gray-600 text-sm">
-        <p>&copy; 2024 VotreAgence. Tous droits réservés. Créé avec passion.</p>
+    <footer class="bg-[#0f172a] text-gray-400 text-center py-8">
+        <p>&copy; 2026 Pro Web Agency. Tous droits réservés. Design qui convertit.</p>
     </footer>
 
-    <!-- SCRIPT ANIMATIONS & WHATSAPP -->
+    <!-- SCRIPTS -->
     <script>
-        // 1. Animation d'apparition au défilement (Scroll)
+        // Animation d'apparition
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-        // 2. Gestion du formulaire vers WhatsApp
+        // Envoi WhatsApp
         document.getElementById('whatsappForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Récupération des valeurs
             const nom = document.getElementById('nom').value;
+            const tel = document.getElementById('tel').value;
+            const email = document.getElementById('email').value;
             const projet = document.getElementById('projet').value;
             const message = document.getElementById('message').value;
             
-            // ⚠️ REMPLACE CE NUMÉRO PAR TON VRAI NUMÉRO WHATSAPP (sans le +)
-            // Exemple pour la RDC : 243891234567
-            const monNumero = "TON_NUMERO_WHATSAPP"; 
+            // ⚠️ METS TON NUMÉRO ICI
+            const monNumero = "243890000000"; 
             
-            // Construction du message
-            const texte = `Bonjour, je suis ${nom}.%0A%0AJe suis intéressé(e) par : *${projet}*.%0A%0AMon besoin : ${message}`;
+            const texte = `*NOUVELLE DEMANDE CLIENT*%0A%0A👤 *Nom:* ${nom}%0A📞 *Tél:* ${tel}%0A✉️ *Email:* ${email}%0A📦 *Projet:* ${projet}%0A%0A📝 *Message:* ${message}`;
             
-            // Ouverture de WhatsApp
-            const url = `https://wa.me/${monNumero}?text=${texte}`;
-            window.open(url, '_blank');
+            window.open(`https://wa.me/${monNumero}?text=${texte}`, '_blank');
         });
     </script>
 </body>
