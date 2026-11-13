@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hôpital Horizon | L'Excellence Médicale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #0A2540; /* Bleu nuit profond */
+            --accent: #00A896; /* Turquoise médical */
+            --light: #F4F7F6; 
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light); color: var(--primary); overflow-x: hidden; }
+        h1, h2, h3, .font-serif { font-family: 'Lora', serif; }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Effets de survol */
+        .hover-card { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .hover-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(10, 37, 64, 0.08); }
+        
+        /* Bouton d'urgence clignotant */
+        .btn-urgent { background-color: #E63946; color: white; transition: all 0.3s; animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(230, 57, 70, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+        }
+
+        /* Formulaire de rendez-vous */
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; focus: outline; focus:ring-2; focus:ring-[#00A896]; background: white;}
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- NAVBAR FIXE -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm py-4 transition-all" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <!-- LOGO -->
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#0A2540] rounded-lg flex items-center justify-center text-[#00A896] font-bold text-xl">H</div>
+                <span class="text-2xl font-serif font-bold text-[#0A2540]">Hôpital Horizon</span>
+            </a>
+            
+            <!-- Liens Desktop -->
+            <div class="hidden md:flex gap-8 font-semibold text-sm text-[#0A2540]">
+                <a href="#services" class="hover:text-[#00A896] transition">Spécialités</a>
+                <a href="#medecins" class="hover:text-[#00A896] transition">Médecins</a>
+                <a href="#avis" class="hover:text-[#00A896] transition">Avis Patients</a>
+                <a href="admin.html" class="text-gray-400 hover:text-[#00A896] transition">Admin</a>
+            </div>
+
+            <!-- Bouton RDV & Urgences -->
+            <div class="hidden md:flex items-center gap-4">
+                <a href="tel:+243890000000" class="btn-urgent px-5 py-2 rounded-full font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd" /></svg>
+                    Urgences
+                </a>
+                <a href="#rendezvous" class="bg-[#0A2540] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#00A896] transition">Prendre RDV</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="h-[90vh] relative flex items-center justify-center overflow-hidden">
+        <!-- Image d'hôpital moderne -->
+        <img src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1920&q=80" alt="Hôpital Moderne" class="absolute inset-0 w-full h-full object-cover z-0">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0A2540]/90 to-[#0A2540]/40 z-10"></div>
+        
+        <div class="relative z-20 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="reveal">
+                <span class="text-[#00A896] font-bold tracking-widest uppercase text-sm mb-4 block">L'innovation au service de la vie</span>
+                <h1 class="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight">Votre santé, <br> notre priorité absolue.</h1>
+                <p class="text-gray-200 text-lg mb-8 max-w-lg font-light">Un plateau technique de pointe, des médecins spécialistes et une prise en charge humaine et technologique.</p>
+                <div class="flex gap-4">
+                    <a href="#rendezvous" class="bg-[#00A896] text-white font-bold py-4 px-8 rounded-lg hover:bg-[#008f80] transition shadow-[0_0_20px_rgba(0,168,150,0.4)]">Prendre Rendez-vous</a>
+                    <a href="#services" class="border border-white text-white font-bold py-4 px-8 rounded-lg hover:bg-white hover:text-[#0A2540] transition">Nos Spécialités</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CHIFFRES CLÉS (Anticipation et Confiance) -->
+    <section class="bg-white py-10 border-b border-gray-200 relative z-20 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center reveal">
+            <div><p class="text-4xl font-serif font-bold text-[#0A2540]">24/7</p><p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Urgences</p></div>
+            <div><p class="text-4xl font-serif font-bold text-[#0A2540]">50+</p><p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Spécialistes</p></div>
+            <div><p class="text-4xl font-serif font-bold text-[#0A2540]">15k</p><p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Patients guéris</p></div>
+            <div><p class="text-4xl font-serif font-bold text-[#0A2540]">IRM</p><p class="text-sm text-gray-500 uppercase tracking-wider mt-1">Équipements de pointe</p></div>
+        </div>
+    </section>
+
+    <!-- SERVICES / SPÉCIALITÉS -->
+    <section id="services" class="py-24 bg-[#F4F7F6]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-serif font-bold mb-4 text-[#0A2540]">Nos Pôles d'Excellence</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Une prise en charge multidisciplinaire avec les technologies les plus avancées.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="hover-card bg-white p-8 rounded-2xl border border-gray-100 reveal">
+                    <div class="w-14 h-14 bg-[#00A896]/10 rounded-xl flex items-center justify-center text-3xl mb-6">❤️</div>
+                    <h3 class="text-2xl font-serif font-bold mb-3">Cardiologie</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Diagnostic précis, coronarographie et suivi personnalisé pour votre cœur.</p>
+                    <a href="#rendezvous" class="text-[#00A896] font-bold text-sm hover:underline">Consulter un cardiologue &rarr;</a>
+                </div>
+                <!-- Card 2 -->
+                <div class="hover-card bg-white p-8 rounded-2xl border border-gray-100 reveal" style="transition-delay: 0.1s;">
+                    <div class="w-14 h-14 bg-[#00A896]/10 rounded-xl flex items-center justify-center text-3xl mb-6">🧠</div>
+                    <h3 class="text-2xl font-serif font-bold mb-3">Neurologie</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Prise en charge des maladies neurologiques avec imagerie cérébrale de dernière génération.</p>
+                    <a href="#rendezvous" class="text-[#00A896] font-bold text-sm hover:underline">Consulter un neurologue &rarr;</a>
+                </div>
+                <!-- Card 3 -->
+                <div class="hover-card bg-white p-8 rounded-2xl border border-gray-100 reveal" style="transition-delay: 0.2s;">
+                    <div class="w-14 h-14 bg-[#00A896]/10 rounded-xl flex items-center justify-center text-3xl mb-6">👶</div>
+                    <h3 class="text-2xl font-serif font-bold mb-3">Pédiatrie</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Des soins adaptés aux plus petits dans un environnement rassurant et coloré.</p>
+                    <a href="#rendezvous" class="text-[#00A896] font-bold text-sm hover:underline">Consulter un pédiatre &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION MÉDECINS -->
+    <section id="medecins" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-serif font-bold mb-4 text-[#0A2540]">Notre Équipe Médicale</h2>
+                <p class="text-gray-600">Des experts reconnus, à votre écoute.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Doc 1 -->
+                <div class="text-center reveal">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Dr. Kabila" class="w-48 h-48 object-cover rounded-full mx-auto mb-4 border-4 border-gray-50 shadow-lg">
+                    <h4 class="text-xl font-serif font-bold text-[#0A2540]">Dr. Kabila</h4>
+                    <p class="text-[#00A896] text-sm font-semibold mb-2">Chef de Cardiologie</p>
+                    <p class="text-gray-500 text-xs px-4">15 ans d'expérience, spécialiste des interventions non invasives.</p>
+                </div>
+                <!-- Doc 2 -->
+                <div class="text-center reveal" style="transition-delay: 0.1s;">
+                    <img src="https://images.unsplash.com/photo-1594824436998-058d2b6352b6?auto=format&fit=crop&w=400&q=80" alt="Dr. Lumumba" class="w-48 h-48 object-cover rounded-full mx-auto mb-4 border-4 border-gray-50 shadow-lg">
+                    <h4 class="text-xl font-serif font-bold text-[#0A2540]">Dr. Lumumba</h4>
+                    <p class="text-[#00A896] text-sm font-semibold mb-2">Pédiatre</p>
+                    <p class="text-gray-500 text-xs px-4">Experte en néonatologie et développement de l'enfant.</p>
+                </div>
+                <!-- Doc 3 -->
+                <div class="text-center reveal" style="transition-delay: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80" alt="Dr. Mukendi" class="w-48 h-48 object-cover rounded-full mx-auto mb-4 border-4 border-gray-50 shadow-lg">
+                    <h4 class="text-xl font-serif font-bold text-[#0A2540]">Dr. Mukendi</h4>
+                    <p class="text-[#00A896] text-sm font-semibold mb-2">Neurologue</p>
+                    <p class="text-gray-500 text-xs px-4">Spécialiste des pathologies cérébrales complexes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRISE DE RENDEZ-VOUS -->
+    <section id="rendezvous" class="py-24 bg-[#0A2540] relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-[#00A896] rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 reveal">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-serif font-bold text-[#0A2540] mb-2">Prendre Rendez-vous</h2>
+                    <p class="text-gray-500">Remplissez ce formulaire, nous vous confirmerons votre créneau par téléphone.</p>
+                </div>
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="block text-sm font-semibold text-gray-700 mb-1">Nom complet</label><input type="text" class="form-input" placeholder="Votre nom"></div>
+                    <div><label class="block text-sm font-semibold text-gray-700 mb-1">Téléphone</label><input type="tel" class="form-input" placeholder="+243..."></div>
+                    <div><label class="block text-sm font-semibold text-gray-700 mb-1">Spécialité</label>
+                        <select class="form-input">
+                            <option>Cardiologie</option>
+                            <option>Pédiatrie</option>
+                            <option>Neurologie</option>
+                            <option>Médecine Générale</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-semibold text-gray-700 mb-1">Date souhaitée</label><input type="date" class="form-input"></div>
+                    <div class="md:col-span-2">
+                        <button type="button" onclick="alert('Demande de rendez-vous envoyée avec succès. Notre secrétariat vous contactera.')" class="w-full bg-[#00A896] text-white font-bold py-4 rounded-lg hover:bg-[#008f80] transition text-lg shadow-lg">Confirmer la demande</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION AVIS (Connectée à Firebase) -->
+    <section id="avis" class="py-24 bg-[#F4F7F6]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-serif font-bold mb-4 text-[#0A2540]">Avis de nos Patients</h2>
+                <p class="text-gray-600">Votre satisfaction est notre plus belle récompense.</p>
+            </div>
+
+            <!-- Formulaire d'avis -->
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm mb-16 reveal border border-gray-100">
+                <h3 class="text-xl font-serif font-bold mb-4 text-[#0A2540]">Laissez votre témoignage</h3>
+                <form id="reviewForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Votre nom</label>
+                        <input type="text" id="reviewName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-[#00A896]">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Votre note</label>
+                        <div class="star-rating flex flex-row-reverse justify-end">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" required /><label for="star1">★</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Votre commentaire</label>
+                        <textarea id="reviewMessage" required rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-[#00A896]"></textarea>
+                    </div>
+                    <button type="submit" class="bg-[#0A2540] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#00A896] transition w-full">Publier mon avis</button>
+                    <p id="reviewStatus" class="text-sm font-semibold text-green-600 hidden text-center">Merci ! Votre avis a été publié.</p>
+                </form>
+            </div>
+
+            <!-- Liste des avis -->
+            <div id="reviewsList" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <p class="text-gray-500 col-span-3 text-center">Chargement des avis...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#0A2540] text-white py-16">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-[#0A2540] font-bold text-xl">H</div>
+                    <span class="text-2xl font-serif font-bold">Hôpital Horizon</span>
+                </div>
+                <p class="text-gray-400 text-sm max-w-sm">Un établissement de santé de référence, alliant technologie de pointe et humanité au service de tous.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4 uppercase tracking-wider text-sm text-[#00A896]">Contact</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li>+243 890 000 000</li>
+                    <li>contact@horizon-medical.com</li>
+                    <li>Avenue de la Santé, Kinshasa</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4 uppercase tracking-wider text-sm text-[#00A896]">Liens Rapides</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#services" class="hover:text-white">Spécialités</a></li>
+                    <li><a href="#medecins" class="hover:text-white">Notre équipe</a></li>
+                    <li><a href="#rendezvous" class="hover:text-white">Prendre RDV</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-gray-500 text-xs mt-12 pt-8 border-t border-gray-800">
+            &copy; 2026 Hôpital Horizon. Tous droits réservés.
+        </div>
+    </footer>
+
+    <!-- SCRIPT FIREBASE & LOGIQUE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
+            authDomain: "menu-f24cc.firebaseapp.com",
+            projectId: "menu-f24cc",
+            storageBucket: "menu-f24cc.firebasestorage.app",
+            messagingSenderId: "460095019040",
+            appId: "1:460095019040:web:45f931d14a59027e3b0445",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Animation au défilement
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- LOGIQUE DES AVIS ---
+        const reviewForm = document.getElementById('reviewForm');
+        const reviewsList = document.getElementById('reviewsList');
+
+        async function loadReviews() {
+            reviewsList.innerHTML = ''; 
+            const q = query(collection(db, "avis_hopital"), orderBy("date", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                reviewsList.innerHTML = '<p class="text-gray-500 col-span-3 text-center">Soyez le premier à laisser un avis.</p>';
+                return;
+            }
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+                reviewsList.innerHTML += `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 reveal active">
+                        <div class="text-[#00A896] mb-3 text-xl">${stars}</div>
+                        <p class="text-gray-600 italic mb-4 text-sm">"${data.message}"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-[#0A2540] text-white rounded-full flex items-center justify-center font-bold text-xs">${data.name.charAt(0).toUpperCase()}</div>
+                            <div><h4 class="font-bold text-sm text-[#0A2540]">${data.name}</h4><p class="text-xs text-gray-400">Patient</p></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const message = document.getElementById('reviewMessage').value;
+            const status = document.getElementById('reviewStatus');
+
+            try {
+                await addDoc(collection(db, "avis_hopital"), {
+                    name: name,
+                    rating: parseInt(rating),
+                    message: message,
+                    date: serverTimestamp()
+                });
+                
+                status.classList.remove('hidden');
+                reviewForm.reset();
+                setTimeout(() => status.classList.add('hidden'), 3000);
+                loadReviews(); 
+            } catch (error) {
+                alert("Erreur lors de l'envoi de l'avis.");
+            }
+        });
+
+        loadReviews();
+
+        // Style étoiles (CSS injecté via JS pour propreté)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .star-rating input { display: none; }
+            .star-rating label { cursor: pointer; color: #ccc; font-size: 28px; transition: color 0.2s; }
+            .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #00A896; }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
