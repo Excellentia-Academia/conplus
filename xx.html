@@ -1,1393 +1,214 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Anagramme – Quiz Multijoueur</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --fond: #f4f4f4;
-    --texte: #111111;
-    --dore: #cda434;
-    --dore-hover: #b8902a;
-    --carte: #ffffff;
-    --gris: #e0e0e0;
-    --msg-rouge: #ef4444;
-    --msg-vert: #10b981;
-    --carte-verte: #dcfce7;
-    --carte-rouge: #fee2e2;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE | Boutique de Vêtements Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #C5A880; --dark: #111111; --light: #F9F8F6; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--light); color: var(--dark); overflow-x: hidden; }
+        h1, h2, h3, .font-luxury { font-family: 'Playfair Display', serif; }
 
-  body.dark-mode {
-    --fond: #121212;
-    --texte: #f4f4f4;
-    --dore: #e5b83b;
-    --dore-hover: #f5c84c;
-    --carte: #1e1e1e;
-    --gris: #333333;
-    --msg-rouge: #f87171;
-    --msg-vert: #34d399;
-    --carte-verte: #064e3b;
-    --carte-rouge: #7f1d1d;
-  }
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family: 'Montserrat', sans-serif;
-    background: var(--fond);
-    min-height: 100vh; color: var(--texte);
-    padding: 16px; display: grid; place-items: center;
-    transition: background 0.3s, color 0.3s;
-  }
-  .container {
-    max-width: 900px; width: 100%;
-    background: var(--carte);
-    border-radius: 20px; padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-top: 6px solid var(--dore);
-    position: relative;
-    transition: background 0.3s, border-color 0.3s;
-  }
+        /* Cartes Produits */
+        .product-card { transition: transform 0.5s ease, box-shadow 0.5s ease; background: white; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .product-card:hover .product-image { transform: scale(1.05); }
 
-  #themeToggle {
-    position: absolute; top: 20px; right: 20px;
-    background: var(--gris); border: none; border-radius: 50%;
-    width: 44px; height: 44px; cursor: pointer;
-    font-size: 1.2rem; display: grid; place-items: center;
-    transition: all 0.2s; color: var(--texte);
-  }
-  #themeToggle:hover { transform: scale(1.1); }
+        /* Panier */
+        .cart-sidebar { transform: translateX(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .cart-sidebar.open { transform: translateX(0); }
 
-  h1 {
-    font-size: clamp(24px, 4vw, 32px);
-    text-align: center; margin-bottom: 24px;
-    color: var(--texte); font-weight: 900;
-    letter-spacing: 1px;
-  }
-  h2 { text-align: center; color: var(--dore); margin-bottom: 16px; font-size: 1.2rem; }
-  
-  button {
-    padding: 14px 20px; font-size: 1rem; font-weight: 800;
-    border-radius: 12px; border: none;
-    cursor: pointer; transition: all 0.2s ease;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-  
-  .btn-primaire { background: var(--dore); color: #111; }
-  .btn-primaire:hover:not(:disabled) { background: var(--dore-hover); transform: translateY(-2px); }
-  
-  .btn-secondaire { background: var(--gris); color: var(--texte); }
-  .btn-secondaire:hover:not(:disabled) { filter: brightness(0.9); }
-
-  .btn-danger { background: var(--msg-rouge); color: #fff; }
-  .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
-
-  input[type=text] {
-    font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
-    border: 2px solid var(--gris); width: 100%; margin: 8px 0;
-    background: var(--carte); color: var(--texte); outline: none;
-    font-family: 'Montserrat', sans-serif; font-weight: 600;
-    transition: border-color 0.2s, background 0.3s, color 0.3s;
-  }
-  input[type=text]:focus { border-color: var(--dore); }
-  
-  .row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
-  .row > * { flex: 1; min-width: 140px; }
-  .hidden { display: none !important; }
-  
-  .pill {
-    display: inline-block; padding: 6px 14px; border-radius: 999px;
-    background: var(--gris); font-size: 0.9rem; margin: 3px;
-    font-weight: 700; color: var(--texte);
-  }
-  .status { text-align: center; margin: 12px 0; font-weight: 600; }
-  
-  /* Style du tableau des scores en jeu */
-  .scoreboard {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px; margin: 20px 0;
-  }
-  .player-card {
-    background: var(--fond); border-radius: 12px; padding: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    border: 2px solid var(--gris); transition: all 0.3s ease;
-  }
-  .player-card.me { border-color: var(--dore); background: var(--carte); }
-  .player-card.winner { border-color: var(--dore); background: var(--carte); box-shadow: 0 4px 12px rgba(205, 164, 52, 0.2); }
-  
-  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
-  .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
-
-  .player-name { font-weight: 800; font-size: 1rem; }
-  .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
-
-  #questionBox {
-    background: var(--carte); color: var(--texte);
-    border-radius: 16px; padding: 30px; margin: 20px 0;
-    text-align: center; border: 2px solid var(--dore);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: background 0.3s, color 0.3s;
-  }
-  #wordDisplay {
-    font-size: clamp(40px, 8vw, 72px); font-weight: 900;
-    letter-spacing: 0.1em; margin-bottom: 16px; color: var(--dore);
-    text-transform: uppercase;
-  }
-  #instructionText { font-size: clamp(16px, 2vw, 20px); line-height: 1.5; font-weight: 600; opacity: 0.8; }
-  
-  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
-  #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
-  .timer-danger #timerFill { background: var(--msg-rouge); animation: pulse-danger 1s infinite; }
-  @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-  #timerText { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
-
-  #progressBar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 20px; background: var(--fond); border-radius: 12px;
-    margin: 16px 0; font-size: 0.9rem; font-weight: 700; border: 1px solid var(--gris);
-  }
-  .code-display {
-    font-family: monospace; font-size: 2.8rem; letter-spacing: 0.3em;
-    text-align: center; margin: 16px 0; background: var(--fond);
-    padding: 20px; border-radius: 16px; font-weight: 900;
-    color: var(--dore); border: 2px solid var(--gris);
-  }
-  
-  .recap-list { background: var(--fond); border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--gris); }
-  .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
-  .recap-item:last-child { border-bottom: none; }
-  .recap-good { color: var(--msg-vert); font-weight: 800; }
-
-  /* --- TABLEAU DE CLASSEMENT FINAL --- */
-  .pro-table {
-    width: 100%; border-collapse: collapse; margin-top: 16px;
-    background: var(--carte); border-radius: 12px; overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--gris);
-  }
-  .pro-table th {
-    background: var(--dore); color: #111; padding: 16px;
-    text-align: left; font-weight: 800; text-transform: uppercase;
-    font-size: 0.85rem; letter-spacing: 0.5px;
-  }
-  .pro-table td {
-    padding: 16px; border-bottom: 1px solid var(--gris);
-    font-weight: 600; color: var(--texte);
-  }
-  .pro-table tr:last-child td { border-bottom: none; }
-  .pro-table tr.winner-row { background: rgba(205, 164, 52, 0.1); }
-  .pro-table tr.winner-row td { color: var(--dore); font-weight: 900; }
-  .rank-badge {
-    display: inline-block; width: 32px; height: 32px;
-    line-height: 32px; text-align: center; border-radius: 50%;
-    background: var(--gris); color: var(--texte); font-weight: 800;
-  }
-  .rank-badge.gold { background: #fbbf24; color: #111; }
-  .rank-badge.silver { background: #9ca3af; color: #111; }
-  .rank-badge.bronze { background: #d97706; color: #fff; }
-</style>
+        /* Bouton Or */
+        .btn-gold { background-color: var(--dark); color: var(--gold); border: 1px solid var(--gold); transition: all 0.3s; }
+        .btn-gold:hover { background-color: var(--gold); color: white; }
+    </style>
 </head>
-<body>
-<div class="container">
-  <button id="themeToggle" title="Changer de thème">🌙</button>
+<body class="antialiased">
 
-  <h1>🔤 Anagramme – Quiz Multijoueur 🔤</h1>
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 py-4 transition-all">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="text-3xl font-luxury font-bold tracking-widest text-[#111]">LUXE<span class="text-[#C5A880]">.</span></a>
+            <div class="hidden md:flex gap-8 text-sm font-semibold tracking-wider uppercase">
+                <a href="#galerie" class="hover:text-[#C5A880] transition">Collection</a>
+                <a href="#histoire" class="hover:text-[#C5A880] transition">Notre Histoire</a>
+                <a href="admin.html" class="text-gray-400 hover:text-[#C5A880] transition">Admin</a>
+            </div>
+            <button onclick="toggleCart()" class="relative group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:text-[#C5A880] transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-[#C5A880] text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+            </button>
+        </div>
+    </nav>
 
-  <!-- ACCUEIL -->
-  <div id="screenHome">
-    <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
-    <div class="row">
-      <button id="btnCreate" class="btn-primaire">Créer une salle</button>
-      <input id="joinCode" type="text" placeholder="Code (4 chiffres)" maxlength="4" inputmode="numeric" style="max-width:180px" />
-      <button id="btnJoin" class="btn-secondaire">Rejoindre</button>
+    <!-- HERO SECTION -->
+    <header class="h-screen relative flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1920&q=80" alt="Mode" class="absolute inset-0 w-full h-full object-cover z-0">
+        <div class="absolute inset-0 bg-black/30 z-10"></div>
+        <div class="relative z-20 text-center px-4 max-w-4xl mx-auto reveal">
+            <p class="text-white tracking-[0.3em] uppercase text-sm mb-4">Collection Automne / Hiver 2026</p>
+            <h1 class="text-6xl md:text-8xl text-white font-luxury mb-8 leading-tight">L'Élégance <br> <span class="italic text-[#C5A880]">Intemporelle</span></h1>
+            <a href="#galerie" class="inline-block bg-white text-black font-semibold py-4 px-12 uppercase tracking-widest text-sm hover:bg-[#C5A880] hover:text-white transition duration-300">
+                Découvrir la collection
+            </a>
+        </div>
+    </header>
+
+    <!-- GALERIE DE VÊTEMENTS (Générée par Firebase) -->
+    <section id="galerie" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-luxury mb-4">Nos Pièces Exclusives</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto text-sm uppercase tracking-widest">Des créations uniques, confectionnées avec les meilleurs matériaux.</p>
+            </div>
+
+            <!-- Grille des produits -->
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <p class="col-span-full text-center text-gray-400 py-10">Chargement de la collection...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION HISTOIRE -->
+    <section id="histoire" class="py-24 bg-[#F9F8F6]">
+        <div class="max-w-4xl mx-auto px-6 text-center reveal">
+            <h2 class="text-3xl font-luxury mb-6">L'Art de la Confection</h2>
+            <p class="text-gray-600 leading-relaxed text-lg font-light">
+                Chaque pièce de notre collection est le fruit d'un savoir-faire artisanal. Nous sélectionnons les tissus les plus nobles pour vous offrir un vêtement qui traverse le temps. L'exclusivité n'est pas un luxe, c'est une signature.
+            </p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#111] text-white py-12 text-center">
+        <div class="text-3xl font-luxury font-bold tracking-widest mb-4">LUXE<span class="text-[#C5A880]">.</span></div>
+        <p class="text-gray-500 text-xs tracking-widest uppercase mb-4">&copy; 2026 LUXE. Tous droits réservés.</p>
+    </footer>
+
+    <!-- PANIER (SIDEBAR) -->
+    <div class="cart-sidebar fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-2xl z-50 flex flex-col">
+        <div class="p-6 border-b flex justify-between items-center">
+            <h3 class="text-2xl font-luxury">Votre Panier</h3>
+            <button onclick="toggleCart()" class="text-2xl hover:text-[#C5A880]">&times;</button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto" id="cart-items">
+            <p class="text-gray-400 text-center mt-10 text-sm">Votre panier est vide.</p>
+        </div>
+        <div class="p-6 border-t bg-gray-50">
+            <div class="flex justify-between font-bold text-lg mb-4">
+                <span>Total :</span>
+                <span id="cart-total">0.00 $</span>
+            </div>
+            <button onclick="checkout()" class="w-full btn-gold py-4 uppercase tracking-widest text-sm font-bold">Commander via WhatsApp</button>
+        </div>
     </div>
-    <div id="msg" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
-    <div class="status" style="opacity:0.6; font-size:0.85rem;">Crée une salle et partage le code aux autres joueurs</div>
-  </div>
 
-  <!-- LOBBY -->
-  <div id="screenLobby" class="hidden">
-    <h2>Salle d'attente</h2>
-    <p style="text-align:center;margin-bottom:8px;">Partage ce code à tes amis :</p>
-    <div class="code-display" id="lobbyCode">----</div>
-    <p class="status" id="lobbyStatus">Chargement…</p>
-    <div class="scoreboard" id="lobbyPlayers"></div>
-    <div class="row" id="hostControls">
-      <button id="btnStart" class="btn-primaire">🚀 Lancer la partie</button>
-      <button id="btnLobbyLeave" class="btn-danger" style="max-width:180px;">Quitter</button>
-    </div>
-    <div class="row" id="guestLeave" style="display:none;">
-      <button id="btnLobbyLeaveGuest" class="btn-danger">Quitter la salle</button>
-    </div>
-    <div id="msg2" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
-  </div>
+    <!-- SCRIPT FIREBASE - LECTURE DES PRODUITS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  <!-- JEU -->
-  <div id="screenGame" class="hidden">
-    <div class="status">
-      <span class="pill" id="qCounter">Question 1/20</span>
-    </div>
-    <div class="scoreboard" id="scoreboard"></div>
-    
-    <div id="questionBox">
-      <div id="wordDisplay">Mot</div>
-      <div id="instructionText">Trouve une anagramme de ce mot.</div>
-      <button id="btnVocal" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter le mot</button>
-    </div>
-    
-    <div id="timerBar"><div id="timerFill"></div></div>
-    <div id="timerText">30s</div>
+        // ⚠️ METS TA CONFIGURATION FIREBASE ICI
+        const firebaseConfig = {
+            apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
+            authDomain: "menu-f24cc.firebaseapp.com",
+            projectId: "menu-f24cc",
+            storageBucket: "menu-f24cc.firebasestorage.app",
+            messagingSenderId: "460095019040",
+            appId: "1:460095019040:web:45f931d14a59027e3b0445",
+        };
 
-    <div id="progressBar">
-      <span>📊 Joueurs ayant répondu</span>
-      <span><b id="answeredCount">0</b> / <b id="totalPlayers">0</b></span>
-    </div>
-    
-    <div class="row">
-      <input id="answer" type="text" placeholder="Ton anagramme…" autocomplete="off" />
-      <button id="btnSubmit" class="btn-primaire" style="max-width:120px">Valider</button>
-    </div>
-    
-    <div id="msg3" class="status"></div>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
-      <button id="btnGameLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter la partie</button>
-    </div>
-  </div>
+        // Charger les produits depuis Firebase
+        async function loadProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = ''; 
+            try {
+                const querySnapshot = await getDocs(collection(db, "vetements"));
+                
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<p class="col-span-full text-center text-gray-500">Aucun vêtement dans la collection pour le moment. Allez sur la page Admin pour en ajouter.</p>';
+                    return;
+                }
 
-  <!-- FIN -->
-  <div id="screenEnd" class="hidden">
-    <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="endTitle">Partie terminée</div>
-    
-    <table class="pro-table" id="finalScoreboard">
-      <thead>
-        <tr>
-          <th>Rang</th>
-          <th>Joueur</th>
-          <th>Score</th>
-          <th>Stats (✅/❌)</th>
-        </tr>
-      </thead>
-      <tbody id="finalScoreboardBody"></tbody>
-    </table>
-    
-    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des anagrammes</h3>
-    <div class="recap-list" id="recapList"></div>
+                querySnapshot.forEach((doc) => {
+                    const prod = doc.data();
+                    grid.innerHTML += `
+                        <div class="product-card rounded-sm overflow-hidden group reveal active">
+                            <div class="h-96 overflow-hidden relative">
+                                <img src="${prod.image}" alt="${prod.nom}" class="product-image w-full h-full object-cover transition duration-700">
+                                <div class="absolute top-4 right-4 bg-white px-3 py-1 text-xs uppercase tracking-wider font-bold">${prod.categorie}</div>
+                            </div>
+                            <div class="p-5 text-center">
+                                <h3 class="text-lg font-luxury mb-1">${prod.nom}</h3>
+                                <p class="text-[#C5A880] font-bold mb-4">${prod.prix} $</p>
+                                <button onclick="addToCart('${prod.nom}', ${prod.prix})" class="border border-black text-black px-6 py-2 text-xs uppercase tracking-widest hover:bg-black hover:text-white transition w-full">Ajouter</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                grid.innerHTML = '<p class="text-red-500 text-center">Erreur de connexion à la base de données.</p>';
+            }
+        }
 
-    <div class="row" style="margin-top:24px;">
-      <button id="btnLeave" class="btn-primaire">🏠 Retour à l'accueil</button>
-    </div>
-  </div>
-</div>
+        // Logique du Panier
+        let cart = [];
+        window.toggleCart = function() { document.querySelector('.cart-sidebar').classList.toggle('open'); }
+        window.addToCart = function(name, price) {
+            cart.push({ name, price });
+            updateCart();
+            window.toggleCart();
+        }
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCount = document.getElementById('cart-count');
+            cartItems.innerHTML = '';
+            let total = 0;
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-400 text-center mt-10 text-sm">Votre panier est vide.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    cartItems.innerHTML += `
+                        <div class="flex justify-between items-center mb-4 border-b pb-4">
+                            <div>
+                                <h4 class="font-semibold text-sm">${item.name}</h4>
+                                <span class="text-[#C5A880] font-bold text-sm">${item.price} $</span>
+                            </div>
+                            <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500">&times;</button>
+                        </div>`;
+                });
+            }
+            cartTotal.innerText = `${total.toFixed(2)} $`;
+            cartCount.innerText = cart.length;
+        }
+        window.removeFromCart = function(index) { cart.splice(index, 1); updateCart(); }
+        window.checkout = function() {
+            if (cart.length === 0) return alert("Votre panier est vide.");
+            let message = "Bonjour LUXE, je souhaite commander :%0A";
+            let total = 0;
+            cart.forEach(item => { message += `- ${item.name} (${item.price} $)%0A`; total += item.price; });
+            message += `%0A*Total : ${total.toFixed(2)} $*`;
+            window.open(`https://wa.me/243890000000?text=${message}`, '_blank'); // Remplace par ton numéro
+        }
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+        loadProducts();
 
-<script>
-/* ============================================================
-   🔥 CONFIG FIREBASE
-   ============================================================ */
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyA8OQxm5BcHOB2dyWCayavNYpGSut4l7W4",
-  authDomain: "eeee-1387d.firebaseapp.com",
-  projectId: "eeee-1387d",
-  storageBucket: "eeee-1387d.firebasestorage.app",
-  messagingSenderId: "777961527724",
-  appId: "1:777961527724:web:5c222e42be24af0ab38209"
-};
-firebase.initializeApp(FIREBASE_CONFIG);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-/* ============================================================
-   BANQUE DE MOTS (Anagrammes)
-   ============================================================ */
-const ANAGRAMMES = [
-  { mot: "Sinistre", anagrammes: ["Insister"] },
-  { mot: "Givre", anagrammes: ["Grive"] },
-  { mot: "Hectare", anagrammes: ["Acheter", "Châtrée", "Trachée", "Rachète"] },
-  { mot: "Brute", anagrammes: ["Buter", "Tuber", "Turbe", "Rebut"] },
-  { mot: "Margarine", anagrammes: ["Marginera"] },
-  { mot: "Oracles", anagrammes: ["Recolas", "Scarole", "Racoles", "Écloras"] },
-  { mot: "Chantage", anagrammes: ["Changeât"] },
-  { mot: "Nos", anagrammes: ["Son"] },
-  { mot: "Sec", anagrammes: ["Ces"] },
-  { mot: "Casque", anagrammes: ["Caques", "Sacqué"] },
-  { mot: "Cirque", anagrammes: ["Crique"] },
-  { mot: "Aube", anagrammes: ["Beau"] },
-  { mot: "Arme", anagrammes: ["Amer", "Rame"] },
-  { mot: "Rester", anagrammes: ["Terres", "Tenser", "Stérer"] },
-  { mot: "Partie", anagrammes: ["Parité", "Tipera", "Pirate", "Paître", "Prêtait"] },
-  { mot: "Granit", anagrammes: ["Garnit", "Gratin", "Grinta", "Ingrat", "Rating"] },
-  { mot: "Écrit", anagrammes: ["Récit", "Citer"] },
-  { mot: "Détour", anagrammes: ["Douter", "Tordue", "Tourde"] },
-  { mot: "Agent", anagrammes: ["Étang", "Hanté", "Géant", "Gênât"] },
-  { mot: "Sauver", anagrammes: ["Saveur"] },
-  { mot: "Ouvert", anagrammes: ["Trouvé", "Voûter", "Rouvet"] },
-  { mot: "Éclats", anagrammes: ["Caltés", "Castel", "Lacets", "Lactés", "Tacles"] },
-  { mot: "Détenu", anagrammes: ["Denture", "Étendu", "Tendre"] },
-  { mot: "Ombres", anagrammes: ["Sombres"] },
-  { mot: "Grêle", anagrammes: ["Léger", "Geler", "Règle", "Gerle"] },
-  { mot: "Suer", anagrammes: ["Rues", "Ruse", "Sure", "Ures", "User"] },
-  { mot: "Star", anagrammes: ["Arts", "Rats", "Sart", "Tars", "Tsar"] },
-  { mot: "Tige", anagrammes: ["Gîte"] },
-  { mot: "Paveur", anagrammes: ["Vapeur", "Pauvre"] },
-  { mot: "Ancre", anagrammes: ["Crâne", "Caner", "Cerna", "Écran", "Rance", "Nacre"] },
-  { mot: "Verbe", anagrammes: ["Brève"] },
-  { mot: "Rage", anagrammes: ["Gare", "Areg", "Fera", "Grea"] },
-  { mot: "Coursier", anagrammes: ["Croiseur", "Croisure", "Secourir", "Sourcier"] },
-  { mot: "Départ", anagrammes: ["Pétard"] },
-  { mot: "Stable", anagrammes: ["Tables"] },
-  { mot: "Virage", anagrammes: ["Rivage", "Viager", "Vaigre", "Gravie"] },
-  { mot: "Quatre", anagrammes: ["Quater", "Taquer", "Traque"] },
-  { mot: "Langue", anagrammes: ["Englua", "Gnaule", "Lagune"] },
-  { mot: "Crabe", anagrammes: ["Berça"] },
-  { mot: "Juste", anagrammes: ["Sujet"] },
-  { mot: "Copieur", anagrammes: ["Croupie", "Poucier"] },
-  { mot: "Baliste", anagrammes: ["Bétails", "Établis", "Bestial"] },
-  { mot: "Soigneur", anagrammes: ["Guérison"] },
-  { mot: "Empirer", anagrammes: ["Premier", "Périmer"] },
-  { mot: "Crainte", anagrammes: ["Certain"] },
-  { mot: "Semaine", anagrammes: ["Animées"] },
-  { mot: "Réalité", anagrammes: ["Atelier"] },
-  { mot: "Argent", anagrammes: ["Gérant", "Grenat", "Garent", "Ragent", "Ranger", "Greant", "Régnât", "Ganter"] },
-  { mot: "Adonner", anagrammes: ["Redonna", "Donnera"] },
-  { mot: "Carte", anagrammes: ["Trace", "Écart", "Carte", "Cérat", "Recta", "Créât"] },
-  { mot: "Destiner", anagrammes: ["Dentiers"] },
-  { mot: "Ministre", anagrammes: ["Intérims"] },
-  { mot: "Création", anagrammes: ["Canotier"] },
-  { mot: "Robinet", anagrammes: ["Obtenir"] },
-  { mot: "Résultat", anagrammes: ["Lutteras"] },
-  { mot: "Service", anagrammes: ["Viscère"] },
-  { mot: "Prendre", anagrammes: ["Reprend"] },
-  { mot: "Mienne", anagrammes: ["Ennemi"] },
-  { mot: "Secret", anagrammes: ["Crêtes", "Certes", "Terces"] },
-  { mot: "Plié", anagrammes: ["Pile"] },
-  { mot: "Rap", anagrammes: ["Par"] },
-  { mot: "Miel", anagrammes: ["Mile", "Lime"] },
-  { mot: "Manoir", anagrammes: ["Romain", "Minora", "Romani"] },
-  { mot: "Poutres", anagrammes: ["Posture", "Troupes"] },
-  { mot: "Clientèle", anagrammes: ["Étincelle"] },
-  { mot: "Alimenter", anagrammes: ["Terminale"] },
-  { mot: "Anticiper", anagrammes: ["Patricien", "Pincerait", "Praticien"] },
-  { mot: "Présenter", anagrammes: ["Serpenter"] },
-  { mot: "President", anagrammes: ["Prédisent", "Déprisent", "Prétendis"] },
-  { mot: "Pointure", anagrammes: ["Éruption", "Pointeur", "Toupiner"] },
-  { mot: "Canard", anagrammes: ["Cadran"] },
-  { mot: "Sac", anagrammes: ["Cas"] },
-  { mot: "Marche", anagrammes: ["Macher", "Charme"] },
-  { mot: "Port", anagrammes: ["Trop"] },
-  { mot: "Marie", anagrammes: ["Aimer", "Maire", "Ramie"] },
-  { mot: "Voisin", anagrammes: ["Vision"] },
-  { mot: "Cogne", anagrammes: ["Congé"] },
-  { mot: "Crime", anagrammes: ["Merci"] },
-  { mot: "Face", anagrammes: ["Café"] },
-  { mot: "Neige", anagrammes: ["Génie"] },
-  { mot: "Obéir", anagrammes: ["Boire"] },
-  { mot: "Rouge", anagrammes: ["Orgue", "Goure", "Rogue"] },
-  { mot: "Laide", anagrammes: ["Idéal", "Délai"] },
-  { mot: "Voter", anagrammes: ["Votre"] },
-  { mot: "Après", anagrammes: ["Repas"] },
-  { mot: "Fois", anagrammes: ["Soif"] },
-  { mot: "Ami", anagrammes: ["Mai"] },
-  { mot: "Amie", anagrammes: ["Aime"] },
-  { mot: "Orange", anagrammes: ["Organe"] },
-  { mot: "Août", anagrammes: ["Auto"] },
-  { mot: "Sœur", anagrammes: ["Ourse"] },
-  { mot: "Art", anagrammes: ["Rat"] },
-  { mot: "Courte", anagrammes: ["Croûte"] },
-  { mot: "Contre", anagrammes: ["Cornet", "Conter"] },
-  { mot: "Tirer", anagrammes: ["Trier"] },
-  { mot: "Course", anagrammes: ["Source"] },
-  { mot: "Ange", anagrammes: ["Nage", "Gêna"] },
-  { mot: "Poule", anagrammes: ["Loupe"] },
-  { mot: "Avec", anagrammes: ["Cave"] },
-  { mot: "Douce", anagrammes: ["Coude"] },
-  { mot: "Baignade", anagrammes: ["Badinage"] },
-  { mot: "Cuisson", anagrammes: ["Cousins", "Coussin", "Sucions"] },
-  { mot: "Céréale", anagrammes: ["Recalée", "Lacérée", "Relacée"] },
-  { mot: "Région", anagrammes: ["Ignore"] },
-  { mot: "Creuser", anagrammes: ["Recrues", "Recures", "Récuser"] },
-  { mot: "Devenu", anagrammes: ["Vendue"] },
-  { mot: "Ordure", anagrammes: ["Rôdeur", "Doreur", "Dorure"] },
-  { mot: "Monstre", anagrammes: ["Mentors", "Montres"] },
-  { mot: "Reprise", anagrammes: ["Pierres", "Prières", "Respire"] },
-  { mot: "Bientôt", anagrammes: ["Obtient", "Bottine", "Boitent"] },
-  { mot: "Croiser", anagrammes: ["Sorcier", "Recrois"] },
-  { mot: "Démon", anagrammes: ["Monde"] },
-  { mot: "Lecteur", anagrammes: ["Lecture"] },
-  { mot: "Cerveau", anagrammes: ["Évacuer"] },
-  { mot: "Facile", anagrammes: ["Fécial", "Ficela", "Calife"] },
-  { mot: "Ressort", anagrammes: ["Trésors", "Rostres"] },
-  { mot: "Sauce", anagrammes: ["Sceau", "Cause"] },
-  { mot: "Singe", anagrammes: ["Signe"] },
-  { mot: "Concert", anagrammes: ["Concret"] },
-  { mot: "Lion", anagrammes: ["Loin"] },
-  { mot: "Pari", anagrammes: ["Pair", "Pria", "Ripa"] },
-  { mot: "Rive", anagrammes: ["Vire", "Ivre"] },
-  { mot: "Pure", anagrammes: ["Puer", "Peur", "Repu", "Rupe"] },
-  { mot: "Info", anagrammes: ["Foin", "Fion"] },
-  { mot: "Tour", anagrammes: ["Trou"] },
-  { mot: "Lire", anagrammes: ["Lier", "Riel"] },
-  { mot: "Malice", anagrammes: ["Limace"] },
-  { mot: "Carie", anagrammes: ["Acier", "Craie", "Écria", "Créai"] },
-  { mot: "Dirige", anagrammes: ["Rigide"] },
-  { mot: "Carnet", anagrammes: ["Nectar", "Cranté", "Centra", "Canter", "Cantre", "Créant", "Encart", "Trance"] },
-  { mot: "Prière", anagrammes: ["Pierre"] }, 
-  { mot: "Aube", anagrammes: ["Beau"] },
-  { mot: "Récital", anagrammes: ["Clairet"] },
-  { mot: "Imposer", anagrammes: ["Promise"] },
-  { mot: "Soigner", anagrammes: ["Régions", "ignores"] },
-  { mot: "Idole", anagrammes: ["iodle"] },
-  { mot: "Forêt", anagrammes: ["Forte"] },
-  { mot: "Danger", anagrammes: ["Grande"] },
-  { mot: "Tenter", anagrammes: ["Trente"] },
-  { mot: "Pastel", anagrammes: ["Palets", "Plaste", "Plates", "septal", "peltas"] },
-  { mot: "Dicter", anagrammes: ["Direct", "Crédit", "décrit"] },
-  { mot: "Misère", anagrammes: ["Remise", "Émeris", "Mirées", "Rimées"] },
-  { mot: "Leçon", anagrammes: ["Oncle", "clone"] },
-  { mot: "Toupie", anagrammes: ["Utopie", "Epouti"] },
-  { mot: "Oublier", anagrammes: ["boulier", "éblouir", "riboule"] },
-  { mot: "Sucre", anagrammes: ["Sucer", "Reçus", "écrus", "curés", "Crues"] },
-  { mot: "Arpent", anagrammes: ["Parent"] },
-  { mot: "Entier", anagrammes: ["Inerte", "Rétine", "Nitrée", "Terrie"] },
-  { mot: "Graduer", anagrammes: ["Draguer", "gardeur"] },
-  { mot: "Barre", anagrammes: ["Arbre"] },
-  { mot: "Manioc", anagrammes: ["Camion"] },
-  { mot: "Poser", anagrammes: ["Perso", "pores", "prose", "repos"] },
-  { mot: "Jeune", anagrammes: ["enjeu"] },
-  { mot: "Manège", anagrammes: ["Mangée", "Ménage", "Magnée", "engame"] },
-  { mot: "Lampe", anagrammes: ["Ample", "Palme"] },
-  { mot: "Triste", anagrammes: ["Titres", "tirets", "sertit"] },
-  { mot: "Achète", anagrammes: ["Tachée"] },
-  { mot: "Couler", anagrammes: ["Clouer"] },
-  { mot: "Tomber", anagrammes: ["Trombe"] },
-  { mot: "Blouse", anagrammes: ["Boules"] }, 
-  { mot: "Aigle", anagrammes: ["Agile", "gelai", "algie", "liage"] },
-  { mot: "Facteur", anagrammes: ["Facture", "Cafteur"] },
-  { mot: "Mesurer", anagrammes: ["Résumer"] },
-  { mot: "Inviter", anagrammes: ["Vitrine", "Inverti"] },
-  { mot: "Étire", anagrammes: ["Tirée", "triée", "etier"] },
-  { mot: "Reussite", anagrammes: ["Tireuses", "Trieuses", "restitués"] },
-  { mot: "Réussi", anagrammes: ["Suries", "sieurs", "Russie"] },
-  { mot: "Jouets", anagrammes: ["joutes"] },
-  { mot: "Boules", anagrammes: ["Blouse"] },
-  { mot: "Festin", anagrammes: ["Feints"] },
-  { mot: "Regime", anagrammes: ["Emigre", "Rémige", "Migrée"] },
-  { mot: "Noirs", anagrammes: ["Rions", "irons", "noris"] },
-  { mot: "Senior", anagrammes: ["Noires", "Réions", "Irones"] },
-  { mot: "Aporie", anagrammes: ["opérai"] },
-  { mot: "Phoniatres", anagrammes: ["Anthropise"] },
-  { mot: "Sieste", anagrammes: ["Tissée"] },
-  { mot: "Vitesse", anagrammes: ["Vêtisse", "servîtes", "estives"] },
-  { mot: "Harpe", anagrammes: ["Phare", "Raphe"] },
-  { mot: "Anglais", anagrammes: ["Alignas", "signala", "sanglai", "glanais"] },
-  { mot: "Traffic", anagrammes: ["Farcît"] },
-  { mot: "Galerie", anagrammes: ["Élargie", "gèlerai", "liègera", "reliage", "Algérie"] },
-  { mot: "Ralenti", anagrammes: ["Alentir", "reliant", "Retinal", "trenail"] },
-  { mot: "Laveur", anagrammes: ["valeur", "lavure", "Revalu", "Levura"] },
-  { mot: "Demane", anagrammes: ["Amende", "Ménade", "Mandée", "Damnée"] },
-  { mot: "Scénariste", anagrammes: ["Cartésiens", "sénatrices", "Résistance"] },
-  { mot: "Centre", anagrammes: ["Créent", "Récent"] },
-  { mot: "Étrangère", anagrammes: ["Agréèrent", "enterrage", "Régénérât"] },
-  { mot: "Miracles", anagrammes: ["Carlisme"] },
-  { mot: "Sapin", anagrammes: ["Pains", "Pisan", "Pians"] },
-  { mot: "Rêver", anagrammes: ["Verre"] }, 
-  { mot: "Présent", anagrammes: ["Serpent"] },
-  { mot: "Cigare", anagrammes: ["Cirage", "gracie", "gerçai"] },
-  { mot: "Love", anagrammes: ["Vélo", "volé", "vole"] },
-  { mot: "Stade", anagrammes: ["Dates"] },
-  { mot: "Gars", anagrammes: ["Gras"] },
-  { mot: "Meuf", anagrammes: ["Fume"] },
-  { mot: "Appareil", anagrammes: ["Rappelai", "Palperai"] },
-  { mot: "Sainte", anagrammes: ["Tisane", "Satiné", "tenais", "nastie", "Niâtes"] },
-  { mot: "Encore", anagrammes: ["coréen", "Cornée", "Écorné"] },
-  { mot: "Uriner", anagrammes: ["Ruiner", "Réunir"] },
-  { mot: "Teneur", anagrammes: ["Neutre", "Tenure", "Retenu", "Enture", "Eurent"] },
-  { mot: "Crible", anagrammes: ["Cibler"] },
-  { mot: "Reflet", anagrammes: ["Trèfle"] },
-  { mot: "Hareng", anagrammes: ["Hargne"] },
-  { mot: "Igname", anagrammes: ["Amigne", "Minage", "Gamine", "Gémina"] }, 
-  { mot: "Corbeau", anagrammes: ["Caroube"] },
-  { mot: "Pièce", anagrammes: ["Épice"] },
-  { mot: "Ronde", anagrammes: ["Drone", "Doner", "Norde", "Redon"] },
-  { mot: "Arc", anagrammes: ["Car"] },
-  { mot: "Naturel", anagrammes: ["Laurent"] },
-  { mot: "Haricot", anagrammes: ["Chariot", "Torchai", "Rochait"] },
-  { mot: "Pots", anagrammes: ["Stop"] },
-  { mot: "Casser", anagrammes: ["Césars", "Crasse", "crases", "sacrés", "scares"] },
-  { mot: "Bancaire", anagrammes: ["Carabine", "cabinera"] },
-  { mot: "Entraide", anagrammes: ["Éteindra", "Dentaire", "Étendrai"] },
-  { mot: "Courrier", anagrammes: ["Recourir"] },
-  { mot: "Poudrier", anagrammes: ["Produire"] },
-  { mot: "Paroisse", anagrammes: ["Passoire", "Poserais", "Reposais", "Poissera"] },
-  { mot: "Affermir", anagrammes: ["Affirmer"] },
-  { mot: "Jonction", anagrammes: ["Conjoint"] }, 
-  { mot: "Maternel", anagrammes: ["Lamenter", "Râlement", "lamèrent", "Remelant"] },
-  { mot: "Cavalier", anagrammes: ["Calvaire", "clavaire", "Claverai"] },
-  { mot: "Allonger", anagrammes: ["Rallonge"] },
-  { mot: "Créature", anagrammes: ["Créateur", "écarteur", "réacteur", "curètera"] },
-  { mot: "Seigneur", anagrammes: ["Insurgée", "Rugines", "seringue"] },
-  { mot: "Oriental", anagrammes: ["Relation", "Enrôlait", "laieront"] },
-  { mot: "Migraine", anagrammes: ["Imaginer"] },
-  { mot: "Pastiche", anagrammes: ["Pistache", "Chipates", "scaphite"] },
-  { mot: "Pagode", anagrammes: ["Dopage"] },
-  { mot: "Attirer", anagrammes: ["Atterri", "Traître", "traiter", "titrera"] },
-  { mot: "Désirer", anagrammes: ["Résider", "Sidérer"] },
-  { mot: "Étrange", anagrammes: ["Gérante", "Argenté", "agréent"] },
-  { mot: "Dominer", anagrammes: ["Moindre", "Endormi"] },
-  { mot: "Dentier", anagrammes: ["Teindre", "détenir"] },
-  { mot: "Gorille", anagrammes: ["Girolle"] }, 
-  { mot: "Aplatir", anagrammes: ["Parlait", "Partial", "platrai"] },
-  { mot: "Filtrer", anagrammes: ["Flétrir", "Flirter"] },
-  { mot: "Jeter", anagrammes: ["Rejet"] },
-  { mot: "Perse", anagrammes: ["Peser", "pères", "serpe"] },
-  { mot: "Encre", anagrammes: ["Cerné", "Crene"] },
-  { mot: "Ancre", anagrammes: ["Écran", "crâne", "cerna"] },
-  { mot: "Totem", anagrammes: ["Motte", "Tomte", "Matot"] },
-  { mot: "Maigre", anagrammes: ["Mirage"] },
-  { mot: "Évier", anagrammes: ["Rivée", "virée"] },
-  { mot: "Typhon", anagrammes: ["Python"] },
-  { mot: "Sonder", anagrammes: ["Drones", "Rondes"] },
-  { mot: "Salut", anagrammes: ["Lutas", "Talus"] },
-  { mot: "Amande", anagrammes: ["Amenda", "Menade"] },
-  { mot: "Canotier", anagrammes: ["Création", "conterai", "réaction"] },
-  { mot: "Noix", anagrammes: ["Inox"] }, 
-  { mot: "Utopie", anagrammes: ["Toupie"] },
-  { mot: "Rigolé", anagrammes: ["Gloire"] },
-  { mot: "Olivier", anagrammes: ["Voilier", "Violier"] },
-  { mot: "Part", anagrammes: ["Rapts"] },
-  { mot: "Cause", anagrammes: ["Sauce", "Sceau"] },
-  { mot: "Ouest", anagrammes: ["Ouste", "Toues", "soute"] },
-  { mot: "Brame", anagrammes: ["Ambre"] },
-  { mot: "Peinard", anagrammes: ["Épinard", "peindra", "prendrai"] },
-  { mot: "Rétine", anagrammes: ["Inerte", "Entier"] },
-  { mot: "Subir", anagrammes: ["Rubis", "ubris"] },
-  { mot: "Tarte", anagrammes: ["Ratte", "Taret", "tâter"] },
-  { mot: "Spectre", anagrammes: ["Respect", "sceptre", "percets"] },
-  { mot: "Féconder", anagrammes: ["Défoncer", "défronce"] },
-  { mot: "Avocatier", anagrammes: ["Octaviera"] },
-  { mot: "Sabre", anagrammes: ["Abers", "Brase"] }, 
-  { mot: "Ciel", anagrammes: ["Lice"] },
-  { mot: "Veine", anagrammes: ["Envie", "vinée"] },
-  { mot: "Satin", anagrammes: ["Saint", "Tains", "Tians"] },
-  { mot: "Glaire", anagrammes: ["Argile", "Élargi", "Agrile"] },
-  { mot: "Fourmi", anagrammes: ["Fumoir"] },
-  { mot: "Isabelle", anagrammes: ["Abeilles", "baillées"] },
-  { mot: "Milan", anagrammes: ["Malin", "liman"] },
-  { mot: "Credo", anagrammes: ["Coder", "Corde", "décor"] },
-  { mot: "Fait", anagrammes: ["Fiat"] },
-  { mot: "Béatrice", anagrammes: ["Bactérie", "Acerbite", "Becterai"] },
-  { mot: "Carole", anagrammes: ["Oracle", "Racole"] },
-  { mot: "Laurent", anagrammes: ["Naturel"] },
-  { mot: "Rosalie", anagrammes: ["Solaire", "isolera", "oralise"] },
-  { mot: "Martine", anagrammes: ["Termina", "Mâtiner", "Martien"] },
-  { mot: "Elvire", anagrammes: ["lièvre", "réveil", "livrée"] }, 
-  { mot: "Banque", anagrammes: ["Banqué", "Buquéa"] },
-  { mot: "Clarinette", anagrammes: ["Intercalent", "Relactinente"] },
-  { mot: "Dentelle", anagrammes: ["Tendelle"] },
-  { mot: "Fleur", anagrammes: ["Rufel", "Fluer"] },
-  { mot: "Garage", anagrammes: ["Agager", "Ragage"] },
-  { mot: "Héros", anagrammes: ["Rohes", "Horse"] },
-  { mot: "Igloo", anagrammes: ["Oligo"] },
-  { mot: "Jardin", anagrammes: ["Randji", "Rindja"] },
-  { mot: "Kiosque", anagrammes: ["Koquise"] },
-  { mot: "Lanterne", anagrammes: ["Ennartel", "Reelnant"] },
-  { mot: "Médaille", anagrammes: ["Dilemma", "Médilla"] },
-  { mot: "Noir", anagrammes: ["Rion", "Iron"] },
-  { mot: "Ovale", anagrammes: ["Voléa", "Valéo"] },
-  { mot: "Parole", anagrammes: ["Reopal", "Pareil"] },
-  { mot: "Quatre", anagrammes: ["Traqué", "Quarté"] },
-  { mot: "Rivière", anagrammes: ["Révrier", "Rivérer"] },
-  { mot: "Soleil", anagrammes: ["Oisell", "Lioels"] },
-  { mot: "Tombé", anagrammes: ["Béomt", "Métob"] },
-  { mot: "Utile", anagrammes: ["Lutéi", "Teuil"] },
-  { mot: "Vacance", anagrammes: ["Canvace", "Cavance"] },
-  { mot: "Wagon", anagrammes: ["Gowan", "Angow"] },
-  { mot: "Xylophone", anagrammes: ["Loxhyphone", "Phonelyox"] },
-  { mot: "Yaourt", anagrammes: ["Toyaúr", "Rayout"] },
-  { mot: "Zèbre", anagrammes: ["Bèzer", "Rébez"] },
-  { mot: "Avion", anagrammes: ["Navio", "Viano"] },
-  { mot: "Bureau", anagrammes: ["Urbéau", "Rebua"] },
-  { mot: "Chien", anagrammes: ["Niche", "Enchi"] },
-  { mot: "Drapeau", anagrammes: ["Paradeu", "Rapadeu"] },
-  { mot: "Étoile", anagrammes: ["Toéile", "Loéite"] },
-  { mot: "Fleur", anagrammes: ["Reful", "Rufel"] },
-  { mot: "Gomme", anagrammes: ["Mogme", "Gmome"] },
-  { mot: "Hiver", anagrammes: ["Vireh", "Revih"] },
-  { mot: "Idée", anagrammes: ["Déie", "Éide"] },
-  { mot: "Jardin", anagrammes: ["Drajin", "Rijdan"] }, 
-  { mot: "Échos", anagrammes: [] },
-  { mot: "Rouler", anagrammes: ["Lourer"] },
-  { mot: "Grèce", anagrammes: ["Gerce"] },
-  { mot: "Enfant", anagrammes: ["Fanent"] },
-  { mot: "Danser", anagrammes: ["Sandre", "Redans", "Denars", "Darnes"] },
-  { mot: "Poil", anagrammes: ["Poli"] },
-  { mot: "Onze", anagrammes: ["Zone"] },
-  { mot: "Mien", anagrammes: ["Mine"] },
-  { mot: "File", anagrammes: ["Fiel"] },
-  { mot: "Veau", anagrammes: ["Aveu"] },
-  { mot: "Sont", anagrammes: ["Tons"] },
-  { mot: "Vies", anagrammes: ["Vise"] },
-  { mot: "Noce", anagrammes: ["Once"] },
-  { mot: "Cale", anagrammes: ["Cela", "Lace"] },
-  { mot: "Aile", anagrammes: ["Laie"] },
-  { mot: "Apte", anagrammes: ["Tape", "Pâte", "Peta"] },
-  { mot: "Aire", anagrammes: ["Raie", "Réai"] },
-  { mot: "Béni", anagrammes: ["Bien", "Bine"] },
-  { mot: "Cure", anagrammes: ["Crue", "Reçu", "Écru", "Curé"] },
-  { mot: "Dose", anagrammes: ["Odes", "Sode", "Deos"] },
-  { mot: "Tchao", anagrammes: ["Cahot", "Catho"] },
-  { mot: "Mire", anagrammes: ["Émir", "Rime"] },
-  { mot: "Soie", anagrammes: ["Oies"] },
-  { mot: "Huer", anagrammes: ["Hure", "Heur"] },
-  { mot: "Sabre", anagrammes: ["Baser"] },
-  { mot: "Asile", anagrammes: ["Ailes", "Alise", "Laies", "Lésai", "Elias"] },
-  { mot: "Avril", anagrammes: ["Rival", "Viral", "Livra"] },
-  { mot: "Baver", anagrammes: ["Brave"] },
-  { mot: "Bayou", anagrammes: ["Boyau"] },
-  { mot: "Boues", anagrammes: ["Bouse"] },
-  { mot: "Pouce", anagrammes: ["Coupe"] },
-  { mot: "Calme", anagrammes: ["Clame", "Macle"] },
-  { mot: "Gaver", anagrammes: ["Grave", "Greva"] },
-  { mot: "Essor", anagrammes: ["Roses"] },
-  { mot: "Balle", anagrammes: ["Label"] },
-  { mot: "Cruel", anagrammes: ["Culer", "Lucre", "Recul"] },
-  { mot: "Ligne", anagrammes: ["Linge"] },
-  { mot: "Louer", anagrammes: ["Roule", "Relou", "Loure", "Ourle"] },
-  { mot: "Miser", anagrammes: ["Remis", "Rimes", "Mires", "Émirs"] },
-  { mot: "Lasse", anagrammes: ["Sales", "Lésas", "Salse"] },
-  { mot: "Neveu", anagrammes: ["Neuve", "Venue"] },
-  { mot: "Norme", anagrammes: ["Morne", "Renom"] },
-  { mot: "Train", anagrammes: ["Riant", "Tarin", "Nitra"] },
-  { mot: "Varie", anagrammes: ["Ravie", "Vraie", "Vaire", "Rêvai"] },
-  { mot: "Aider", anagrammes: ["Raide", "Radié", "Draie", "Aride", "Adire"] },
-  { mot: "Actes", anagrammes: ["Caste", "Cates"] },
-  { mot: "Corne", anagrammes: ["Ronce", "Nocer", "Nécro", "Encor"] },
-  { mot: "Buste", anagrammes: ["Tubes", "Butes"] },
-  { mot: "Peigne", anagrammes: ["Pignée"] },
-  { mot: "Serrure", anagrammes: ["Erreurs"] },
-  { mot: "Périr", anagrammes: ["Prier", "Riper"] },
-  { mot: "Récré", anagrammes: ["Créer"] },
-  { mot: "Règne", anagrammes: ["Genre", "Gêner", "Grène"] },
-  { mot: "Régie", anagrammes: ["Érige"] },
-  { mot: "Salon", anagrammes: ["Sonal"] },
-  { mot: "Élève", anagrammes: ["Levée"] },
-  { mot: "Égale", anagrammes: ["Eagle"] },
-  { mot: "Ont", anagrammes: ["Ton"] },
-  { mot: "Lieur", anagrammes: ["Liure", "Ruile", "Luire", "Relui"] },
-  { mot: "Rare", anagrammes: ["Erra"] },
-  { mot: "Élire", anagrammes: ["Relie", "Elier"] },
-  { mot: "Gâter", anagrammes: ["Gérât", "Great", "Targe"] },
-  { mot: "Tue", anagrammes: ["Eut"] },
-  { mot: "Tisseur", anagrammes: ["Tissure", "Réussit", "Surites"] },
-  { mot: "Sape", anagrammes: ["Aspe", "Pesa"] },
-  { mot: "Pénaliser", anagrammes: ["Pralinées"] },
-  { mot: "Soulève", anagrammes: ["Évolues", "Voleuse", "Louvées"] },
-  { mot: "Autre", anagrammes: ["Tuera", "Taure", "Urate"] },
-  { mot: "Bière", anagrammes: ["Briée", "Ibère"] },
-  { mot: "Bouchère", anagrammes: ["Rebouche"] },
-  { mot: "Écarter", anagrammes: ["Cratère", "Cretera", "Recréât", "Reterça", "Retrace", "Tercera"] },
-  { mot: "Mater", anagrammes: ["Trame", "Tréma", "Métrа", "Marte"] },
-  { mot: "Acide", anagrammes: ["Cédai"] },
-  { mot: "Prétoire", anagrammes: ["Portière", "Porterie"] },
-  { mot: "Caf", anagrammes: ["Fac"] },
-  { mot: "Invités", anagrammes: ["Investi"] },
-  { mot: "Écraser", anagrammes: ["Recréas", "Recaser", "Créeras"] },
-  { mot: "Parlement", anagrammes: ["Palmèrent", "Lampèrent", "Emperlant"] },
-  { mot: "Vaseline", anagrammes: ["Niveales", "Enlevais", "Avelines", "Alevines"] },
-  { mot: "Élire", anagrammes: ["Elier", "Relie"] },
-  { mot: "Géo", anagrammes: ["Ego"] },
-  { mot: "Recaler", anagrammes: ["Relacer", "Lacérer", "Carrelé"] },
-  { mot: "Cassure", anagrammes: ["Casseur", "Creusas", "Curasse", "Recusas", "Suceras", "Sucrase"] },
-  { mot: "Hanté", anagrammes: ["Aneth", "Thane"] },
-  { mot: "Valable", anagrammes: ["Lavable"] },
-  { mot: "Chères", anagrammes: ["Sécher", "Rêches", "Escher"] },
-  { mot: "Freiner", anagrammes: ["Inférer"] },
-  { mot: "Admire", anagrammes: ["Medira", "Damier", "Merdai", "Redima"] },
-  { mot: "Attiser", anagrammes: ["Artiste", "Attires", "Ratites", "Restait", "Tarites", "Tirates", "Traites", "Triates"] },
-  { mot: "Scénario", anagrammes: ["Acerions", "Aciérons", "Aconiers", "Acoriens", "Coranise", "Écornais"] },
-  { mot: "Poète", anagrammes: ["Potée", "Topée"] },
-  { mot: "Poste", anagrammes: ["Potes", "Optes", "Pesto", "Topes"] },
-  { mot: "Énoncer", anagrammes: ["Cornéen", "Encorné", "Renonce"] },
-  { mot: "Concerte", anagrammes: ["Concrète", "Écorcent", "Cocréent"] },
-  { mot: "Rabattre", anagrammes: ["Baratter"] },
-  { mot: "Créative", anagrammes: ["Réactive"] },
-  { mot: "Titan", anagrammes: ["Tinta", "Tatin"] },
-  { mot: "Terrien", anagrammes: ["Terrine"] },
-  { mot: "Rangement", anagrammes: ["Garnement"] },
-  { mot: "Prime", anagrammes: ["Imper"] },
-  { mot: "Traîner", anagrammes: ["Terrain", "Ternira", "Rentrai", "Ratiner", "Nitrera"] },
-  { mot: "Cacher", anagrammes: ["Crache", "Crecha"] },
-  { mot: "Arche", anagrammes: ["Chera"] },
-  { mot: "Biberon", anagrammes: ["Bobiner"] },
-  { mot: "Torche", anagrammes: ["Troche", "Rochet", "Chérot"] },
-  { mot: "Résurrection", anagrammes: ["Intercourses", "Reconstruise", "SECURISERONT"] },
-  { mot: "Aire", anagrammes: ["Raie"] },
-  { mot: "Bilan", anagrammes: ["Liban"] },
-  { mot: "Népal", anagrammes: ["Panel", "Pénal"] },
-  { mot: "Irlande", anagrammes: ["Landier"] },
-  { mot: "Serbie", anagrammes: ["Bières", "Brisée"] },
-  { mot: "Israël", anagrammes: ["Éliras", "Lieras", "Lisera", "Relais", "Relias"] },
-  { mot: "Malte", anagrammes: ["Métal", "Mêlât"] },
-  { mot: "Mali", anagrammes: ["Lima", "Mail"] },
-  { mot: "Pologne", anagrammes: ["Plonge", "Poêlon"] },
-  { mot: "Venise", anagrammes: ["Veines", "Envies", "Vinées"] },
-  { mot: "Lucien", anagrammes: ["Inclue"] },
-  { mot: "Maître", anagrammes: ["Tamier", "Métrai", "Mérita", "Mitera", "Émirat"] },
-  { mot: "Pêcher", anagrammes: ["Prêché", "Perche"] },
-  { mot: "Sucrerie", anagrammes: ["Sucrière"] },
-  { mot: "Espérer", anagrammes: ["Repères", "Repeser"] },
-  { mot: "Savons", anagrammes: ["Avons"] },
-  { mot: "Crêpe", anagrammes: ["Percé"] },
-  { mot: "Parisien", anagrammes: ["Aspirine"] },
-  { mot: "Connoise", anagrammes: ["Canonise", "Énonçais"] },
-  { mot: "Annécien", anagrammes: ["Ancienne", "Nancéien"] },
-  { mot: "Anlesien", anagrammes: ["Salienne"] },
-  { mot: "Levain", anagrammes: ["Alevin", "Alvine", "Nivale", "Valine"] },
-  { mot: "Graine", anagrammes: ["Ingéra", "Ignare", "Argien", "Régnai", "Genrai"] },
-  { mot: "Tourte", anagrammes: ["Tortue", "Touret", "Trouet", "Tutore"] },
-  { mot: "Saveur", anagrammes: ["Sauver"] },
-  { mot: "Meunier", anagrammes: ["Mineure", "Ruminée"] },
-  { mot: "Céréale", anagrammes: ["Lacérée", "Recalée", "Relacée"] },
-  { mot: "Seigle", anagrammes: ["Église", "Lieges", "Siglée", "Elegis"] },
-  { mot: "Palmier", anagrammes: ["Lampier", "Remplia", "Rempila", "Emplira", "Lempira"] },
-  { mot: "Grenade", anagrammes: ["Agender", "Dérange"] },
-  { mot: "Cerise", anagrammes: ["Cirées", "Écries", "Criées"] },
-  { mot: "Goyave", anagrammes: ["Voyage"] },
-  { mot: "Narcisse", anagrammes: ["Rancisse", "Rinçassent", "Sarcines"] },
-  { mot: "Israel", anagrammes: ["Éliras", "Lieras", "Lisera", "Relais", "Silera", "Serial", "Resali"] },
-  { mot: "Algérie", anagrammes: ["Élargie", "Galerie", "Gèlerai", "Liègera", "Reliage"] },
-  { mot: "Brésil", anagrammes: ["Libres", "Libers", "Ribles"] },
-  { mot: "Arménie", anagrammes: ["Anémier", "Ranimée", "Réanime", "Manière"] },
-  { mot: "Croatie", anagrammes: ["Coterai", "Coïtera", "Cairote"] },
-  { mot: "Chine", anagrammes: ["Chien", "Niche"] },
-  { mot: "Roumanie", anagrammes: ["Aumônier"] },
-  { mot: "Pérou", anagrammes: ["Proue"] },
-  { mot: "Routes", anagrammes: ["Outrés", "Résout", "Toures", "Troues", "Rouste", "Rouets"] },
-  { mot: "Atomes", anagrammes: ["Ôtâmes"] },
-  { mot: "Métro", anagrammes: ["Morte", "Tomer", "Ormet"] },
-  { mot: "Rumine", anagrammes: ["Mineur", "Murine"] },
-  { mot: "Mordue", anagrammes: ["Remoud", "Moudre"] },
-  { mot: "Est", anagrammes: ["Tes", "Set"] },
-  { mot: "Coeur", anagrammes: ["Coure", "Ecro"] },
-  { mot: "Essence", anagrammes: ["Censées"] },
-  { mot: "Silence", anagrammes: ["Enclise"] },
-  { mot: "Scène", anagrammes: ["Cènes", "Censé"] },
-  { mot: "Naniser", anagrammes: ["Narines", "Rennais"] },
-  { mot: "Récolte", anagrammes: ["Electro"] },
-  { mot: "Seul", anagrammes: ["Élus", "Lues", "Leus"] },
-  { mot: "Clos", anagrammes: ["Cols"] },
-  { mot: "Tatoueur", anagrammes: ["Tourteau"] },
-  { mot: "Avent", anagrammes: ["Navet", "Vante", "Venta"] },
-  { mot: "Pièce", anagrammes: ["Épice"] },
-  { mot: "Ceinture", anagrammes: ["Centurie"] },
-  { mot: "Torsader", anagrammes: ["Dartrose"] },
-  { mot: "Vareuse", anagrammes: ["Évasure", "Raveuse", "Verseau"] },
-  { mot: "Étable", anagrammes: ["Batele", "Tablée"] },
-  { mot: "Givre", anagrammes: ["Grive"] },
-  { mot: "Navire", anagrammes: ["Avenir", "Arvine", "Aviner", "Ravine", "Vinera"] },
-  { mot: "Rebord", anagrammes: ["Border", "Broder"] },
-  { mot: "Littoral", anagrammes: ["Tortilla", "Trollait"] },
-  { mot: "Bonté", anagrammes: ["Béton", "Bento"] },
-  { mot: "Frime", anagrammes: ["Fermi", "Firme", "Frémi"] },
-  { mot: "Bruit", anagrammes: ["Tribu"] },
-  { mot: "Plate", anagrammes: ["Palet", "Lepta", "Pelât", "Palet"] },
-  { mot: "Lavande", anagrammes: ["Vandale"] },
-  { mot: "Verseau", anagrammes: ["Vareuse"] },
-  { mot: "Avenir", anagrammes: ["Navire"] },
-  { mot: "Sphère", anagrammes: ["Herpès"] },
-  { mot: "Guide", anagrammes: ["Digue"] },
-  { mot: "Unies", anagrammes: ["Usine", "Nuise", "Sinue"] },
-  { mot: "Notaire", anagrammes: ["Notarié", "Noterai", "Orienta", "Renotai"] },
-  { mot: "Farine", anagrammes: ["Freina", "Inféra"] },
-  { mot: "Muraille", anagrammes: ["Mailleur", "Maillure"] },
-  { mot: "Ampleur", anagrammes: ["Plumera", "Palmure"] },
-  { mot: "Bouchère", anagrammes: ["Rebouche"] },
-  { mot: "Testeur", anagrammes: ["Surette", "Trustée"] },
-  { mot: "Adresse", anagrammes: ["Résédas", "Dérasés", "Dérases"] },
-  { mot: "Tiède", anagrammes: ["Édite", "Déité", "Diète"] },
-  { mot: "Samedi", anagrammes: ["Médias", "Admise", "Amides"] },
-  { mot: "Ténor", anagrammes: ["Trône", "Notre", "Noter", "Étron"] },
-  { mot: "Slogan", anagrammes: ["Lagons", "Galons"] },
-  { mot: "Roussi", anagrammes: ["Souris"] },
-  { mot: "Audace", anagrammes: ["Cadeau"] },
-  { mot: "Césure", anagrammes: ["Céruse", "Creuse", "Curées", "Écures", "Sucrée", "Récuse"] },
-  { mot: "Nantaise", anagrammes: ["Néantisai", "Anisaient"] },
-  { mot: "Lensoise", anagrammes: ["Insolées", "Nolisées"] },
-  { mot: "Viennois", anagrammes: ["Envions", "Innoves", "Venions", "Veinons"] },
-  { mot: "Patine", anagrammes: ["Tapine", "Paient", "Inapte", "Aptien"] },
-  { mot: "Élever", anagrammes: ["Relève", "Révèle"] },
-  { mot: "Dérive", anagrammes: ["Dévier", "Dévire", "Drivée", "Évider", "Verdie"] },
-  { mot: "Grâce", anagrammes: ["Garce", "Gerça"] },
-  { mot: "Éternité", anagrammes: ["Étreinte", "Reinette", "Reteinte"] },
-  { mot: "Angleterre", anagrammes: ["L’Étrangère", "Galérèrent", "Régalèrent"] },
-  { mot: "Modestie", anagrammes: ["Mois d’été"] },
-  { mot: "Divorce", anagrammes: ["Corvidé"] },
-  { mot: "Fragile", anagrammes: ["Giflera"] },
-  { mot: "Tomate", anagrammes: ["Émotta"] },
-  { mot: "Souterrains", anagrammes: ["Restaurions", "Saturerions", "Tonsurerais", "Surnoterais"] },
-  { mot: "Persistante", anagrammes: ["Étripassent", "Patisserent", "Pressentait", "Rapetissent", "Retapissent", "Tapissèrent"] },
-  { mot: "Amuser", anagrammes: ["Amures", "Résuma", "Mesura", "Masure", "Maures", "Mauser", "Mueras", "Remuas"] },
-  { mot: "Libère", anagrammes: ["Riblée", "Belier"] },
-  { mot: "Réduction", anagrammes: ["Reconduit"] },
-  { mot: "Triangle", anagrammes: ["Intégral", "Glairent"] },
-  { mot: "Œil", anagrammes: ["L’oie"] },
-  { mot: "Robe", anagrammes: ["Orbe", "Bore", "Boer"] },
-  { mot: "Alarme", anagrammes: ["Lamera"] },
-  { mot: "Chaise", anagrammes: ["Séchai", "Eschai", "Echais"] },
-  { mot: "Vote", anagrammes: ["Veto"] },
-  { mot: "Valoir", anagrammes: ["L’avoir", "Lavoir"] },
-  { mot: "Véhiculer", anagrammes: ["CHEVREUIL"] },
-  { mot: "Beauté", anagrammes: ["Abutée"] },
-  { mot: "Réaliser", anagrammes: ["Lisérera", "Relieras", "Rééliras"] },
-  { mot: "Puits", anagrammes: ["Tupis"] },
-  { mot: "Garage", anagrammes: ["Ragage", "Gagera"] },
-  { mot: "Balance", anagrammes: ["Bancale"] },
-  { mot: "Histoire", anagrammes: ["Historie"] },
-  { mot: "Français", anagrammes: ["Francisa"] },
-  { mot: "Latin", anagrammes: ["Liant"] },
-  { mot: "Algèbre", anagrammes: ["Alberge", "Brêlage", "Gérable"] },
-  { mot: "Masculin", anagrammes: ["Culminas", "Muscinal"] },
-  { mot: "Scorpion", anagrammes: ["Picorons"] },
-  { mot: "Infirmière", anagrammes: ["Infirmerie"] },
-  { mot: "Patient", anagrammes: ["Piétant"] },
-  { mot: "Couleur", anagrammes: ["Cloueur", "Coulure"] },
-  { mot: "Bras", anagrammes: ["Bars", "Rabs"] },
-  { mot: "Croisade", anagrammes: ["Décorais", "Coderais", "Décroisa", "Sarcoide"] },
-  { mot: "Claire", anagrammes: ["Éclair", "Calier"] },
-  { mot: "Maître", anagrammes: ["Mérita", "Émirat", "Mitera", "Tamier", "Metrai"] }
-];
-
-/* ============================================================
-   CONSTANTES & ÉTAT GLOBAL
-   ============================================================ */
-const TOTAL_QUESTIONS = 20;
-const POINTS_PER_CORRECT = 10;
-const QUESTION_DURATION_MS = 30000; // 30 secondes
-
-let uid = null;
-let pseudo = localStorage.getItem('josef_pseudo') || '';
-let roomCode = null;
-let isHost = false;
-let unsubscribeRoom = null;
-let currentRoom = null;
-let timerInterval = null;
-let lastAnsweredQ = -1;
-
-const $ = id => document.getElementById(id);
-const show = id => $(id).classList.remove('hidden');
-const hide = id => $(id).classList.add('hidden');
-const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
-const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\-' ]/g,'').trim();
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function genCode(){ return String(Math.floor(1000 + Math.random() * 9000)); }
-
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'fr-FR';
-    u.rate = 1.0;
-    window.speechSynthesis.speak(u);
-  }
-}
-
-/* ============================================================
-   GESTION DU THÈME
-   ============================================================ */
-function initTheme() {
-  const savedTheme = localStorage.getItem('josef_theme');
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-    $('themeToggle').textContent = '☀️';
-  }
-}
-
-$('themeToggle').addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  const isDark = document.body.classList.contains('dark-mode');
-  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
-});
-
-/* ============================================================
-   INITIALISATION
-   ============================================================ */
-async function initAuth(){
-  initTheme();
-  
-  if (pseudo) $('pseudo').value = pseudo;
-  
-  const savedRoom = localStorage.getItem('josef_room');
-  if (savedRoom) {
-    try {
-      await auth.signInAnonymously();
-      uid = auth.currentUser.uid;
-      const snap = await db.collection('rooms').doc(savedRoom).get();
-      if (snap.exists && snap.data().players[pseudo]) {
-        roomCode = savedRoom;
-        isHost = (snap.data().hostName === pseudo);
-        enterLobby();
-        return;
-      }
-    } catch(e) { console.log("Pas de session précédente"); }
-  }
-
-  try {
-    await auth.signInAnonymously();
-    uid = auth.currentUser.uid;
-  } catch(e) {
-    console.error(e);
-    setMsg('msg', '❌ Auth échouée : ' + e.message, 'var(--msg-rouge)');
-  }
-}
-
-/* ============================================================
-   CRÉATION & CONNEXION SALLE
-   ============================================================ */
-async function createRoom(){
-  let code = null;
-  for (let i = 0; i < 10; i++) {
-    const testCode = genCode();
-    const snap = await db.collection('rooms').doc(testCode).get();
-    if (!snap.exists) { code = testCode; break; }
-  }
-  if (!code) return setMsg('msg', '❌ Impossible de créer la salle.', 'var(--msg-rouge)');
-
-  await db.collection('rooms').doc(code).set({
-    state: 'lobby',
-    hostName: pseudo,
-    players: { [pseudo]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 } },
-    questions: [],
-    currentQ: 0,
-    qStartAt: 0,
-    winnerName: null,
-    createdAt: Date.now()
-  });
-  
-  localStorage.setItem('josef_room', code);
-  isHost = true;
-  roomCode = code;
-  enterLobby();
-}
-
-async function joinRoom(code){
-  const ref = db.collection('rooms').doc(code);
-  const snap = await ref.get();
-  if (!snap.exists) return setMsg('msg', '❌ Salle introuvable.', 'var(--msg-rouge)');
-  const data = snap.data();
-  if (data.state !== 'lobby') return setMsg('msg', '❌ La partie a déjà commencé.', 'var(--msg-rouge)');
-
-  if (!data.players[pseudo]) {
-    await ref.update({
-      [`players.${pseudo}`]: { score: 0, lastAnswerQ: -1, lastWrongQ: -1, correctAnswers: 0, wrongAnswers: 0 }
-    });
-  }
-  
-  localStorage.setItem('josef_room', code);
-  isHost = false;
-  roomCode = code;
-  enterLobby();
-}
-
-/* ============================================================
-   LOBBY
-   ============================================================ */
-function enterLobby(){
-  hide('screenHome'); show('screenLobby'); hide('screenGame'); hide('screenEnd');
-  $('lobbyCode').textContent = roomCode;
-
-  if (unsubscribeRoom) unsubscribeRoom();
-  unsubscribeRoom = db.collection('rooms').doc(roomCode).onSnapshot(
-    (doc) => {
-      if (!doc.exists) return;
-      currentRoom = doc.data();
-      renderRoom(currentRoom);
-    },
-    (err) => {
-      console.error('❌ Erreur Firestore :', err);
-      setMsg('msg2', '❌ Erreur : ' + err.message, 'var(--msg-rouge)');
-    }
-  );
-}
-
-function renderRoom(game){
-  if (game.state === 'lobby') {
-    hide('screenGame'); hide('screenEnd'); show('screenLobby');
-    renderLobby(game);
-  } else if (game.state === 'playing') {
-    hide('screenLobby'); hide('screenEnd'); show('screenGame');
-    renderGame(game);
-  } else if (game.state === 'ended') {
-    hide('screenLobby'); hide('screenGame'); show('screenEnd');
-    renderEnd(game);
-  }
-}
-
-function renderLobby(game){
-  const players = game.players || {};
-  const names = Object.keys(players);
-  $('lobbyPlayers').innerHTML = names.map(name => `
-    <div class="player-card ${name===pseudo?'me':''}">
-      <span class="player-name">${escapeHtml(name)}${name===game.hostName?' 👑':''}</span>
-      <span class="pill">${name===pseudo?'toi':'prêt'}</span>
-    </div>
-  `).join('');
-
-  if (game.hostName === pseudo) {
-    $('hostControls').style.display = 'flex';
-    $('guestLeave').style.display = 'none';
-  } else {
-    $('hostControls').style.display = 'none';
-    $('guestLeave').style.display = 'flex';
-  }
-  $('btnStart').disabled = names.length < 2;
-  $('lobbyStatus').textContent = names.length < 2
-    ? "⏳ Attends au moins 1 autre joueur…"
-    : `✅ ${names.length} joueur(s) prêt(s) — l'hôte peut lancer.`;
-}
-
-$('btnStart').addEventListener('click', async () => {
-  if (!currentRoom || currentRoom.hostName !== pseudo) return;
-  const names = Object.keys(currentRoom.players || {});
-  if (names.length < 2) return setMsg('msg2', 'Il faut au moins 2 joueurs.', 'var(--msg-rouge)');
-  
-  // Ici on utilise la même logique de "history" (Firestore config) pour ne pas répéter les questions
-  const historySnap = await db.collection('config').doc('history_ana').get(); // J'ai nommé 'history_ana' pour ne pas mélanger avec le quiz champ lexical
-  let history = historySnap.exists ? historySnap.data().asked || [] : [];
-
-  let all = [];
-  for (const item of ANAGRAMMES) {
-    const qId = item.mot;
-    if (!history.includes(qId)) {
-      all.push({ mot: item.mot, anagrammes: item.anagrammes });
-    }
-  }
-
-  if (all.length < TOTAL_QUESTIONS) {
-    history = [];
-    all = [];
-    for (const item of ANAGRAMMES) {
-      all.push({ mot: item.mot, anagrammes: item.anagrammes });
-    }
-  }
-
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]];
-  }
-  
-  const questions = all.slice(0, TOTAL_QUESTIONS);
-  const newAskedIds = questions.map(q => q.mot);
-  const updatedHistory = [...history, ...newAskedIds];
-  await db.collection('config').doc('history_ana').set({ asked: updatedHistory });
-
-  const updates = {
-    state: 'playing',
-    currentQ: 0,
-    questions,
-    qStartAt: Date.now(),
-    winnerName: null
-  };
-  names.forEach(n => {
-    updates[`players.${n}.score`] = 0;
-    updates[`players.${n}.lastAnswerQ`] = -1;
-    updates[`players.${n}.lastWrongQ`] = -1;
-    updates[`players.${n}.correctAnswers`] = 0;
-    updates[`players.${n}.wrongAnswers`] = 0;
-  });
-  try { await db.collection('rooms').doc(roomCode).update(updates); }
-  catch(e){ console.error(e); }
-});
-
-/* ============================================================
-   JEU
-   ============================================================ */
-function renderGame(game){
-  const players = game.players || {};
-  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-  
-  $('scoreboard').innerHTML = entries.map(([name,p]) => {
-    let stateClass = '';
-    if (p.lastAnswerQ === game.currentQ) {
-      stateClass = p.lastWrongQ === game.currentQ ? 'bad' : 'good';
-    }
-    return `
-    <div class="player-card ${name===pseudo?'me':''} ${name===game.winnerName?'winner':''} ${stateClass}">
-      <span class="player-name">${escapeHtml(name)}</span>
-      <span class="player-score">${p.score||0}</span>
-    </div>
-  `}).join('');
-
-  let answered = 0;
-  for (const name of Object.keys(players)) {
-    if (players[name].lastAnswerQ === game.currentQ) answered++;
-  }
-  $('answeredCount').textContent = answered;
-  $('totalPlayers').textContent = Object.keys(players).length;
-
-  const questions = game.questions || [];
-  const qIdx = game.currentQ || 0;
-  $('qCounter').textContent = `Question ${qIdx+1}/${questions.length}`;
-  
-  const q = questions[qIdx];
-  if (q) {
-    if (lastAnsweredQ !== qIdx) {
-      $('wordDisplay').textContent = q.mot;
-      $('instructionText').textContent = "Trouve une anagramme de ce mot.";
-      $('answer').value = ""; // Vide le clavier
-      $('answer').disabled = false;
-      $('btnSubmit').disabled = false;
-      setMsg('msg3', '');
-      lastAnsweredQ = qIdx;
-    }
-  }
-
-  startTimerLoop();
-}
-
-function startTimerLoop(){
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    if (!currentRoom || currentRoom.state !== 'playing') return;
-    const elapsed = Date.now() - (currentRoom.qStartAt || 0);
-    const remain = Math.max(0, QUESTION_DURATION_MS - elapsed);
-    const pct = (remain / QUESTION_DURATION_MS) * 100;
-    $('timerFill').style.width = pct + '%';
-    $('timerText').textContent = Math.ceil(remain/1000) + 's';
-    $('timerBar').classList.toggle('timer-danger', remain < 5000);
-    
-    if (remain <= 0 && currentRoom.hostName === pseudo) handleTimeout();
-  }, 250);
-}
-
-async function handleTimeout(){
-  if (!currentRoom || currentRoom.state !== 'playing') return;
-  if (currentRoom.qStartAt_processed === currentRoom.qStartAt) return;
-  
-  const qIdx = currentRoom.currentQ;
-  const q = currentRoom.questions[qIdx];
-  
-  setMsg('msg3', `⏱ Temps écoulé ! Une anagramme de ${q.mot} était : ${q.anagrammes[0] || '...'}`, 'var(--dore)');
-  speak("Temps écoulé.");
-  
-  setTimeout(async () => {
-    const questions = currentRoom.questions || [];
-    const updates = { qStartAt_processed: currentRoom.qStartAt };
-    if (qIdx + 1 >= questions.length) {
-      updates.state = 'ended';
-      updates.winnerName = null;
-    } else {
-      updates.currentQ = qIdx + 1;
-      updates.qStartAt = Date.now();
-    }
-    try { await db.collection('rooms').doc(roomCode).update(updates); }
-    catch(e){ console.error(e); }
-  }, 1000); // 1 seconde
-}
-
-/* ============================================================
-   SOUMISSION DES RÉPONSES (Joueur)
-   ============================================================ */
-$('btnSubmit').addEventListener('click', submitAnswer);
-$('answer').addEventListener('keydown', e => { if (e.key === 'Enter') submitAnswer(); });
-
-$('btnVocal').addEventListener('click', () => {
-  if (currentRoom && currentRoom.questions) {
-    const q = currentRoom.questions[currentRoom.currentQ];
-    if (q) speak("Trouve une anagramme du mot " + q.mot);
-  }
-});
-
-async function submitAnswer(){
-  if (!currentRoom || currentRoom.state !== 'playing' || $('answer').disabled) return;
-  const qIdx = currentRoom.currentQ;
-  const userVal = normalize($('answer').value);
-  if (!userVal) return;
-  const q = currentRoom.questions[qIdx];
-  if (!q) return;
-
-  // On vérifie si l'anagramme proposée est dans la liste
-  const anagramListNorm = q.anagrammes.map(a => normalize(a));
-  const correct = anagramListNorm.includes(userVal);
-  
-  $('answer').disabled = true;
-  $('btnSubmit').disabled = true;
-
-  const ref = db.collection('rooms').doc(roomCode);
-
-  if (correct) {
-    setMsg('msg3', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
-    speak("Correct !");
-    
-    const pData = currentRoom.players[pseudo] || { score: 0, correctAnswers: 0 };
-    const myScore = (pData.score || 0) + POINTS_PER_CORRECT;
-    const myCorrects = (pData.correctAnswers || 0) + 1;
-
-    const updates = {
-      [`players.${pseudo}.score`]: myScore,
-      [`players.${pseudo}.lastAnswerQ`]: qIdx,
-      [`players.${pseudo}.correctAnswers`]: myCorrects
-    };
-    
-    setTimeout(async () => {
-      if (qIdx + 1 >= currentRoom.questions.length) {
-        updates.state = 'ended';
-        updates.winnerName = pseudo;
-      } else {
-        updates.currentQ = qIdx + 1;
-        updates.qStartAt = Date.now();
-      }
-      try { await ref.update(updates); } catch(e){ console.error(e); }
-    }, 1000);
-    
-  } else {
-    setMsg('msg3', `❌ Mauvaise réponse.`, 'var(--msg-rouge)');
-    speak("Mauvaise réponse.");
-    
-    const pData = currentRoom.players[pseudo] || { wrongAnswers: 0 };
-    const myWrongs = (pData.wrongAnswers || 0) + 1;
-
-    try {
-      await ref.update({
-        [`players.${pseudo}.lastWrongQ`]: qIdx,
-        [`players.${pseudo}.lastAnswerQ`]: qIdx,
-        [`players.${pseudo}.wrongAnswers`]: myWrongs
-      });
-      
-      const snap = await ref.get();
-      const data = snap.data();
-      const players = data.players || {};
-      const allWrong = Object.keys(players).length > 0 && Object.values(players).every(p => p.lastWrongQ === qIdx);
-      
-      if (allWrong) {
-        setMsg('msg3', `❌ Tout le monde a raté !`, 'var(--dore)');
-        
-        setTimeout(async () => {
-          const updates = {};
-          if (qIdx + 1 >= data.questions.length) {
-            updates.state = 'ended';
-          } else {
-            updates.currentQ = qIdx + 1;
-            updates.qStartAt = Date.now();
-          }
-          await ref.update(updates);
-        }, 1000);
-      }
-    } catch(e){ console.error(e); }
-  }
-}
-
-/* ============================================================
-   QUITTER LA PARTIE
-   ============================================================ */
-async function leaveRoom() {
-  if (!confirm("Êtes-vous sûr de vouloir quitter ?")) return;
-
-  if (roomCode && pseudo) {
-    try {
-      await db.collection('rooms').doc(roomCode).update({
-        [`players.${pseudo}`]: firebase.firestore.FieldValue.delete()
-      });
-    } catch(e) { console.error(e); }
-  }
-  localStorage.removeItem('josef_room');
-  location.reload();
-}
-
-$('btnLobbyLeave').addEventListener('click', leaveRoom);
-$('btnLobbyLeaveGuest').addEventListener('click', leaveRoom);
-$('btnGameLeave').addEventListener('click', leaveRoom);
-
-/* ============================================================
-   FIN DE PARTIE (TABLEAU PRO)
-   ============================================================ */
-function renderEnd(game){
-  if (timerInterval) clearInterval(timerInterval);
-  
-  const players = game.players || {};
-  const entries = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-  
-  const winnerName = entries.length > 0 ? entries[0][0] : null;
-  const winnerScore = winnerName ? entries[0][1].score : 0;
-  const tied = entries.length > 1 && entries[1][1].score === winnerScore;
-
-  const tbody = $('finalScoreboardBody');
-  tbody.innerHTML = entries.map(([name,p],i) => {
-    let rankIcon = '';
-    let rankClass = '';
-    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
-    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
-    else if (i === 2) { rankIcon = '🥉'; rankClass = 'bronze'; }
-    else { rankIcon = i + 1; }
-
-    const isWinner = name === winnerName && !tied;
-
-    return `
-      <tr class="${isWinner ? 'winner-row' : ''}">
-        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
-        <td>${escapeHtml(name)} ${isWinner ? '👑' : ''}</td>
-        <td style="color:var(--dore); font-size:1.2rem;">${p.score||0} pts</td>
-        <td>✅ ${p.correctAnswers||0} | ❌ ${p.wrongAnswers||0}</td>
-      </tr>
-    `;
-  }).join('');
-  
-  if (tied) {
-    $('endTitle').textContent = `🤝 Égalité entre les joueurs à ${winnerScore} pts !`;
-  } else if (winnerName) {
-    $('endTitle').textContent = `🏆 ${winnerName} gagne avec ${winnerScore} pts !`;
-  } else {
-    $('endTitle').textContent = "⏱ Fin de partie — aucun gagnant";
-  }
-
-  const questions = game.questions || [];
-  $('recapList').innerHTML = questions.map((q, i) => `
-    <div class="recap-item">
-      <span><b>Q${i+1}.</b> ${q.mot}</span>
-      <span class="recap-good">➡️ ${q.anagrammes[0] || ''}...</span>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   NAVIGATION ACCUEIL
-   ============================================================ */
-$('btnCreate').addEventListener('click', async () => {
-  const p = $('pseudo').value.trim();
-  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
-  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
-  pseudo = p;
-  localStorage.setItem('josef_pseudo', pseudo);
-  try { await createRoom(); }
-  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
-});
-
-$('btnJoin').addEventListener('click', async () => {
-  const p = $('pseudo').value.trim();
-  const code = $('joinCode').value.trim();
-  if (!p) return setMsg('msg', 'Entre un pseudo.', 'var(--msg-rouge)');
-  if (!/^\d{4}$/.test(code)) return setMsg('msg', 'Code à 4 chiffres requis.', 'var(--msg-rouge)');
-  if (!uid) return setMsg('msg', 'Connexion Firebase en cours…', 'var(--msg-rouge)');
-  pseudo = p;
-  localStorage.setItem('josef_pseudo', pseudo);
-  try { await joinRoom(code); }
-  catch(e) { console.error(e); setMsg('msg', '❌ ' + e.message, 'var(--msg-rouge)'); }
-});
-
-$('btnLeave').addEventListener('click', () => {
-  localStorage.removeItem('josef_room');
-  location.reload();
-});
-
-/* ============================================================
-   DÉMARRAGE
-   ============================================================ */
-initAuth();
-</script>
+        // Animation au défilement
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
