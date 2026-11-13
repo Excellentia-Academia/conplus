@@ -51,13 +51,23 @@
                             <option>Accessoires</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Photo du vêtement</label>
-                        <input type="file" id="prod-image" accept="image/*" required class="w-full bg-black border border-gray-700 rounded p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C5A880] file:text-black hover:file:bg-white cursor-pointer">
+                    
+                    <!-- LE CHOIX : SOIT URL, SOIT UPLOAD -->
+                    <div class="border border-gray-700 p-4 rounded bg-black">
+                        <p class="text-sm text-[#C5A880] font-bold mb-2">Image du vêtement</p>
+                        
+                        <label class="block text-xs text-gray-400 mb-1">Option 1 : Lien URL (Rapide)</label>
+                        <input type="url" id="prod-image-url" placeholder="https://..." class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white mb-4 text-sm">
+                        
+                        <div class="text-center text-xs text-gray-500 mb-2">--- OU ---</div>
+
+                        <label class="block text-xs text-gray-400 mb-1">Option 2 : Uploader un fichier</label>
+                        <input type="file" id="prod-image-file" accept="image/*" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C5A880] file:text-black hover:file:bg-white cursor-pointer">
                     </div>
+
                     <button type="submit" id="submit-btn" class="w-full bg-[#C5A880] text-black font-bold py-2 rounded hover:bg-white transition mt-4">Ajouter à la boutique</button>
                     <p id="add-status" class="text-green-500 text-sm text-center hidden mt-2">Vêtement ajouté avec succès !</p>
-                    <p id="upload-status" class="text-yellow-500 text-sm text-center hidden mt-2">Compression et envoi en cours... (Veuillez patienter)</p>
+                    <p id="upload-status" class="text-yellow-500 text-sm text-center hidden mt-2">Traitement en cours...</p>
                 </form>
             </div>
 
@@ -88,7 +98,7 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        // LOGIQUE DE CONNEXION
+        // Connexion
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
@@ -109,8 +119,7 @@
             }
         });
 
-        // --- LA NOUVELLE FONCTION MAGIQUE DE COMPRESSION ---
-        // Elle prend l'image, la réduit à 800px de large max, et la compresse à 70% de qualité.
+        // Compression d'image (seulement si on choisit l'upload)
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -120,73 +129,74 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // Taille max pour un site web
+                        const MAX_WIDTH = 800; 
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
-                        
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        // On convertit en JPEG à 70% de qualité (très léger)
-                        canvas.toBlob((blob) => {
-                            resolve(blob);
-                        }, 'image/jpeg', 0.7);
+                        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
                     };
                 };
             });
         }
 
-        // AJOUTER UN PRODUIT
+        // Ajouter un produit
         document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('prod-name').value;
             const prix = document.getElementById('prod-price').value;
             const categorie = document.getElementById('prod-category').value;
-            const file = document.getElementById('prod-image').files[0];
+            
+            const urlInput = document.getElementById('prod-image-url').value;
+            const fileInput = document.getElementById('prod-image-file').files[0];
             
             const status = document.getElementById('add-status');
             const uploadStatus = document.getElementById('upload-status');
             const submitBtn = document.getElementById('submit-btn');
 
-            if (!file) return alert("Veuillez sélectionner une image.");
+            let finalImageUrl = "";
 
-            try {
+            // Si l'utilisateur a mis un lien URL
+            if (urlInput.trim() !== "") {
+                finalImageUrl = urlInput;
                 uploadStatus.classList.remove('hidden');
-                uploadStatus.innerText = "Compression de l'image...";
+                uploadStatus.innerText = "Enregistrement de l'URL...";
+            } 
+            // Sinon, s'il a choisi un fichier
+            else if (fileInput) {
+                uploadStatus.classList.remove('hidden');
+                uploadStatus.innerText = "Compression et envoi (quelques secondes)...";
                 submitBtn.disabled = true;
-                submitBtn.innerText = "Patientez...";
+                try {
+                    const compressedFile = await compressImage(fileInput);
+                    const storageRef = ref(storage, 'vetements/' + Date.now() + '.jpg');
+                    await uploadBytes(storageRef, compressedFile);
+                    finalImageUrl = await getDownloadURL(storageRef);
+                } catch (error) {
+                    alert("Erreur lors de l'upload du fichier.");
+                    uploadStatus.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    return;
+                }
+            } else {
+                return alert("Veuillez fournir un lien URL ou uploader une photo.");
+            }
 
-                // 1. ON COMPRESSE L'IMAGE AVANT L'ENVOI
-                const compressedFile = await compressImage(file);
-
-                uploadStatus.innerText = "Envoi sécurisé vers Firebase...";
-
-                // 2. On upload l'image compressée
-                const storageRef = ref(storage, 'vetements/' + Date.now() + '_' + nom.replace(/\s+/g, '') + '.jpg');
-                await uploadBytes(storageRef, compressedFile);
-                
-                // 3. On récupère le lien
-                const imageUrl = await getDownloadURL(storageRef);
-
-                // 4. On sauvegarde dans Firestore
-                await addDoc(collection(db, "vetements"), { nom, prix, categorie, image: imageUrl });
+            // Enregistrement dans Firestore (avec l'URL finale, qu'elle vienne d'internet ou de l'upload)
+            try {
+                submitBtn.disabled = true;
+                await addDoc(collection(db, "vetements"), { nom, prix, categorie, image: finalImageUrl });
                 
                 status.classList.remove('hidden');
                 uploadStatus.classList.add('hidden');
                 document.getElementById('add-product-form').reset();
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Ajouter à la boutique";
-                
                 setTimeout(() => status.classList.add('hidden'), 3000);
                 loadAdminProducts();
-                
             } catch (error) {
-                console.error(error);
-                alert("Erreur lors de l'ajout.");
-                uploadStatus.classList.add('hidden');
+                alert("Erreur d'enregistrement dans la base.");
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Ajouter à la boutique";
             }
         });
 
