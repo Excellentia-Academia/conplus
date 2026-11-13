@@ -1,1376 +1,195 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Champ lexical – Duel contre Ya Credo Robot</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<style>
-  :root {
-    --fond: #f4f4f4;
-    --texte: #111111;
-    --dore: #cda434;
-    --dore-hover: #b8902a;
-    --carte: #ffffff;
-    --gris: #e0e0e0;
-    --msg-rouge: #ef4444;
-    --msg-vert: #10b981;
-    --carte-verte: #dcfce7;
-    --carte-rouge: #fee2e2;
-    --robot: #6366f1;
-    --robot-light: #e0e7ff;
-  }
-
-  body.dark-mode {
-    --fond: #121212;
-    --texte: #f4f4f4;
-    --dore: #e5b83b;
-    --dore-hover: #f5c84c;
-    --carte: #1e1e1e;
-    --gris: #333333;
-    --msg-rouge: #f87171;
-    --msg-vert: #34d399;
-    --carte-verte: #064e3b;
-    --carte-rouge: #7f1d1d;
-    --robot: #818cf8;
-    --robot-light: #312e81;
-  }
-
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family: 'Montserrat', sans-serif;
-    background: var(--fond);
-    min-height: 100vh; color: var(--texte);
-    padding: 16px; display: grid; place-items: center;
-    transition: background 0.3s, color 0.3s;
-  }
-  .container {
-    max-width: 950px; width: 100%;
-    background: var(--carte);
-    border-radius: 20px; padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-top: 6px solid var(--dore);
-    position: relative;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  #themeToggle {
-    position: absolute; top: 20px; right: 20px;
-    background: var(--gris); border: none; border-radius: 50%;
-    width: 44px; height: 44px; cursor: pointer;
-    font-size: 1.2rem; display: grid; place-items: center;
-    transition: all 0.2s; color: var(--texte);
-    z-index: 10;
-  }
-  #themeToggle:hover { transform: scale(1.1); }
-
-  h1 {
-    font-size: clamp(22px, 4vw, 30px);
-    text-align: center; margin-bottom: 24px;
-    color: var(--texte); font-weight: 900;
-    letter-spacing: 1px;
-  }
-  h2 { text-align: center; color: var(--dore); margin-bottom: 16px; font-size: 1.2rem; }
-  
-  button {
-    padding: 14px 20px; font-size: 1rem; font-weight: 800;
-    border-radius: 12px; border: none;
-    cursor: pointer; transition: all 0.2s ease;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-  
-  .btn-primaire { background: var(--dore); color: #111; }
-  .btn-primaire:hover:not(:disabled) { background: var(--dore-hover); transform: translateY(-2px); }
-  
-  .btn-secondaire { background: var(--gris); color: var(--texte); }
-  .btn-secondaire:hover:not(:disabled) { filter: brightness(0.9); }
-
-  .btn-danger { background: var(--msg-rouge); color: #fff; }
-  .btn-danger:hover:not(:disabled) { filter: brightness(0.9); }
-
-  .btn-robot {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: #fff;
-  }
-  .btn-robot:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99,102,241,0.4);
-  }
-
-  .btn-scores {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #fff;
-  }
-  .btn-scores:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16,185,129,0.4);
-  }
-
-  input[type=text] {
-    font-size: 1.1rem; padding: 14px 16px; border-radius: 10px;
-    border: 2px solid var(--gris); width: 100%; margin: 8px 0;
-    background: var(--carte); color: var(--texte); outline: none;
-    font-family: 'Montserrat', sans-serif; font-weight: 600;
-    transition: border-color 0.2s, background 0.3s, color 0.3s;
-  }
-  input[type=text]:focus { border-color: var(--dore); }
-  
-  .row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
-  .row > * { flex: 1; min-width: 140px; }
-  .hidden { display: none !important; }
-  
-  .pill {
-    display: inline-block; padding: 6px 14px; border-radius: 999px;
-    background: var(--gris); font-size: 0.9rem; margin: 3px;
-    font-weight: 700; color: var(--texte);
-  }
-  .status { text-align: center; margin: 12px 0; font-weight: 600; }
-
-  .diff-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin: 20px 0;
-  }
-  .diff-card {
-    padding: 20px 16px;
-    border: 3px solid var(--gris);
-    border-radius: 14px;
-    background: var(--carte);
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-  }
-  .diff-card:hover { transform: translateY(-3px); }
-  .diff-card.selected { transform: translateY(-3px); }
-  .diff-card.facile.selected { border-color: #10b981; background: rgba(16,185,129,0.08); }
-  .diff-card.moyen.selected { border-color: #f59e0b; background: rgba(245,158,11,0.08); }
-  .diff-card.difficile.selected { border-color: #ef4444; background: rgba(239,68,68,0.08); }
-  .diff-emoji { font-size: 2rem; margin-bottom: 6px; }
-  .diff-name { font-weight: 900; font-size: 1rem; margin-bottom: 4px; }
-  .diff-time { font-size: 0.8rem; opacity: 0.7; }
-  
-  .scoreboard {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px; margin: 20px 0;
-  }
-  .player-card {
-    background: var(--fond); border-radius: 12px; padding: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    border: 2px solid var(--gris); transition: all 0.3s ease;
-  }
-  .player-card.me { border-color: var(--dore); background: var(--carte); }
-  .player-card.robot-card { border-color: var(--robot); background: var(--robot-light); }
-  .player-card.good { background-color: var(--carte-verte) !important; border-color: var(--msg-vert) !important; transform: scale(1.02); }
-  .player-card.bad { background-color: var(--carte-rouge) !important; border-color: var(--msg-rouge) !important; }
-
-  .player-name { font-weight: 800; font-size: 1rem; }
-  .player-score { font-size: 1.5rem; font-weight: 900; color: var(--dore); }
-  .player-card.robot-card .player-score { color: var(--robot); }
-
-  #questionBox {
-    background: var(--carte); color: var(--texte);
-    border-radius: 16px; padding: 30px; margin: 20px 0;
-    text-align: center; border: 2px solid var(--dore);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  }
-  #prefixBig {
-    font-size: clamp(40px, 8vw, 72px); font-weight: 900;
-    letter-spacing: 0.15em; margin-bottom: 16px; color: var(--dore);
-    text-transform: uppercase;
-  }
-  #definitionText { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.5; font-weight: 600; }
-  
-  #timerBar { height: 14px; background: var(--gris); border-radius: 8px; overflow: hidden; margin: 16px 0; border: 1px solid var(--gris); }
-  #timerFill { height: 100%; background: var(--dore); width: 100%; transition: width 0.3s linear; }
-  .timer-danger #timerFill { background: var(--msg-rouge); animation: pulse-danger 1s infinite; }
-  @keyframes pulse-danger { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-  #timerText { text-align: center; font-weight: 900; font-size: 1.4rem; margin-top: 4px; color: var(--dore); }
-
-  .recap-list { background: var(--fond); border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto; margin-top: 16px; border: 1px solid var(--gris); }
-  .recap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gris); font-size: 0.95rem; }
-  .recap-item:last-child { border-bottom: none; }
-  .recap-good { color: var(--msg-vert); font-weight: 800; }
-
-  .pro-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
-    background: var(--carte);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid var(--gris);
-  }
-  .pro-table th {
-    background: var(--dore);
-    color: #111;
-    padding: 16px;
-    text-align: left;
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-  }
-  .pro-table td {
-    padding: 16px;
-    border-bottom: 1px solid var(--gris);
-    font-weight: 600;
-    color: var(--texte);
-  }
-  .pro-table tr:last-child td { border-bottom: none; }
-  .pro-table tr.winner-row { background: rgba(205, 164, 52, 0.1); }
-  .pro-table tr.winner-row td { color: var(--dore); font-weight: 900; }
-  .rank-badge {
-    display: inline-block;
-    width: 32px; height: 32px;
-    line-height: 32px;
-    text-align: center;
-    border-radius: 50%;
-    background: var(--gris);
-    color: var(--texte);
-    font-weight: 800;
-  }
-  .rank-badge.gold { background: #fbbf24; color: #111; }
-  .rank-badge.silver { background: #9ca3af; color: #111; }
-  .rank-badge.bronze { background: #d97706; color: #fff; }
-
-  @keyframes robotThinking {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(-10deg) scale(1.1); }
-    75% { transform: rotate(10deg) scale(1.1); }
-  }
-  .robot-thinking { animation: robotThinking 0.8s ease-in-out infinite; display: inline-block; }
-
-  .robot-progress {
-    height: 6px;
-    background: var(--gris);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-  .robot-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--robot), #8b5cf6);
-    width: 0%;
-    transition: width 0.2s linear;
-  }
-
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin: 20px 0;
-    border-bottom: 2px solid var(--gris);
-    overflow-x: auto;
-  }
-  .tab {
-    padding: 12px 20px;
-    background: transparent;
-    border: none;
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: var(--texte);
-    opacity: 0.5;
-    cursor: pointer;
-    border-radius: 8px 8px 0 0;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-  .tab:hover { opacity: 0.8; background: rgba(205,164,52,0.05); }
-  .tab.active {
-    opacity: 1;
-    color: var(--dore);
-    border-bottom: 3px solid var(--dore);
-  }
-
-  .tab-content { animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin: 20px 0;
-  }
-  .stat-card {
-    background: var(--fond);
-    border-radius: 14px;
-    padding: 18px 16px;
-    text-align: center;
-    border: 2px solid var(--gris);
-    transition: all 0.25s;
-  }
-  .stat-card:hover { transform: translateY(-3px); border-color: var(--dore); }
-  .stat-emoji { font-size: 1.8rem; margin-bottom: 6px; }
-  .stat-value {
-    font-size: 1.7rem;
-    font-weight: 900;
-    color: var(--dore);
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }
-  .stat-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.7;
-  }
-
-  .chart-card {
-    background: var(--fond);
-    border-radius: 16px;
-    padding: 20px;
-    margin: 16px 0;
-    border: 1px solid var(--gris);
-  }
-  .chart-title {
-    font-size: 0.95rem;
-    font-weight: 800;
-    margin-bottom: 14px;
-    color: var(--texte);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .chart-container {
-    position: relative;
-    height: 260px;
-    width: 100%;
-  }
-
-  .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
-    background: var(--carte);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid var(--gris);
-  }
-  .history-table th {
-    background: var(--gris);
-    color: var(--texte);
-    padding: 12px 14px;
-    text-align: left;
-    font-weight: 800;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .history-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--gris);
-    font-weight: 600;
-    font-size: 0.88rem;
-    color: var(--texte);
-  }
-  .history-table tr:last-child td { border-bottom: none; }
-  .history-table tr:hover td { background: rgba(205,164,52,0.05); }
-
-  .badge-win { color: var(--msg-vert); font-weight: 900; }
-  .badge-lose { color: var(--msg-rouge); font-weight: 900; }
-  .badge-tie { color: var(--dore); font-weight: 900; }
-
-  .empty-state {
-    text-align: center;
-    padding: 50px 20px;
-    opacity: 0.6;
-  }
-  .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
-  .empty-state p { font-size: 0.95rem; line-height: 1.5; }
-
-  .scroll-wrap {
-    max-height: 420px;
-    overflow-y: auto;
-    border-radius: 12px;
-  }
-  .scroll-wrap::-webkit-scrollbar { width: 8px; }
-  .scroll-wrap::-webkit-scrollbar-track { background: var(--gris); border-radius: 4px; }
-  .scroll-wrap::-webkit-scrollbar-thumb { background: var(--dore); border-radius: 4px; }
-
-  .diff-tag {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-  .diff-tag.facile { background: rgba(16,185,129,0.15); color: #10b981; }
-  .diff-tag.moyen { background: rgba(245,158,11,0.15); color: #f59e0b; }
-  .diff-tag.difficile { background: rgba(239,68,68,0.15); color: #ef4444; }
-
-  .progress-section {
-    background: var(--fond);
-    border-radius: 16px;
-    padding: 20px;
-    margin: 16px 0;
-    border: 1px solid var(--gris);
-  }
-  .progress-item { margin-bottom: 16px; }
-  .progress-item:last-child { margin-bottom: 0; }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 0.88rem;
-    font-weight: 700;
-  }
-  .progress-bar-track {
-    height: 12px;
-    background: var(--gris);
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    border-radius: 8px;
-    transition: width 0.8s ease;
-    position: relative;
-  }
-  .progress-bar-fill::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shimmer 2s infinite;
-  }
-  @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-  .fill-green { background: linear-gradient(90deg, #10b981, #34d399); }
-  .fill-orange { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-  .fill-red { background: linear-gradient(90deg, #ef4444, #f87171); }
-  .fill-blue { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | LUXE Backoffice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #111; color: white; font-family: sans-serif; }
+    </style>
 </head>
-<body>
-<div class="container">
-  <button id="themeToggle" title="Changer de thème">🌙</button>
+<body class="flex items-center justify-center min-h-screen">
 
-  <h1>✨ Champ lexical – Duel contre Ya Credo Robot ✨</h1>
-
-  <!-- ACCUEIL -->
-  <div id="screenHome">
-    <div class="row"><input id="pseudo" type="text" placeholder="Ton prénom / pseudo" maxlength="16" autocomplete="off" /></div>
-    
-    <div class="row" style="margin-top:16px;">
-      <button id="btnToSetup" class="btn-robot">🤖 Affronter Ya Credo Robot</button>
-      <button id="btnShowScores" class="btn-scores">📊 Mes scores</button>
-    </div>
-    <div id="msg" style="min-height:24px;text-align:center;font-weight:700;margin:8px 0;"></div>
-    <div class="status" style="opacity:0.6; font-size:0.85rem;">
-      ⚠️ Si tu réponds <b>mal</b> ou si tu <b>ne réponds pas</b> à temps, Ya Credo Robot prendra les points !
-    </div>
-  </div>
-
-  <!-- SETUP -->
-  <div id="screenSoloSetup" class="hidden">
-    <h2>🤖 Affronter Ya Credo Robot</h2>
-    <p style="text-align:center; opacity:0.7; margin-bottom:20px; font-size:0.9rem;">
-      ⚠️ <b>Attention :</b> si tu réponds mal OU si tu ne réponds pas avant la fin du chrono, <b>Ya Credo Robot</b> répondra correctement et prendra les points !
-    </p>
-    
-    <div class="diff-grid">
-      <div class="diff-card facile" data-diff="facile" data-time="20">
-        <div class="diff-emoji">🟢</div>
-        <div class="diff-name">Facile</div>
-        <div class="diff-time">20 secondes</div>
-      </div>
-      <div class="diff-card moyen selected" data-diff="moyen" data-time="15">
-        <div class="diff-emoji">🟡</div>
-        <div class="diff-name">Moyen</div>
-        <div class="diff-time">15 secondes</div>
-      </div>
-      <div class="diff-card difficile" data-diff="difficile" data-time="10">
-        <div class="diff-emoji">🔴</div>
-        <div class="diff-name">Difficile</div>
-        <div class="diff-time">10 secondes</div>
-      </div>
-    </div>
-    
-    <div class="row">
-      <button id="btnStartSolo" class="btn-robot">🚀 Lancer le duel</button>
-      <button id="btnBackHome" class="btn-secondaire">← Retour</button>
-    </div>
-  </div>
-
-  <!-- JEU -->
-  <div id="screenSoloGame" class="hidden">
-    <div class="status">
-      <span class="pill" id="qCounterSolo">Question 1/20</span>
-      <span class="pill" id="diffBadge">🟡 Moyen</span>
-    </div>
-    
-    <div class="scoreboard">
-      <div class="player-card me" id="soloPlayerCard">
-        <span class="player-name">👤 <span id="soloMyName">Moi</span></span>
-        <span class="player-score" id="soloMyScore">0</span>
-      </div>
-      <div class="player-card robot-card" id="soloRobotCard">
-        <span class="player-name"><span id="robotEmoji">🤖</span> Ya Credo Robot</span>
-        <span class="player-score" id="soloRobotScore">0</span>
-      </div>
-    </div>
-    
-    <div id="questionBox">
-      <div id="prefixBig">–</div>
-      <div id="definitionText">En attente…</div>
-      <button id="btnVocalSolo" class="btn-secondaire" style="margin-top:20px; font-size:0.9rem; padding:10px 20px;">🔊 Écouter la définition</button>
-    </div>
-    
-    <div id="timerBar"><div id="timerFill"></div></div>
-    <div id="timerText">15s</div>
-    
-    <div class="robot-progress" style="margin: 12px 0;">
-      <div class="robot-progress-fill" id="robotProgressFill"></div>
-    </div>
-    <p style="text-align:center; font-size:0.8rem; opacity:0.6; margin-bottom:12px;">
-      Ya Credo Robot répondra automatiquement dans <span id="robotTimeLeft">15</span>s
-    </p>
-    
-    <div class="row">
-      <input id="answerSolo" type="text" placeholder="Ta réponse…" autocomplete="off" />
-      <button id="btnSubmitSolo" class="btn-primaire" style="max-width:120px">Valider</button>
-    </div>
-    
-    <div id="msgSolo" class="status"></div>
-    
-    <div class="row" style="margin-top:16px; border-top: 1px solid var(--gris); padding-top: 16px;">
-      <button id="btnSoloLeave" class="btn-danger" style="background:transparent; color:var(--msg-rouge); border: 2px solid var(--msg-rouge);">🚪 Quitter le duel</button>
-    </div>
-  </div>
-
-  <!-- FIN -->
-  <div id="screenSoloEnd" class="hidden">
-    <div class="status" style="font-size:clamp(24px, 5vw, 36px); font-weight:900; color:var(--dore); margin:20px 0;" id="soloEndTitle">Duel terminé</div>
-    
-    <table class="pro-table">
-      <thead>
-        <tr>
-          <th>Rang</th>
-          <th>Joueur</th>
-          <th>Score</th>
-          <th>Stats (✅/❌)</th>
-        </tr>
-      </thead>
-      <tbody id="soloFinalBody"></tbody>
-    </table>
-    
-    <h3 style="text-align:center; margin-top:32px; color:var(--texte);">Récapitulatif des réponses</h3>
-    <div class="recap-list" id="soloRecapList"></div>
-
-    <div class="row" style="margin-top:24px;">
-      <button id="btnSoloRematch" class="btn-robot">🔁 Revanche</button>
-      <button id="btnSoloScores" class="btn-scores">📊 Voir mes scores</button>
-      <button id="btnSoloBack" class="btn-primaire">🏠 Accueil</button>
-    </div>
-  </div>
-
-  <!-- SCORES -->
-  <div id="screenScores" class="hidden">
-    <h2>📊 Mes statistiques</h2>
-    
-    <div class="tabs">
-      <button class="tab active" data-tab="evolution">📈 Évolution</button>
-      <button class="tab" data-tab="stats">🎯 Statistiques</button>
-      <button class="tab" data-tab="history">📜 Historique</button>
+    <!-- ÉCRAN DE CONNEXION -->
+    <div id="login-screen" class="bg-gray-900 p-10 rounded-lg shadow-2xl w-full max-w-md border border-gray-800">
+        <h2 class="text-3xl text-center mb-6 text-[#C5A880]">Espace Admin</h2>
+        <p class="text-gray-400 text-center text-sm mb-8">Accès réservé au propriétaire.</p>
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Email</label>
+                <input type="email" id="email" required class="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-[#C5A880]">
+            </div>
+            <div>
+                <label class="block text-sm text-gray-400 mb-1">Mot de passe</label>
+                <input type="password" id="password" required class="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-[#C5A880]">
+            </div>
+            <button type="submit" class="w-full bg-[#C5A880] text-black font-bold py-3 rounded hover:bg-white transition">Se connecter</button>
+            <p id="login-error" class="text-red-500 text-sm text-center hidden">Identifiants incorrects.</p>
+        </form>
     </div>
 
-    <div id="tab-evolution" class="tab-content">
-      <div id="emptyEvolution" class="empty-state hidden">
-        <div class="emoji">📈</div>
-        <p>Aucune donnée pour l'instant.<br>Joue un duel pour voir ton évolution !</p>
-      </div>
-      <div id="evolutionContent" class="hidden">
-        <div class="progress-section">
-          <div class="chart-title">🏆 Progression vers le niveau suivant</div>
-          <div id="progressBars"></div>
+    <!-- DASHBOARD (Caché par défaut) -->
+    <div id="dashboard-screen" class="hidden w-full max-w-4xl p-6">
+        <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-4">
+            <h1 class="text-2xl font-bold text-[#C5A880]">Gestion de la Boutique</h1>
+            <button id="logout-btn" class="text-sm text-gray-400 hover:text-red-500">Déconnexion</button>
         </div>
-        <div class="chart-card">
-          <div class="chart-title">📈 Évolution de tes scores</div>
-          <div class="chart-container"><canvas id="chartEvolution"></canvas></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Formulaire d'ajout -->
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                <h2 class="text-xl mb-4 text-[#C5A880]">Ajouter un vêtement</h2>
+                <form id="add-product-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Nom du vêtement</label>
+                        <input type="text" id="prod-name" required class="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-[#C5A880]">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Prix (en $)</label>
+                        <input type="number" id="prod-price" required class="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-[#C5A880]">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Catégorie</label>
+                        <select id="prod-category" class="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-[#C5A880]">
+                            <option>Homme</option>
+                            <option>Femme</option>
+                            <option>Accessoires</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Lien de l'image (URL)</label>
+                        <input type="url" id="prod-image" required placeholder="https://..." class="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-[#C5A880]">
+                    </div>
+                    <button type="submit" class="w-full bg-[#C5A880] text-black font-bold py-2 rounded hover:bg-white transition mt-4">Ajouter à la boutique</button>
+                    <p id="add-status" class="text-green-500 text-sm text-center hidden mt-2">Vêtement ajouté avec succès !</p>
+                </form>
+            </div>
+
+            <!-- Liste des produits existants -->
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                <h2 class="text-xl mb-4 text-[#C5A880]">Vêtements en ligne</h2>
+                <div id="admin-products-list" class="space-y-3 overflow-y-auto max-h-96 pr-2">
+                    <!-- Généré par JS -->
+                </div>
+            </div>
         </div>
-        <div class="chart-card">
-          <div class="chart-title">🥇 Victoires vs Défaites vs Égalités</div>
-          <div class="chart-container"><canvas id="chartVictories"></canvas></div>
-        </div>
-      </div>
     </div>
 
-    <div id="tab-stats" class="tab-content hidden">
-      <div class="stats-grid" id="statsGrid"></div>
-      <div id="emptyStats" class="empty-state hidden">
-        <div class="emoji">🎯</div>
-        <p>Joue ta première partie pour voir tes statistiques !</p>
-      </div>
-      <div class="chart-card" id="chartDiffCard" style="display:none;">
-        <div class="chart-title">🎚️ Répartition par difficulté</div>
-        <div class="chart-container"><canvas id="chartDifficulty"></canvas></div>
-      </div>
-    </div>
-
-    <div id="tab-history" class="tab-content hidden">
-      <div id="emptyHistory" class="empty-state">
-        <div class="emoji">📜</div>
-        <p>Aucune partie enregistrée.<br>Commence un duel pour remplir ton historique !</p>
-      </div>
-      <div id="historyContent" class="hidden">
-        <div class="scroll-wrap">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Difficulté</th>
-                <th>Mon score</th>
-                <th>Robot</th>
-                <th>Résultat</th>
-              </tr>
-            </thead>
-            <tbody id="historyBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:24px;">
-      <button id="btnClearHistory" class="btn-danger">🗑️ Effacer l'historique</button>
-      <button id="btnScoresBack" class="btn-primaire">🏠 Retour à l'accueil</button>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ============================================================
-   BANQUE DE QUESTIONS — VALIDE
-   ============================================================ */
-const FIELDS = {
-  "Ab":[{"mot":"Abandon","def":"Action de renoncer à quelque chose."},{"mot":"Abcès","def":"Poche de pus dans un tissu."},{"mot":"Abîme","def":"Gouffre très profond."},{"mot":"Abnégation","def":"Sacrifice de soi au profit d'autrui."},{"mot":"Abolir","def":"Supprimer officiellement une loi."},{"mot":"Abondance","def":"Grande quantité de biens."},{"mot":"Abordable","def":"Facile d'accès ou de prix."},{"mot":"Abri","def":"Lieu qui protège des intempéries."},{"mot":"Abrupt","def":"À pente raide et soudaine."},{"mot":"Absence","def":"Fait de ne pas être présent."},{"mot":"Absolu","def":"Total, sans restriction."},{"mot":"Absorber","def":"Faire pénétrer un liquide ou une information."},{"mot":"Abstention","def":"Fait de ne pas voter."},{"mot":"Abstrait","def":"Qui n'a pas de réalité matérielle."},{"mot":"Absurde","def":"Dépourvu de sens logique."},{"mot":"Abus","def":"Usage excessif ou injuste."},{"mot":"Abyssal","def":"Relatif aux grandes profondeurs."}],
-  "Ad":[{"mot":"Action","def":"Fait d'agir ; acte accompli."},{"mot":"Adaptation","def":"Ajustement à une nouvelle situation."},{"mot":"Addition","def":"Opération mathématique de somme."},{"mot":"Adhésif","def":"Qui colle ou permet de coller."},{"mot":"Adjectif","def":"Mot qualifiant le nom."},{"mot":"Administration","def":"Gestion d'une organisation."},{"mot":"Admirable","def":"Qui suscite l'admiration."},{"mot":"Admissible","def":"Qui peut être accepté."},{"mot":"Adolescent","def":"Personne entre l'enfance et l'âge adulte."},{"mot":"Adorable","def":"Qui inspire l'affection."},{"mot":"Adresse","def":"Lieu où l'on habite, ou habileté."},{"mot":"Adroit","def":"Habile dans ses mouvements."},{"mot":"Adulte","def":"Personne ayant atteint la maturité."}],
-  "Af":[{"mot":"Affable","def":"Aimable et facile d'accès."},{"mot":"Affaire","def":"Occupation ou commerce."},{"mot":"Affamé","def":"Qui a très faim."},{"mot":"Affectif","def":"Relatif aux émotions."},{"mot":"Affection","def":"Sentiment d'attachement tendre."},{"mot":"Affichage","def":"Action de présenter publiquement."},{"mot":"Affinité","def":"Ressemblance ou attirance naturelle."},{"mot":"Affirmation","def":"Action d'énoncer quelque chose."},{"mot":"Affluence","def":"Grande arrivée de personnes."},{"mot":"Affreux","def":"Très désagréable ou laid."},{"mot":"Affront","def":"Insulte ou offense publique."},{"mot":"Africain","def":"Relatif à l'Afrique."}],
-  "Al":[{"mot":"Alarme","def":"Signal d'avertissement d'un danger."},{"mot":"Alchimie","def":"Art ancien de la transmutation."},{"mot":"Alcool","def":"Liquide enivrant produit par fermentation."},{"mot":"Alerte","def":"Signal d'avertissement."},{"mot":"Algue","def":"Plante aquatique sans vraie racine."},{"mot":"Alibi","def":"Justification prouvant l'absence."},{"mot":"Alignement","def":"Mise en ligne droite."},{"mot":"Aliment","def":"Substance qui nourrit."},{"mot":"Allée","def":"Chemin pour se déplacer."},{"mot":"Alliance","def":"Union entre personnes ou États."},{"mot":"Allocation","def":"Somme versée régulièrement."},{"mot":"Allonger","def":"Rendre plus long."},{"mot":"Allusion","def":"Référence indirecte."},{"mot":"Alphabet","def":"Ensemble des lettres d'une langue."},{"mot":"Altruisme","def":"Souci désintéressé d'autrui."},{"mot":"Aluminium","def":"Métal léger argenté."}],
-  "Am":[{"mot":"Amas","def":"Tas d'objets accumulés."},{"mot":"Amateur","def":"Personne qui aime une activité sans en faire profession."},{"mot":"Ambassade","def":"Représentation diplomatique d'un pays."},{"mot":"Ambiance","def":"Atmosphère d'un lieu."},{"mot":"Ambigu","def":"Qui peut être compris de plusieurs façons."},{"mot":"Ambitieux","def":"Qui vise de hauts objectifs."},{"mot":"Ambition","def":"Désir d'atteindre un objectif élevé."},{"mot":"Ambulance","def":"Véhicule pour transporter les malades."},{"mot":"Âme","def":"Principe spirituel de l'être humain."},{"mot":"Amélioration","def":"Action de rendre meilleur."},{"mot":"Amende","def":"Somme payée comme punition."},{"mot":"Ami","def":"Personne avec qui on a de l'affection."},{"mot":"Amitié","def":"Lien d'affection réciproque."},{"mot":"Amnésie","def":"Perte totale ou partielle de la mémoire."},{"mot":"Amorcer","def":"Commencer une action."},{"mot":"Amour","def":"Sentiment d'affection intense."},{"mot":"Ampleur","def":"Grandeur, étendue d'un phénomène."},{"mot":"Amusant","def":"Qui divertit et fait rire."},{"mot":"Analyse","def":"Décomposition d'un tout en parties."}],
-  "An":[{"mot":"Analogie","def":"Rapport de ressemblance entre deux choses."},{"mot":"Ananas","def":"Fruit tropical à peau épineuse."},{"mot":"Anatomie","def":"Science de la structure du corps."},{"mot":"Ancêtre","def":"Personne dont on descend."},{"mot":"Ancre","def":"Objet lourd qui retient un navire."},{"mot":"Ancrage","def":"Action de fixer solidement."},{"mot":"Anéantir","def":"Réduire à néant, détruire."},{"mot":"Anesthésie","def":"Suppression temporaire de la sensibilité."},{"mot":"Ange","def":"Être spirituel céleste."},{"mot":"Angle","def":"Ouverture entre deux droites."},{"mot":"Angoisse","def":"Sentiment d'inquiétude profonde."},{"mot":"Anguille","def":"Poisson long et serpentiforme."},{"mot":"Animal","def":"Être vivant non végétal."},{"mot":"Animer","def":"Donner vie ou mouvement."},{"mot":"Animosité","def":"Hostilité, malveillance."},{"mot":"Anneau","def":"Cercle de métal porté au doigt."},{"mot":"Annexe","def":"Partie jointe à un document."},{"mot":"Anniversaire","def":"Date commémorative de la naissance."},{"mot":"Annulation","def":"Action d'annuler."},{"mot":"Anomalie","def":"Irrégularité par rapport à la norme."},{"mot":"Anonyme","def":"Dont on ne connaît pas le nom."},{"mot":"Anormal","def":"Qui s'écarte de la norme."},{"mot":"Antenne","def":"Dispositif de réception d'ondes."},{"mot":"Antérieur","def":"Qui est situé avant, devant."},{"mot":"Anthropologie","def":"Science de l'être humain."},{"mot":"Anticiper","def":"Prévoir à l'avance."},{"mot":"Antidote","def":"Remède contre un poison."},{"mot":"Antiquité","def":"Époque ancienne de l'histoire."},{"mot":"Anxiété","def":"État d'inquiétude persistante."}],
-  "Ap":[{"mot":"Apaisement","def":"Action de calmer."},{"mot":"Aperçu","def":"Vue rapide et générale."},{"mot":"Aplanir","def":"Rendre plan, résoudre une difficulté."},{"mot":"Aplomb","def":"Assurance dans l'attitude."},{"mot":"Apogée","def":"Point culminant d'une évolution."},{"mot":"Appareil","def":"Objet fabriqué pour un usage."},{"mot":"Apparence","def":"Aspect extérieur visible."},{"mot":"Apparition","def":"Fait de se manifester, surgir."},{"mot":"Appartement","def":"Logement dans un immeuble."},{"mot":"Appel","def":"Action d'inviter ou de crier."},{"mot":"Appendice","def":"Partie ajoutée, annexe."},{"mot":"Appétit","def":"Envie de manger."},{"mot":"Applaudir","def":"Battre des mains en signe d'approbation."},{"mot":"Application","def":"Programme ou mise en pratique."},{"mot":"Apport","def":"Contribution ajoutée."},{"mot":"Apprenti","def":"Personne qui apprend un métier."},{"mot":"Apprentissage","def":"Acquisition de connaissances."},{"mot":"Approbation","def":"Accord favorable."},{"mot":"Approche","def":"Manière d'aborder un sujet."},{"mot":"Approfondir","def":"Étudier plus en détail."},{"mot":"Approprié","def":"Qui convient, adapté."},{"mot":"Approuver","def":"Donner son accord."},{"mot":"Appui","def":"Soutien, base solide."},{"mot":"Appuyer","def":"Faire pression, soutenir."}],
-  "Ar":[{"mot":"Araignée","def":"Animal à huit pattes qui tisse des toiles."},{"mot":"Arbitrage","def":"Action de juger un litige ou un match."},{"mot":"Arbre","def":"Grand végétal à tronc ligneux."},{"mot":"Arc","def":"Arme courbée pour tirer des flèches."},{"mot":"Arcade","def":"Galerie ou passage couvert."},{"mot":"Archange","def":"Ange d'un rang supérieur."},{"mot":"Arche","def":"Navire ou coffre en forme de caisse."},{"mot":"Archéologie","def":"Science des vestiges du passé."},{"mot":"Architecte","def":"Concepteur de bâtiments."},{"mot":"Archives","def":"Ensemble de documents conservés."},{"mot":"Ardent","def":"Qui brûle, très vif."},{"mot":"Ardoise","def":"Roche plate servant à écrire."},{"mot":"Argent","def":"Métal précieux ou monnaie."},{"mot":"Argile","def":"Terre plastique utilisée en poterie."},{"mot":"Argument","def":"Raison présentée pour convaincre."},{"mot":"Aride","def":"Très sec, sans végétation."},{"mot":"Armature","def":"Structure de soutien."},{"mot":"Arme","def":"Instrument destiné à attaquer ou défendre."},{"mot":"Armée","def":"Forces militaires d'un pays."},{"mot":"Armistice","def":"Suspension des combats."},{"mot":"Armoire","def":"Meuble de rangement."},{"mot":"Arôme","def":"Odeur agréable d'une substance."},{"mot":"Arracher","def":"Détacher avec force."},{"mot":"Arrangement","def":"Organisation, accord."},{"mot":"Arrestation","def":"Action de priver de liberté."},{"mot":"Arrivée","def":"Action d'atteindre un lieu."},{"mot":"Arrogant","def":"Hautain, méprisant."},{"mot":"Arrosage","def":"Action de fournir de l'eau aux plantes."},{"mot":"Arroser","def":"Fournir de l'eau."},{"mot":"Arsenal","def":"Lieu de stockage d'armes."},{"mot":"Artère","def":"Vaisseau qui transporte le sang."},{"mot":"Article","def":"Texte d'une publication ou élément d'un ensemble."},{"mot":"Articulation","def":"Jonction entre deux os."},{"mot":"Artifice","def":"Moyen habile ou trompeur, feu d'artifice."},{"mot":"Artisan","def":"Travailleur manuel qualifié."},{"mot":"Artiste","def":"Personne qui crée des œuvres d'art."},{"mot":"Ascenseur","def":"Appareil pour monter et descendre."},{"mot":"Ascension","def":"Action de monter, s'élever."},{"mot":"Asile","def":"Lieu de refuge."},{"mot":"Aspect","def":"Apparence extérieure."},{"mot":"Asperger","def":"Projeter un liquide sur quelque chose."},{"mot":"Aspirateur","def":"Appareil qui aspire la poussière."},{"mot":"Assemblage","def":"Action de mettre ensemble."},{"mot":"Assemblée","def":"Groupe de personnes réunies."},{"mot":"Assidu","def":"Régulier et appliqué."},{"mot":"Assiette","def":"Ustensile plat pour manger."},{"mot":"Assistance","def":"Aide apportée à quelqu'un."},{"mot":"Association","def":"Groupe organisé poursuivant un but."},{"mot":"Assurance","def":"Contrat de garantie, ou confiance."},{"mot":"Assurer","def":"Garantir, rendre certain."},{"mot":"Astre","def":"Corps céleste lumineux."},{"mot":"Astuce","def":"Trouvaille ingénieuse."},{"mot":"Astronome","def":"Scientifique qui étudie les astres."},{"mot":"Atelier","def":"Lieu de travail artisanal."},{"mot":"Athlète","def":"Personne pratiquant un sport."},{"mot":"Atmosphère","def":"Couche gazeuse autour de la Terre."},{"mot":"Atome","def":"Plus petite particule d'un élément."},{"mot":"Atout","def":"Avantage favorable."},{"mot":"Atroce","def":"Extrêmement cruel ou horrible."},{"mot":"Attaque","def":"Action offensive."},{"mot":"Attente","def":"Fait d'espérer ou d'attendre."},{"mot":"Attention","def":"Concentration de l'esprit."},{"mot":"Attitude","def":"Manière de se tenir ou de penser."},{"mot":"Attraction","def":"Force qui attire."},{"mot":"Attrait","def":"Charme, séduction."},{"mot":"Attribut","def":"Caractéristique propre."},{"mot":"Audace","def":"Hardiesse, courage."},{"mot":"Audience","def":"Séance d'un tribunal, ou nombre de spectateurs."},{"mot":"Audition","def":"Action d'entendre."},{"mot":"Augmentation","def":"Action d'accroître."},{"mot":"Aumône","def":"Don fait aux pauvres."},{"mot":"Aurore","def":"Lueur du matin avant le lever du soleil."},{"mot":"Auteur","def":"Personne qui crée une œuvre."},{"mot":"Authentique","def":"Vrai, conforme à l'original."},{"mot":"Automate","def":"Machine qui agit seule."},{"mot":"Automne","def":"Saison entre été et hiver."},{"mot":"Automobile","def":"Véhicule à moteur."},{"mot":"Autonomie","def":"Capacité à se gouverner soi-même."},{"mot":"Autorité","def":"Pouvoir de commander."},{"mot":"Autoroute","def":"Grande route rapide."},{"mot":"Autruche","def":"Grand oiseau qui ne vole pas."},{"mot":"Avalanche","def":"Masse de neige qui dévale."},{"mot":"Avance","def":"Mouvement en avant, progrès."},{"mot":"Avantage","def":"Situation favorable."},{"mot":"Avare","def":"Qui amasse sans dépenser."},{"mot":"Avenir","def":"Temps à venir."},{"mot":"Aventure","def":"Expérience excitante et imprévue."},{"mot":"Averse","def":"Pluie soudaine et brève."},{"mot":"Avertir","def":"Informer d'un danger."},{"mot":"Aveugle","def":"Privé de la vue."},{"mot":"Avide","def":"Qui désire ardemment."},{"mot":"Avion","def":"Appareil volant."},{"mot":"Avocat","def":"Juriste, ou fruit."},{"mot":"Avoine","def":"Céréale pour l'alimentation animale."},{"mot":"Avouer","def":"Reconnaître un fait."},{"mot":"Avril","def":"Quatrième mois de l'année."},{"mot":"Azur","def":"Bleu intense du ciel."},{"mot":"Azote","def":"Gaz incolore de l'air."}],
-  "Ch":[{"mot":"Chaleur","def":"Sensation de température élevée."},{"mot":"Chambre","def":"Pièce où l'on dort."},{"mot":"Chanson","def":"Composition musicale avec paroles."},{"mot":"Chapeau","def":"Coiffure protégeant du soleil."},{"mot":"Chat","def":"Animal domestique qui miaule."},{"mot":"Chocolat","def":"Produit alimentaire à base de cacao."},{"mot":"Chiffre","def":"Symbole numérique."},{"mot":"Chute","def":"Action de tomber."}],
-  "De":[{"mot":"Définition","def":"Explication précise d'un mot."},{"mot":"Démocratie","def":"Système où le peuple exerce le pouvoir."},{"mot":"Décision","def":"Choix pris après réflexion."},{"mot":"Désir","def":"Envie d'obtenir quelque chose."},{"mot":"Début","def":"Commencement d'une période."},{"mot":"Défi","def":"Provocation à une épreuve."}],
-  "Ma":[{"mot":"Magie","def":"Utilisation de pouvoirs surnaturels."},{"mot":"Maison","def":"Bâtiment où l'on vit."},{"mot":"Mariage","def":"Union légale de partenaires."},{"mot":"Maladie","def":"Altération de la santé."},{"mot":"Matin","def":"Première partie de la journée."},{"mot":"Masque","def":"Objet porté sur le visage."}],
-  "Re":[{"mot":"Rêve","def":"Suite d'images pendant le sommeil."},{"mot":"Réalité","def":"Ensemble des choses existantes."},{"mot":"Région","def":"Territoire délimité."},{"mot":"Recherche","def":"Action de chercher des informations."},{"mot":"Résultat","def":"Conséquence d'une action."},{"mot":"Réussir","def":"Atteindre son objectif avec succès."}],
-  "Co":[{"mot":"Concombre","def":"Légume vert allongé."},{"mot":"Connaissance","def":"Savoir acquis."},{"mot":"Coopération","def":"Action de travailler ensemble."},{"mot":"Corps","def":"Partie physique d'un être vivant."},{"mot":"Couleur","def":"Perception visuelle."},{"mot":"Conflit","def":"Opposition entre parties."}],
-  "Na":[{"mot":"Nage","def":"Déplacement dans l'eau."},{"mot":"Naissance","def":"Venue au monde d'un être vivant."},{"mot":"Narrateur","def":"Personne qui raconte une histoire."},{"mot":"Nation","def":"Communauté humaine partageant histoire."},{"mot":"Nature","def":"Ensemble des éléments du monde physique."},{"mot":"Navire","def":"Grand bateau de transport."}],
-  "Ro":[{"mot":"Robot","def":"Machine programmable effectuant des tâches."},{"mot":"Rose","def":"Fleur parfumée à pétales."},{"mot":"Royaume","def":"Territoire gouverné par un monarque."},{"mot":"Route","def":"Voie de circulation pour véhicules."},{"mot":"Roman","def":"Œuvre littéraire de fiction."},{"mot":"Rocher","def":"Gros bloc de pierre."}],
-  "En":[{"mot":"Enfant","def":"Humain mineur."},{"mot":"Enseignement","def":"Action de transmettre des connaissances."},{"mot":"Environnement","def":"Milieu naturel et construit."},{"mot":"Enquête","def":"Recherche d'informations sur un sujet."},{"mot":"Enthousiasme","def":"Élan joyeux et motivé."},{"mot":"Enjeu","def":"Ce qui est en question/risque."}],
-  "Ha":[{"mot":"Habitat","def":"Lieu de vie d'un être ou groupe."},{"mot":"Handicap","def":"Limitation d'activité ou participation."},{"mot":"Harmonie","def":"Accord, juste combinaison d'éléments."},{"mot":"Hâte","def":"Empressement, précipitation."},{"mot":"Hauteur","def":"Dimension verticale."},{"mot":"Hachoir","def":"Outil pour hacher la viande."}],
-  "So":[{"mot":"Société","def":"Ensemble d'individus vivant en communauté."},{"mot":"Solitude","def":"Fait/ressenti d'être seul."},{"mot":"Solidarité","def":"Soutien mutuel au sein d'un groupe."},{"mot":"Sommeil","def":"État de repos périodique."},{"mot":"Soutien","def":"Aide, appui."},{"mot":"Souvenir","def":"Image/événement conservé en mémoire."}],
-  "Pi":[{"mot":"Piano","def":"Instrument de musique à clavier."},{"mot":"Pictogramme","def":"Symbole graphique informatif."},{"mot":"Piscine","def":"Bassin pour nager."},{"mot":"Piste","def":"Chemin ou voie tracée."},{"mot":"Pilote","def":"Personne qui conduit un véhicule."},{"mot":"Pinceau","def":"Outil pour peindre."}],
-  "Sc":[{"mot":"Scandale","def":"Événement causant indignation."},{"mot":"Sceptique","def":"Qui doute; incrédule."},{"mot":"Science","def":"Ensemble organisé de connaissances."},{"mot":"Score","def":"Résultat d'un jeu/épreuve."},{"mot":"Sculpture","def":"Art de créer des formes en volume."},{"mot":"Scénario","def":"Texte décrivant l'histoire d'un film."}],
-  "St":[{"mot":"Stupéfaction","def":"Surprise extrême."},{"mot":"Stabilité","def":"Capacité à rester constant."},{"mot":"Stratégie","def":"Plan d'action pour atteindre un objectif."},{"mot":"Stress","def":"Réponse à une contrainte/pression."},{"mot":"Structure","def":"Organisation des parties d'un tout."},{"mot":"Studio","def":"Lieu de création/enregistrement."}],
-  "Va":[{"mot":"Vache","def":"Bovin femelle domestique."},{"mot":"Valise","def":"Bagage pour vêtements et effets."},{"mot":"Vague","def":"Ondulation de la surface de l'eau."},{"mot":"Vanille","def":"Épice issue d'orchidées."},{"mot":"Valeur","def":"Caractère de ce qui est estimable."},{"mot":"Vacances","def":"Période d'arrêt des activités habituelles."}],
-  "Vi":[{"mot":"Victoire","def":"Résultat gagnant d'une compétition."},{"mot":"Vibration","def":"Mouvement oscillatoire."},{"mot":"Vif","def":"Plein de vie et d'énergie."},{"mot":"Vision","def":"Capacité de voir."},{"mot":"Visage","def":"Partie antérieure de la tête."},{"mot":"Vitesse","def":"Rapidité d'un mouvement."}],
-  "He":[{"mot":"Héroïsme","def":"Bravoure exceptionnelle face au danger."},{"mot":"Hésitation","def":"Indécision dans le choix."},{"mot":"Héritage","def":"Biens, droits transmis par succession."},{"mot":"Hélicoptère","def":"Aéronef à voilure tournante."},{"mot":"Hérisson","def":"Petit mammifère couvert de piquants."},{"mot":"Heure","def":"Unité de temps égale à 60 minutes."}],
-  "Te":[{"mot":"Tendresse","def":"Sentiment d'affection douce."},{"mot":"Tempête","def":"Phénomène météorologique violent."},{"mot":"Ténacité","def":"Persévérance, résistance dans l'effort."},{"mot":"Terrasse","def":"Espace extérieur attenant à un bâtiment."},{"mot":"Téléphone","def":"Appareil de communication vocale à distance."},{"mot":"Texte","def":"Suite de mots formant un message écrit."}],
-  "Ta":[{"mot":"Tableau","def":"Surface pour écrire/dessiner."},{"mot":"Tache","def":"Marque salissante sur une surface."},{"mot":"Tâche","def":"Travail à accomplir."},{"mot":"Tactile","def":"Relatif au toucher."},{"mot":"Tapis","def":"Revêtement de sol souple."},{"mot":"Tasse","def":"Petit récipient pour boire."}],
-  "Li":[{"mot":"Liberté","def":"État d'une personne libre d'agir."},{"mot":"Ligne","def":"Trait continu; rangée d'éléments alignés."},{"mot":"Littoral","def":"Zone de contact terre/mer."},{"mot":"Limite","def":"Frontière séparant deux espaces."},{"mot":"Livre","def":"Ouvrage écrit relié."},{"mot":"Littérature","def":"Ensemble des œuvres écrites."}],
-  "Lu":[{"mot":"Lucide","def":"Clairvoyant, qui perçoit nettement la réalité."},{"mot":"Lune","def":"Satellite naturel de la Terre."},{"mot":"Lutte","def":"Combat; sport de combat."},{"mot":"Luminosité","def":"Intensité de la lumière."},{"mot":"Luxe","def":"Caractère de ce qui est somptueux."},{"mot":"Lumière","def":"Rayonnement rendant les objets visibles."}],
-  "Ru":[{"mot":"Ruban","def":"Bande étroite de tissu."},{"mot":"Rubrique","def":"Titre de section; catégorie d'articles."},{"mot":"Ruche","def":"Habitation artificielle des abeilles."},{"mot":"Ruisseau","def":"Petit cours d'eau."},{"mot":"Ruse","def":"Stratagème pour tromper ou contourner."},{"mot":"Rue","def":"Voie de circulation bordée de bâtiments."}],
-  "Hu":[{"mot":"Humanité","def":"Ensemble des êtres humains."},{"mot":"Humeur","def":"Disposition émotionnelle du moment."},{"mot":"Humilité","def":"Qualité de qui est modeste."},{"mot":"Humain","def":"Relatif à l'être humain."},{"mot":"Huile","def":"Substance grasse d'origine végétale."},{"mot":"Hurler","def":"Pousser des cris aigus et forts."}],
-  "Mo":[{"mot":"Monde","def":"Ensemble des êtres et des choses."},{"mot":"Montagne","def":"Relief élevé."},{"mot":"Monarque","def":"Souverain d'un État."},{"mot":"Monnaie","def":"Moyen d'échange."},{"mot":"Moteur","def":"Dispositif produisant un mouvement."},{"mot":"Monument","def":"Construction commémorative remarquable."}],
-  "Sp":[{"mot":"Spécial","def":"Différent de l'ordinaire."},{"mot":"Spectacle","def":"Représentation artistique publique."},{"mot":"Sphère","def":"Solide géométrique rond en 3D."},{"mot":"Spécialité","def":"Compétence ou produit propre à un domaine."},{"mot":"Spirale","def":"Courbe enroulée autour d'un point."},{"mot":"Spontané","def":"Qui se produit naturellement."}]
-};
-
-/* ============================================================
-   CONSTANTES
-   ============================================================ */
-const TOTAL_QUESTIONS = 20;
-const POINTS_PER_CORRECT = 10;
-const STORAGE_KEY = 'yacredo_history_v1';
-
-let pseudo = localStorage.getItem('josef_pseudo') || '';
-let soloState = null;
-let soloTimerInterval = null;
-let soloRobotTimeout = null;
-let currentCharts = {};
-
-const $ = id => document.getElementById(id);
-const show = id => $(id).classList.remove('hidden');
-const hide = id => $(id).classList.add('hidden');
-const setMsg = (id, text, color='#111') => { const el=$(id); if(el){el.textContent=text;el.style.color=color;} };
-const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\-' ]/g,'').trim();
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'fr-FR';
-    u.rate = 1.0;
-    window.speechSynthesis.speak(u);
-  }
-}
-
-/* ============================================================
-   HISTORIQUE
-   ============================================================ */
-function loadHistory() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch(e) { return []; }
-}
-function saveMatch(match) {
-  const history = loadHistory();
-  history.push(match);
-  if (history.length > 200) history.shift();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-}
-function clearHistory() {
-  if (!confirm("⚠️ Effacer tout l'historique ?\nCette action est irréversible.")) return;
-  localStorage.removeItem(STORAGE_KEY);
-  renderScoresScreen();
-}
-
-/* ============================================================
-   THÈME
-   ============================================================ */
-function initTheme() {
-  const savedTheme = localStorage.getItem('josef_theme');
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-    $('themeToggle').textContent = '☀️';
-  }
-}
-$('themeToggle').addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  const isDark = document.body.classList.contains('dark-mode');
-  $('themeToggle').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('josef_theme', isDark ? 'dark' : 'light');
-  if (!$('screenScores').classList.contains('hidden')) {
-    renderScoresScreen();
-  }
-});
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-function goHome() {
-  hide('screenSoloSetup'); hide('screenSoloGame'); hide('screenSoloEnd'); hide('screenScores');
-  show('screenHome');
-  stopSoloTimers();
-  soloState = null;
-}
-
-$('btnToSetup').addEventListener('click', () => {
-  const p = $('pseudo').value.trim();
-  if (!p) return setMsg('msg', 'Entre un pseudo avant de continuer.', 'var(--msg-rouge)');
-  pseudo = p;
-  localStorage.setItem('josef_pseudo', pseudo);
-  hide('screenHome'); show('screenSoloSetup');
-});
-$('btnBackHome').addEventListener('click', goHome);
-$('btnScoresBack').addEventListener('click', goHome);
-$('btnClearHistory').addEventListener('click', clearHistory);
-
-$('btnShowScores').addEventListener('click', () => {
-  hide('screenHome');
-  show('screenScores');
-  renderScoresScreen();
-});
-$('btnSoloScores').addEventListener('click', () => {
-  hide('screenSoloEnd');
-  show('screenScores');
-  renderScoresScreen();
-});
-
-/* ============================================================
-   DIFFICULTÉ
-   ============================================================ */
-let soloDifficulty = 'moyen';
-let soloTimeLimit = 15;
-
-document.querySelectorAll('.diff-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.diff-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    soloDifficulty = card.dataset.diff;
-    soloTimeLimit = parseInt(card.dataset.time);
-  });
-});
-
-/* ============================================================
-   JEU
-   ============================================================ */
-function buildAllQuestions() {
-  const all = [];
-  for (const prefix of Object.keys(FIELDS)) {
-    for (const item of FIELDS[prefix]) {
-      all.push({ id: `${prefix}-${item.mot}`, prefix, mot: item.mot, def: item.def });
-    }
-  }
-  return all;
-}
-
-$('btnStartSolo').addEventListener('click', startSoloGame);
-
-function startSoloGame() {
-  const all = buildAllQuestions();
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]];
-  }
-  const questions = all.slice(0, TOTAL_QUESTIONS);
-
-  soloState = {
-    questions,
-    currentQ: 0,
-    myScore: 0,
-    robotScore: 0,
-    myCorrects: 0,
-    myWrongs: 0,
-    robotCorrects: 0,
-    robotWrongs: 0,
-    answers: [],
-    questionClosed: false,
-    difficulty: soloDifficulty,
-    timeLimit: soloTimeLimit,
-    startedAt: Date.now()
-  };
-
-  hide('screenHome'); hide('screenSoloSetup'); hide('screenSoloEnd'); hide('screenScores');
-  show('screenSoloGame');
-
-  $('soloMyName').textContent = pseudo;
-  $('soloMyScore').textContent = '0';
-  $('soloRobotScore').textContent = '0';
-  $('diffBadge').textContent =
-    soloDifficulty === 'facile' ? '🟢 Facile' :
-    soloDifficulty === 'difficile' ? '🔴 Difficile' : '🟡 Moyen';
-
-  renderSoloQuestion();
-}
-
-function renderSoloQuestion() {
-  if (!soloState) return;
-  const qIdx = soloState.currentQ;
-  const q = soloState.questions[qIdx];
-  if (!q) return;
-
-  soloState.questionClosed = false;
-  soloState.qStartAt = Date.now();
-
-  $('qCounterSolo').textContent = `Question ${qIdx+1}/${soloState.questions.length}`;
-  $('prefixBig').textContent = q.prefix.toUpperCase();
-  $('definitionText').textContent = q.def;
-  $('answerSolo').value = '';
-  $('answerSolo').disabled = false;
-  $('btnSubmitSolo').disabled = false;
-  $('robotEmoji').textContent = '🤖';
-  setMsg('msgSolo', '');
-
-  $('timerFill').style.width = '100%';
-  $('timerText').textContent = soloTimeLimit + 's';
-  $('timerBar').classList.remove('timer-danger');
-
-  $('robotProgressFill').style.width = '0%';
-  $('robotTimeLeft').textContent = soloTimeLimit;
-
-  startSoloTimers();
-}
-
-function startSoloTimers() {
-  stopSoloTimers();
-  const startAt = soloState.qStartAt;
-  const limitMs = soloState.timeLimit * 1000;
-
-  soloTimerInterval = setInterval(() => {
-    if (!soloState || soloState.questionClosed) return;
-    const elapsed = Date.now() - startAt;
-    const remain = Math.max(0, limitMs - elapsed);
-
-    const pct = (remain / limitMs) * 100;
-    $('timerFill').style.width = pct + '%';
-    $('timerText').textContent = Math.ceil(remain/1000) + 's';
-    $('timerBar').classList.toggle('timer-danger', remain < 3000);
-
-    const robotPct = Math.min(100, (elapsed / limitMs) * 100);
-    $('robotProgressFill').style.width = robotPct + '%';
-    $('robotTimeLeft').textContent = Math.ceil(remain/1000);
-
-    if (remain < 3000 && !soloState.questionClosed) {
-      $('robotEmoji').classList.add('robot-thinking');
-    } else {
-      $('robotEmoji').classList.remove('robot-thinking');
-    }
-  }, 200);
-
-  soloRobotTimeout = setTimeout(() => {
-    if (!soloState || soloState.questionClosed) return;
-    robotAnswer(false);
-  }, limitMs);
-}
-
-function stopSoloTimers() {
-  if (soloTimerInterval) { clearInterval(soloTimerInterval); soloTimerInterval = null; }
-  if (soloRobotTimeout) { clearTimeout(soloRobotTimeout); soloRobotTimeout = null; }
-  $('robotEmoji').classList.remove('robot-thinking');
-}
-
-$('btnSubmitSolo').addEventListener('click', submitSoloAnswer);
-$('answerSolo').addEventListener('keydown', e => { if (e.key === 'Enter') submitSoloAnswer(); });
-$('btnVocalSolo').addEventListener('click', () => {
-  if (soloState) {
-    const q = soloState.questions[soloState.currentQ];
-    if (q) speak("Trouvez le mot qui commence par " + q.prefix + ". " + q.def);
-  }
-});
-
-function submitSoloAnswer() {
-  if (!soloState || soloState.questionClosed) return;
-  const val = normalize($('answerSolo').value);
-  if (!val) return;
-
-  soloState.questionClosed = true;
-  stopSoloTimers();
-
-  const q = soloState.questions[soloState.currentQ];
-  const correct = val === normalize(q.mot);
-
-  $('answerSolo').disabled = true;
-  $('btnSubmitSolo').disabled = true;
-
-  if (correct) {
-    // ✅ Bonne réponse → le joueur gagne
-    soloState.myScore += POINTS_PER_CORRECT;
-    soloState.myCorrects++;
-    soloState.answers.push({ by: 'me', correct: true, mot: q.mot });
-    $('soloMyScore').textContent = soloState.myScore;
-    $('soloPlayerCard').classList.add('good');
-    setMsg('msgSolo', `✅ Correct ! +${POINTS_PER_CORRECT} pts`, 'var(--msg-vert)');
-    speak("Correct !");
-
-    setTimeout(() => {
-      $('soloPlayerCard').classList.remove('good', 'bad');
-      nextSoloQuestion();
-    }, 1500);
-
-  } else {
-    // ❌ Mauvaise réponse → le robot prend les points !
-    soloState.myWrongs++;
-    soloState.robotScore += POINTS_PER_CORRECT;
-    soloState.robotCorrects++;
-    soloState.answers.push({ by: 'robot', correct: true, mot: q.mot, reason: 'player_wrong' });
-
-    $('soloPlayerCard').classList.add('bad');
-    $('soloRobotScore').textContent = soloState.robotScore;
-    $('soloRobotCard').classList.add('good');
-    $('robotEmoji').textContent = '🤖';
-
-    setMsg('msgSolo', `❌ Mauvaise réponse ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--msg-rouge)');
-    speak("Mauvaise réponse. Ya Credo Robot répond : " + q.mot);
-
-    setTimeout(() => {
-      $('soloPlayerCard').classList.remove('good', 'bad');
-      $('soloRobotCard').classList.remove('good');
-      nextSoloQuestion();
-    }, 2200);
-  }
-}
-
-function robotAnswer(timedOut) {
-  if (!soloState || soloState.questionClosed) return;
-  soloState.questionClosed = true;
-  stopSoloTimers();
-
-  const q = soloState.questions[soloState.currentQ];
-
-  soloState.robotScore += POINTS_PER_CORRECT;
-  soloState.robotCorrects++;
-  soloState.answers.push({ by: 'robot', correct: true, mot: q.mot, reason: 'timeout' });
-  $('soloRobotScore').textContent = soloState.robotScore;
-  $('soloRobotCard').classList.add('good');
-  $('answerSolo').disabled = true;
-  $('btnSubmitSolo').disabled = true;
-  $('robotEmoji').textContent = '🤖';
-  setMsg('msgSolo', `⏱️ Temps écoulé ! Ya Credo Robot répond : « ${q.mot} » (+${POINTS_PER_CORRECT} pts)`, 'var(--robot)');
-  speak("Temps écoulé. Ya Credo Robot répond correctement : " + q.mot);
-
-  setTimeout(() => {
-    $('soloRobotCard').classList.remove('good');
-    nextSoloQuestion();
-  }, 1800);
-}
-
-function nextSoloQuestion() {
-  if (!soloState) return;
-  soloState.currentQ++;
-  if (soloState.currentQ >= soloState.questions.length) {
-    endSoloGame();
-  } else {
-    renderSoloQuestion();
-  }
-}
-
-$('btnSoloLeave').addEventListener('click', () => {
-  if (!confirm("Quitter le duel ?")) return;
-  stopSoloTimers();
-  soloState = null;
-  goHome();
-});
-
-/* ============================================================
-   FIN
-   ============================================================ */
-function endSoloGame() {
-  stopSoloTimers();
-  hide('screenSoloGame');
-  show('screenSoloEnd');
-
-  const me = {
-    name: pseudo,
-    score: soloState.myScore,
-    corrects: soloState.myCorrects,
-    wrongs: soloState.myWrongs,
-    isMe: true
-  };
-  const robot = {
-    name: 'Ya Credo Robot',
-    score: soloState.robotScore,
-    corrects: soloState.robotCorrects,
-    wrongs: soloState.robotWrongs,
-    isRobot: true
-  };
-
-  const entries = [me, robot].sort((a,b) => b.score - a.score);
-  const tie = entries[0].score === entries[1].score;
-
-  const match = {
-    date: new Date().toISOString(),
-    difficulty: soloState.difficulty,
-    myScore: me.score,
-    robotScore: robot.score,
-    myCorrects: me.corrects,
-    myWrongs: me.wrongs,
-    result: tie ? 'tie' : (me.score > robot.score ? 'win' : 'lose'),
-    durationSec: Math.round((Date.now() - soloState.startedAt) / 1000)
-  };
-  saveMatch(match);
-
-  const tbody = $('soloFinalBody');
-  tbody.innerHTML = entries.map((p, i) => {
-    let rankIcon = '';
-    let rankClass = '';
-    if (i === 0) { rankIcon = '🥇'; rankClass = 'gold'; }
-    else if (i === 1) { rankIcon = '🥈'; rankClass = 'silver'; }
-    const isWinner = i === 0 && !tie;
-    return `
-      <tr class="${isWinner ? 'winner-row' : ''}">
-        <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
-        <td>${p.isRobot ? '🤖 ' : '👤 '}${escapeHtml(p.name)} ${isWinner ? '👑' : ''}</td>
-        <td style="color:${p.isRobot ? 'var(--robot)' : 'var(--dore)'}; font-size:1.2rem;">${p.score} pts</td>
-        <td>✅ ${p.corrects} | ❌ ${p.wrongs}</td>
-      </tr>
-    `;
-  }).join('');
-
-  if (tie) {
-    $('soloEndTitle').textContent = `🤝 Égalité à ${me.score} pts !`;
-  } else if (entries[0].isRobot) {
-    $('soloEndTitle').textContent = `🤖 Ya Credo Robot gagne ${robot.score} - ${me.score} !`;
-  } else {
-    $('soloEndTitle').textContent = `🏆 ${pseudo} bat Ya Credo Robot ${me.score} - ${robot.score} !`;
-  }
-
-  $('soloRecapList').innerHTML = soloState.questions.map((q, i) => {
-    const a = soloState.answers[i];
-    let by = '—';
-    if (a) {
-      if (a.by === 'robot') {
-        by = a.reason === 'player_wrong' ? '🤖 Robot (tu as raté)' : '🤖 Robot (temps)';
-      } else {
-        by = '👤 Toi';
-      }
-    }
-    return `
-      <div class="recap-item">
-        <span><b>Q${i+1}.</b> (${q.prefix.toUpperCase()}) ${q.mot}</span>
-        <span class="recap-good">${by}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-$('btnSoloRematch').addEventListener('click', () => {
-  hide('screenSoloEnd');
-  show('screenSoloSetup');
-});
-$('btnSoloBack').addEventListener('click', () => {
-  soloState = null;
-  goHome();
-});
-
-/* ============================================================
-   SCORES
-   ============================================================ */
-function computeStats(history) {
-  const total = history.length;
-  if (total === 0) return null;
-
-  const wins = history.filter(m => m.result === 'win').length;
-  const loses = history.filter(m => m.result === 'lose').length;
-  const ties = history.filter(m => m.result === 'tie').length;
-  const bestScore = Math.max(...history.map(m => m.myScore));
-  const avgScore = Math.round(history.reduce((s,m) => s+m.myScore, 0) / total);
-  const totalCorrects = history.reduce((s,m) => s+m.myCorrects, 0);
-  const totalWrongs = history.reduce((s,m) => s+m.myWrongs, 0);
-  const totalAnswers = totalCorrects + totalWrongs;
-  const accuracy = totalAnswers > 0 ? Math.round((totalCorrects / totalAnswers) * 100) : 0;
-
-  const byDiff = { facile: 0, moyen: 0, difficile: 0 };
-  history.forEach(m => { if (byDiff[m.difficulty] !== undefined) byDiff[m.difficulty]++; });
-
-  return { total, wins, loses, ties, bestScore, avgScore, accuracy, totalCorrects, totalWrongs, byDiff };
-}
-
-function renderScoresScreen() {
-  const history = loadHistory();
-
-  if (history.length === 0) {
-    show('emptyEvolution'); hide('evolutionContent');
-  } else {
-    hide('emptyEvolution'); show('evolutionContent');
-    renderEvolution(history);
-  }
-
-  const stats = computeStats(history);
-  if (!stats) {
-    $('statsGrid').innerHTML = '';
-    show('emptyStats');
-    $('chartDiffCard').style.display = 'none';
-  } else {
-    hide('emptyStats');
-    renderStats(stats);
-    $('chartDiffCard').style.display = 'block';
-    renderDifficultyChart(stats.byDiff);
-  }
-
-  if (history.length === 0) {
-    show('emptyHistory'); hide('historyContent');
-  } else {
-    hide('emptyHistory'); show('historyContent');
-    renderHistory(history);
-  }
-}
-
-function renderStats(stats) {
-  $('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="stat-emoji">🎮</div><div class="stat-value">${stats.total}</div><div class="stat-label">Parties jouées</div></div>
-    <div class="stat-card"><div class="stat-emoji">🏆</div><div class="stat-value" style="color:#10b981;">${stats.wins}</div><div class="stat-label">Victoires</div></div>
-    <div class="stat-card"><div class="stat-emoji">❌</div><div class="stat-value" style="color:#ef4444;">${stats.loses}</div><div class="stat-label">Défaites</div></div>
-    <div class="stat-card"><div class="stat-emoji">🤝</div><div class="stat-value" style="color:#f59e0b;">${stats.ties}</div><div class="stat-label">Égalités</div></div>
-    <div class="stat-card"><div class="stat-emoji">⭐</div><div class="stat-value">${stats.bestScore}</div><div class="stat-label">Meilleur score</div></div>
-    <div class="stat-card"><div class="stat-emoji">📊</div><div class="stat-value">${stats.avgScore}</div><div class="stat-label">Score moyen</div></div>
-    <div class="stat-card"><div class="stat-emoji">🎯</div><div class="stat-value">${stats.accuracy}%</div><div class="stat-label">Précision</div></div>
-    <div class="stat-card"><div class="stat-emoji">✅</div><div class="stat-value">${stats.totalCorrects}</div><div class="stat-label">Bonnes réponses</div></div>
-  `;
-}
-
-function renderHistory(history) {
-  const sorted = [...history].sort((a,b) => new Date(b.date) - new Date(a.date));
-  $('historyBody').innerHTML = sorted.map(m => {
-    const date = new Date(m.date);
-    const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) +
-                    ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    const badge = m.result === 'win'
-      ? '<span class="badge-win">🏆 Victoire</span>'
-      : m.result === 'lose'
-      ? '<span class="badge-lose">❌ Défaite</span>'
-      : '<span class="badge-tie">🤝 Égalité</span>';
-    return `
-      <tr>
-        <td>${dateStr}</td>
-        <td><span class="diff-tag ${m.difficulty}">${m.difficulty}</span></td>
-        <td><strong style="color:var(--dore);">${m.myScore} pts</strong></td>
-        <td style="color:var(--robot);">${m.robotScore} pts</td>
-        <td>${badge}</td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function getThemeColors() {
-  const isDark = document.body.classList.contains('dark-mode');
-  return {
-    text: isDark ? '#f4f4f4' : '#111111',
-    grid: isDark ? '#333333' : '#e0e0e0',
-    dore: isDark ? '#e5b83b' : '#cda434',
-    robot: isDark ? '#818cf8' : '#6366f1',
-    green: '#10b981',
-    red: '#ef4444',
-    orange: '#f59e0b'
-  };
-}
-
-function destroyChart(name) {
-  if (currentCharts[name]) {
-    currentCharts[name].destroy();
-    delete currentCharts[name];
-  }
-}
-
-function renderEvolution(history) {
-  const colors = getThemeColors();
-  const recent = [...history].sort((a,b) => new Date(a.date) - new Date(b.date)).slice(-20);
-  const labels = recent.map((_, i) => `#${history.length - recent.length + i + 1}`);
-  const myScores = recent.map(m => m.myScore);
-  const robotScores = recent.map(m => m.robotScore);
-
-  const stats = computeStats(history);
-  const winRate = stats.total > 0 ? Math.round((stats.wins / stats.total) * 100) : 0;
-  const accuracy = stats.accuracy;
-  const bestScore = stats.bestScore;
-  const bestScoreMax = TOTAL_QUESTIONS * POINTS_PER_CORRECT;
-
-  $('progressBars').innerHTML = `
-    <div class="progress-item">
-      <div class="progress-header"><span>🏆 Taux de victoire</span><span style="color:#10b981;">${winRate}%</span></div>
-      <div class="progress-bar-track"><div class="progress-bar-fill fill-green" style="width:${winRate}%;"></div></div>
-    </div>
-    <div class="progress-item">
-      <div class="progress-header"><span>🎯 Précision des réponses</span><span style="color:#f59e0b;">${accuracy}%</span></div>
-      <div class="progress-bar-track"><div class="progress-bar-fill fill-orange" style="width:${accuracy}%;"></div></div>
-    </div>
-    <div class="progress-item">
-      <div class="progress-header"><span>⭐ Meilleur score</span><span style="color:#6366f1;">${bestScore} / ${bestScoreMax}</span></div>
-      <div class="progress-bar-track"><div class="progress-bar-fill fill-blue" style="width:${(bestScore/bestScoreMax)*100}%;"></div></div>
-    </div>
-  `;
-
-  destroyChart('evolution');
-  const ctx1 = $('chartEvolution').getContext('2d');
-  currentCharts.evolution = new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Mon score',
-          data: myScores,
-          borderColor: colors.dore,
-          backgroundColor: 'rgba(205,164,52,0.15)',
-          fill: true, tension: 0.35,
-          pointRadius: 4, pointBackgroundColor: colors.dore,
-          pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 3
-        },
-        {
-          label: 'Ya Credo Robot',
-          data: robotScores,
-          borderColor: colors.robot,
-          backgroundColor: 'rgba(99,102,241,0.1)',
-          fill: true, tension: 0.35,
-          pointRadius: 4, pointBackgroundColor: colors.robot,
-          pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 3
+    <!-- SCRIPT FIREBASE AUTH & FIRESTORE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ⚠️ METS TA CONFIGURATION FIREBASE ICI
+        const firebaseConfig = {
+            apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
+            authDomain: "menu-f24cc.firebaseapp.com",
+            projectId: "menu-f24cc",
+            storageBucket: "menu-f24cc.firebasestorage.app",
+            messagingSenderId: "460095019040",
+            appId: "1:460095019040:web:45f931d14a59027e3b0445",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Éléments DOM
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+
+        // 1. Connexion
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    loginError.classList.add('hidden');
+                })
+                .catch(() => {
+                    loginError.classList.remove('hidden');
+                });
+        });
+
+        // 2. Déconnexion
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // 3. Surveiller l'état de connexion
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginScreen.classList.add('hidden');
+                dashboardScreen.classList.remove('hidden');
+                loadAdminProducts();
+            } else {
+                loginScreen.classList.remove('hidden');
+                dashboardScreen.classList.add('hidden');
+            }
+        });
+
+        // 4. Ajouter un produit
+        document.getElementById('add-product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom = document.getElementById('prod-name').value;
+            const prix = document.getElementById('prod-price').value;
+            const categorie = document.getElementById('prod-category').value;
+            const image = document.getElementById('prod-image').value;
+            const status = document.getElementById('add-status');
+
+            try {
+                await addDoc(collection(db, "vetements"), { nom, prix, categorie, image });
+                status.classList.remove('hidden');
+                document.getElementById('add-product-form').reset();
+                setTimeout(() => status.classList.add('hidden'), 3000);
+                loadAdminProducts();
+            } catch (error) {
+                alert("Erreur lors de l'ajout. Vérifiez vos droits d'accès.");
+            }
+        });
+
+        // 5. Afficher les produits dans l'admin
+        async function loadAdminProducts() {
+            const list = document.getElementById('admin-products-list');
+            list.innerHTML = 'Chargement...';
+            const querySnapshot = await getDocs(collection(db, "vetements"));
+            list.innerHTML = '';
+            
+            if(querySnapshot.empty) {
+                list.innerHTML = '<p class="text-gray-500 text-sm">Aucun produit.</p>';
+                return;
+            }
+
+            querySnapshot.forEach((document) => {
+                const prod = document.data();
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-black p-3 rounded border border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <img src="${prod.image}" class="w-10 h-10 object-cover rounded">
+                            <div>
+                                <p class="text-sm font-bold">${prod.nom}</p>
+                                <p class="text-xs text-gray-400">${prod.prix} $</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteProduct('${document.id}')" class="text-red-500 text-sm hover:underline">Supprimer</button>
+                    </div>
+                `;
+            });
         }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: colors.text, font: { family: 'Montserrat', weight: '700' } } }
-      },
-      scales: {
-        x: { ticks: { color: colors.text, font: { family: 'Montserrat' } }, grid: { color: colors.grid } },
-        y: { beginAtZero: true, max: bestScoreMax, ticks: { color: colors.text, font: { family: 'Montserrat' } }, grid: { color: colors.grid } }
-      }
-    }
-  });
 
-  destroyChart('victories');
-  const ctx2 = $('chartVictories').getContext('2d');
-  currentCharts.victories = new Chart(ctx2, {
-    type: 'doughnut',
-    data: {
-      labels: ['🏆 Victoires', '❌ Défaites', '🤝 Égalités'],
-      datasets: [{
-        data: [stats.wins, stats.loses, stats.ties],
-        backgroundColor: [colors.green, colors.red, colors.orange],
-        borderColor: document.body.classList.contains('dark-mode') ? '#1e1e1e' : '#fff',
-        borderWidth: 4, hoverOffset: 10
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: colors.text,
-            font: { family: 'Montserrat', weight: '700', size: 12 },
-            padding: 16, usePointStyle: true, pointStyle: 'circle'
-          }
+        // 6. Supprimer un produit
+        window.deleteProduct = async function(id) {
+            if(confirm("Supprimer ce vêtement de la boutique ?")) {
+                await deleteDoc(doc(db, "vetements", id));
+                loadAdminProducts();
+            }
         }
-      },
-      cutout: '60%'
-    }
-  });
-}
-
-function renderDifficultyChart(byDiff) {
-  const colors = getThemeColors();
-  destroyChart('difficulty');
-  const ctx = $('chartDifficulty').getContext('2d');
-  currentCharts.difficulty = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['🟢 Facile', '🟡 Moyen', '🔴 Difficile'],
-      datasets: [{
-        label: 'Parties jouées',
-        data: [byDiff.facile, byDiff.moyen, byDiff.difficile],
-        backgroundColor: ['rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(239,68,68,0.7)'],
-        borderColor: [colors.green, colors.orange, colors.red],
-        borderWidth: 2, borderRadius: 8, barThickness: 60
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: colors.text, font: { family: 'Montserrat', weight: '700' } }, grid: { display: false } },
-        y: { beginAtZero: true, ticks: { color: colors.text, stepSize: 1, font: { family: 'Montserrat' } }, grid: { color: colors.grid } }
-      }
-    }
-  });
-}
-
-/* ============================================================
-   ONGLETS
-   ============================================================ */
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    const id = 'tab-' + tab.dataset.tab;
-    $(id).classList.remove('hidden');
-  });
-});
-
-/* ============================================================
-   INIT
-   ============================================================ */
-initTheme();
-if (pseudo) $('pseudo').value = pseudo;
-</script>
+    </script>
 </body>
 </html>
