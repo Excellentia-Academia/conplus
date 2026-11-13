@@ -27,6 +27,9 @@
         /* Bouton Or */
         .btn-gold { background-color: var(--dark); color: var(--gold); border: 1px solid var(--gold); transition: all 0.3s; }
         .btn-gold:hover { background-color: var(--gold); color: white; }
+
+        /* Filtres */
+        .filter-btn.active { background-color: var(--dark); color: white; border-color: var(--dark); }
     </style>
 </head>
 <body class="antialiased">
@@ -35,15 +38,24 @@
     <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 py-4 transition-all">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
             <a href="#" class="text-3xl font-luxury font-bold tracking-widest text-[#111]">LUXE<span class="text-[#C5A880]">.</span></a>
+            
             <div class="hidden md:flex gap-8 text-sm font-semibold tracking-wider uppercase">
                 <a href="#galerie" class="hover:text-[#C5A880] transition">Collection</a>
                 <a href="#histoire" class="hover:text-[#C5A880] transition">Notre Histoire</a>
                 <a href="admin.html" class="text-gray-400 hover:text-[#C5A880] transition">Admin</a>
             </div>
-            <button onclick="toggleCart()" class="relative group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:text-[#C5A880] transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-[#C5A880] text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
-            </button>
+
+            <!-- Barre de recherche et Panier -->
+            <div class="flex items-center gap-6">
+                <div class="relative hidden sm:block">
+                    <input type="text" id="search-bar" placeholder="Rechercher un article..." class="bg-transparent border-b border-gray-300 py-1 px-2 text-sm focus:outline-none focus:border-[#C5A880] transition w-48">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute right-2 top-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+                <button onclick="toggleCart()" class="relative group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:text-[#C5A880] transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-[#C5A880] text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -60,12 +72,33 @@
         </div>
     </header>
 
-    <!-- GALERIE DE VÊTEMENTS (Générée par Firebase) -->
+    <!-- GALERIE DE VÊTEMENTS -->
     <section id="galerie" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 reveal">
+            <div class="text-center mb-12 reveal">
                 <h2 class="text-4xl md:text-5xl font-luxury mb-4">Nos Pièces Exclusives</h2>
                 <p class="text-gray-500 max-w-2xl mx-auto text-sm uppercase tracking-widest">Des créations uniques, confectionnées avec les meilleurs matériaux.</p>
+            </div>
+
+            <!-- BARRE DE FILTRES ET DE TRI -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12 reveal border-b border-gray-100 pb-6 gap-4">
+                <!-- Boutons Catégories -->
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="filterCategory('Tous', this)" class="filter-btn active px-5 py-2 rounded-full border border-gray-300 text-sm uppercase tracking-wider transition">Tout</button>
+                    <button onclick="filterCategory('Homme', this)" class="filter-btn px-5 py-2 rounded-full border border-gray-300 text-sm uppercase tracking-wider transition">Homme</button>
+                    <button onclick="filterCategory('Femme', this)" class="filter-btn px-5 py-2 rounded-full border border-gray-300 text-sm uppercase tracking-wider transition">Femme</button>
+                    <button onclick="filterCategory('Accessoires', this)" class="filter-btn px-5 py-2 rounded-full border border-gray-300 text-sm uppercase tracking-wider transition">Accessoires</button>
+                </div>
+
+                <!-- Tri par prix -->
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-500 uppercase tracking-wider">Trier :</label>
+                    <select id="sort-select" onchange="sortProducts()" class="bg-transparent border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-[#C5A880]">
+                        <option value="default">Par défaut</option>
+                        <option value="price-asc">Prix croissant</option>
+                        <option value="price-desc">Prix décroissant</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Grille des produits -->
@@ -109,12 +142,11 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE - LECTURE DES PRODUITS -->
+    <!-- SCRIPT FIREBASE ET LOGIQUE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ⚠️ METS TA CONFIGURATION FIREBASE ICI
         const firebaseConfig = {
             apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
             authDomain: "menu-f24cc.firebaseapp.com",
@@ -127,6 +159,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let allProducts = []; // On stocke tous les produits ici pour filtrer sans recharger
+
         // Charger les produits depuis Firebase
         async function loadProducts() {
             const grid = document.getElementById('products-grid');
@@ -135,32 +169,101 @@
                 const querySnapshot = await getDocs(collection(db, "vetements"));
                 
                 if (querySnapshot.empty) {
-                    grid.innerHTML = '<p class="col-span-full text-center text-gray-500">Aucun vêtement dans la collection pour le moment. Allez sur la page Admin pour en ajouter.</p>';
+                    grid.innerHTML = '<p class="col-span-full text-center text-gray-500">Aucun vêtement dans la collection.</p>';
                     return;
                 }
 
+                allProducts = []; // On vide le tableau
                 querySnapshot.forEach((doc) => {
-                    const prod = doc.data();
-                    grid.innerHTML += `
-                        <div class="product-card rounded-sm overflow-hidden group reveal active">
-                            <div class="h-96 overflow-hidden relative">
-                                <img src="${prod.image}" alt="${prod.nom}" class="product-image w-full h-full object-cover transition duration-700">
-                                <div class="absolute top-4 right-4 bg-white px-3 py-1 text-xs uppercase tracking-wider font-bold">${prod.categorie}</div>
-                            </div>
-                            <div class="p-5 text-center">
-                                <h3 class="text-lg font-luxury mb-1">${prod.nom}</h3>
-                                <p class="text-[#C5A880] font-bold mb-4">${prod.prix} $</p>
-                                <button onclick="addToCart('${prod.nom}', ${prod.prix})" class="border border-black text-black px-6 py-2 text-xs uppercase tracking-widest hover:bg-black hover:text-white transition w-full">Ajouter</button>
-                            </div>
-                        </div>
-                    `;
+                    allProducts.push({ id: doc.id, ...doc.data() });
                 });
+
+                renderProducts(allProducts); // On affiche tout
             } catch (error) {
                 grid.innerHTML = '<p class="text-red-500 text-center">Erreur de connexion à la base de données.</p>';
             }
         }
 
-        // Logique du Panier
+        // Afficher les produits (fonction réutilisable)
+        function renderProducts(products) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-10">Aucun article ne correspond à votre recherche.</p>';
+                return;
+            }
+
+            products.forEach((prod) => {
+                grid.innerHTML += `
+                    <div class="product-card rounded-sm overflow-hidden group reveal active">
+                        <div class="h-96 overflow-hidden relative">
+                            <img src="${prod.image}" alt="${prod.nom}" class="product-image w-full h-full object-cover transition duration-700">
+                            <div class="absolute top-4 right-4 bg-white px-3 py-1 text-xs uppercase tracking-wider font-bold">${prod.categorie}</div>
+                        </div>
+                        <div class="p-5 text-center">
+                            <h3 class="text-lg font-luxury mb-1">${prod.nom}</h3>
+                            <p class="text-[#C5A880] font-bold mb-4">${prod.prix} $</p>
+                            <button onclick="addToCart('${prod.nom}', ${prod.prix})" class="border border-black text-black px-6 py-2 text-xs uppercase tracking-widest hover:bg-black hover:text-white transition w-full">Ajouter</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- SYSTÈME DE FILTRES, RECHERCHE ET TRI ---
+        let currentCategory = 'Tous';
+        let currentSearch = '';
+        let currentSort = 'default';
+
+        // 1. Filtrer par catégorie
+        window.filterCategory = function(category, btnElement) {
+            currentCategory = category;
+            
+            // Changer le style des boutons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            applyFilters();
+        }
+
+        // 2. Barre de recherche
+        document.getElementById('search-bar').addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        // 3. Trier par prix
+        window.sortProducts = function() {
+            currentSort = document.getElementById('sort-select').value;
+            applyFilters();
+        }
+
+        // 4. Fonction qui applique tout en même temps
+        function applyFilters() {
+            let filtered = [...allProducts];
+
+            // Filtrer par catégorie
+            if (currentCategory !== 'Tous') {
+                filtered = filtered.filter(p => p.categorie === currentCategory);
+            }
+
+            // Filtrer par recherche
+            if (currentSearch !== '') {
+                filtered = filtered.filter(p => p.nom.toLowerCase().includes(currentSearch));
+            }
+
+            // Trier
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.prix - b.prix);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.prix - a.prix);
+            }
+
+            renderProducts(filtered);
+        }
+
+        // --- LOGIQUE DU PANIER ---
         let cart = [];
         window.toggleCart = function() { document.querySelector('.cart-sidebar').classList.toggle('open'); }
         window.addToCart = function(name, price) {
@@ -202,6 +305,7 @@
             window.open(`https://wa.me/243890000000?text=${message}`, '_blank'); // Remplace par ton numéro
         }
 
+        // Initialisation
         loadProducts();
 
         // Animation au défilement
