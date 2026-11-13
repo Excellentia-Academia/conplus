@@ -9,7 +9,6 @@
 </head>
 <body class="flex items-center justify-center min-h-screen">
 
-    <!-- ÉCRAN DE CONNEXION -->
     <div id="login-screen" class="bg-gray-900 p-10 rounded-lg shadow-2xl w-full max-w-md border border-gray-800">
         <h2 class="text-3xl text-center mb-6 text-[#C5A880]">Espace Admin</h2>
         <form id="login-form" class="space-y-4">
@@ -26,7 +25,6 @@
         </form>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="dashboard-screen" class="hidden w-full max-w-4xl p-6">
         <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-4">
             <h1 class="text-2xl font-bold text-[#C5A880]">Gestion de la Boutique</h1>
@@ -34,7 +32,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <!-- Formulaire d'ajout (MODIFIÉ POUR L'UPLOAD) -->
             <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
                 <h2 class="text-xl mb-4 text-[#C5A880]">Ajouter un vêtement</h2>
                 <form id="add-product-form" class="space-y-4">
@@ -54,39 +51,29 @@
                             <option>Accessoires</option>
                         </select>
                     </div>
-                    
-                    <!-- CHAMP MODIFIÉ POUR L'UPLOAD D'IMAGE -->
                     <div>
                         <label class="block text-sm text-gray-400 mb-1">Photo du vêtement</label>
                         <input type="file" id="prod-image" accept="image/*" required class="w-full bg-black border border-gray-700 rounded p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C5A880] file:text-black hover:file:bg-white cursor-pointer">
-                        <p class="text-xs text-gray-500 mt-1">Sélectionnez une image depuis votre téléphone ou PC.</p>
                     </div>
-                    
                     <button type="submit" id="submit-btn" class="w-full bg-[#C5A880] text-black font-bold py-2 rounded hover:bg-white transition mt-4">Ajouter à la boutique</button>
                     <p id="add-status" class="text-green-500 text-sm text-center hidden mt-2">Vêtement ajouté avec succès !</p>
-                    <p id="upload-status" class="text-yellow-500 text-sm text-center hidden mt-2">Envoi de l'image en cours...</p>
+                    <p id="upload-status" class="text-yellow-500 text-sm text-center hidden mt-2">Compression et envoi en cours... (Veuillez patienter)</p>
                 </form>
             </div>
 
-            <!-- Liste des produits existants -->
             <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
                 <h2 class="text-xl mb-4 text-[#C5A880]">Vêtements en ligne</h2>
-                <div id="admin-products-list" class="space-y-3 overflow-y-auto max-h-96 pr-2">
-                    <!-- Généré par JS -->
-                </div>
+                <div id="admin-products-list" class="space-y-3 overflow-y-auto max-h-96 pr-2"></div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE AVEC STORAGE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        // IMPORTATION DE STORAGE
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        // ⚠️ TA CONFIGURATION FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
             authDomain: "menu-f24cc.firebaseapp.com",
@@ -99,45 +86,64 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app); // Initialisation de Storage
+        const storage = getStorage(app);
 
-        // Éléments DOM
-        const loginScreen = document.getElementById('login-screen');
-        const dashboardScreen = document.getElementById('dashboard-screen');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-
-        // Connexion
-        loginForm.addEventListener('submit', (e) => {
+        // LOGIQUE DE CONNEXION
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-                .then(() => loginError.classList.add('hidden'))
-                .catch(() => loginError.classList.remove('hidden'));
+                .then(() => document.getElementById('login-error').classList.add('hidden'))
+                .catch(() => document.getElementById('login-error').classList.remove('hidden'));
         });
 
-        // Déconnexion
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-        // Surveiller l'état de connexion
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                loginScreen.classList.add('hidden');
-                dashboardScreen.classList.remove('hidden');
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
                 loadAdminProducts();
             } else {
-                loginScreen.classList.add('hidden'); // Corrigé pour éviter le clignotement
-                loginScreen.classList.remove('hidden');
-                dashboardScreen.classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('dashboard-screen').classList.add('hidden');
             }
         });
 
-        // 4. Ajouter un produit avec UPLOAD D'IMAGE
+        // --- LA NOUVELLE FONCTION MAGIQUE DE COMPRESSION ---
+        // Elle prend l'image, la réduit à 800px de large max, et la compresse à 70% de qualité.
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800; // Taille max pour un site web
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // On convertit en JPEG à 70% de qualité (très léger)
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', 0.7);
+                    };
+                };
+            });
+        }
+
+        // AJOUTER UN PRODUIT
         document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('prod-name').value;
             const prix = document.getElementById('prod-price').value;
             const categorie = document.getElementById('prod-category').value;
-            const file = document.getElementById('prod-image').files[0]; // Le fichier image
+            const file = document.getElementById('prod-image').files[0];
             
             const status = document.getElementById('add-status');
             const uploadStatus = document.getElementById('upload-status');
@@ -146,22 +152,26 @@
             if (!file) return alert("Veuillez sélectionner une image.");
 
             try {
-                // A. On affiche "Envoi en cours..."
                 uploadStatus.classList.remove('hidden');
+                uploadStatus.innerText = "Compression de l'image...";
                 submitBtn.disabled = true;
                 submitBtn.innerText = "Patientez...";
 
-                // B. On upload l'image sur Firebase Storage
-                const storageRef = ref(storage, 'vetements/' + Date.now() + '_' + file.name);
-                await uploadBytes(storageRef, file);
+                // 1. ON COMPRESSE L'IMAGE AVANT L'ENVOI
+                const compressedFile = await compressImage(file);
+
+                uploadStatus.innerText = "Envoi sécurisé vers Firebase...";
+
+                // 2. On upload l'image compressée
+                const storageRef = ref(storage, 'vetements/' + Date.now() + '_' + nom.replace(/\s+/g, '') + '.jpg');
+                await uploadBytes(storageRef, compressedFile);
                 
-                // C. On récupère le lien de l'image
+                // 3. On récupère le lien
                 const imageUrl = await getDownloadURL(storageRef);
 
-                // D. On sauvegarde dans Firestore
+                // 4. On sauvegarde dans Firestore
                 await addDoc(collection(db, "vetements"), { nom, prix, categorie, image: imageUrl });
                 
-                // E. On nettoie
                 status.classList.remove('hidden');
                 uploadStatus.classList.add('hidden');
                 document.getElementById('add-product-form').reset();
@@ -173,14 +183,13 @@
                 
             } catch (error) {
                 console.error(error);
-                alert("Erreur lors de l'ajout. Vérifiez vos règles Storage et Firestore.");
+                alert("Erreur lors de l'ajout.");
                 uploadStatus.classList.add('hidden');
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Ajouter à la boutique";
             }
         });
 
-        // Afficher les produits dans l'admin
         async function loadAdminProducts() {
             const list = document.getElementById('admin-products-list');
             list.innerHTML = 'Chargement...';
@@ -209,9 +218,8 @@
             });
         }
 
-        // Supprimer un produit
         window.deleteProduct = async function(id) {
-            if(confirm("Supprimer ce vêtement de la boutique ?")) {
+            if(confirm("Supprimer ce vêtement ?")) {
                 await deleteDoc(doc(db, "vetements", id));
                 loadAdminProducts();
             }
