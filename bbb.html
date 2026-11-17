@@ -1,557 +1,854 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signaler une absence ou un retard — Groupe KA Nodasa</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --primary:#5c0a1a;--primary-light:#8b1327;--secondary:#f5a623;
-  --bg:#fbf6f6;--surface:#fff;--text:#1a0a0f;--muted:#7a5c62;
-  --border:#ecd5d8;--success:#0f9d58;--danger:#c8102e;--warning:#e65100;
-  --radius:14px;--shadow:0 4px 16px rgba(92,10,26,.08);
-  --grad-primary:linear-gradient(135deg,#5c0a1a 0%,#8b1327 50%,#b91c2e 100%);
-  --grad-gold:linear-gradient(135deg,#f5a623 0%,#ffc857 100%);
-  --grad-success:linear-gradient(135deg,#0f9d58 0%,#13b866 100%);
-  --grad-warning:linear-gradient(135deg,#e65100 0%,#f59e0b 100%);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
-h1,h2,h3{font-family:'Playfair Display',serif;color:var(--primary)}
-.container{max-width:900px;margin:0 auto;padding:0 24px}
-.header{background:var(--grad-primary);color:#fff;padding:18px 0;box-shadow:0 4px 20px rgba(92,10,26,.3)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:14px}
-.logo-img{width:56px;height:56px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 4px 14px rgba(200,16,46,.35);flex-shrink:0;transition:transform .3s}
-.logo:hover .logo-img{transform:rotate(-5deg) scale(1.05)}
-.logo-text strong{display:block;font-size:1.15rem;letter-spacing:.5px;color:#fff}
-.logo-text small{opacity:.85;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--secondary)}
-.theme-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.theme-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC Food | Le Meilleur Shawarma de la Ville</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #FFC107; --dark: #121212; --light: #f9f9f9; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--light); color: var(--dark); overflow-x: hidden; }
+        h1, h2, h3, .logo-font { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
 
-.hero{background:var(--grad-primary);color:#fff;padding:50px 0 60px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50%;left:-10%;width:60%;height:200%;background:radial-gradient(circle,rgba(245,166,35,.18) 0%,transparent 60%);pointer-events:none}
-.hero::after{content:'';position:absolute;bottom:-50%;right:-10%;width:50%;height:200%;background:radial-gradient(circle,rgba(230,57,70,.4) 0%,transparent 60%);pointer-events:none}
-.hero .container{position:relative;z-index:1}
-.hero h1{color:#fff;font-size:2.3rem;margin-bottom:12px;font-weight:900}
-.hero-sub{font-size:1.05rem;opacity:.9}
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-.section{padding:36px 0}
-.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;margin-bottom:24px;border:1px solid var(--border)}
-.card h2{font-size:1.4rem;margin-bottom:8px}
-.card .sub{color:var(--muted);font-size:.9rem;margin-bottom:24px}
+        .menu-card { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .menu-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .menu-card:hover img { transform: scale(1.1); }
 
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-weight:600;margin-bottom:8px;font-size:.88rem;color:var(--primary)}
-.form-group label .req{color:var(--danger)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;transition:all .2s;background:#fff;color:var(--text)}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 4px rgba(139,19,39,.12)}
-.form-group textarea{resize:vertical;min-height:90px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+        .cart-sidebar { transform: translateX(100%); transition: transform 0.4s ease-in-out; }
+        .cart-sidebar.open { transform: translateX(0); }
 
-.type-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
-@media(max-width:600px){.type-choices{grid-template-columns:1fr}}
-.type-choice{padding:22px;border-radius:14px;border:3px solid var(--border);cursor:pointer;text-align:center;transition:all .25s;background:#fff;font-family:inherit}
-.type-choice:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(92,10,26,.12)}
-.type-choice input{display:none}
-.type-choice .tc-icon{font-size:2rem;margin-bottom:8px;display:block}
-.type-choice .tc-label{font-weight:700;font-size:1rem;color:var(--text)}
-.type-choice .tc-desc{font-size:.75rem;color:var(--muted);margin-top:4px}
-.type-choice.selected[data-type="absence"]{border-color:var(--danger);background:linear-gradient(135deg,#fff5f5 0%,#fce8e6 100%);box-shadow:0 8px 20px rgba(200,16,46,.2)}
-.type-choice.selected[data-type="absence"] .tc-label{color:var(--danger)}
-.type-choice.selected[data-type="retard"]{border-color:var(--warning);background:linear-gradient(135deg,#fff8f0 0%,#fff3e0 100%);box-shadow:0 8px 20px rgba(230,81,0,.2)}
-.type-choice.selected[data-type="retard"] .tc-label{color:var(--warning)}
+        .mascot { position: fixed; bottom: 20px; left: 20px; z-index: 50; animation: float 3s ease-in-out infinite; cursor: pointer; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+        .bubble { position: absolute; top: -40px; left: 80px; background: white; padding: 10px 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: bold; font-size: 14px; opacity: 0; transition: 0.3s; pointer-events: none; }
+        .mascot:hover .bubble { opacity: 1; }
 
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:10px;border:none;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none}
-.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 4px 14px rgba(92,10,26,.3)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(92,10,26,.4)}
-.btn-block{width:100%;justify-content:center}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
+        .star-rating input { display: none; }
+        .star-rating label { cursor: pointer; color: #ccc; font-size: 30px; transition: color 0.2s; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFC107; }
 
-.message{margin-top:18px;padding:16px 20px;border-radius:10px;font-weight:500;display:none;font-size:.95rem;line-height:1.5}
-.message.show{display:block}
-.message.success{background:#e6f7ee;color:#0f9d58;border-left:4px solid #0f9d58}
-.message.error{background:#fce8e6;color:#c8102e;border-left:4px solid #c8102e}
-.message.warning{background:#fff3e0;color:#e65100;border-left:4px solid #e65100}
+        /* === NOUVEAU : Barre de recherche === */
+        .search-box { transition: all 0.3s ease; }
+        .search-box:focus-within { box-shadow: 0 0 0 3px rgba(255,193,7,0.4); }
 
-.info-box{background:linear-gradient(135deg,#fdf6f7 0%,#fae8ea 100%);border-left:5px solid var(--primary);border-radius:10px;padding:18px 22px;margin-bottom:24px;font-size:.9rem}
-.info-box strong{color:var(--primary)}
+        /* === NOUVEAU : Quiz === */
+        .quiz-card { background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%); }
+        .quiz-option { transition: all 0.2s ease; cursor: pointer; }
+        .quiz-option:hover:not(.disabled) { background: rgba(255,193,7,0.15); border-color: #FFC107; transform: translateX(5px); }
+        .quiz-option.correct { background: rgba(34,197,94,0.2); border-color: #22c55e; }
+        .quiz-option.wrong { background: rgba(239,68,68,0.2); border-color: #ef4444; }
+        .quiz-option.disabled { cursor: not-allowed; opacity: 0.6; }
+        @keyframes pulseTimer { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .timer-warning { animation: pulseTimer 1s infinite; color: #ef4444 !important; }
+        .locked-day { filter: grayscale(1); opacity: 0.5; }
 
-/* BANNIÈRE D'ÉTAT DU SIGNALEMENT */
-.status-banner{border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;transition:all .3s}
-.status-banner.open{background:linear-gradient(135deg,#e6f7ee 0%,#c8e6c9 100%);border:3px solid var(--success)}
-.status-banner.waiting{background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);border:3px solid var(--warning)}
-.status-banner.closed{background:linear-gradient(135deg,#fce8e6 0%,#f8c4c0 100%);border:3px solid var(--danger)}
-.status-banner .sb-icon{font-size:2.5rem;flex-shrink:0}
-.status-banner .sb-text{flex:1;min-width:200px}
-.status-banner .sb-title{font-weight:800;font-size:1.15rem;margin-bottom:4px}
-.status-banner.open .sb-title{color:var(--success)}
-.status-banner.waiting .sb-title{color:var(--warning)}
-.status-banner.closed .sb-title{color:var(--danger)}
-.status-banner .sb-desc{font-size:.88rem;color:var(--text)}
-.status-banner .sb-details{font-size:.85rem;color:var(--text);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.15)}
-.status-banner .sb-details div{padding:3px 0}
-.status-banner .sb-details strong{color:var(--primary)}
+        /* === NOUVEAU : Devise === */
+        .currency-btn.active { background: #FFC107; color: #121212; }
 
-/* FORMULAIRE DÉSACTIVÉ */
-.form-disabled{position:relative;opacity:.55;pointer-events:none;user-select:none}
-
-.footer{background:var(--grad-primary);color:#fff;text-align:center;padding:28px 0;font-size:.85rem;margin-top:40px;position:relative}
-.footer::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--grad-gold)}
-.footer p{opacity:.85;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.footer .footer-logo{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#fff;padding:2px}
-
-.hidden{display:none!important}
-
-.confirm-box{text-align:center;padding:40px 20px}
-.confirm-box .check{font-size:4rem;margin-bottom:16px;display:block}
-.confirm-box h2{font-size:1.8rem;margin-bottom:12px}
-.confirm-box p{color:var(--muted);margin-bottom:24px;font-size:1rem}
-.confirm-box .details{background:var(--bg);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;font-size:.9rem}
-.confirm-box .details div{padding:6px 0;border-bottom:1px solid var(--border)}
-.confirm-box .details div:last-child{border-bottom:none}
-.confirm-box .details strong{color:var(--primary);display:inline-block;min-width:130px}
-
-html[data-theme="dark"]{
-  --bg:#121014;--surface:#1c1618;--text:#f0e8ea;--muted:#9a8a90;
-  --border:#2e2228;--primary:#ff9aa8;--primary-light:#ff7a8a;
-  --shadow:0 4px 16px rgba(0,0,0,.35);
-}
-html[data-theme="dark"] .type-choice{background:#1c1618;color:#f0e8ea}
-html[data-theme="dark"] .type-choice .tc-label{color:#f0e8ea}
-html[data-theme="dark"] .type-choice.selected[data-type="absence"]{background:linear-gradient(135deg,#2a1518 0%,#3a1620 100%)}
-html[data-theme="dark"] .type-choice.selected[data-type="retard"]{background:linear-gradient(135deg,#2a2015 0%,#3a2a15 100%)}
-html[data-theme="dark"] .info-box{background:linear-gradient(135deg,#1c1618 0%,#2a1a1e 100%)}
-html[data-theme="dark"] .confirm-box .details{background:#121014}
-html[data-theme="dark"] .form-group input,
-html[data-theme="dark"] .form-group select,
-html[data-theme="dark"] .form-group textarea{background:#1c1618;color:#f0e8ea}
-html[data-theme="dark"] .form-group select option{background:#1c1618;color:#f0e8ea}
-html[data-theme="dark"] .status-banner.open{background:linear-gradient(135deg,#163a28 0%,#0f2a1c 100%)}
-html[data-theme="dark"] .status-banner.waiting{background:linear-gradient(135deg,#3a2a15 0%,#2a2015 100%)}
-html[data-theme="dark"] .status-banner.closed{background:linear-gradient(135deg,#3a1620 0%,#2a1015 100%)}
-html[data-theme="dark"] .status-banner .sb-details{border-top-color:rgba(255,255,255,.15)}
-
-@media(max-width:700px){
-  .hero h1{font-size:1.7rem}
-  .logo-img{width:48px;height:48px}
-  .logo-text small{font-size:.65rem}
-  .card{padding:24px 18px}
-}
-</style>
-<script>
-(function(){
-  var saved = localStorage.getItem('ka-theme');
-  if(saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-})();
-</script>
+        /* === NOUVEAU : Anti-triche overlay === */
+        #cheat-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center; padding: 20px; }
+        #cheat-overlay.show { display: flex; }
+    </style>
 </head>
-<body>
+<body class="antialiased">
 
-<header class="header">
-  <div class="container header-inner">
-    <div class="logo">
-      <img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="logo-img">
-      <div class="logo-text"><strong>Groupe KA Nodasa</strong><small>Signalement d'absence / retard</small></div>
-    </div>
-    <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="Mode sombre / clair" aria-label="Basculer le thème">🌙</button>
-  </div>
-</header>
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 bg-white shadow-lg py-4 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="w-12 h-12 bg-[#121212] rounded-full flex items-center justify-center text-[#FFC107] text-2xl font-bold border-4 border-[#FFC107]">MC</div>
+                <span class="text-3xl font-bold text-[#121212] logo-font hidden sm:inline">MC FOOD</span>
+            </div>
 
-<section class="hero">
-  <div class="container">
-    <h1>Signaler une absence ou un retard</h1>
-    <p class="hero-sub">Remplissez le formulaire ci-dessous — votre signalement arrivera directement à la Commission</p>
-  </div>
-</section>
+            <!-- NOUVEAU : Barre de recherche -->
+            <div class="search-box flex-1 max-w-md hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 border-2 border-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <input id="search-input" type="text" placeholder="Rechercher un plat, une boisson..." class="w-full bg-transparent px-3 outline-none text-sm font-semibold">
+                <div id="search-results" class="absolute top-full mt-2 left-0 right-0 bg-white rounded-2xl shadow-2xl hidden max-h-80 overflow-y-auto z-50"></div>
+            </div>
 
-<section class="section">
-  <div class="container">
+            <div class="hidden lg:flex gap-6 font-semibold text-base">
+                <a href="#menu" class="hover:text-[#FFC107] transition">Menu</a>
+                <a href="#jeu" class="hover:text-[#FFC107] transition">Quiz Mardi</a>
+                <a href="#avis" class="hover:text-[#FFC107] transition">Avis</a>
+            </div>
 
-    <!-- BANNIÈRE D'ÉTAT DU SIGNALEMENT (synchronisée en temps réel) -->
-    <div id="statusBanner" class="status-banner closed">
-      <span class="sb-icon" id="statusIcon">⏸</span>
-      <div class="sb-text">
-        <div class="sb-title" id="statusTitle">Vérification en cours…</div>
-        <div class="sb-desc" id="statusDesc">Connexion au centre de contrôle…</div>
-        <div class="sb-details" id="statusDetails" style="display:none"></div>
-      </div>
-    </div>
+            <!-- NOUVEAU : Sélecteur de devise -->
+            <div class="flex items-center bg-gray-100 rounded-full p-1 text-sm font-bold">
+                <button data-currency="USD" class="currency-btn active px-3 py-1 rounded-full transition">$</button>
+                <button data-currency="FC" class="currency-btn px-3 py-1 rounded-full transition">FC</button>
+            </div>
 
-    <div class="info-box" id="infoBox">
-      <strong>📢 Encadreurs uniquement</strong><br>
-      Ce formulaire permet de signaler une <strong>absence</strong> ou un <strong>retard</strong>. 
-      Votre signalement est enregistré automatiquement et visible par la Commission Secrétariat.
-    </div>
-
-    <!-- FORMULAIRE -->
-    <div class="card" id="cardFormulaire">
-      <h2>📝 Nouveau signalement</h2>
-      <p class="sub">Tous les champs marqués d'un <span style="color:var(--danger)">*</span> sont obligatoires.</p>
-
-      <form id="formSignalement">
-
-        <label style="display:block;font-weight:600;margin-bottom:12px;font-size:.88rem;color:var(--primary)">Type de signalement <span style="color:var(--danger)">*</span></label>
-        <div class="type-choices">
-          <label class="type-choice" data-type="absence">
-            <input type="radio" name="typeSignalement" value="absence" required>
-            <span class="tc-icon">❌</span>
-            <span class="tc-label">Absence</span>
-            <span class="tc-desc">Je ne serai pas présent(e)</span>
-          </label>
-          <label class="type-choice" data-type="retard">
-            <input type="radio" name="typeSignalement" value="retard" required>
-            <span class="tc-icon">⏰</span>
-            <span class="tc-label">Retard</span>
-            <span class="tc-desc">Je serai en retard</span>
-          </label>
+            <button onclick="toggleCart()" class="relative bg-[#121212] text-white p-3 rounded-full hover:bg-[#FFC107] hover:text-[#121212] transition duration-300 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">0</span>
+            </button>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="nomInput">Nom complet <span class="req">*</span></label>
-            <input type="text" id="nomInput" required placeholder="Ex : Ya Lwanga Maurice Fefe" autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label for="roleSelect">Rôle <span class="req">*</span></label>
-            <select id="roleSelect" required>
-              <option value="">— Choisir —</option>
-              <option value="Mukasa/Kasima">Mukasa/Kasima</option>
-              <option value="Lwanga/Kahenga">Lwanga/Kahenga</option>
-              <option value="Kaggwa/Meka">Kaggwa/Meka</option>
-              <option value="Mulumba/Bakoma">Mulumba/Bakoma</option>
-              <option value="Stagiaire">Stagiaire</option>
-            </select>
-          </div>
+        <!-- NOUVEAU : Barre de recherche mobile -->
+        <div class="md:hidden px-4 mt-3">
+            <div class="search-box flex items-center bg-gray-100 rounded-full px-4 py-2 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <input id="search-input-mobile" type="text" placeholder="Rechercher..." class="w-full bg-transparent px-3 outline-none text-sm font-semibold">
+                <div id="search-results-mobile" class="absolute top-full mt-2 left-0 right-0 bg-white rounded-2xl shadow-2xl hidden max-h-80 overflow-y-auto z-50"></div>
+            </div>
         </div>
+    </nav>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="dateInput">Date concernée <span class="req">*</span></label>
-            <input type="date" id="dateInput" required>
-          </div>
-          <div class="form-group">
-            <label for="motifSelect">Motif <span class="req">*</span></label>
-            <select id="motifSelect" required>
-              <option value="">— Choisir un motif —</option>
-              <option value="Maladie">Maladie</option>
-              <option value="Voyage">Voyage</option>
-              <option value="Raison familiale">Raison familiale</option>
-              <option value="Obligation professionnelle">Obligation professionnelle</option>
-              <option value="Transport / Embouteillage">Transport / Embouteillage</option>
-              <option value="Retard imprévu">Retard imprévu</option>
-              <option value="Absence non justifiée">Absence non justifiée</option>
-              <option value="Autre">Autre</option>
-            </select>
-          </div>
+    <!-- HERO SECTION -->
+    <header class="h-screen relative flex items-center justify-center overflow-hidden pt-20">
+        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1920&q=80" alt="Burger" class="absolute inset-0 w-full h-full object-cover z-0">
+        <div class="absolute inset-0 bg-black/60 z-10"></div>
+        <div class="relative z-20 text-center px-4 max-w-4xl mx-auto reveal">
+            <h1 class="text-6xl md:text-8xl font-bold text-white mb-4">L'expérience <br> <span class="text-[#FFC107]">MC FOOD</span></h1>
+            <p class="text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-light">Des burgers juteux, des shawarmas légendaires et des frites croustillantes. Goûtez à la perfection.</p>
+            <a href="#menu" class="bg-[#FFC107] text-black font-bold py-4 px-12 rounded-full text-lg hover:bg-white transition duration-300 shadow-[0_0_20px_rgba(255,193,7,0.6)] hover:shadow-[0_0_40px_rgba(255,193,7,0.9)] transform hover:-translate-y-1">Découvrir le Menu</a>
         </div>
+    </header>
 
-        <div class="form-group">
-          <label for="detailInput">Détail / Commentaire (optionnel)</label>
-          <textarea id="detailInput" placeholder="Ex : Rendez-vous médical à l'hôpital, je serai présent vers 10h…"></textarea>
+    <!-- SECTION MENU -->
+    <section id="menu" class="py-24 bg-[#f9f9f9]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-5xl font-bold mb-4">Nos <span class="text-[#FFC107]">Spécialités</span></h2>
+                <p class="text-gray-600 text-lg">Préparé avec passion, servi avec amour.</p>
+            </div>
+
+            <!-- Catégorie : Plats -->
+            <h3 class="text-3xl font-bold mb-8 reveal">🍔 <span class="text-[#FFC107]">Plats</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+
+                <!-- Burger -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Le Big MC burger" data-price="8">
+                    <div class="h-64 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Le Big MC</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="8">$8.00</span><button onclick="addToCart('Le Big MC', 8)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+
+                <!-- Shawarma -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Shawarma Légendaire" data-price="5">
+                    <div class="h-64 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Shawarma Légendaire</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="5">$5.00</span><button onclick="addToCart('Shawarma', 5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+
+                <!-- Frites (design amélioré) -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.2s;" data-name="Frites Croustillantes" data-price="2.5">
+                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-yellow-300">
+                        <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                        <span class="absolute top-3 right-3 bg-[#FFC107] text-black text-xs font-bold px-3 py-1 rounded-full shadow">🔥 Top</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Frites Croustillantes</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="2.5">$2.50</span><button onclick="addToCart('Frites', 2.5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Sucré & Fruits -->
+            <h3 class="text-3xl font-bold mb-8 reveal">🍌 <span class="text-[#FFC107]">Sucré & Fruits</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Banane Douce" data-price="1">
+                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-yellow-50 to-yellow-200">
+                        <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Banane Douce</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="1">$1.00</span><button onclick="addToCart('Banane', 1)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Salade de Fruits" data-price="2">
+                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-pink-50 to-orange-200">
+                        <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Salade de Fruits</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="2">$2.00</span><button onclick="addToCart('Salade de Fruits', 2)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.2s;" data-name="Beignets Sucrés" data-price="1.5">
+                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-amber-50 to-amber-200">
+                        <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-2">Beignets Sucrés</h3>
+                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="1.5">$1.50</span><button onclick="addToCart('Beignets', 1.5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Boissons -->
+            <h3 class="text-3xl font-bold mb-8 reveal">🥤 <span class="text-[#FFC107]">Boissons</span></h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Coca-Cola" data-price="1">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-red-100 to-red-300">
+                        <img src="https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Coca-Cola</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1">$1.00</span>
+                        <button onclick="addToCart('Coca-Cola', 1)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.05s;" data-name="Fanta Orange" data-price="1">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-orange-100 to-orange-300">
+                        <img src="https://images.unsplash.com/photo-1624517452488-04869289c4ca?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Fanta Orange</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1">$1.00</span>
+                        <button onclick="addToCart('Fanta', 1)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Sprite" data-price="1">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-green-100 to-green-300">
+                        <img src="https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Sprite</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1">$1.00</span>
+                        <button onclick="addToCart('Sprite', 1)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.15s;" data-name="Eau Minérale" data-price="0.5">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-blue-100 to-blue-300">
+                        <img src="https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Eau Minérale</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="0.5">$0.50</span>
+                        <button onclick="addToCart('Eau', 0.5)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Jus d'Orange" data-price="1.5">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-orange-100 to-yellow-300">
+                        <img src="https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Jus d'Orange</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1.5">$1.50</span>
+                        <button onclick="addToCart('Jus d\'Orange', 1.5)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.05s;" data-name="Jus de Mangue" data-price="1.5">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-orange-300">
+                        <img src="https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Jus de Mangue</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1.5">$1.50</span>
+                        <button onclick="addToCart('Jus de Mangue', 1.5)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Thé Glacé" data-price="1">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-amber-100 to-amber-300">
+                        <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Thé Glacé</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="1">$1.00</span>
+                        <button onclick="addToCart('Thé Glacé', 1)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.15s;" data-name="Milkshake Vanille" data-price="2.5">
+                    <div class="h-48 overflow-hidden relative bg-gradient-to-br from-pink-100 to-pink-300">
+                        <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5 text-center">
+                        <h3 class="text-xl font-bold mb-1">Milkshake</h3>
+                        <span class="text-xl font-bold text-[#FFC107] price-tag block mb-3" data-price="2.5">$2.50</span>
+                        <button onclick="addToCart('Milkshake', 2.5)" class="w-full bg-[#121212] text-white py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <button type="submit" class="btn btn-primary btn-block" id="btnEnvoyer" disabled>
-          🔒 Signalement inactif
-        </button>
-      </form>
+    <!-- NOUVEAU : QUIZ DU MARDI -->
+    <section id="jeu" class="py-24 bg-[#121212] text-white relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-6 text-center reveal">
+            <h2 class="text-5xl font-bold mb-4 text-[#FFC107]">Quiz Culture Générale du Mardi 🏆</h2>
+            <p class="text-gray-300 mb-6 text-lg">10 questions ultra-difficiles. 60 secondes par question. Le premier à tout gagner remporte <span class="text-[#FFC107] font-bold">un plat gratuit au choix</span> !</p>
 
-      <div id="messageSignalement" class="message"></div>
+            <!-- Badge jour -->
+            <div id="quiz-day-badge" class="inline-block px-6 py-2 rounded-full font-bold mb-8 bg-red-600/20 border border-red-500 text-red-400">
+                🔒 Disponible uniquement le Mardi
+            </div>
+
+            <!-- Écran de démarrage -->
+            <div id="quiz-start-screen" class="quiz-card rounded-3xl p-8 md:p-12 shadow-2xl">
+                <div class="text-6xl mb-4">🧠</div>
+                <h3 class="text-3xl font-bold mb-4">Prêt à relever le défi ?</h3>
+                <ul class="text-left max-w-md mx-auto text-gray-300 space-y-2 mb-8">
+                    <li>✅ 10 questions de culture générale (niveau expert)</li>
+                    <li>⏱️ 60 secondes par question</li>
+                    <li>🚫 Anti-triche activé (changement d'onglet = élimination)</li>
+                    <li>🎁 Plat gratuit au choix pour le gagnant</li>
+                </ul>
+                <button id="quiz-start-btn" onclick="startQuiz()" class="bg-[#FFC107] text-black font-bold py-4 px-12 rounded-full text-lg hover:bg-white transition duration-300 shadow-[0_0_20px_rgba(255,193,7,0.6)] transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Commencer le Quiz
+                </button>
+                <p id="quiz-locked-msg" class="mt-4 text-red-400 font-semibold hidden">Le quiz n'est disponible que le mardi. Revenez demain !</p>
+            </div>
+
+            <!-- Écran de quiz -->
+            <div id="quiz-screen" class="quiz-card rounded-3xl p-8 md:p-12 shadow-2xl hidden text-left">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-sm font-bold text-gray-400">Question <span id="quiz-qnum">1</span>/10</span>
+                    <div id="quiz-timer" class="text-2xl font-bold text-[#FFC107] bg-black/30 px-4 py-1 rounded-full">⏱️ 60s</div>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2 mb-6">
+                    <div id="quiz-progress" class="bg-[#FFC107] h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <h3 id="quiz-question" class="text-2xl font-bold mb-6 min-h-[60px]">Chargement...</h3>
+                <div id="quiz-options" class="space-y-3"></div>
+            </div>
+
+            <!-- Écran de fin -->
+            <div id="quiz-end-screen" class="quiz-card rounded-3xl p-8 md:p-12 shadow-2xl hidden">
+                <div id="quiz-end-icon" class="text-6xl mb-4">🎉</div>
+                <h3 id="quiz-end-title" class="text-3xl font-bold mb-4 text-[#FFC107]">Félicitations !</h3>
+                <p id="quiz-end-message" class="text-gray-300 mb-6"></p>
+                <div id="quiz-prize-box" class="bg-[#FFC107]/10 border-2 border-[#FFC107] rounded-2xl p-6 mb-6 hidden">
+                    <p class="text-sm text-gray-400 mb-2">Votre code promo :</p>
+                    <p id="quiz-prize-code" class="text-3xl font-bold text-[#FFC107] tracking-widest mb-3">MC-FREE-2026</p>
+                    <p class="text-sm text-gray-300">Envoyez ce code au <strong>+243 898336928</strong> sur WhatsApp pour réclamer votre plat gratuit.</p>
+                </div>
+                <button onclick="resetQuiz()" class="bg-[#FFC107] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition">Rejouer</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION AVIS CLIENTS -->
+    <section id="avis" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-5xl font-bold text-center mb-16 reveal">Ce que disent nos <span class="text-[#FFC107]">Clients</span></h2>
+
+            <div class="max-w-2xl mx-auto bg-[#f9f9f9] p-8 rounded-3xl shadow-lg mb-16 reveal">
+                <h3 class="text-2xl font-bold mb-4">Laissez votre avis</h3>
+                <form id="reviewForm" class="space-y-4">
+                    <div>
+                        <label class="block font-semibold mb-1">Votre nom</label>
+                        <input type="text" id="reviewName" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#FFC107]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Votre note</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" required /><label for="star1">★</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Votre commentaire</label>
+                        <textarea id="reviewMessage" required rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#FFC107]"></textarea>
+                    </div>
+                    <button type="submit" class="bg-[#121212] text-white font-bold py-3 px-8 rounded-xl hover:bg-[#FFC107] hover:text-black transition">Publier mon avis</button>
+                    <p id="reviewStatus" class="text-sm font-semibold text-green-600 hidden">Merci ! Votre avis a été publié.</p>
+                </form>
+            </div>
+
+            <div id="reviewsList" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <p class="text-gray-500 col-span-3 text-center">Chargement des avis...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#121212] text-white py-10 text-center">
+        <div class="text-3xl font-bold logo-font text-[#FFC107] mb-4">MC FOOD</div>
+        <p class="text-gray-400 text-sm mb-2">Kinshasa, RDC | +243 898336928</p>
+        <p class="text-gray-600 text-xs">&copy; 2026 MC Food. Tous droits réservés.</p>
+    </footer>
+
+    <!-- PANIER -->
+    <div class="cart-sidebar fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-2xl z-50 flex flex-col">
+        <div class="p-6 border-b flex justify-between items-center bg-[#121212] text-white">
+            <h3 class="text-2xl font-bold">Votre Panier</h3>
+            <button onclick="toggleCart()" class="text-2xl hover:text-[#FFC107]">&times;</button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto" id="cart-items"><p class="text-gray-500 text-center mt-10">Votre panier est vide.</p></div>
+        <div class="p-6 border-t bg-gray-50">
+            <div class="flex justify-between font-bold text-xl mb-4"><span>Total :</span><span id="cart-total">$0.00</span></div>
+            <button onclick="checkout()" class="w-full bg-[#FFC107] text-black font-bold py-4 rounded-xl hover:bg-[#121212] hover:text-white transition duration-300">Commander via WhatsApp</button>
+        </div>
     </div>
 
-    <!-- CONFIRMATION -->
-    <div class="card hidden" id="cardConfirmation">
-      <div class="confirm-box">
-        <span class="check">✅</span>
-        <h2>Signalement envoyé !</h2>
-        <p>Votre signalement a bien été enregistré et transmis à la Commission Secrétariat.</p>
-        <div class="details" id="detailsConfirmation"></div>
-        <button class="btn btn-primary" onclick="nouveauSignalement()">➕ Faire un autre signalement</button>
-      </div>
+    <div class="mascot" onclick="mascotTalk()">
+        <div class="bubble" id="mascot-bubble">Bonjour ! Viens manger 😋</div>
+        <img src="https://img.freepik.com/free-vector/chef-character-design_23-2148632036.jpg" alt="Chef MC" class="w-24 h-24 rounded-full border-4 border-[#FFC107] shadow-2xl object-cover bg-white">
     </div>
 
-  </div>
-</section>
+    <!-- NOUVEAU : Overlay anti-triche -->
+    <div id="cheat-overlay">
+        <div class="text-6xl mb-6">🚫</div>
+        <h2 class="text-3xl font-bold mb-4 text-red-500">Triche détectée !</h2>
+        <p class="text-gray-300 mb-6 max-w-md">Vous avez changé d'onglet ou tenté de contourner le quiz. Votre participation est annulée.</p>
+        <button onclick="closeCheatOverlay()" class="bg-[#FFC107] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition">Retour</button>
+    </div>
 
-<footer class="footer">
-  <div class="container"><p><img src="IMG_6726.png" alt="Logo Groupe KA Nodasa" class="footer-logo"> © 2026 Groupe KA Nodasa — Salamu-Amani · Signalement d'absence / retard</p></div>
-</footer>
+    <!-- SCRIPT FIREBASE ET LOGIQUE -->
+    <script type="module">
+        // 1. IMPORTATION DE FIREBASE
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        // 2. CONFIGURATION FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
+            authDomain: "menu-f24cc.firebaseapp.com",
+            projectId: "menu-f24cc",
+            storageBucket: "menu-f24cc.firebasestorage.app",
+            messagingSenderId: "460095019040",
+            appId: "1:460095019040:web:45f931d14a59027e3b0445",
+            measurementId: "G-J07GJCREXT"
+        };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBpPWrDA058Xj_xr1MPl05e8CVv5gcREEw",
-  authDomain: "registre-e3389.firebaseapp.com",
-  projectId: "registre-e3389",
-  storageBucket: "registre-e3389.firebasestorage.app",
-  messagingSenderId: "180998003518",
-  appId: "1:180998003518:web:43f1f6aa39941025206a6f",
-  measurementId: "G-L79ET2SX74"
-};
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        // ============================================================
+        // 3. LOGIQUE DU SITE (Panier, Devise, etc.)
+        // ============================================================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-/* ============ UTILS ============ */
-function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function dateToISO(d){
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`;
-}
-function formatDateFr(iso){
-  return new Date(iso+"T00:00:00").toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-}
-function formatDateHeure(iso){
-  if(!iso) return '—';
-  return new Date(iso).toLocaleString('fr-FR', {
-    weekday:'long', day:'numeric', month:'long', year:'numeric',
-    hour:'2-digit', minute:'2-digit'
-  });
-}
-function afficherMessage(id,msg,type){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.textContent=msg; el.className='message show '+type;
-}
+        // --- SYSTÈME DE DEVISE ---
+        const EXCHANGE_RATE = 2800; // 1 USD = 2800 FC (taux raisonnable en RDC)
+        let currentCurrency = localStorage.getItem('mc_currency') || 'USD';
 
-/* ============ THÈME ============ */
-function updateThemeButton(){
-  const btn = document.getElementById('themeToggle');
-  if(!btn) return;
-  btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
-}
-window.toggleTheme = function(){
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ka-theme', next);
-  updateThemeButton();
-};
-updateThemeButton();
+        window.updatePrices = function() {
+            document.querySelectorAll('.price-tag').forEach(el => {
+                const usd = parseFloat(el.dataset.price);
+                if (currentCurrency === 'USD') {
+                    el.innerText = `$${usd.toFixed(2)}`;
+                } else {
+                    el.innerText = `${Math.round(usd * EXCHANGE_RATE).toLocaleString('fr-FR')} FC`;
+                }
+            });
+            updateCart();
+            document.querySelectorAll('.currency-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.currency === currentCurrency);
+            });
+        };
 
-/* ============ INITIALISATION DATE ============ */
-const today = new Date();
-document.getElementById('dateInput').value = dateToISO(today);
-document.getElementById('dateInput').max = dateToISO(today);
+        document.querySelectorAll('.currency-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentCurrency = btn.dataset.currency;
+                localStorage.setItem('mc_currency', currentCurrency);
+                updatePrices();
+            });
+        });
 
-/* ============ CHOIX DU TYPE (visuel) ============ */
-document.querySelectorAll('.type-choice').forEach(choice => {
-  const input = choice.querySelector('input[type="radio"]');
-  choice.addEventListener('click', () => {
-    if(document.getElementById('btnEnvoyer').disabled) return;
-    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
-    choice.classList.add('selected');
-    input.checked = true;
-  });
-});
+        // --- PANIER ---
+        let cart = [];
+        window.toggleCart = function() { document.querySelector('.cart-sidebar').classList.toggle('open'); }
+        window.addToCart = function(name, price) {
+            cart.push({ name, price });
+            updateCart();
+            window.toggleCart();
+        }
+        function formatPrice(usd) {
+            if (currentCurrency === 'USD') return `$${usd.toFixed(2)}`;
+            return `${Math.round(usd * EXCHANGE_RATE).toLocaleString('fr-FR')} FC`;
+        }
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCount = document.getElementById('cart-count');
+            if (!cartItems) return;
+            cartItems.innerHTML = '';
+            let total = 0;
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-500 text-center mt-10">Votre panier est vide.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    cartItems.innerHTML += `<div class="flex justify-between items-center mb-4 border-b pb-2"><div><h4 class="font-bold">${item.name}</h4><span class="text-[#FFC107] font-bold">${formatPrice(item.price)}</span></div><button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 font-bold">&times;</button></div>`;
+                });
+            }
+            cartTotal.innerText = formatPrice(total);
+            cartCount.innerText = cart.length;
+        }
+        window.removeFromCart = function(index) { cart.splice(index, 1); updateCart(); }
+        window.checkout = function() {
+            if (cart.length === 0) return alert("Votre panier est vide !");
+            let message = "Bonjour MC Food, je souhaite commander :%0A";
+            let total = 0;
+            cart.forEach(item => {
+                message += `- ${item.name} (${formatPrice(item.price)})%0A`;
+                total += item.price;
+            });
+            message += `%0A*Total : ${formatPrice(total)}*`;
+            window.open(`https://wa.me/243898336928?text=${message}`, '_blank');
+        }
 
-/* ============================================================
-   SYNCHRONISATION AVEC L'ACTIVATION (config/signalementEncadreurs)
-   Champs : actif, debutLe, finLe
-   ============================================================ */
-let cacheActivation = { actif: false, debutLe: null, finLe: null };
-let signalementActif = false;
+        // ============================================================
+        // NOUVEAU : RECHERCHE
+        // ============================================================
+        const allProducts = [
+            { name: 'Le Big MC', price: 8, category: 'Plats', emoji: '🍔' },
+            { name: 'Shawarma Légendaire', price: 5, category: 'Plats', emoji: '🌯' },
+            { name: 'Frites Croustillantes', price: 2.5, category: 'Plats', emoji: '🍟' },
+            { name: 'Banane Douce', price: 1, category: 'Fruits', emoji: '🍌' },
+            { name: 'Salade de Fruits', price: 2, category: 'Fruits', emoji: '🍓' },
+            { name: 'Beignets Sucrés', price: 1.5, category: 'Sucré', emoji: '🍩' },
+            { name: 'Coca-Cola', price: 1, category: 'Boissons', emoji: '🥤' },
+            { name: 'Fanta Orange', price: 1, category: 'Boissons', emoji: '🍊' },
+            { name: 'Sprite', price: 1, category: 'Boissons', emoji: '🥤' },
+            { name: 'Eau Minérale', price: 0.5, category: 'Boissons', emoji: '💧' },
+            { name: 'Jus d\'Orange', price: 1.5, category: 'Boissons', emoji: '🍊' },
+            { name: 'Jus de Mangue', price: 1.5, category: 'Boissons', emoji: '🥭' },
+            { name: 'Thé Glacé', price: 1, category: 'Boissons', emoji: '🧊' },
+            { name: 'Milkshake Vanille', price: 2.5, category: 'Boissons', emoji: '🥛' },
+        ];
 
-function cheminActivation(){ return doc(db, "config", "signalementEncadreurs"); }
+        function renderSearchResults(term, container) {
+            if (!term.trim()) { container.classList.add('hidden'); return; }
+            const results = allProducts.filter(p =>
+                p.name.toLowerCase().includes(term.toLowerCase()) ||
+                p.category.toLowerCase().includes(term.toLowerCase())
+            );
+            if (results.length === 0) {
+                container.innerHTML = '<p class="p-4 text-gray-500 text-sm text-center">Aucun résultat</p>';
+            } else {
+                container.innerHTML = results.map(p => `
+                    <div class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer border-b last:border-0" onclick="addToCart('${p.name.replace(/'/g, "\\'")}', ${p.price}); document.getElementById('search-input').value=''; document.getElementById('search-results').classList.add('hidden'); document.getElementById('search-input-mobile').value=''; document.getElementById('search-results-mobile').classList.add('hidden');">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${p.emoji}</span>
+                            <div>
+                                <p class="font-bold text-sm">${p.name}</p>
+                                <p class="text-xs text-gray-500">${p.category}</p>
+                            </div>
+                        </div>
+                        <span class="font-bold text-[#FFC107] text-sm">${formatPrice(p.price)}</span>
+                    </div>
+                `).join('');
+            }
+            container.classList.remove('hidden');
+        }
 
-function estSignalementActif(){
-  if(!cacheActivation.actif) return false;
-  if(!cacheActivation.debutLe || !cacheActivation.finLe) return false;
-  const now = new Date();
-  return now >= new Date(cacheActivation.debutLe) && now <= new Date(cacheActivation.finLe);
-}
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        if (searchInput) searchInput.addEventListener('input', e => renderSearchResults(e.target.value, searchResults));
+        const searchInputMobile = document.getElementById('search-input-mobile');
+        const searchResultsMobile = document.getElementById('search-results-mobile');
+        if (searchInputMobile) searchInputMobile.addEventListener('input', e => renderSearchResults(e.target.value, searchResultsMobile));
 
-function estSignalementEnAttente(){
-  if(!cacheActivation.actif) return false;
-  if(!cacheActivation.debutLe) return false;
-  return new Date(cacheActivation.debutLe) > new Date();
-}
+        // ============================================================
+        // NOUVEAU : QUIZ DU MARDI
+        // ============================================================
+        const QUIZ_QUESTIONS = [
+            {
+                q: "Quel est le plus long fleuve du monde ?",
+                options: ["Le Nil", "L'Amazone", "Le Mississippi", "Le Congo"],
+                correct: 0
+            },
+            {
+                q: "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?",
+                options: ["1965", "1969", "1972", "1961"],
+                correct: 1
+            },
+            {
+                q: "Qui a peint 'La Joconde' ?",
+                options: ["Michel-Ange", "Raphaël", "Léonard de Vinci", "Van Gogh"],
+                correct: 2
+            },
+            {
+                q: "Quel est le plus petit pays du monde ?",
+                options: ["Monaco", "Le Vatican", "Le Liechtenstein", "Saint-Marin"],
+                correct: 1
+            },
+            {
+                q: "En quelle année la RDC a-t-elle obtenu son indépendance ?",
+                options: ["1958", "1960", "1962", "1965"],
+                correct: 1
+            },
+            {
+                q: "Quel est l'élément chimique représenté par le symbole 'Au' ?",
+                options: ["Argent", "Aluminium", "Or", "Argon"],
+                correct: 2
+            },
+            {
+                q: "Combien de os compte le corps humain adulte ?",
+                options: ["206", "200", "210", "195"],
+                correct: 0
+            },
+            {
+                q: "Qui a écrit 'Les Misérables' ?",
+                options: ["Émile Zola", "Victor Hugo", "Gustave Flaubert", "Molière"],
+                correct: 1
+            },
+            {
+                q: "Quelle est la capitale de l'Australie ?",
+                options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+                correct: 2
+            },
+            {
+                q: "Quel est le plus grand désert du monde ?",
+                options: ["Le Sahara", "Le Gobi", "L'Antarctique", "L'Arabie"],
+                correct: 2
+            }
+        ];
 
-function estSignalementExpire(){
-  if(!cacheActivation.actif) return false;
-  if(!cacheActivation.finLe) return false;
-  return new Date(cacheActivation.finLe) < new Date();
-}
+        let quizState = {
+            currentQ: 0,
+            score: 0,
+            timer: null,
+            timeLeft: 60,
+            active: false,
+            tabHidden: false
+        };
 
-function rendreFormulaireActif(etat){
-  // etat : 'actif' | 'attente' | 'expire' | 'inactif'
-  signalementActif = (etat === 'actif');
+        // Vérifie si c'est mardi
+        function isTuesday() {
+            return new Date().getDay() === 2; // 0=Dimanche, 2=Mardi
+        }
 
-  const btn = document.getElementById('btnEnvoyer');
-  const form = document.getElementById('formSignalement');
-  const banner = document.getElementById('statusBanner');
-  const icon = document.getElementById('statusIcon');
-  const title = document.getElementById('statusTitle');
-  const desc = document.getElementById('statusDesc');
-  const details = document.getElementById('statusDetails');
+        function updateQuizDayStatus() {
+            const badge = document.getElementById('quiz-day-badge');
+            const startBtn = document.getElementById('quiz-start-btn');
+            const lockedMsg = document.getElementById('quiz-locked-msg');
+            if (isTuesday()) {
+                badge.innerHTML = '✅ Quiz ouvert aujourd\'hui (Mardi)';
+                badge.className = 'inline-block px-6 py-2 rounded-full font-bold mb-8 bg-green-600/20 border border-green-500 text-green-400';
+                startBtn.disabled = false;
+                lockedMsg.classList.add('hidden');
+            } else {
+                badge.innerHTML = '🔒 Disponible uniquement le Mardi';
+                badge.className = 'inline-block px-6 py-2 rounded-full font-bold mb-8 bg-red-600/20 border border-red-500 text-red-400';
+                startBtn.disabled = true;
+                lockedMsg.classList.remove('hidden');
+            }
+        }
+        updateQuizDayStatus();
 
-  if(etat === 'actif'){
-    banner.className = 'status-banner open';
-    icon.textContent = '✅';
-    title.textContent = 'Signalement OUVERT';
-    const remaining = new Date(cacheActivation.finLe) - new Date();
-    const jours = Math.floor(remaining / 86400000);
-    const h = Math.max(0, Math.floor((remaining % 86400000) / 3600000));
-    const m = Math.max(0, Math.floor((remaining % 3600000) / 60000));
-    const decompte = jours > 0 ? `${jours}j ${h}h ${m}min` : `${h}h ${m}min`;
-    desc.textContent = `Vous pouvez signaler votre absence ou retard. Encore ouvert pendant ${decompte}.`;
-    details.style.display = 'block';
-    details.innerHTML = `
-      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
-      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
-    `;
-    btn.disabled = false;
-    btn.textContent = '📤 Envoyer mon signalement';
-    form.classList.remove('form-disabled');
-  } else if(etat === 'attente'){
-    banner.className = 'status-banner waiting';
-    icon.textContent = '⏳';
-    title.textContent = 'Signalement pas encore ouvert';
-    desc.textContent = `Le signalement s'ouvrira automatiquement à la date de début programmée par la Commission.`;
-    details.style.display = 'block';
-    details.innerHTML = `
-      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
-      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
-    `;
-    btn.disabled = true;
-    btn.textContent = '⏳ Signalement pas encore ouvert';
-    form.classList.add('form-disabled');
-  } else if(etat === 'expire'){
-    banner.className = 'status-banner closed';
-    icon.textContent = '⌛';
-    title.textContent = 'Période de signalement terminée';
-    desc.textContent = `La période programmée par la Commission est terminée. Vous ne pouvez plus signaler.`;
-    details.style.display = 'block';
-    details.innerHTML = `
-      <div><strong>Début :</strong> ${formatDateHeure(cacheActivation.debutLe)}</div>
-      <div><strong>Fin :</strong> ${formatDateHeure(cacheActivation.finLe)}</div>
-    `;
-    btn.disabled = true;
-    btn.textContent = '⌛ Période terminée';
-    form.classList.add('form-disabled');
-  } else {
-    banner.className = 'status-banner closed';
-    icon.textContent = '🔒';
-    title.textContent = 'Signalement FERMÉ';
-    desc.textContent = "Le signalement n'est pas activé par la Commission. Le formulaire sera disponible dès que la Commission programme une période.";
-    details.style.display = 'none';
-    details.innerHTML = '';
-    btn.disabled = true;
-    btn.textContent = '🔒 Signalement inactif';
-    form.classList.add('form-disabled');
-  }
-}
+        window.startQuiz = function() {
+            if (!isTuesday()) return;
+            if (quizState.active) return;
+            quizState = { currentQ: 0, score: 0, timer: null, timeLeft: 60, active: true, tabHidden: false };
+            document.getElementById('quiz-start-screen').classList.add('hidden');
+            document.getElementById('quiz-end-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-qnum').innerText = '1';
+            document.getElementById('quiz-progress').style.width = '0%';
+            renderQuestion();
+        }
 
-function getEtatSignalement(){
-  if(estSignalementActif()) return 'actif';
-  if(estSignalementEnAttente()) return 'attente';
-  if(estSignalementExpire()) return 'expire';
-  return 'inactif';
-}
+        function renderQuestion() {
+            if (!quizState.active) return;
+            const q = QUIZ_QUESTIONS[quizState.currentQ];
+            document.getElementById('quiz-question').innerText = q.q;
+            const optsContainer = document.getElementById('quiz-options');
+            optsContainer.innerHTML = q.options.map((opt, i) => `
+                <div class="quiz-option border-2 border-gray-600 rounded-2xl p-4 text-lg" data-index="${i}" onclick="answerQuestion(${i})">
+                    <span class="font-bold text-[#FFC107] mr-3">${String.fromCharCode(65 + i)}.</span>${opt}
+                </div>
+            `).join('');
+            startTimer();
+        }
 
-/* Écoute en temps réel de l'activation */
-onSnapshot(cheminActivation(), snap => {
-  if(snap.exists()){
-    const data = snap.data() || {};
-    cacheActivation = {
-      actif: data.actif === true,
-      debutLe: data.debutLe || null,
-      finLe: data.finLe || null
-    };
-  } else {
-    cacheActivation = { actif: false, debutLe: null, finLe: null };
-  }
-  rendreFormulaireActif(getEtatSignalement());
-}, err => {
-  console.error("Erreur Firestore activation :", err);
-  rendreFormulaireActif('inactif');
-});
+        function startTimer() {
+            clearInterval(quizState.timer);
+            quizState.timeLeft = 60;
+            const timerEl = document.getElementById('quiz-timer');
+            timerEl.innerText = '⏱️ 60s';
+            timerEl.classList.remove('timer-warning');
+            quizState.timer = setInterval(() => {
+                quizState.timeLeft--;
+                timerEl.innerText = `⏱️ ${quizState.timeLeft}s`;
+                if (quizState.timeLeft <= 10) timerEl.classList.add('timer-warning');
+                if (quizState.timeLeft <= 0) {
+                    clearInterval(quizState.timer);
+                    endQuiz(false, "Temps écoulé !");
+                }
+            }, 1000);
+        }
 
-/* Vérification toutes les 30 secondes (compte à rebours + transition auto) */
-setInterval(() => {
-  rendreFormulaireActif(getEtatSignalement());
-}, 30000);
+        window.answerQuestion = function(index) {
+            if (!quizState.active) return;
+            clearInterval(quizState.timer);
+            const q = QUIZ_QUESTIONS[quizState.currentQ];
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                if (i === index && index !== q.correct) opt.classList.add('wrong');
+            });
+            if (index === q.correct) {
+                quizState.score++;
+            }
+            setTimeout(() => {
+                quizState.currentQ++;
+                if (quizState.currentQ >= QUIZ_QUESTIONS.length) {
+                    endQuiz(quizState.score === QUIZ_QUESTIONS.length, null);
+                } else {
+                    document.getElementById('quiz-qnum').innerText = quizState.currentQ + 1;
+                    document.getElementById('quiz-progress').style.width = `${(quizState.currentQ / QUIZ_QUESTIONS.length) * 100}%`;
+                    renderQuestion();
+                }
+            }, 1200);
+        }
 
-/* ============ SOUMISSION ============ */
-document.getElementById('formSignalement').addEventListener('submit', async e => {
-  e.preventDefault();
+        function endQuiz(won, reason) {
+            quizState.active = false;
+            clearInterval(quizState.timer);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-end-screen').classList.remove('hidden');
+            const icon = document.getElementById('quiz-end-icon');
+            const title = document.getElementById('quiz-end-title');
+            const msg = document.getElementById('quiz-end-message');
+            const prizeBox = document.getElementById('quiz-prize-box');
+            if (won) {
+                icon.innerText = '🏆';
+                title.innerText = 'Félicitations, vous avez gagné !';
+                title.className = 'text-3xl font-bold mb-4 text-[#FFC107]';
+                msg.innerText = `Score parfait : ${quizState.score}/10. Vous avez mérité votre plat gratuit !`;
+                prizeBox.classList.remove('hidden');
+                const code = 'MC-FREE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                document.getElementById('quiz-prize-code').innerText = code;
+                // Sauvegarde locale pour éviter la triche (un seul gain)
+                localStorage.setItem('mc_quiz_winner', code);
+            } else {
+                icon.innerText = '😢';
+                title.innerText = 'Dommage !';
+                title.className = 'text-3xl font-bold mb-4 text-red-400';
+                msg.innerText = reason || `Score : ${quizState.score}/10. Il faut 10/10 pour gagner le plat gratuit. Réessayez !`;
+                prizeBox.classList.add('hidden');
+            }
+        }
 
-  if(!estSignalementActif()){
-    return afficherMessage('messageSignalement', "Le signalement n'est pas ouvert actuellement. Attendez que la Commission programme et ouvre une période.", 'warning');
-  }
+        window.resetQuiz = function() {
+            document.getElementById('quiz-end-screen').classList.add('hidden');
+            document.getElementById('quiz-start-screen').classList.remove('hidden');
+            document.getElementById('quiz-start-btn').disabled = !isTuesday();
+        }
 
-  const typeInput = document.querySelector('input[name="typeSignalement"]:checked');
-  const nom = document.getElementById('nomInput').value.trim().replace(/\s+/g,' ');
-  const role = document.getElementById('roleSelect').value;
-  const date = document.getElementById('dateInput').value;
-  const motif = document.getElementById('motifSelect').value;
-  const detail = document.getElementById('detailInput').value.trim();
+        // ============================================================
+        // ANTI-TRICHE
+        // ============================================================
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => { if (quizState.active) e.preventDefault(); });
+        document.addEventListener('cut', e => { if (quizState.active) e.preventDefault(); });
+        document.addEventListener('paste', e => { if (quizState.active) e.preventDefault(); });
 
-  if(!typeInput) return afficherMessage('messageSignalement', "Veuillez choisir : Absence ou Retard.", 'error');
-  if(!nom || nom.length < 2) return afficherMessage('messageSignalement', "Veuillez écrire votre nom complet.", 'error');
-  if(!role) return afficherMessage('messageSignalement', "Veuillez choisir votre rôle.", 'error');
-  if(!date) return afficherMessage('messageSignalement', "Veuillez choisir une date.", 'error');
-  if(!motif) return afficherMessage('messageSignalement', "Veuillez choisir un motif.", 'error');
+        document.addEventListener('visibilitychange', () => {
+            if (quizState.active && document.hidden) {
+                quizState.tabHidden = true;
+                endQuiz(false, "Vous avez changé d'onglet. Triche détectée !");
+                document.getElementById('cheat-overlay').classList.add('show');
+            }
+        });
 
-  const type = typeInput.value;
-  const btn = document.getElementById('btnEnvoyer');
-  btn.disabled = true;
-  btn.textContent = "⏳ Envoi en cours…";
+        window.addEventListener('blur', () => {
+            if (quizState.active) {
+                quizState.tabHidden = true;
+                endQuiz(false, "Vous avez quitté la page. Triche détectée !");
+                document.getElementById('cheat-overlay').classList.add('show');
+            }
+        });
 
-  try {
-    const id = 'sig_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-    const signalement = {
-      type,
-      nom,
-      role,
-      date,
-      motif,
-      detail,
-      createdAt: new Date().toISOString(),
-      statut: 'nouveau'
-    };
-    await setDoc(doc(db, "signalements", id), signalement);
+        window.closeCheatOverlay = function() {
+            document.getElementById('cheat-overlay').classList.remove('show');
+            resetQuiz();
+        }
 
-    document.getElementById('cardFormulaire').classList.add('hidden');
-    document.getElementById('cardConfirmation').classList.remove('hidden');
-    document.getElementById('detailsConfirmation').innerHTML = `
-      <div><strong>Type :</strong> ${type === 'absence' ? '❌ Absence' : '⏰ Retard'}</div>
-      <div><strong>Nom :</strong> ${esc(nom)}</div>
-      <div><strong>Rôle :</strong> ${esc(role)}</div>
-      <div><strong>Date concernée :</strong> ${formatDateFr(date)}</div>
-      <div><strong>Motif :</strong> ${esc(motif)}</div>
-      ${detail ? `<div><strong>Détail :</strong> ${esc(detail)}</div>` : ''}
-    `;
+        // Interdire F12 et DevTools
+        document.addEventListener('keydown', e => {
+            if (quizState.active && (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'u')
+            )) {
+                e.preventDefault();
+                endQuiz(false, "Tentative de triche détectée !");
+                document.getElementById('cheat-overlay').classList.add('show');
+            }
+        });
 
-    document.getElementById('formSignalement').reset();
-    document.querySelectorAll('.type-choice').forEach(c => c.classList.remove('selected'));
-    document.getElementById('dateInput').value = dateToISO(today);
-    document.getElementById('messageSignalement').className = 'message';
-  } catch(err){
-    console.error(err);
-    afficherMessage('messageSignalement', "Erreur : " + err.message, 'error');
-  } finally {
-    rendreFormulaireActif(getEtatSignalement());
-  }
-});
+        // ============================================================
+        // 4. LOGIQUE DES AVIS (FIREBASE)
+        // ============================================================
+        const reviewForm = document.getElementById('reviewForm');
+        const reviewsList = document.getElementById('reviewsList');
 
-window.nouveauSignalement = function(){
-  document.getElementById('cardConfirmation').classList.add('hidden');
-  document.getElementById('cardFormulaire').classList.remove('hidden');
-  document.getElementById('messageSignalement').className = 'message';
-  rendreFormulaireActif(getEtatSignalement());
-  window.scrollTo({top:0, behavior:'smooth'});
-};
-</script>
+        async function loadReviews() {
+            reviewsList.innerHTML = '';
+            const q = query(collection(db, "commentaires"), orderBy("date", "desc"));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                reviewsList.innerHTML = '<p class="text-gray-500 col-span-3 text-center">Soyez le premier à laisser un avis !</p>';
+                return;
+            }
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+                reviewsList.innerHTML += `
+                    <div class="bg-[#f9f9f9] p-8 rounded-3xl shadow-lg reveal active">
+                        <div class="stars text-[#FFC107] mb-4 text-xl">${stars}</div>
+                        <p class="text-gray-600 italic mb-6">"${data.message}"</p>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-bold text-black">${data.name.charAt(0).toUpperCase()}</div>
+                            <div><h4 class="font-bold text-black">${data.name}</h4><p class="text-xs text-gray-500">Client</p></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const message = document.getElementById('reviewMessage').value;
+            const status = document.getElementById('reviewStatus');
+            try {
+                await addDoc(collection(db, "commentaires"), {
+                    name: name,
+                    rating: parseInt(rating),
+                    message: message,
+                    date: serverTimestamp()
+                });
+                status.classList.remove('hidden');
+                reviewForm.reset();
+                setTimeout(() => status.classList.add('hidden'), 3000);
+                loadReviews();
+            } catch (error) {
+                console.error("Erreur lors de l'envoi : ", error);
+                alert("Erreur lors de l'envoi de l'avis. Vérifiez la console.");
+            }
+        });
+
+        // ============================================================
+        // MASCOTTE
+        // ============================================================
+        window.mascotTalk = function() {
+            const bubble = document.getElementById('mascot-bubble');
+            const messages = ["Viens manger 😋", "J'ai faim !", "Le Big MC est chaud !", "Commande vite !", "Le quiz du mardi t'attend !"];
+            bubble.innerText = messages[Math.floor(Math.random() * messages.length)];
+            bubble.style.opacity = 1;
+            setTimeout(() => { bubble.style.opacity = 0; }, 3000);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        loadReviews();
+        updatePrices();
+    </script>
 </body>
 </html>
