@@ -31,11 +31,9 @@
         .star-rating label { cursor: pointer; color: #ccc; font-size: 30px; transition: color 0.2s; }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFC107; }
 
-        /* === NOUVEAU : Barre de recherche === */
         .search-box { transition: all 0.3s ease; }
         .search-box:focus-within { box-shadow: 0 0 0 3px rgba(255,193,7,0.4); }
 
-        /* === NOUVEAU : Quiz === */
         .quiz-card { background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%); }
         .quiz-option { transition: all 0.2s ease; cursor: pointer; }
         .quiz-option:hover:not(.disabled) { background: rgba(255,193,7,0.15); border-color: #FFC107; transform: translateX(5px); }
@@ -44,12 +42,9 @@
         .quiz-option.disabled { cursor: not-allowed; opacity: 0.6; }
         @keyframes pulseTimer { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .timer-warning { animation: pulseTimer 1s infinite; color: #ef4444 !important; }
-        .locked-day { filter: grayscale(1); opacity: 0.5; }
 
-        /* === NOUVEAU : Devise === */
         .currency-btn.active { background: #FFC107; color: #121212; }
 
-        /* === NOUVEAU : Anti-triche overlay === */
         #cheat-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center; padding: 20px; }
         #cheat-overlay.show { display: flex; }
     </style>
@@ -64,8 +59,7 @@
                 <span class="text-3xl font-bold text-[#121212] logo-font hidden sm:inline">MC FOOD</span>
             </div>
 
-            <!-- NOUVEAU : Barre de recherche -->
-            <div class="search-box flex-1 max-w-md hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 border-2 border-transparent">
+            <div class="search-box flex-1 max-w-md hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 border-2 border-transparent relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 <input id="search-input" type="text" placeholder="Rechercher un plat, une boisson..." class="w-full bg-transparent px-3 outline-none text-sm font-semibold">
                 <div id="search-results" class="absolute top-full mt-2 left-0 right-0 bg-white rounded-2xl shadow-2xl hidden max-h-80 overflow-y-auto z-50"></div>
@@ -77,7 +71,6 @@
                 <a href="#avis" class="hover:text-[#FFC107] transition">Avis</a>
             </div>
 
-            <!-- NOUVEAU : Sélecteur de devise -->
             <div class="flex items-center bg-gray-100 rounded-full p-1 text-sm font-bold">
                 <button data-currency="USD" class="currency-btn active px-3 py-1 rounded-full transition">$</button>
                 <button data-currency="FC" class="currency-btn px-3 py-1 rounded-full transition">FC</button>
@@ -89,7 +82,6 @@
             </button>
         </div>
 
-        <!-- NOUVEAU : Barre de recherche mobile -->
         <div class="md:hidden px-4 mt-3">
             <div class="search-box flex items-center bg-gray-100 rounded-full px-4 py-2 relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -120,72 +112,112 @@
 
             <!-- Catégorie : Plats -->
             <h3 class="text-3xl font-bold mb-8 reveal">🍔 <span class="text-[#FFC107]">Plats</span></h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
 
                 <!-- Burger -->
                 <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Le Big MC burger" data-price="8">
-                    <div class="h-64 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
-                    <div class="p-6">
+                    <div class="h-56 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
+                    <div class="p-5">
                         <h3 class="text-2xl font-bold mb-2">Le Big MC</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="8">$8.00</span><button onclick="addToCart('Le Big MC', 8)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="8">$8.00</span><button onclick="addToCart('Le Big MC', 8)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
                     </div>
                 </div>
 
                 <!-- Shawarma -->
                 <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Shawarma Légendaire" data-price="5">
-                    <div class="h-64 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
-                    <div class="p-6">
+                    <div class="h-56 overflow-hidden relative"><img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500"></div>
+                    <div class="p-5">
                         <h3 class="text-2xl font-bold mb-2">Shawarma Légendaire</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="5">$5.00</span><button onclick="addToCart('Shawarma', 5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="5">$5.00</span><button onclick="addToCart('Shawarma', 5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
                     </div>
                 </div>
 
-                <!-- Frites (design amélioré) -->
-                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.2s;" data-name="Frites Croustillantes" data-price="2.5">
-                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-yellow-300">
+                <!-- NOUVEAU : Tacos -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.15s;" data-name="Tacos MC" data-price="6">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-orange-100 to-red-200">
+                        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">🌮 Nouveau</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-2xl font-bold mb-2">Tacos MC</h3>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="6">$6.00</span><button onclick="addToCart('Tacos MC', 6)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
+                    </div>
+                </div>
+
+                <!-- NOUVEAU : Sandwich Croustillant "Le Crunchy MC" -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.2s;" data-name="Le Crunchy MC sandwich" data-price="6.5">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-amber-300">
+                        <img src="https://images.unsplash.com/photo-1553909489-cd47e0ef937f?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                        <span class="absolute top-3 right-3 bg-[#FFC107] text-black text-xs font-bold px-3 py-1 rounded-full shadow">⭐ Signature</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-2xl font-bold mb-2">Le Crunchy MC</h3>
+                        <p class="text-xs text-gray-500 mb-1 italic">Sandwich ultra croustillant</p>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="6.5">$6.50</span><button onclick="addToCart('Le Crunchy MC', 6.5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie : Frites -->
+            <h3 class="text-3xl font-bold mb-8 reveal">🍟 <span class="text-[#FFC107]">Frites</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Frites Croustillantes" data-price="2.5">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-yellow-300">
                         <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
                         <span class="absolute top-3 right-3 bg-[#FFC107] text-black text-xs font-bold px-3 py-1 rounded-full shadow">🔥 Top</span>
                     </div>
-                    <div class="p-6">
+                    <div class="p-5">
                         <h3 class="text-2xl font-bold mb-2">Frites Croustillantes</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="2.5">$2.50</span><button onclick="addToCart('Frites', 2.5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="2.5">$2.50</span><button onclick="addToCart('Frites', 2.5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Frites Épicées" data-price="3">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-red-100 to-orange-300">
+                        <img src="https://images.unsplash.com/photo-1630431341973-02e1b662ec35?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-2xl font-bold mb-2">Frites Épicées</h3>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="3">$3.00</span><button onclick="addToCart('Frites Épicées', 3)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
+                    </div>
+                </div>
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.15s;" data-name="Frites Cheddar" data-price="3.5">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-amber-100 to-yellow-300">
+                        <img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-2xl font-bold mb-2">Frites Cheddar</h3>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="3.5">$3.50</span><button onclick="addToCart('Frites Cheddar', 3.5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
                     </div>
                 </div>
             </div>
 
             <!-- Catégorie : Sucré & Fruits -->
             <h3 class="text-3xl font-bold mb-8 reveal">🍌 <span class="text-[#FFC107]">Sucré & Fruits</span></h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
-                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Banane Douce" data-price="1">
-                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-yellow-50 to-yellow-200">
-                        <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <!-- Banane Grillée (remplace la banane simple) -->
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Banane Grillée" data-price="1.5">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-yellow-100 to-amber-300">
+                        <img src="https://images.unsplash.com/photo-1603833665858-e61d17a86224?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
+                        <span class="absolute top-3 right-3 bg-[#FFC107] text-black text-xs font-bold px-3 py-1 rounded-full shadow">🔥 Grillé</span>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-bold mb-2">Banane Douce</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="1">$1.00</span><button onclick="addToCart('Banane', 1)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
-                    </div>
-                </div>
-                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Salade de Fruits" data-price="2">
-                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-pink-50 to-orange-200">
-                        <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-bold mb-2">Salade de Fruits</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="2">$2.00</span><button onclick="addToCart('Salade de Fruits', 2)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                    <div class="p-5">
+                        <h3 class="text-2xl font-bold mb-2">Banane Grillée</h3>
+                        <p class="text-xs text-gray-500 mb-2 italic">Caramélisée au feu de bois</p>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="1.5">$1.50</span><button onclick="addToCart('Banane Grillée', 1.5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
                     </div>
                 </div>
-                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.2s;" data-name="Beignets Sucrés" data-price="1.5">
-                    <div class="h-64 overflow-hidden relative bg-gradient-to-br from-amber-50 to-amber-200">
+                <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" style="transition-delay: 0.1s;" data-name="Beignets Sucrés" data-price="1.5">
+                    <div class="h-56 overflow-hidden relative bg-gradient-to-br from-amber-50 to-amber-200">
                         <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-500">
                     </div>
-                    <div class="p-6">
+                    <div class="p-5">
                         <h3 class="text-2xl font-bold mb-2">Beignets Sucrés</h3>
-                        <div class="flex justify-between items-center"><span class="text-2xl font-bold text-[#FFC107] price-tag" data-price="1.5">$1.50</span><button onclick="addToCart('Beignets', 1.5)" class="bg-[#121212] text-white px-5 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition">Ajouter</button></div>
+                        <div class="flex justify-between items-center"><span class="text-xl font-bold text-[#FFC107] price-tag" data-price="1.5">$1.50</span><button onclick="addToCart('Beignets', 1.5)" class="bg-[#121212] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#FFC107] hover:text-black transition text-sm">Ajouter</button></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Catégorie : Boissons -->
+            <!-- Catégorie : Boissons (inchangées) -->
             <h3 class="text-3xl font-bold mb-8 reveal">🥤 <span class="text-[#FFC107]">Boissons</span></h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="menu-card bg-white rounded-3xl overflow-hidden shadow-xl reveal" data-name="Coca-Cola" data-price="1">
@@ -274,13 +306,12 @@
         </div>
     </section>
 
-    <!-- NOUVEAU : QUIZ DU MARDI -->
+    <!-- QUIZ DU MARDI -->
     <section id="jeu" class="py-24 bg-[#121212] text-white relative overflow-hidden">
         <div class="max-w-4xl mx-auto px-6 text-center reveal">
             <h2 class="text-5xl font-bold mb-4 text-[#FFC107]">Quiz Culture Générale du Mardi 🏆</h2>
-            <p class="text-gray-300 mb-6 text-lg">10 questions ultra-difficiles. 60 secondes par question. Le premier à tout gagner remporte <span class="text-[#FFC107] font-bold">un plat gratuit au choix</span> !</p>
+            <p class="text-gray-300 mb-6 text-lg">10 questions ultra-difficiles. 60 secondes par question. <strong>Une seule tentative par joueur.</strong> Le premier à tout gagner remporte <span class="text-[#FFC107] font-bold">un plat gratuit au choix</span> !</p>
 
-            <!-- Badge jour -->
             <div id="quiz-day-badge" class="inline-block px-6 py-2 rounded-full font-bold mb-8 bg-red-600/20 border border-red-500 text-red-400">
                 🔒 Disponible uniquement le Mardi
             </div>
@@ -293,12 +324,14 @@
                     <li>✅ 10 questions de culture générale (niveau expert)</li>
                     <li>⏱️ 60 secondes par question</li>
                     <li>🚫 Anti-triche activé (changement d'onglet = élimination)</li>
+                    <li>⚠️ <strong class="text-[#FFC107]">Une seule tentative par joueur</strong></li>
                     <li>🎁 Plat gratuit au choix pour le gagnant</li>
                 </ul>
                 <button id="quiz-start-btn" onclick="startQuiz()" class="bg-[#FFC107] text-black font-bold py-4 px-12 rounded-full text-lg hover:bg-white transition duration-300 shadow-[0_0_20px_rgba(255,193,7,0.6)] transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
                     Commencer le Quiz
                 </button>
                 <p id="quiz-locked-msg" class="mt-4 text-red-400 font-semibold hidden">Le quiz n'est disponible que le mardi. Revenez demain !</p>
+                <p id="quiz-already-played-msg" class="mt-4 text-orange-400 font-semibold hidden">Vous avez déjà utilisé votre tentative. Revenez mardi prochain !</p>
             </div>
 
             <!-- Écran de quiz -->
@@ -324,7 +357,7 @@
                     <p id="quiz-prize-code" class="text-3xl font-bold text-[#FFC107] tracking-widest mb-3">MC-FREE-2026</p>
                     <p class="text-sm text-gray-300">Envoyez ce code au <strong>+243 898336928</strong> sur WhatsApp pour réclamer votre plat gratuit.</p>
                 </div>
-                <button onclick="resetQuiz()" class="bg-[#FFC107] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition">Rejouer</button>
+                <p class="text-sm text-gray-500 mt-4">Vous ne pourrez plus rejouer. Rendez-vous mardi prochain !</p>
             </div>
         </div>
     </section>
@@ -391,21 +424,19 @@
         <img src="https://img.freepik.com/free-vector/chef-character-design_23-2148632036.jpg" alt="Chef MC" class="w-24 h-24 rounded-full border-4 border-[#FFC107] shadow-2xl object-cover bg-white">
     </div>
 
-    <!-- NOUVEAU : Overlay anti-triche -->
+    <!-- Overlay anti-triche -->
     <div id="cheat-overlay">
         <div class="text-6xl mb-6">🚫</div>
         <h2 class="text-3xl font-bold mb-4 text-red-500">Triche détectée !</h2>
-        <p class="text-gray-300 mb-6 max-w-md">Vous avez changé d'onglet ou tenté de contourner le quiz. Votre participation est annulée.</p>
+        <p class="text-gray-300 mb-6 max-w-md">Vous avez changé d'onglet ou tenté de contourner le quiz. Votre tentative unique est consommée.</p>
         <button onclick="closeCheatOverlay()" class="bg-[#FFC107] text-black font-bold py-3 px-8 rounded-full hover:bg-white transition">Retour</button>
     </div>
 
     <!-- SCRIPT FIREBASE ET LOGIQUE -->
     <script type="module">
-        // 1. IMPORTATION DE FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 2. CONFIGURATION FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDttf65TwEHVul4dpRxZkDycK72fAR1iAY",
             authDomain: "menu-f24cc.firebaseapp.com",
@@ -420,15 +451,15 @@
         const db = getFirestore(app);
 
         // ============================================================
-        // 3. LOGIQUE DU SITE (Panier, Devise, etc.)
+        // 3. LOGIQUE DU SITE
         // ============================================================
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // --- SYSTÈME DE DEVISE ---
-        const EXCHANGE_RATE = 2800; // 1 USD = 2800 FC (taux raisonnable en RDC)
+        // --- DEVISE : 1 USD = 2300 FC ---
+        const EXCHANGE_RATE = 2300;
         let currentCurrency = localStorage.getItem('mc_currency') || 'USD';
 
         window.updatePrices = function() {
@@ -498,14 +529,17 @@
         }
 
         // ============================================================
-        // NOUVEAU : RECHERCHE
+        // RECHERCHE
         // ============================================================
         const allProducts = [
             { name: 'Le Big MC', price: 8, category: 'Plats', emoji: '🍔' },
             { name: 'Shawarma Légendaire', price: 5, category: 'Plats', emoji: '🌯' },
-            { name: 'Frites Croustillantes', price: 2.5, category: 'Plats', emoji: '🍟' },
-            { name: 'Banane Douce', price: 1, category: 'Fruits', emoji: '🍌' },
-            { name: 'Salade de Fruits', price: 2, category: 'Fruits', emoji: '🍓' },
+            { name: 'Tacos MC', price: 6, category: 'Plats', emoji: '🌮' },
+            { name: 'Le Crunchy MC', price: 6.5, category: 'Plats', emoji: '🥪' },
+            { name: 'Frites Croustillantes', price: 2.5, category: 'Frites', emoji: '🍟' },
+            { name: 'Frites Épicées', price: 3, category: 'Frites', emoji: '🌶️' },
+            { name: 'Frites Cheddar', price: 3.5, category: 'Frites', emoji: '🧀' },
+            { name: 'Banane Grillée', price: 1.5, category: 'Fruits', emoji: '🍌' },
             { name: 'Beignets Sucrés', price: 1.5, category: 'Sucré', emoji: '🍩' },
             { name: 'Coca-Cola', price: 1, category: 'Boissons', emoji: '🥤' },
             { name: 'Fanta Orange', price: 1, category: 'Boissons', emoji: '🍊' },
@@ -550,84 +584,61 @@
         if (searchInputMobile) searchInputMobile.addEventListener('input', e => renderSearchResults(e.target.value, searchResultsMobile));
 
         // ============================================================
-        // NOUVEAU : QUIZ DU MARDI
+        // QUIZ DU MARDI - UNE SEULE TENTATIVE
         // ============================================================
         const QUIZ_QUESTIONS = [
-            {
-                q: "Quel est le plus long fleuve du monde ?",
-                options: ["Le Nil", "L'Amazone", "Le Mississippi", "Le Congo"],
-                correct: 0
-            },
-            {
-                q: "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?",
-                options: ["1965", "1969", "1972", "1961"],
-                correct: 1
-            },
-            {
-                q: "Qui a peint 'La Joconde' ?",
-                options: ["Michel-Ange", "Raphaël", "Léonard de Vinci", "Van Gogh"],
-                correct: 2
-            },
-            {
-                q: "Quel est le plus petit pays du monde ?",
-                options: ["Monaco", "Le Vatican", "Le Liechtenstein", "Saint-Marin"],
-                correct: 1
-            },
-            {
-                q: "En quelle année la RDC a-t-elle obtenu son indépendance ?",
-                options: ["1958", "1960", "1962", "1965"],
-                correct: 1
-            },
-            {
-                q: "Quel est l'élément chimique représenté par le symbole 'Au' ?",
-                options: ["Argent", "Aluminium", "Or", "Argon"],
-                correct: 2
-            },
-            {
-                q: "Combien de os compte le corps humain adulte ?",
-                options: ["206", "200", "210", "195"],
-                correct: 0
-            },
-            {
-                q: "Qui a écrit 'Les Misérables' ?",
-                options: ["Émile Zola", "Victor Hugo", "Gustave Flaubert", "Molière"],
-                correct: 1
-            },
-            {
-                q: "Quelle est la capitale de l'Australie ?",
-                options: ["Sydney", "Melbourne", "Canberra", "Perth"],
-                correct: 2
-            },
-            {
-                q: "Quel est le plus grand désert du monde ?",
-                options: ["Le Sahara", "Le Gobi", "L'Antarctique", "L'Arabie"],
-                correct: 2
-            }
+            { q: "Quel est le plus long fleuve du monde ?", options: ["Le Nil", "L'Amazone", "Le Mississippi", "Le Congo"], correct: 0 },
+            { q: "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?", options: ["1965", "1969", "1972", "1961"], correct: 1 },
+            { q: "Qui a peint 'La Joconde' ?", options: ["Michel-Ange", "Raphaël", "Léonard de Vinci", "Van Gogh"], correct: 2 },
+            { q: "Quel est le plus petit pays du monde ?", options: ["Monaco", "Le Vatican", "Le Liechtenstein", "Saint-Marin"], correct: 1 },
+            { q: "En quelle année la RDC a-t-elle obtenu son indépendance ?", options: ["1958", "1960", "1962", "1965"], correct: 1 },
+            { q: "Quel est l'élément chimique représenté par le symbole 'Au' ?", options: ["Argent", "Aluminium", "Or", "Argon"], correct: 2 },
+            { q: "Combien de os compte le corps humain adulte ?", options: ["206", "200", "210", "195"], correct: 0 },
+            { q: "Qui a écrit 'Les Misérables' ?", options: ["Émile Zola", "Victor Hugo", "Gustave Flaubert", "Molière"], correct: 1 },
+            { q: "Quelle est la capitale de l'Australie ?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: 2 },
+            { q: "Quel est le plus grand désert du monde ?", options: ["Le Sahara", "Le Gobi", "L'Antarctique", "L'Arabie"], correct: 2 }
         ];
 
-        let quizState = {
-            currentQ: 0,
-            score: 0,
-            timer: null,
-            timeLeft: 60,
-            active: false,
-            tabHidden: false
-        };
+        let quizState = { currentQ: 0, score: 0, timer: null, timeLeft: 60, active: false };
 
-        // Vérifie si c'est mardi
-        function isTuesday() {
-            return new Date().getDay() === 2; // 0=Dimanche, 2=Mardi
+        function isTuesday() { return new Date().getDay() === 2; }
+
+        // Clé de tentative hebdomadaire : change chaque semaine (année + numéro de semaine ISO)
+        function getWeekKey() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const diff = now - start;
+            const oneWeek = 1000 * 60 * 60 * 24 * 7;
+            const weekNum = Math.floor(diff / oneWeek);
+            return `mc_quiz_attempt_${now.getFullYear()}_W${weekNum}`;
+        }
+
+        function hasAlreadyPlayed() {
+            return localStorage.getItem(getWeekKey()) === 'true';
+        }
+
+        function markAsPlayed() {
+            localStorage.setItem(getWeekKey(), 'true');
         }
 
         function updateQuizDayStatus() {
             const badge = document.getElementById('quiz-day-badge');
             const startBtn = document.getElementById('quiz-start-btn');
             const lockedMsg = document.getElementById('quiz-locked-msg');
+            const alreadyMsg = document.getElementById('quiz-already-played-msg');
+
+            // Toujours afficher le message déjà joué si applicable
+            if (hasAlreadyPlayed()) {
+                alreadyMsg.classList.remove('hidden');
+            } else {
+                alreadyMsg.classList.add('hidden');
+            }
+
             if (isTuesday()) {
                 badge.innerHTML = '✅ Quiz ouvert aujourd\'hui (Mardi)';
                 badge.className = 'inline-block px-6 py-2 rounded-full font-bold mb-8 bg-green-600/20 border border-green-500 text-green-400';
-                startBtn.disabled = false;
                 lockedMsg.classList.add('hidden');
+                startBtn.disabled = hasAlreadyPlayed();
             } else {
                 badge.innerHTML = '🔒 Disponible uniquement le Mardi';
                 badge.className = 'inline-block px-6 py-2 rounded-full font-bold mb-8 bg-red-600/20 border border-red-500 text-red-400';
@@ -639,8 +650,11 @@
 
         window.startQuiz = function() {
             if (!isTuesday()) return;
+            if (hasAlreadyPlayed()) return;
             if (quizState.active) return;
-            quizState = { currentQ: 0, score: 0, timer: null, timeLeft: 60, active: true, tabHidden: false };
+            // Marquer immédiatement comme joué (anti-triche : même si refresh)
+            markAsPlayed();
+            quizState = { currentQ: 0, score: 0, timer: null, timeLeft: 60, active: true };
             document.getElementById('quiz-start-screen').classList.add('hidden');
             document.getElementById('quiz-end-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
@@ -689,9 +703,7 @@
                 if (i === q.correct) opt.classList.add('correct');
                 if (i === index && index !== q.correct) opt.classList.add('wrong');
             });
-            if (index === q.correct) {
-                quizState.score++;
-            }
+            if (index === q.correct) quizState.score++;
             setTimeout(() => {
                 quizState.currentQ++;
                 if (quizState.currentQ >= QUIZ_QUESTIONS.length) {
@@ -721,21 +733,22 @@
                 prizeBox.classList.remove('hidden');
                 const code = 'MC-FREE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
                 document.getElementById('quiz-prize-code').innerText = code;
-                // Sauvegarde locale pour éviter la triche (un seul gain)
-                localStorage.setItem('mc_quiz_winner', code);
             } else {
                 icon.innerText = '😢';
                 title.innerText = 'Dommage !';
                 title.className = 'text-3xl font-bold mb-4 text-red-400';
-                msg.innerText = reason || `Score : ${quizState.score}/10. Il faut 10/10 pour gagner le plat gratuit. Réessayez !`;
+                msg.innerText = reason || `Score : ${quizState.score}/10. Il faut 10/10 pour gagner le plat gratuit.`;
                 prizeBox.classList.add('hidden');
             }
+            // Mettre à jour le badge "déjà joué"
+            updateQuizDayStatus();
         }
 
         window.resetQuiz = function() {
+            // Cette fonction n'est plus utilisée (une seule tentative), mais gardée pour compat
             document.getElementById('quiz-end-screen').classList.add('hidden');
             document.getElementById('quiz-start-screen').classList.remove('hidden');
-            document.getElementById('quiz-start-btn').disabled = !isTuesday();
+            updateQuizDayStatus();
         }
 
         // ============================================================
@@ -748,7 +761,6 @@
 
         document.addEventListener('visibilitychange', () => {
             if (quizState.active && document.hidden) {
-                quizState.tabHidden = true;
                 endQuiz(false, "Vous avez changé d'onglet. Triche détectée !");
                 document.getElementById('cheat-overlay').classList.add('show');
             }
@@ -756,7 +768,6 @@
 
         window.addEventListener('blur', () => {
             if (quizState.active) {
-                quizState.tabHidden = true;
                 endQuiz(false, "Vous avez quitté la page. Triche détectée !");
                 document.getElementById('cheat-overlay').classList.add('show');
             }
@@ -764,10 +775,11 @@
 
         window.closeCheatOverlay = function() {
             document.getElementById('cheat-overlay').classList.remove('show');
-            resetQuiz();
+            document.getElementById('quiz-end-screen').classList.add('hidden');
+            document.getElementById('quiz-start-screen').classList.remove('hidden');
+            updateQuizDayStatus();
         }
 
-        // Interdire F12 et DevTools
         document.addEventListener('keydown', e => {
             if (quizState.active && (
                 e.key === 'F12' ||
@@ -781,7 +793,7 @@
         });
 
         // ============================================================
-        // 4. LOGIQUE DES AVIS (FIREBASE)
+        // AVIS (FIREBASE)
         // ============================================================
         const reviewForm = document.getElementById('reviewForm');
         const reviewsList = document.getElementById('reviewsList');
@@ -844,9 +856,7 @@
             setTimeout(() => { bubble.style.opacity = 0; }, 3000);
         }
 
-        // ============================================================
         // INIT
-        // ============================================================
         loadReviews();
         updatePrices();
     </script>
